@@ -1,0 +1,64 @@
+# Project: FLWGProj
+# Makefile created by Dev-C++ 5.11
+
+CPP      = g++.exe -D__DEBUG__
+CC       = gcc.exe -D__DEBUG__
+WINDRES  = windres.exe
+OBJ      = ../OfficialCode/2DLinkedList.o ../OfficialCode/FLWP-2.o ../OfficialCode/HashFunctions.o ../OfficialCode/HashMap.o ../OfficialCode/TreeSet.o ../OfficialCode/WordLinkedList.o ../OfficialCode/TreeStorageNode.o ../OfficialCode/BreadthFirstSearch.o ../OfficialCode/GenericLinkedListNode.o ../OfficialCode/HashSet.o ../OfficialCode/Arrays.o ../OfficialCode/UserInput.o ../OfficialCode/GameFunctions.o
+LINKOBJ  = ../OfficialCode/2DLinkedList.o ../OfficialCode/FLWP-2.o ../OfficialCode/HashFunctions.o ../OfficialCode/HashMap.o ../OfficialCode/TreeSet.o ../OfficialCode/WordLinkedList.o ../OfficialCode/TreeStorageNode.o ../OfficialCode/BreadthFirstSearch.o ../OfficialCode/GenericLinkedListNode.o ../OfficialCode/HashSet.o ../OfficialCode/Arrays.o ../OfficialCode/UserInput.o ../OfficialCode/GameFunctions.o
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -g3
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+BIN      = FourLetterWordProgram.exe
+CXXFLAGS = $(CXXINCS) -g3
+CFLAGS   = $(INCS) -g3
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+../OfficialCode/2DLinkedList.o: 2DLinkedList.c
+	$(CC) -c 2DLinkedList.c -o ../OfficialCode/2DLinkedList.o $(CFLAGS)
+
+../OfficialCode/FLWP-2.o: FLWP-2.c
+	$(CC) -c FLWP-2.c -o ../OfficialCode/FLWP-2.o $(CFLAGS)
+
+../OfficialCode/HashFunctions.o: HashFunctions.c
+	$(CC) -c HashFunctions.c -o ../OfficialCode/HashFunctions.o $(CFLAGS)
+
+../OfficialCode/HashMap.o: HashMap.c
+	$(CC) -c HashMap.c -o ../OfficialCode/HashMap.o $(CFLAGS)
+
+../OfficialCode/TreeSet.o: TreeSet.c
+	$(CC) -c TreeSet.c -o ../OfficialCode/TreeSet.o $(CFLAGS)
+
+../OfficialCode/WordLinkedList.o: WordLinkedList.c
+	$(CC) -c WordLinkedList.c -o ../OfficialCode/WordLinkedList.o $(CFLAGS)
+
+../OfficialCode/TreeStorageNode.o: TreeStorageNode.c
+	$(CC) -c TreeStorageNode.c -o ../OfficialCode/TreeStorageNode.o $(CFLAGS)
+
+../OfficialCode/BreadthFirstSearch.o: BreadthFirstSearch.c
+	$(CC) -c BreadthFirstSearch.c -o ../OfficialCode/BreadthFirstSearch.o $(CFLAGS)
+
+../OfficialCode/GenericLinkedListNode.o: GenericLinkedListNode.c
+	$(CC) -c GenericLinkedListNode.c -o ../OfficialCode/GenericLinkedListNode.o $(CFLAGS)
+
+../OfficialCode/HashSet.o: HashSet.c
+	$(CC) -c HashSet.c -o ../OfficialCode/HashSet.o $(CFLAGS)
+
+../OfficialCode/Arrays.o: Arrays.c
+	$(CC) -c Arrays.c -o ../OfficialCode/Arrays.o $(CFLAGS)
+
+../OfficialCode/UserInput.o: UserInput.c
+	$(CC) -c UserInput.c -o ../OfficialCode/UserInput.o $(CFLAGS)
+
+../OfficialCode/GameFunctions.o: GameFunctions.c
+	$(CC) -c GameFunctions.c -o ../OfficialCode/GameFunctions.o $(CFLAGS)
