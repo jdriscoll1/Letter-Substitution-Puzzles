@@ -5,7 +5,8 @@ Singularly Linked List Node Functions
 Uses: Stores the word connections from the start to the goal
 The Queue of the words whose connections will be checked 
 */
-/*The Queue's Node --> The single most basic type of linked list lol*/
+/*The Queue's Node --> The single most basic type of linked list lol
+#Note: When creating this, make sure to initialize the dataMalloc to 0*/
 
 /*Enum --> It's main purpose is when it is time to print a linked list:
 @type LINKED --> outputs list: ties->pies->lies->etc.
@@ -76,10 +77,15 @@ void Print_WordLL(struct word *header, enum output o);
 @return --> Returns an array of strings (char*) */
 char** ConvertWordLLToArray(struct word *header);
 	
-
+/*This takes the word linked list and converts it to a string
+@param header -->The header of the word linked list
+@param output o --> This is the way that it is necessary to output it
+#Note: You must free the string that you are given*/
+char* toString_WordLL(struct word* header, enum output o); 
 
 /*Frees the linked list
-@param header --> the DHN's location*/
+@param header --> the DHN's location
+#Note: If you did not set the dataMalloc on the header, you will get a valgrind error*/
 void Free_WordLL(struct word *header);
 
 /*Copies one linked list onto another linked list

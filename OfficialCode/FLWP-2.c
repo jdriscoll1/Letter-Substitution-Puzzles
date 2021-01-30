@@ -42,6 +42,36 @@ void WeBeginTheGame();
 void AllConnections(); 
 void AVLTree(); 
 int main(){  
+	struct word* list = malloc(sizeof(struct word)); 
+	list->dataMalloc = 0;
+	list->next = NULL; 
+	AddToBack_WordLL("pies", list, 0); 
+	AddToBack_WordLL("ties", list, 0);
+	AddToBack_WordLL("vies", list, 0);
+
+
+	
+	char* s = toString_WordLL(list, LINKED); 
+	 
+	printf("%s", s); 
+	free(s); 
+	Free_WordLL(list);
+	
+
+
+	
+	return 0; 
+}
+
+void PathfinderGameMain(){
+	//Goal: User types undo, and gets to the previous move, this can happen as many times as possible
+	//First, I need a Generic Linked List that Holds all of the information
+	//Then, every time the user makes a move, I have to add the information in, by first adding to front, then copying it in 
+	//Then I need to print it out to test that it worked 
+	//Once that works, then It's time to get started on the undo
+	//if we get the output of "u": 
+	//It will be necessary to just go back one in the list 
+	//Also, we need a pointer to free it at the head, so a header pointer 
 	
 	srand(time(0)); 
 	EnterText(); 
@@ -58,7 +88,7 @@ int main(){
 	int quit = 0; 
 	for(i = 0; i < numRounds && quit == 0; i++){
 	
-		quit = PathfinderGame(i + 2, allWords, wordStorage, HashMap, NULL, NULL, 0);
+		quit = PathfinderGame(i + 2, allWords, wordStorage, HashMap);
 		 
 	}
 	
@@ -68,32 +98,6 @@ int main(){
 	FreeWordStorage(wordStorage); 
 	FreeHashMap(HashMap); 
 	
-	
-	return 0; 
-}
-
-void PathfinderGameMain(){
-	//Goal: User types undo, and gets to the previous move, this can happen as many times as possible
-	//First, I need a Generic Linked List that Holds all of the information
-	//Then, every time the user makes a move, I have to add the information in, by first adding to front, then copying it in 
-	//Then I need to print it out to test that it worked 
-	//Once that works, then It's time to get started on the undo
-	//if we get the output of "u": 
-	//It will be necessary to just go back one in the list 
-	//Also, we need a pointer to free it at the head, so a header pointer 
-	
-	srand(time(0)); 
-	struct wordConnections **(*HashMap) = AllocateHashMap();
-	char** wordStorage = FillHashMap(HashMap, 0);
-
-	//printf("Welcome to the Four Letter Word Pathfinder!\n\nThe premise of this game, is to start off with one word, and through changing a single letter, make it into a new word!\nThrough doing this, you can pathfind to the goal word\nFirst, Choose your difficulty:\n"); 
-	char** allWords = ExtrapolateAllWords();
-	PathfinderGame(2, allWords, wordStorage, HashMap, NULL, NULL, 0); 
-	//used to free the array
-	int totalWordCount[3] = {30, 590, 2235}; 
-	Free_2DArray(totalWordCount[numLetters - 2], (void***)allWords, 0); 
-	FreeWordStorage(wordStorage); 
-	FreeHashMap(HashMap); 
 }
 
 void MainProgram(char* w1, char* w2, struct wordConnections ***HashMap){

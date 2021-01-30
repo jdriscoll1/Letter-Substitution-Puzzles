@@ -28,7 +28,7 @@ char* Interpret_Input(struct word* userConnections, char* prevWord, char* input)
 @param prevWord --> The previous word, the word it is checking the current characters against
 @param currWord --> The word who is being judged
 @return --> 1) Valid   0) Invalid*/ 
-int Check_Input(char* prevWord, char* currWord, struct wordConnections ***HashMap); 
+int Check_Input(char* prevWord, const char* currWord, struct wordConnections ***HashMap); 
 
 
 /*This Converts a word to lowercase*/ 
@@ -43,6 +43,8 @@ char* toLowerCase(char* input);
 @note --> Does give a '\0'*/ 
 char* substr(char* word, int start, int end, int replace); 
 
+/*This is a safer variant of the C-regular strncat*/
+int safeStrcat(char** dest, char* src, int destLength, int buff, int start); 
    
 #endif
 

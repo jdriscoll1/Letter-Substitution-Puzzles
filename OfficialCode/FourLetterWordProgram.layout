@@ -6,9 +6,9 @@ LeftChar=1
 [Editors]
 <<<<<<< HEAD
 <<<<<<< HEAD
-Order=5,19,6,24,22,2,14,25
+Order=9,2,24,5,19,10
 <<<<<<< HEAD
-Focused=25
+Focused=2
 =======
 Order=2,14,12,11,22,19,10,9,13,24,3,20
 <<<<<<< HEAD
@@ -27,17 +27,17 @@ CursorRow=35
 TopLine=1
 LeftChar=1
 [Editor_10]
-CursorCol=21
-CursorRow=2
+CursorCol=6
+CursorRow=84
 TopLine=1
 LeftChar=1
 [Editor_2]
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
-CursorCol=1
-CursorRow=88
-TopLine=94
+CursorCol=8
+CursorRow=57
+TopLine=31
 =======
 CursorCol=24
 CursorRow=56
@@ -55,14 +55,14 @@ TopLine=50
 >>>>>>> AVLDoubleRotationsBranch
 LeftChar=1
 [Editor_5]
-CursorCol=33
-CursorRow=192
-TopLine=178
+CursorCol=5
+CursorRow=174
+TopLine=159
 LeftChar=1
 [Editor_6]
 CursorCol=5
 CursorRow=24
-TopLine=9
+TopLine=22
 LeftChar=1
 [Editor_7]
 <<<<<<< HEAD
@@ -97,9 +97,9 @@ TopLine=35
 >>>>>>> AVLDoubleRotationsBranch
 LeftChar=1
 [Editor_9]
-CursorCol=2
-CursorRow=149
-TopLine=130
+CursorCol=20
+CursorRow=10
+TopLine=1
 LeftChar=1
 [Editor_11]
 <<<<<<< HEAD
@@ -131,7 +131,7 @@ LeftChar=1
 <<<<<<< HEAD
 CursorCol=2
 CursorRow=410
-TopLine=232
+TopLine=1
 =======
 CursorCol=1
 CursorRow=162
@@ -170,7 +170,7 @@ TopLine=1
 LeftChar=1
 [Editor_19]
 CursorCol=1
-CursorRow=1
+CursorRow=4
 <<<<<<< HEAD
 TopLine=1
 =======
@@ -184,12 +184,12 @@ CursorRow=249
 TopLine=243
 LeftChar=1
 [Editor_24]
-CursorCol=2
-CursorRow=279
+CursorCol=3
+CursorRow=25
 =======
 CursorCol=18
 CursorRow=195
-TopLine=20
+TopLine=52
 LeftChar=1
 [Editor_24]
 CursorCol=30
@@ -198,22 +198,27 @@ CursorRow=34
 TopLine=25
 LeftChar=1
 [Editor_23]
-CursorCol=15
-CursorRow=186
-TopLine=2
+CursorCol=1
+CursorRow=228
+TopLine=190
 LeftChar=1
 [Editor_22]
-CursorCol=131
-CursorRow=44
-TopLine=73
+CursorCol=84
+CursorRow=38
+TopLine=14
 LeftChar=1
 [Editor_21]
-CursorCol=5
-CursorRow=31
-TopLine=19
+CursorCol=15
+CursorRow=47
+TopLine=16
 LeftChar=1
 [Editor_25]
 CursorCol=2
-CursorRow=15
+CursorRow=64
+TopLine=33
+LeftChar=1
+[Editor_26]
+CursorCol=1
+CursorRow=34
 TopLine=1
 LeftChar=1

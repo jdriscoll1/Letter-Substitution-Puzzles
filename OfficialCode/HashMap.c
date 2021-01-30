@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+
 #include "HashMap.h"
 #include "2DLinkedList.h"
 #include "HashFunctions.h"
@@ -189,7 +190,7 @@ FILE *OpenFile(){
 	/*Four Letter Word Document*/
 	FILE *flwd = fopen(wordDocuments[numLetters - 2], "r"); 
 	if(flwd == NULL){
-		printf("Could not open file\n");
+		printf("Could not open file: %s\n", wordDocuments[numLetters - 2]);
 		
 	}
 	return flwd;

@@ -123,7 +123,7 @@ char* Interpret_Input(struct word* userConnections, char* prevWord, char* input)
 	   
 }
 
-int Check_Input(char* prevWord, char* currWord, struct wordConnections ***HashMap){
+int Check_Input(char* prevWord, const char* currWord, struct wordConnections ***HashMap){
 	//Has to make sure that word is numLetters letters
 	//Has to make sure that word has numLetters - 1 letters in commond
 	//First, find prev word 
@@ -202,5 +202,27 @@ char* substr(char* word, int start, int end, int replace){
 		free(word); 
 	} 
 	return subWord; 
+}
+
+int safeStrcat(char** dest, char* src, int destLength, int buff, int start){
+	//It starts at where it left off last time
+	//As long as it is less than the buff, and it's not hit a null pointer, and it's destination can contain it  it's good to go. 
+	int i = start; 
+	 
+	
+	for(; i < buff + start; i++){
+		(*dest)[i] = src[i-start];
+
+		
+	}
+	
+	if(destLength == i){
+		printf("Error - Safe String Cat: Array Out of Bounds Exception");
+		exit(0); 
+	}
+	//The end of the destination is a null pointer
+	(*dest)[i] = '\0'; 
+	return i; 
+	//So how this is supposed to work. 
 }
 

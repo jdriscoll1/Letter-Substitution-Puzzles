@@ -92,7 +92,7 @@ int goalCheck(char* input, char* goal){
 	
 }
 /*This is the function which is the pathfinder game. You call this. You play the four letter word pathfinder*/
-int PathfinderGame(int challenge, char** allWords, char** wordStorage, struct wordConnections **(*HashMap), JNIEnv * env, jobject obj, int isJava){
+int PathfinderGame(int challenge, char** allWords, char** wordStorage, struct wordConnections **(*HashMap)){
 	//enum Difficulty difficulty = ChooseDifficulty();
 	//int minConnections = GetMinConnections(difficulty); 
 	 
@@ -126,7 +126,7 @@ int PathfinderGame(int challenge, char** allWords, char** wordStorage, struct wo
 
 	
 
-	int gameEndCondition = GameInput(undoCalls, numMoves, prevInput, minConnections, shortestConnection, userConnections, HashMap, storage, storageHeader, env, obj, isJava); 
+	int gameEndCondition = GameInput(undoCalls, numMoves, prevInput, minConnections, shortestConnection, userConnections, HashMap, storage, storageHeader); 
 	AfterGameOutput(gameEndCondition); 
 	free(prevInput); 
 	//Interpret Input
@@ -294,7 +294,7 @@ void EnterText(){
 }
 
 
-int GameInput(int undoCalls, int numMoves, char* prevInput, int minConnections, char** shortestConnection, struct word* userConnections, struct wordConnections **(*HashMap), struct GenericLinkedListNode *storage, struct GenericLinkedListNode *storageHeader, JNIEnv * env, jobject obj, int isJava){
+int GameInput(int undoCalls, int numMoves, char* prevInput, int minConnections, char** shortestConnection, struct word* userConnections, struct wordConnections **(*HashMap), struct GenericLinkedListNode *storage, struct GenericLinkedListNode *storageHeader){
 		
 		
 		

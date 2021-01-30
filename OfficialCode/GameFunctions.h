@@ -1,7 +1,6 @@
 #ifndef seenGame
 #define seenGame
 
-#include "jni.h"
 #include "2DLinkedList.h"
 #include "GenericLinkedListNode.h"
 enum Difficulty{
@@ -37,11 +36,8 @@ Pies -> Ties -> Tins
 @param allWords --> All of the words
 @param wordStorage --> This stores all words in the order
 @param HashMap --> This is the hash map that stores all words and their connections
-@param env --> Brings in the jni enviroment such that it an use jni functions
-@param obj --> The Java class that can use the object
-@param isJava --> Is this using the Java language or the C language? 1--> It is Java 0--> It is not Java
 @return --> Returns 1 if user quits, otherwise returns 0*/
-int PathfinderGame(int challenge, char** allWords, char** wordStorage, struct wordConnections **(*HashMap), JNIEnv * env, jobject obj, int isJava);
+int PathfinderGame(int challenge, char** allWords, char** wordStorage, struct wordConnections **(*HashMap));
 
 /*Method that determines when the game will be stopped
 @param input --> the current word who may be the end
@@ -116,10 +112,8 @@ void AddWord(int* undoCalls, int* numMoves, char** prevInput, char** cmd, struct
 @param HashMap --> This stores all the words and all their single letter connections
 @param storage --> This is the storage of all of the moves the user has previously taken
 @param storageHeader --> This is the header of the storage of all of the moves the user has previously taken
-@param env --> Brings in the jni enviroment such that it an use jni functions
-@param obj --> The Java class that can use the object
-@param isJava --> Is this using the Java language or the C language? 1--> It is Java 0--> It is not Java*/ 
-int GameInput(int undoCalls, int numMoves, char* prevInput, int minConnections, char** shortestConnection, struct word* userConnections, struct wordConnections **(*HashMap), struct GenericLinkedListNode *storage, struct GenericLinkedListNode *storageHeader, JNIEnv * env, jobject obj, int isJava);
+@return --> goal check return value*/ 
+int GameInput(int undoCalls, int numMoves, char* prevInput, int minConnections, char** shortestConnection, struct word* userConnections, struct wordConnections **(*HashMap), struct GenericLinkedListNode *storage, struct GenericLinkedListNode *storageHeader);
 
 /*This is the command that runs when the user types help
 @param goal --> This is the goal word so that when the user types help it turns out alright*/

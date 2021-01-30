@@ -9,9 +9,13 @@
 #include <stddef.h>
 #include <string.h>
 
+#include "UserInput.h"
+
 #define true 1 
 #define false 0  
 typedef int bool;
+
+extern int numLetters;
 
 int getSize(struct word *header){
 	int size = 0; 
@@ -150,8 +154,25 @@ void Print_WordLL(struct word *header, enum output o){
 	
 }
 
+char* toString_WordLL(struct word *header, enum output o){
+	//Initializes the output string
+	char* outputStr = malloc(500); 
+	header = header->next; 
+	int start = 0; 
+	while(header != NULL){
+		start = safeStrcat(&outputStr, header->word, 500, numLetters, start); 
+		header = header->next; 
+	}
+	
+
+	return outputStr; 
+	
+}
+
 /*Free Word Node LL*/
 void Free_WordLL(struct word *header){
+	
+	
 	
 	while(header != NULL){
 		struct word temp = *header; 
