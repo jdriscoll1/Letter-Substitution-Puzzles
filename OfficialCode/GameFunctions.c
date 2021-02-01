@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include "GameFunctions.h"
 #include "WordLinkedList.h"
 #include "BreadthFirstSearch.h"
@@ -35,6 +36,7 @@ int GetMinConnections(enum Difficulty difficulty){
 
 /*Randomly chooses a word based on an index*/ 
 char* ChooseStartWord(char** allWordsArray, struct wordConnections **(*HashMap), int TEST_TEMP){
+	srand(time(0)); 
 	//the total number of words
 	int totalWordCount[3] = {30, 590, 2233}; 
 	//randomly choosese a word via an index

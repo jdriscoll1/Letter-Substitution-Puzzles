@@ -33,7 +33,7 @@ FILE *OpenFile();
 @param word --> The word to be checked and returned
 @param HashMap --> The Hash Map
 @return --> Returns NULL if the word is not w/in the hash map, otherwise returns the word*/
-struct wordConnections* SearchHashMap(struct wordConnections ***HashMap, char* word);  
+struct wordConnections* SearchHashMap(struct wordConnections ***HashMap, const char* word);  
 
 /*Print out Hash Map
 @param HashMap --> The Hash Map to be printed*/

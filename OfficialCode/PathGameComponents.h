@@ -1,3 +1,6 @@
+#ifndef seenPathGameComponents
+#define seenPathGameComponents
+
 #include "2DLinkedList.h"
 
 struct  GameComponents{
@@ -26,9 +29,15 @@ This instantiates the Game Components
 @param minConnections --> The minimum number of connections needed to connect
 @return --> Returns all of the Initalized Game Components, including the Start & Goal Word*/
 struct GameComponents *InitializeGameComponents(char** allWords, struct wordConnections **(*HashMap), int minConnections);
-void RemoveWord_Struct(struct GameComponents* gc);
+
+/*This removes a desired word
+@param gc --> All of the initalized game components
+@param input --> The word to be removed, with a - at input[0]
+@param freeInput --> Do you want to free the word, and have it replaced? Or is it freed outside of the remove word structure?*/
+void RemoveWord_Struct(struct GameComponents* gc, char* input, int freeInput);
 void Undo_Struct(struct GameComponents* gc);
 void Redo_Struct(struct GameComponents* gc);
+void ResetUndo_Struct(struct GameComponents* gc); 
 
 /*This checks if the user's input is valid, then adds it to the game
 @param gc --> All of the games components
@@ -39,3 +48,5 @@ int AddWord_Struct(struct GameComponents* gc, const char* newWord, struct wordCo
 
 //This goes through the game components and frees them
 void FreeGameComponents(struct GameComponents *gameComponents);
+
+#endif

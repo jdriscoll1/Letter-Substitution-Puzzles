@@ -60,9 +60,31 @@ struct GameComponents *InitializeGameComponents(char** allWords, struct wordConn
 	return gameComponents;
 
 }
-void RemoveWord_Struct(struct GameComponents* gc){
+void RemoveWord_Struct(struct GameComponents* gc, char* input, int freeInput){
+	//If I have previously undone a move, I need to free that move
+	if(gc->undoCalls != 0){
+		ResetUndo(gc->storageHeader, &(gc->storage), gc->userConnections, &(gc->undoCalls)); 
 	
+	}
+	//First we have to remove the -
+	char* word = substr(input, 1, numLetters + 1, freeInput);
+	 		
+	//Then we have to Remove it from the list, and all the words after it 
+	RemoveFrom_WordLL(word, gc->userConnections->next);
+			
+	//We have to change the word to be compared to the last word in the list
+	strcpy(gc->prevInput, FindLast_WordLL(gc->userConnections));
+			
+	//This adds to the storage such that the user can undo a move
+	AddToFront_GenericLinkedListNode(gc->storage, WORD_LL); 
+	CopyInto_GenericLinkedListNode(gc->userConnections, gc->storage, 1, WORD_LL); 
+			
+	++gc->numMoves; 
 	
+	//If you don't want to free the input
+	if(freeInput == 0){
+		free(word); 
+	}
 	
 	
 	
@@ -70,8 +92,38 @@ void RemoveWord_Struct(struct GameComponents* gc){
 	
 }
 void Undo_Struct(struct GameComponents* gc){
+	
+	if(gc->numMoves == 0){
+		printf("No move to return to.\n"); 
+	}
+	else{
+		//There has been an undo
+		(gc->undoCalls)++; 
+		//The number of moves has gone up 
+		(gc->numMoves)--; 
+  
+		gc->storage = gc->storage->next; 
+		//Change previousInput. It has to be changed here so that it if I add one, it will be able to recognize it
+		strcpy(gc->prevInput, FindLast_WordLL((gc->storage)->next->listHeader));  
+				 
+	
+	}
 }
 void Redo_Struct(struct GameComponents* gc){
+	/*if it is even possible for a user to redo a move*/
+	if(gc->undoCalls == 0){
+		printf("No move to be redone"); 
+	}
+	else{
+		//Undoes an undo
+		--gc->undoCalls; 
+		//Brings back a move
+		++gc->numMoves; 
+		//Changes the turn to the previous one 
+		gc->storage = (gc->storage)->prev; 
+		//makes the previous input the new one
+		strcpy(gc->prevInput, FindLast_WordLL((gc->storage)->next->listHeader));  
+	}
 }
 int AddWord_Struct(struct GameComponents* gc, const char* newWord, struct wordConnections **(*HashMap)){
 	//Checks if the word is valid based on the previous input 
@@ -89,8 +141,8 @@ int AddWord_Struct(struct GameComponents* gc, const char* newWord, struct wordCo
 			AddToFront_GenericLinkedListNode(gc->storage, WORD_LL); 
 			//Copies userConnections list to the front of the Generic Linked List Node
 			CopyInto_GenericLinkedListNode(gc->userConnections, gc->storage, 1, WORD_LL); 
-			//Anotehr move :)
-			++gc->numMoves;
+			//Another move :)
+			(gc->numMoves)++;
 	}
 	//TO-DO:Change isValid to have more specific outputs (Probably just 0 or 1. Perhaps have 2 for not long enough. And 3 for too long?) 
 	return isValid; 

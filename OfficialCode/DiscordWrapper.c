@@ -21,24 +21,29 @@ void javaOutput(JNIEnv * env, jobject obj, char* output, jobject textChannel);
 @param gameComponentsLong --> This is the long value of the game Components structure
 @param textChannel --> This is the text channel from which the input was sent
 @return --> 0) The goal has not been found 1) The goal has not been met 2) The user has quit*/
-int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong HashMapLong,  const char* input, jobject textChannel);
+int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong hashMapLong,  const char* input, jobject textChannel);
 
 //These are all of the components of the game 
  
 
 void javaOutput(JNIEnv * env, jobject obj, char* output, jobject textChannel){
 
+ 	
    jclass javaClass = (*env)->GetObjectClass(env, obj); 
    jmethodID mid = (*env)->GetMethodID(env, javaClass, "output", "(Ljava/lang/String;Ljava/lang/Object;)V");  
+   if(mid == NULL){return;}
    jstring javaString; 
    javaString =  (*env)->NewStringUTF(env, output); 
-   if(mid == NULL){return;}
-   printf("In C:\n");
-   (*env)->CallVoidMethod(env, obj, mid, javaString, textChannel); 
+  
+ 
+   (*env)->CallVoidMethod(env, obj, mid, javaString, textChannel);
+	
 }
 
 JNIEXPORT long JNICALL
 Java_flwp_FLWP_CreateHashMap(JNIEnv * env, jobject obj){
+	 
+	 srand(time(0)); 
 	struct wordConnections **(*HashMap) = AllocateHashMap();
 	return (jlong)HashMap; 
 	
@@ -59,14 +64,15 @@ Java_flwp_FLWP_CreateAllWordsList(JNIEnv * env, jobject obj){
 }
 
 JNIEXPORT long JNICALL
-Java_flwp_FLWP_InstantiateGame(JNIEnv * env, jobject obj, jlong allWords, jlong HashMap, int minConnections, jobject textChannel){
+Java_flwp_FLWP_InstantiateGame(JNIEnv * env, jobject obj, jlong allWords, jlong hashMapLong, int minConnections, jobject textChannel){
 	
- 
-	struct GameComponents *gameComponents = InitializeGameComponents((char**)allWords, (struct wordConnections***)HashMap, minConnections);
+
+	struct GameComponents *gameComponents = InitializeGameComponents((char**)allWords, (struct wordConnections***)hashMapLong, minConnections);
 	
-	char outputGoal[256]; 
+	char outputGoal[255]; 
 	snprintf(outputGoal, sizeof(outputGoal), "Your task is to start with %s and arrive at %s", gameComponents->shortestPath[0], gameComponents->shortestPath[minConnections]); 
 	javaOutput(env, obj, outputGoal, textChannel); 
+	
 	return (jlong)gameComponents; 
 	
 }
@@ -80,72 +86,111 @@ Java_flwp_FLWP_DeleteGame(JNIEnv * env, jobject obj, jlong gameComponentsLong){
 
 }
 
-JNIEXPORT void JNICALL
-Java_flwp_FLWP_BeginningOutput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jobject textChannel){
-	struct GameComponents* gameComponents = (struct GameComponents*)gameComponentsLong; 
-	/*Output in Java the help line*/
-	  
-	javaOutput(env, obj, "Help Line!", textChannel); 
-	
-	
-	
-}
 
-JNIEXPORT jstring JNICALL
-Java_flwp_FLWP_TakeInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong HashMap, jstring text, jobject textChannel){
+JNIEXPORT int JNICALL
+Java_flwp_FLWP_TakeInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong hashMapLong, jstring text, jobject textChannel){
 	//So, now we have the input -- in the Java portion we make sure it's not too long
-	
+
+	int j = 0; 
+
 	//We have to first convert it to a char* 
 	const char* input; 
 	input = (*env)->GetStringUTFChars(env, text, NULL); 
 	if(input == NULL){
-		return NULL; 
+		exit(0); 
 	}
-	int isGoal = InterpretInput(env, obj, gameComponentsLong, HashMap, input, textChannel); 
-	//Now we want to go through the cases
+	int isGoal = InterpretInput(env, obj, gameComponentsLong, hashMapLong, input, textChannel);
+
+		//If the user wins
+		//We want to go on to the next round 
+		//We want to ask the user if they would like to advance to the next level
+		//If they say "yes" -- We want to advance them to the next level
+		//If they say "no" -- We want to have them leave the game. Meaning that FIRST we should have the leave game feature 
+
+
 	
 	//We have to Free the char* object
 	(*env)->ReleaseStringUTFChars(env, text, input); 
+	return isGoal; 
 }
 
-int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong HashMapLong, const char* input, jobject textChannel){
+int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong hashMapLong, const char* input, jobject textChannel){
 	struct GameComponents* gc = (struct GameComponents*)gameComponentsLong; 
-	struct wordConnections **(*HashMap) = (struct wordConnections***)HashMap; 
+	struct wordConnections **(*HashMap) = (struct wordConnections***)hashMapLong; 
 	//If the string starts with a - 
 	//Remove the word from the list
-	if(input[0] == '-'){
-		javaOutput(env, obj, "Removal", textChannel); 
+	int isValid = 1; 
+	//If it starts with a -, and it's less than numLetters - 2, it's going to remove the word
+	if(input[0] == '-' && strlen(input) <= numLetters + 2){
+		//Remove word cannot have a constant char* because it needs it to change to remove the -. That is, there needs to be a word that removes it
+		char* removeWord = malloc(sizeof(numLetters + 2)); 
+		//Copies the const char* into the non const char*
+		strcpy(removeWord, input);
+		//Throws on a \0 in the end, for safe measures
+		removeWord[numLetters + 2] = '\0'; 
+		//Removes the word
+		RemoveWord_Struct(gc, removeWord, 0); 
+		//Frees the removeWord
+		free(removeWord);  
 	}
 	
 	//If the user wants to undo the previous move
 	else if(strcmp(input, "u") == 0){
-		javaOutput(env, obj, "Undo", textChannel);
+		Undo_Struct(gc);  
+	
+		
 	}
 	//if the user wants to redo the previous move
 	else if(strcmp(input, "r") == 0){
-		javaOutput(env, obj, "Redo", textChannel);
+		Redo_Struct(gc); 
 	}
 	
 	//If the user queries for their goal
 	else if(strcmp(input, "g") == 0){
-		javaOutput(env, obj, "Goal", textChannel);
+		char goalOutput[50]; 
+		snprintf(goalOutput, 50, "Your Goal: %s", gc->shortestPath[gc->minConnections]); 
+		javaOutput(env, obj, goalOutput, textChannel);
+		return 0; 
+	
 	}	
-	//If user does not end the game
-	else if (strcmp(input, "q") != 0 && strcmp(input, "finish") != 0){
-		//Checks if the input is valid
-		int isValid = AddWord_Struct(gc, input, HashMap); 
-		char* output = (isValid == 1)?toString_WordLL(gc->userConnections, LINKED):"Invalid Input";  
+	//If user ends the game
+	else if (strcmp(input, "q") == 0 || strcmp(input, "finish") == 0){
+		javaOutput(env, obj, "Better Luck Next Time.", textChannel); 
+		return -1; 
 		
-		javaOutput(env, obj, output, textChannel); 
-		
-		if(isValid == 1){
-			free(output); 
-		}
+	
 	}
+
+	//Otherwise, it'll add a word
+	else{
+		
+		isValid = AddWord_Struct(gc, input, HashMap); 
+		//The user won
+		if(strcmp(input, gc->shortestPath[gc->minConnections]) == 0 && isValid == 1){
+			
+			return 1; 
+		
+		}	
+		
+	}
+	char* output = (isValid == 1)?toString_WordLL(gc->storage->next->listHeader, LINKED):"Invalid Input";  
+		
+	javaOutput(env, obj, output, textChannel); 
+		
+	if(isValid == 1){
+		free(output); 
+	}
+	return 0; 
+
 	
 	
 }
-
+//Make sure to: 
+//Avoid O(n) time for toString_WordLL -- don't have that run every time, only on remove
+//Better IsValid Messages
+//Convert the FLWG in C to use the PathGame Components
+//Once I've done this, I'm ready to get to Yen K's Algorithm and plan out phase II 
+//Change strcpy, strcmp, and others to safe version of it 
 
 //Goal: Take an input, and base it on the games
 /*Here are the cases: 

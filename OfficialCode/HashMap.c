@@ -197,7 +197,7 @@ FILE *OpenFile(){
 }
 
 
-struct wordConnections* SearchHashMap(struct wordConnections ***HashMap, char* word){
+struct wordConnections* SearchHashMap(struct wordConnections ***HashMap, const char* word){
 	//First open the 2D Linked List
 	struct wordConnections *list = HashMap[FirstHashFunction(word[0])][SecondHashFunction(word)];
 	//pass the header

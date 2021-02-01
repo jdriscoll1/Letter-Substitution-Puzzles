@@ -28,6 +28,9 @@ int numLetters = 4;
 #include "UserInput.h"
 
 #include "GameFunctions.h"
+
+#include "PathGameComponents.h"
+
 void WordConnections(); 
 void MainProgram(char* w1, char* w2, struct wordConnections ***HashMap); 
 void GenericLLExample(); 
@@ -42,22 +45,19 @@ void WeBeginTheGame();
 void AllConnections(); 
 void AVLTree(); 
 int main(){  
-	struct word* list = malloc(sizeof(struct word)); 
-	list->dataMalloc = 0;
-	list->next = NULL; 
-	AddToBack_WordLL("pies", list, 0); 
-	AddToBack_WordLL("ties", list, 0);
-	AddToBack_WordLL("vies", list, 0);
+	struct wordConnections **(*HashMap) = AllocateHashMap();	
+	char** wordStorage = FillHashMap(HashMap, 0);
+	char** allWords = ExtrapolateAllWords();
+	int minConnections = 2; 
+	struct GameComponents *gc = InitializeGameComponents(allWords, HashMap, minConnections);
+	char outputGoal[256]; 
+	snprintf(outputGoal, sizeof(outputGoal), "Your task is to start with %s and arrive at %s", gc->shortestPath[0], gc->shortestPath[minConnections]); 
+	char* input = "pets";
+	printf("%s", input);  
 
-
-	
-	char* s = toString_WordLL(list, LINKED); 
-	 
-	printf("%s", s); 
-	free(s); 
-	Free_WordLL(list);
-	
-
+	int isValid = AddWord_Struct(gc, input, HashMap); 
+	printf("%d", isValid); 
+	    
 
 	
 	return 0; 

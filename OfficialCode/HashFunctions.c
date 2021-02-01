@@ -8,12 +8,12 @@
 extern int numLetters; 
 
 /*returns First Letter of a word*/
-int FirstHashFunction(char firstLetter){
+int FirstHashFunction(const char firstLetter){
 	return  firstLetter - 97; 
 	
 }
 /*returns the fist vowel in the word*/
-int SecondHashFunction(char* word){
+int SecondHashFunction(const char* word){
 	
 	char vowels[] = {'a', 'e', 'i', 'o', 'u', 'y'}; 
 	/*The parser that goes through each letter in the word*/
@@ -50,7 +50,7 @@ int VowelSearch(char letter, char vowels[6]){
 
 /*Returns the Array That a word would be in
 given pies, it would return the array with [p][i]*/ 
-void* HashSetArray(char* word, void* **(*HashSet)){
+void* HashSetArray(const char* word, void* **(*HashSet)){
  
 	int element1 = FirstHashFunction(word[0]); 
 	int element2 = SecondHashFunction(word); 

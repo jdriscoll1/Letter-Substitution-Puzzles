@@ -155,12 +155,30 @@ void Print_WordLL(struct word *header, enum output o){
 }
 
 char* toString_WordLL(struct word *header, enum output o){
+	//Determine how the words will be linked together
+	char* link;
+	int linkLen;  
+	if(o == LINES){
+		link = "\n"; 
+		linkLen = 1; 
+	}
+	else{
+		link = (o == LINKED)?"->":", ";
+		linkLen = 2; 
+	}
+	
+	
 	//Initializes the output string
 	char* outputStr = malloc(500); 
 	header = header->next; 
 	int start = 0; 
 	while(header != NULL){
 		start = safeStrcat(&outputStr, header->word, 500, numLetters, start); 
+		if(header->next != NULL){
+			start = safeStrcat(&outputStr, link, 500, linkLen, start); 
+			
+			
+		}
 		header = header->next; 
 	}
 	
