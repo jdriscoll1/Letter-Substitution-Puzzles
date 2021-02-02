@@ -134,15 +134,18 @@ int Check_Input(char* prevWord, const char* currWord, struct wordConnections ***
 	for(i = 0; i < strlen(currWord)+1; i++){
 		if(*(prevWord + i) == '\0' && *(currWord + i) != '\0'){
 			printf("Word is too long\n"); 
+			return 3; 
 			return 0; 
 		}
 		else if(*(prevWord + i) != '\0' && *(currWord + i) == '\0'){
 			printf("Word is too short\n");
+			return 2; 
 			return 0; 
 		}
 		else if(equalLetters < i - 1){
 			printf("Not enough letters in common\n");
-			return 0;  
+			return 4;
+		  
 		}
 		if(*(prevWord + i) == *(currWord + i)){
 			equalLetters++; 
@@ -152,14 +155,14 @@ int Check_Input(char* prevWord, const char* currWord, struct wordConnections ***
 	
 	if(equalLetters == numLetters + 1){
 		printf("Word is Equal to Prev\n");
-		return 0;
+		return 5;
 	}
 	//First: Make sure it is a real word
 	//Go into the hash map
 	//Find it in the hash map
 	if(SearchHashMap(HashMap, currWord) == NULL){
 		printf("Word does not exist\n"); 
-		return 0; 
+		return 6; 
 	}
 	
 	//Originally, I was going to check if the word has already been used, but now I am making the concious decision to say that

@@ -2,12 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+
 #include "GameFunctions.h"
 #include "WordLinkedList.h"
 #include "BreadthFirstSearch.h"
 #include "HashFunctions.h"
 #include "UserInput.h"
 #include "Arrays.h"
+#include "PathGameComponents.h"
 
 
 extern int numLetters; 
@@ -45,6 +47,7 @@ char* ChooseStartWord(char** allWordsArray, struct wordConnections **(*HashMap),
 	//TEST_TEMP FOUND HERE -- sets the index to 2, such that it is able
 	if(TEST_TEMP == 1){
 		//randIndex = 27;
+		//Also try bevy 
 		word = "ruff";  
 	}else{
 		word = allWordsArray[randIndex]; 
@@ -78,6 +81,12 @@ char* enumToString(enum Difficulty difficulty){
 
 /*Method that determines when the game will be stopped*/ 
 int goalCheck(char* input, char* goal){
+	if(strcmp("\n\0", input) == 0){
+		free(input); 
+		return 0; 
+		
+	}
+
 	char* inputTrue = strtok(input, "\n"); 
 	//if user decides to quit
 	if(strcmp(inputTrue, "finish") == 0 || strcmp(inputTrue, "q") == 0){
@@ -277,7 +286,7 @@ void Help(char* goal){
 	printf(" r --> Redoes a move\n");
 	printf(" finish or q --> Ends the game before the word is found\n");
 	printf("Good luck!\n");         
-	//printf("\nThe commands you are allowed are:\nAdd <word>, which adds a word to the list\nRemove <word>, which removes a word from the list, and all the words after it\nUndo - which undoes your previous turn.\nFinish - Which ends the game\nGood Luck, and have a wacky good time!\n\n");
+	//printf("\nYour goal is to start off with the start word, and through letter substitution, find your way to teh gaol word!\nThe commands you are allowed are:\n<word>, which adds a word to the list\n-<word> (put a hyphine in front of the word), which removes a word from the list, and all the words after it\nu - which undoes your previous turn.\nq - Which ends the game\nGood Luck, and have a wacky good time!\n\n");
 	
 	
 }
@@ -344,11 +353,72 @@ int GameInput(int undoCalls, int numMoves, char* prevInput, int minConnections, 
 		Print_WordLL((undoCalls == 0) ? userConnections: storage->next->listHeader, LINES); 
 	
 		printf("\n"); 
-		//free(input);  
+  
 	
 	}while((gameEndCondition = goalCheck(input, shortestConnection[minConnections])) == 0); 
 	return gameEndCondition; 
 	
 	
+	
+}
+
+int trueGame(int minConnections, char** allWords, char** wordStorage, struct wordConnections **(*HashMap)){
+	//All it does it initialize the Pathfinder Pointers
+	struct GameComponents *gc = InitializeGameComponents(allWords, HashMap, minConnections);
+	int endCondition;
+	char* input;  
+	printf("Your goal is to start at %s, and arrive at %s", gc->shortestPath[0], gc->shortestPath[minConnections]); 
+	do{
+		input = toLowerCase(Take_Input_NoSize());
+		if(strcmp(input, "\n\0") != 0){
+			
+			
+			if(strcmp(input, "\n") != 0){	
+				input = strtok(input, "\n"); 
+			}
+			//Runs a command based on the input 
+			//cmd = Interpret_Input(userConnections, prevInput, input);
+			//If they want to remove from a word
+	
+	
+			if(strchr(input, '-') != NULL){
+				RemoveWord_Struct(gc, input, 1); 
+			}
+		
+			//if they want to undo their previous move
+			else if(strcmp(input, "u") == 0){
+				Undo_Struct(gc);
+			}
+			// if cmd equals r -- it will be time to redo the previous move*/
+		
+			else if(strcmp(input, "r") == 0){
+				Redo_Struct(gc);
+				
+			}
+			else if(strcmp(input, "g") == 0){
+				printf("Your goal word is %s\n", gc->shortestPath[minConnections]); 
+			}
+			//Help command
+			else if(strcmp(input, "h") == 0){
+				Help(gc->shortestPath[minConnections]); 
+			}
+			
+			else if(strcmp(input, "q") != 0 && strcmp(input, "finish") != 0){
+				AddWord_Struct(gc, input, HashMap); 
+			}
+				
+			//If there is no undo, it will print where we are, otherwise it will print the next location
+		//	Print_WordLL((gc->undoCalls == 0) ? gc->userConnections: gc->storage->next->listHeader, LINES); 
+			char* output = toString_WordLL(gc->storage->next->listHeader, LINKED); 
+			printf("%s", output); 
+			free(output); 
+			printf("\n"); 
+		
+		
+		}
+		
+	}while(endCondition = goalCheck(input, gc->shortestPath[minConnections]) == 0); 
+	FreeGameComponents(gc);
+	//Until the game is won it just loop s
 	
 }

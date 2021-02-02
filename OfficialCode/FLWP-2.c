@@ -44,20 +44,17 @@ void RandomizedList();
 void WeBeginTheGame(); 
 void AllConnections(); 
 void AVLTree(); 
+void FreeMainComponents(struct wordConnections*** HashMap, char** wordStorage, char** allWords); 
 int main(){  
+	srand(time(0)); 
 	struct wordConnections **(*HashMap) = AllocateHashMap();	
 	char** wordStorage = FillHashMap(HashMap, 0);
 	char** allWords = ExtrapolateAllWords();
-	int minConnections = 2; 
-	struct GameComponents *gc = InitializeGameComponents(allWords, HashMap, minConnections);
-	char outputGoal[256]; 
-	snprintf(outputGoal, sizeof(outputGoal), "Your task is to start with %s and arrive at %s", gc->shortestPath[0], gc->shortestPath[minConnections]); 
-	char* input = "pets";
-	printf("%s", input);  
 
-	int isValid = AddWord_Struct(gc, input, HashMap); 
-	printf("%d", isValid); 
-	    
+	trueGame(2, allWords, wordStorage, HashMap); 
+	
+	
+	FreeMainComponents(HashMap, wordStorage, allWords); 
 
 	
 	return 0; 
@@ -366,7 +363,14 @@ void AVLTree(){
 }
 
 	
+void FreeMainComponents(struct wordConnections*** HashMap, char** wordStorage, char** allWords){
+	//used to free the array
+	int totalWordCount[3] = {30, 590, 2235}; 
+	Free_2DArray(totalWordCount[numLetters - 2], (void***)allWords, 0); 
+	FreeWordStorage(wordStorage); 
+	FreeHashMap(HashMap); 
 	
+}
 /*NEW PLAN: 
 - We need to make FLWP
  - Take User Input

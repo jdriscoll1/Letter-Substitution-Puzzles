@@ -27,7 +27,13 @@ char* Interpret_Input(struct word* userConnections, char* prevWord, char* input)
 /*This method checks the input to make sure that it is valid
 @param prevWord --> The previous word, the word it is checking the current characters against
 @param currWord --> The word who is being judged
-@return --> 1) Valid   0) Invalid*/ 
+@return --> 
+1 -- Valid
+2 - Not long enough
+3 - too long
+4 - not enough letters in common
+5 - word = to prev
+6 - word does not exist*/ 
 int Check_Input(char* prevWord, const char* currWord, struct wordConnections ***HashMap); 
 
 

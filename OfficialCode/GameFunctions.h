@@ -122,6 +122,8 @@ void Help(char* goal);
 /*This is the printed out at the beginning of the game*/ 
 void EnterText(); 
 
+int trueGame(int minConnections, char** allWords, char** wordStorage, struct wordConnections **(*HashMap)); 
+
   
 #endif
   

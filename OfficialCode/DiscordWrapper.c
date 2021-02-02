@@ -24,7 +24,7 @@ void javaOutput(JNIEnv * env, jobject obj, char* output, jobject textChannel);
 int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong hashMapLong,  const char* input, jobject textChannel);
 
 //These are all of the components of the game 
- 
+void validOutput(JNIEnv * env, jobject obj, int valid, jobject textChannel); 
 
 void javaOutput(JNIEnv * env, jobject obj, char* output, jobject textChannel){
 
@@ -144,6 +144,11 @@ int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong ha
 	else if(strcmp(input, "r") == 0){
 		Redo_Struct(gc); 
 	}
+	//If the user asks for help
+	else if(strcmp(input, "h") == 0){
+		javaOutput(env, obj, "Your goal is to start off with the start word, and through letter substitution, find your way to teh gaol word!\nThe commands you are allowed are:\n<word>, which adds a word to the list\n-<word> (put a hyphine in front of the word), which removes a word from the list, and all the words after it\nu - which undoes your previous turn.\nq - Which ends the game\nGood Luck, and have a wacky good time!!\n", textChannel); 
+		
+	}
 	
 	//If the user queries for their goal
 	else if(strcmp(input, "g") == 0){
@@ -173,22 +178,66 @@ int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong ha
 		}	
 		
 	}
-	char* output = (isValid == 1)?toString_WordLL(gc->storage->next->listHeader, LINKED):"Invalid Input";  
-		
+	char* output = toString_WordLL(gc->storage->next->listHeader, LINKED); 
+	 
+	validOutput(env, obj, isValid, textChannel); 
 	javaOutput(env, obj, output, textChannel); 
 		
-	if(isValid == 1){
-		free(output); 
-	}
+
+	free(output); 
 	return 0; 
 
 	
 	
 }
+
+void validOutput(JNIEnv * env, jobject obj, int valid, jobject textChannel){
+	if(valid != 1){
+		switch(valid){
+			case(2):
+				javaOutput(env, obj, "Input is Too Short", textChannel); 
+				break;
+				
+			case(3):
+				javaOutput(env, obj, "Input is Too Long", textChannel); 
+				break; 
+			case(4):
+				javaOutput(env, obj, "Not Enough Letters In Common", textChannel); 
+				break; 
+			case(5):
+				javaOutput(env, obj, "Word is equal to prev", textChannel); 
+				break; 
+			case(6):
+				javaOutput(env, obj, "Word does not exist", textChannel); 
+				break; 
+			
+			
+			
+		}
+	}
+	//It's too long
+	//It's too short
+	//It does not have the minimum character number in common 
+	//
+}
+//So, there should be a string called path 
+//This will be a java variable 
+//Cases: 
+//If it gets removed, free it, and write over it
+//If it gets added to, make sure that it is not too long, if numMoves > 0 and mod 10 == 0, then make it bigger 
+//If it gets undone, go to the I think 6 points behind it and make it bigger
+// 
+//Every 10 words, it should be reallocated, it will be in the Path Game Components
+
+
+
 //Make sure to: 
 //Avoid O(n) time for toString_WordLL -- don't have that run every time, only on remove
-//Better IsValid Messages
 //Convert the FLWG in C to use the PathGame Components
+//Get the help function to work
+//Better IsValid Messages
+//Get the bot on the server so that the folks there can test it (and break it lol) 
+
 //Once I've done this, I'm ready to get to Yen K's Algorithm and plan out phase II 
 //Change strcpy, strcmp, and others to safe version of it 
 
