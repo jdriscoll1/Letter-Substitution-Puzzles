@@ -13,8 +13,12 @@ char* Take_Input(int size);
 /*This takes the input w/ an unknown size
 @return --> Returns the user input*/ 
 char* Take_Input_NoSize(); 
+
+
 /*This asks the user what they'd like the difficulty to be*/ 
 enum Difficulty ChooseDifficulty(); 
+
+
 /*This takes an input, and interprets what to do with it
 @param userConnections --> The list of words the user has inputted
 @prevWord --> The previous word added 
@@ -24,6 +28,7 @@ enum Difficulty ChooseDifficulty();
 @return case 3 --> If it returns f, for finish, then it the game ends
 @return case 4 --> If it returns u, for undo, then it undoes the previous turn (easy for add, hard for remove)*/ 
 char* Interpret_Input(struct word* userConnections, char* prevWord, char* input); 
+
 /*This method checks the input to make sure that it is valid
 @param prevWord --> The previous word, the word it is checking the current characters against
 @param currWord --> The word who is being judged
@@ -49,7 +54,13 @@ char* toLowerCase(char* input);
 @note --> Does give a '\0'*/ 
 char* substr(char* word, int start, int end, int replace); 
 
-/*This is a safer variant of the C-regular strncat*/
+/*This is a safer variant of the C-regular strncat
+@param dest --> The string that will be added to
+@param src --> The string whose contents will be appended onto the the dest
+@param destLength --> How long hte first string is, program will crash if it tries to add more than safe amount
+@paraam buff --> How long hte src string is
+@param start --> Which character will begin being added to
+@return --> Returns the new start location. Or the index that holds the current null terminator*/
 int safeStrcat(char** dest, char* src, int destLength, int buff, int start); 
    
 #endif

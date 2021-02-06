@@ -4,6 +4,7 @@
 #include "2DLinkedList.h"
 
 struct  GameComponents{
+	//Now we need an array list which is a string
 	//This is the shortest path 
 	char** shortestPath; 
 	//This is the minimum number of connections 

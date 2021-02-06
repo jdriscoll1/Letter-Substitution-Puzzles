@@ -214,15 +214,17 @@ int safeStrcat(char** dest, char* src, int destLength, int buff, int start){
 	 
 	
 	for(; i < buff + start; i++){
-		(*dest)[i] = src[i-start];
-
+		if(destLength == i){
+			printf("Error - Safe String Cat: Array Out of Bounds Exception");
+			exit(0); 
+		}		
 		
+		
+		(*dest)[i] = src[i-start];
+				
 	}
 	
-	if(destLength == i){
-		printf("Error - Safe String Cat: Array Out of Bounds Exception");
-		exit(0); 
-	}
+
 	//The end of the destination is a null pointer
 	(*dest)[i] = '\0'; 
 	return i; 

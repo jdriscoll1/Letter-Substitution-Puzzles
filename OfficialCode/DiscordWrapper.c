@@ -233,10 +233,23 @@ void validOutput(JNIEnv * env, jobject obj, int valid, jobject textChannel){
 
 //Make sure to: 
 //Avoid O(n) time for toString_WordLL -- don't have that run every time, only on remove
-//Convert the FLWG in C to use the PathGame Components
-//Get the help function to work
-//Better IsValid Messages
-//Get the bot on the server so that the folks there can test it (and break it lol) 
+//First Create ArrayLists
+//Then Make an ArrayList of Strings. Or a 2D Array List of Characters
+//Create Command to see current game path on discord (should be fast)
+//See if I can't make the get game at all faster
+//Create an example command
+//Get Static Method To Work
+//See why choosing a path that can't be filled gives run time error
+//Make sure that all games can be chosen
+//Change Breadth First Search to Account for all 2nd options, not just the first one alphabetically
+
+//Fix AVL Tree
+
+//PHASE I -- COMPLETED
+
+//Phase II Begins
+//Get Yen K Algorithm to work 
+
 
 //Once I've done this, I'm ready to get to Yen K's Algorithm and plan out phase II 
 //Change strcpy, strcmp, and others to safe version of it 

@@ -31,6 +31,8 @@ int numLetters = 4;
 
 #include "PathGameComponents.h"
 
+#include "ArrayList.h"
+
 void WordConnections(); 
 void MainProgram(char* w1, char* w2, struct wordConnections ***HashMap); 
 void GenericLLExample(); 
@@ -45,19 +47,13 @@ void WeBeginTheGame();
 void AllConnections(); 
 void AVLTree(); 
 void FreeMainComponents(struct wordConnections*** HashMap, char** wordStorage, char** allWords); 
+
+
 int main(){  
-	srand(time(0)); 
-	struct wordConnections **(*HashMap) = AllocateHashMap();	
-	char** wordStorage = FillHashMap(HashMap, 0);
-	char** allWords = ExtrapolateAllWords();
+	
+	PathfinderGameMain(); 
+	return 0;
 
-	trueGame(2, allWords, wordStorage, HashMap); 
-	
-	
-	FreeMainComponents(HashMap, wordStorage, allWords); 
-
-	
-	return 0; 
 }
 
 void PathfinderGameMain(){
@@ -71,29 +67,15 @@ void PathfinderGameMain(){
 	//Also, we need a pointer to free it at the head, so a header pointer 
 	
 	srand(time(0)); 
-	EnterText(); 
-
-	
-	struct wordConnections **(*HashMap) = AllocateHashMap();
+	struct wordConnections **(*HashMap) = AllocateHashMap();	
 	char** wordStorage = FillHashMap(HashMap, 0);
-
-	
 	char** allWords = ExtrapolateAllWords();
-	
-	int i = 2;
-	int numRounds = 5;  
+	int i = 2; 
 	int quit = 0; 
-	for(i = 0; i < numRounds && quit == 0; i++){
-	
-		quit = PathfinderGame(i + 2, allWords, wordStorage, HashMap);
-		 
+	for(i = 2; i < 12 && quit == 0; i++){
+		quit = trueGame(i, allWords, wordStorage, HashMap); 
 	}
-	
-	//used to free the array
-	int totalWordCount[3] = {30, 590, 2235}; 
-	Free_2DArray(totalWordCount[numLetters - 2], (void***)allWords, 0); 
-	FreeWordStorage(wordStorage); 
-	FreeHashMap(HashMap); 
+	FreeMainComponents(HashMap, wordStorage, allWords); 
 	
 }
 
