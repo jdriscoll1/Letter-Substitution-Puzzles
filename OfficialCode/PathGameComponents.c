@@ -18,7 +18,7 @@ struct GameComponents *InitializeGameComponents(char** allWords, struct wordConn
 
 	//Create the shortest path from the beginning word and the goal word, whcih shall both be determined in this method
 	gameComponents->shortestPath = ChoosePath(allWords, HashMap, minConnections); 
-
+	//printf("%s", gameComponents->shortestPath[0]); 
 	//Sets the minimum number of connection
 	gameComponents->minConnections = minConnections; 
 	//Sets the number of moves
@@ -32,7 +32,8 @@ struct GameComponents *InitializeGameComponents(char** allWords, struct wordConn
 	//Sets the previous input to the starting word
 	strcpy(gameComponents->prevInput, gameComponents->shortestPath[0]); 
  
-	
+	//Initialize the arrayList 
+	gameComponents->aList = init_ArrayList(numLetters * (minConnections * 1.5), numLetters * (minConnections), STR); 
 	
 	//Instantiate the input storage 
 	gameComponents->storage = malloc(sizeof(struct GenericLinkedListNode)); 
@@ -51,6 +52,8 @@ struct GameComponents *InitializeGameComponents(char** allWords, struct wordConn
 	//Insert the word into the back of the word linked list
 	AddToBack_WordLL(strdup(gameComponents->shortestPath[0]), gameComponents->userConnections, 1); 
  
+ 	addString_ArrayList(gameComponents->shortestPath[0], gameComponents->aList); 
+ 	 
 	//Allocates space at the beginning of the generic linked list node
 	AddToFront_GenericLinkedListNode(gameComponents->storage, WORD_LL); 
 
@@ -68,7 +71,7 @@ void RemoveWord_Struct(struct GameComponents* gc, char* input, int freeInput){
 	}
 	//First we have to remove the -
 	char* word = substr(input, 1, numLetters + 1, freeInput);
-	 		
+	
 	//Then we have to Remove it from the list, and all the words after it 
 	RemoveFrom_WordLL(word, gc->userConnections->next);
 			
@@ -78,13 +81,14 @@ void RemoveWord_Struct(struct GameComponents* gc, char* input, int freeInput){
 	//This adds to the storage such that the user can undo a move
 	AddToFront_GenericLinkedListNode(gc->storage, WORD_LL); 
 	CopyInto_GenericLinkedListNode(gc->userConnections, gc->storage, 1, WORD_LL); 
-			
+	
+	//You've gotta remove the current array list and replace it 
+	//First, empty the current array list string
+	CopyWordLLOntoArrayList(gc); 
 	++gc->numMoves; 
 	
-	//If you don't want to free the input
-	if(freeInput == 0){
-		free(word); 
-	}
+	//Frees the word
+	free(word); 
 	
 	
 	
@@ -105,14 +109,15 @@ void Undo_Struct(struct GameComponents* gc){
 		gc->storage = gc->storage->next; 
 		//Change previousInput. It has to be changed here so that it if I add one, it will be able to recognize it
 		strcpy(gc->prevInput, FindLast_WordLL((gc->storage)->next->listHeader));  
-				 
+		//ALthough I would like to just remove the last word. The issue is if the person removes a bunch of words, that won't work
+		CopyWordLLOntoArrayList(gc); 		 
 	
 	}
 }
 void Redo_Struct(struct GameComponents* gc){
 	/*if it is even possible for a user to redo a move*/
 	if(gc->undoCalls == 0){
-		printf("No move to be redone"); 
+		printf("No move to be redone\n"); 
 	}
 	else{
 		//Undoes an undo
@@ -123,6 +128,8 @@ void Redo_Struct(struct GameComponents* gc){
 		gc->storage = (gc->storage)->prev; 
 		//makes the previous input the new one
 		strcpy(gc->prevInput, FindLast_WordLL((gc->storage)->next->listHeader));  
+		//This resets the array list with the game component
+		CopyWordLLOntoArrayList(gc); 
 	}
 }
 int AddWord_Struct(struct GameComponents* gc, const char* newWord, struct wordConnections **(*HashMap)){
@@ -135,6 +142,13 @@ int AddWord_Struct(struct GameComponents* gc, const char* newWord, struct wordCo
 			}
 			//Adds the word to the back of the linked list
 			AddToBack_WordLL(strdup(newWord), gc->userConnections, 1);
+			
+		
+			addString_ArrayList("->", gc->aList); 
+		
+			//Copies the new word into the string arraylist
+			addString_ArrayList(newWord, gc->aList); 
+			
 			//Copeis the new word into the prev input
 			strcpy(gc->prevInput, newWord); 
 			//Frees a space for the Generic Linked List Storage
@@ -157,6 +171,16 @@ void FreeGameComponents(struct GameComponents *gameComponents){
 	
 	Free_2DArray(gameComponents->minConnections + 2, (void***)(gameComponents->shortestPath), 0);   
 	Free_GenericLinkedList(gameComponents->storageHeader); 
+	free_ArrayList(gameComponents->aList); 
 	free(gameComponents);  
 
+}
+
+void CopyWordLLOntoArrayList(struct GameComponents *gc){
+	strcpy(gc->aList->list, ""); 
+	gc->aList->currSize = gc->aList->initSize; 
+	gc->aList->currPrecision = 0; 
+	char* output = toString_WordLL(gc->storage->next->listHeader, LINKED); 
+	addString_ArrayList(output, gc->aList); 
+	free(output); 
 }

@@ -38,18 +38,21 @@ int GetMinConnections(enum Difficulty difficulty){
 
 /*Randomly chooses a word based on an index*/ 
 char* ChooseStartWord(char** allWordsArray, struct wordConnections **(*HashMap), int TEST_TEMP){
-	srand(time(0)); 
+	//srand(time(0)); 
 	//the total number of words
 	int totalWordCount[3] = {30, 590, 2233}; 
+	 
 	//randomly choosese a word via an index
 	int randIndex = rand() % (totalWordCount[numLetters - 2] + 1);
+	printf("%d: %s", randIndex, allWordsArray[randIndex]);
 	char* word; 
 	//TEST_TEMP FOUND HERE -- sets the index to 2, such that it is able
 	if(TEST_TEMP == 1){
 		//randIndex = 27;
 		//Also try bevy 
-		word = "ruff";  
-	}else{
+
+	}
+	else{
 		word = allWordsArray[randIndex]; 
 	}
 
@@ -63,7 +66,7 @@ char* ChooseStartWord(char** allWordsArray, struct wordConnections **(*HashMap),
 	}
 	Free_WordLL(connections);
 	//If the word it happens to choose can't connect to anything (for example, ahoy) it retries
-	return ChooseStartWord(allWordsArray, HashMap, TEST_TEMP + 1);  
+	return ChooseStartWord(allWordsArray, HashMap, 0);  
 }
 
 
@@ -82,6 +85,7 @@ char* enumToString(enum Difficulty difficulty){
 
 /*Method that determines when the game will be stopped*/ 
 int goalCheck(char* input, char* goal){
+
 	if(strcmp("\n\0", input) == 0){
 		free(input); 
 		return 0; 
@@ -194,7 +198,11 @@ int trueGame(int minConnections, char** allWords, char** wordStorage, struct wor
 	int endCondition;
 	char* input;  
 	printf("Your goal is to start at %s, and arrive at %s\n", gc->shortestPath[0], gc->shortestPath[minConnections]); 
+	//If the user asks to remove a word
+	int isRemove; 
 	do{
+		//The user has not yet asked to remove a word
+		isRemove = 0; 
 		input = toLowerCase(Take_Input_NoSize());
 		if(strcmp(input, "\n\0") != 0){
 			
@@ -209,7 +217,9 @@ int trueGame(int minConnections, char** allWords, char** wordStorage, struct wor
 	
 			if(strchr(input, '-') != NULL){
 				RemoveWord_Struct(gc, input, 1); 
+				isRemove = 1; 
 			}
+			 
 		
 			//if they want to undo their previous move
 			else if(strcmp(input, "u") == 0){
@@ -233,17 +243,15 @@ int trueGame(int minConnections, char** allWords, char** wordStorage, struct wor
 				AddWord_Struct(gc, input, HashMap); 
 			}
 				
-			//If there is no undo, it will print where we are, otherwise it will print the next location
-		//	Print_WordLL((gc->undoCalls == 0) ? gc->userConnections: gc->storage->next->listHeader, LINES); 
-			char* output = toString_WordLL(gc->storage->next->listHeader, LINKED); 
-			printf("%s", output); 
-			free(output); 
+	
+			printf("%s", (char*)gc->aList->list); 
+			
 			printf("\n"); 
 		
 		
 		}
-		
-	}while((endCondition = goalCheck(input, gc->shortestPath[minConnections])) == 0); 
+		//If the user removes a word (isRemove == 1), then we don't need to check. Otherwise, we do
+	}while((isRemove == 1)?1:(endCondition = goalCheck(input, gc->shortestPath[minConnections])) == 0); 
 
 	AfterGameOutput(endCondition); 
 	FreeGameComponents(gc);

@@ -207,7 +207,7 @@ char* substr(char* word, int start, int end, int replace){
 	return subWord; 
 }
 
-int safeStrcat(char** dest, char* src, int destLength, int buff, int start){
+int safeStrcat(char** dest, const char* src, int destLength, int buff, int start){
 	//It starts at where it left off last time
 	//As long as it is less than the buff, and it's not hit a null pointer, and it's destination can contain it  it's good to go. 
 	int i = start; 

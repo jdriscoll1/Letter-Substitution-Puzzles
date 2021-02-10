@@ -27,7 +27,7 @@ struct arrayList* init_ArrayList(size_t initSize, size_t moveSize, enum alistTyp
 void add_ArrayList(void* data, struct arrayList* aList, enum alistType type); 
 
 //If you want to add a string to it 
-void addString_ArrayList(char* str, struct arrayList* aList); 
+void addString_ArrayList(const char* str, struct arrayList* aList); 
 //Prints out the array list
 void print_ArrayList(struct arrayList* aListm, enum alistType type); 
 //Remove a certain number from the back of it 

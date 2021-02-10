@@ -26,17 +26,136 @@ int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong ha
 //These are all of the components of the game 
 void validOutput(JNIEnv * env, jobject obj, int valid, jobject textChannel); 
 
+
+int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong hashMapLong, const char* input, jobject textChannel){
+	struct GameComponents* gc = (struct GameComponents*)gameComponentsLong; 
+	struct wordConnections **(*HashMap) = (struct wordConnections***)hashMapLong; 
+	//If the string starts with a - 
+	//Remove the word from the list
+	int isValid = 1; 
+	//If it starts with a -, and it's less than numLetters - 2, it's going to remove the word
+	if(input[0] == '-' && strlen(input) <= numLetters + 2){
+		//Remove word cannot have a constant char* because it needs it to change to remove the -. That is, there needs to be a word that removes it
+		char* removeWord = malloc(sizeof(numLetters + 2)); 
+		//Copies the const char* into the non const char*
+		strcpy(removeWord, input);
+		//Throws on a \0 in the end, for safe measures
+		removeWord[numLetters + 2] = '\0'; 
+		//Removes the word
+		RemoveWord_Struct(gc, removeWord, 0); 
+		//Frees the removeWord
+		free(removeWord);  
+	}
+	
+	//If the user wants to undo the previous move
+	else if(strcmp(input, "u") == 0){
+		Undo_Struct(gc);  
+	
+		
+	}
+	//if the user wants to redo the previous move
+	else if(strcmp(input, "r") == 0){
+		Redo_Struct(gc); 
+	}
+
+	
+	//If the user queries for their goal
+	else if(strcmp(input, "g") == 0){
+		char goalOutput[50]; 
+		snprintf(goalOutput, 50, "Your Goal: %s", gc->shortestPath[gc->minConnections]); 
+		javaOutput(env, obj, goalOutput, textChannel);
+		return 0; 
+	
+	}	
+	//If user ends the game
+	else if (strcmp(input, "q") == 0 || strcmp(input, "finish") == 0){
+		javaOutput(env, obj, "Better Luck Next Time.", textChannel); 
+		return -1; 
+		
+	
+	}
+
+	//Otherwise, it'll add a word
+	else{
+		
+		isValid = AddWord_Struct(gc, input, HashMap); 
+		//The user won
+		if(strcmp(input, gc->shortestPath[gc->minConnections]) == 0 && isValid == 1){
+			
+			return 1; 
+		
+		}	
+		
+	}
+	
+	char* output = gc->aList->list;
+	 
+	//c is the official "current" command. So it should output the game without outputting an error message. 
+	if(strcmp(input, "c") != 0){
+		//Outputs the error message based on isValid 
+		validOutput(env, obj, isValid, textChannel);
+	}
+	//Outputs the new string 
+	javaOutput(env, obj, output, textChannel); 
+		
+
+
+	return 0; 
+
+	
+	
+}
+
+void validOutput(JNIEnv * env, jobject obj, int valid, jobject textChannel){
+	if(valid != 1){
+		switch(valid){
+			case(2):
+				javaOutput(env, obj, "Input is Too Short", textChannel); 
+				break;
+				
+			case(3):
+				javaOutput(env, obj, "Input is Too Long", textChannel); 
+				break; 
+			case(4):
+				javaOutput(env, obj, "Not Enough Letters In Common", textChannel); 
+				break; 
+			case(5):
+				javaOutput(env, obj, "Word is equal to prev", textChannel); 
+				break; 
+			case(6):
+				javaOutput(env, obj, "Word does not exist", textChannel); 
+				break; 
+			
+			
+			
+		}
+	}
+	//It's too long
+	//It's too short
+	//It does not have the minimum character number in common 
+	//
+}
+
+
+
+
+
+
 void javaOutput(JNIEnv * env, jobject obj, char* output, jobject textChannel){
 
- 	
-   jclass javaClass = (*env)->GetObjectClass(env, obj); 
-   jmethodID mid = (*env)->GetMethodID(env, javaClass, "output", "(Ljava/lang/String;Ljava/lang/Object;)V");  
-   if(mid == NULL){return;}
+ 	jclass cls = (*env)->GetObjectClass(env, obj); 
+    
+	jmethodID mid = (*env)->GetStaticMethodID(env, cls, "output", "(Ljava/lang/String;Ljava/lang/Object;)V");
+    if (mid == NULL) {
+  	  printf("Method ID Not Found"); 
+      exit(0);  /* method not found */
+    }
    jstring javaString; 
    javaString =  (*env)->NewStringUTF(env, output); 
-  
- 
-   (*env)->CallVoidMethod(env, obj, mid, javaString, textChannel);
+   (*env)->CallStaticVoidMethod(env, cls, mid, javaString, textChannel);
+   
+   
+
 	
 }
 
@@ -48,6 +167,7 @@ Java_flwp_FLWP_CreateHashMap(JNIEnv * env, jobject obj){
 	return (jlong)HashMap; 
 	
 }
+
 
 JNIEXPORT long JNICALL
 Java_flwp_FLWP_CreateWordStorage(JNIEnv * env, jobject obj, jlong HashMap){
@@ -66,7 +186,7 @@ Java_flwp_FLWP_CreateAllWordsList(JNIEnv * env, jobject obj){
 JNIEXPORT long JNICALL
 Java_flwp_FLWP_InstantiateGame(JNIEnv * env, jobject obj, jlong allWords, jlong hashMapLong, int minConnections, jobject textChannel){
 	
-
+	srand(time(0));
 	struct GameComponents *gameComponents = InitializeGameComponents((char**)allWords, (struct wordConnections***)hashMapLong, minConnections);
 	
 	char outputGoal[255]; 
@@ -114,135 +234,32 @@ Java_flwp_FLWP_TakeInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jl
 	return isGoal; 
 }
 
-int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong hashMapLong, const char* input, jobject textChannel){
-	struct GameComponents* gc = (struct GameComponents*)gameComponentsLong; 
-	struct wordConnections **(*HashMap) = (struct wordConnections***)hashMapLong; 
-	//If the string starts with a - 
-	//Remove the word from the list
-	int isValid = 1; 
-	//If it starts with a -, and it's less than numLetters - 2, it's going to remove the word
-	if(input[0] == '-' && strlen(input) <= numLetters + 2){
-		//Remove word cannot have a constant char* because it needs it to change to remove the -. That is, there needs to be a word that removes it
-		char* removeWord = malloc(sizeof(numLetters + 2)); 
-		//Copies the const char* into the non const char*
-		strcpy(removeWord, input);
-		//Throws on a \0 in the end, for safe measures
-		removeWord[numLetters + 2] = '\0'; 
-		//Removes the word
-		RemoveWord_Struct(gc, removeWord, 0); 
-		//Frees the removeWord
-		free(removeWord);  
-	}
-	
-	//If the user wants to undo the previous move
-	else if(strcmp(input, "u") == 0){
-		Undo_Struct(gc);  
-	
-		
-	}
-	//if the user wants to redo the previous move
-	else if(strcmp(input, "r") == 0){
-		Redo_Struct(gc); 
-	}
-	//If the user asks for help
-	else if(strcmp(input, "h") == 0){
-		javaOutput(env, obj, "Your goal is to start off with the start word, and through letter substitution, find your way to teh gaol word!\nThe commands you are allowed are:\n<word>, which adds a word to the list\n-<word> (put a hyphine in front of the word), which removes a word from the list, and all the words after it\nu - which undoes your previous turn.\nq - Which ends the game\nGood Luck, and have a wacky good time!!\n", textChannel); 
-		
-	}
-	
-	//If the user queries for their goal
-	else if(strcmp(input, "g") == 0){
-		char goalOutput[50]; 
-		snprintf(goalOutput, 50, "Your Goal: %s", gc->shortestPath[gc->minConnections]); 
-		javaOutput(env, obj, goalOutput, textChannel);
-		return 0; 
-	
-	}	
-	//If user ends the game
-	else if (strcmp(input, "q") == 0 || strcmp(input, "finish") == 0){
-		javaOutput(env, obj, "Better Luck Next Time.", textChannel); 
-		return -1; 
-		
-	
-	}
 
-	//Otherwise, it'll add a word
-	else{
-		
-		isValid = AddWord_Struct(gc, input, HashMap); 
-		//The user won
-		if(strcmp(input, gc->shortestPath[gc->minConnections]) == 0 && isValid == 1){
-			
-			return 1; 
-		
-		}	
-		
-	}
-	char* output = toString_WordLL(gc->storage->next->listHeader, LINKED); 
+
+JNIEXPORT long JNICALL
+Java_flwp_FLWP_StaticCall(JNIEnv * env, jobject obj){
 	 
-	validOutput(env, obj, isValid, textChannel); 
-	javaOutput(env, obj, output, textChannel); 
-		
+	jclass cls = (*env)->GetObjectClass(env, obj); 
+    
+	jmethodID mid = 
+         (*env)->GetStaticMethodID(env, cls, "print", "()V");
+     if (mid == NULL) {
+         printf("Method ID Not Found"); 
+		 exit(0);  /* method not found */
+     }
+     printf("In C\n");
+     (*env)->CallStaticVoidMethod(env, cls, mid);
 
-	free(output); 
-	return 0; 
-
-	
-	
 }
 
-void validOutput(JNIEnv * env, jobject obj, int valid, jobject textChannel){
-	if(valid != 1){
-		switch(valid){
-			case(2):
-				javaOutput(env, obj, "Input is Too Short", textChannel); 
-				break;
-				
-			case(3):
-				javaOutput(env, obj, "Input is Too Long", textChannel); 
-				break; 
-			case(4):
-				javaOutput(env, obj, "Not Enough Letters In Common", textChannel); 
-				break; 
-			case(5):
-				javaOutput(env, obj, "Word is equal to prev", textChannel); 
-				break; 
-			case(6):
-				javaOutput(env, obj, "Word does not exist", textChannel); 
-				break; 
-			
-			
-			
-		}
-	}
-	//It's too long
-	//It's too short
-	//It does not have the minimum character number in common 
-	//
-}
-//So, there should be a string called path 
-//This will be a java variable 
-//Cases: 
-//If it gets removed, free it, and write over it
-//If it gets added to, make sure that it is not too long, if numMoves > 0 and mod 10 == 0, then make it bigger 
-//If it gets undone, go to the I think 6 points behind it and make it bigger
-// 
-//Every 10 words, it should be reallocated, it will be in the Path Game Components
 
 
 
 //Make sure to: 
-//Avoid O(n) time for toString_WordLL -- don't have that run every time, only on remove
-//First Create ArrayLists
-//Then Make an ArrayList of Strings. Or a 2D Array List of Characters
-//Create Command to see current game path on discord (should be fast)
-//See if I can't make the get game at all faster
-//Create an example command
-//Get Static Method To Work
-//See why choosing a path that can't be filled gives run time error
-//Make sure that all games can be chosen
-//Change Breadth First Search to Account for all 2nd options, not just the first one alphabetically
 
+//Change the game Hash Map so that it's a Singleton (Make get and a exist)
+//Change Breadth First Search to Account for all 2nd options, not just the first one alphabetically
+//Make it so the ToSTring is an arraylist, as well as anythign else that may be a factor
 //Fix AVL Tree
 
 //PHASE I -- COMPLETED
@@ -254,10 +271,3 @@ void validOutput(JNIEnv * env, jobject obj, int valid, jobject textChannel){
 //Once I've done this, I'm ready to get to Yen K's Algorithm and plan out phase II 
 //Change strcpy, strcmp, and others to safe version of it 
 
-//Goal: Take an input, and base it on the games
-/*Here are the cases: 
-- Adding a word
-- Removing a word
-- Undoing a turn
-- Redoing a turn
-- Ending the Game*/

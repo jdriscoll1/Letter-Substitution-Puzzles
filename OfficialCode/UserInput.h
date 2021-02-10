@@ -61,7 +61,7 @@ char* substr(char* word, int start, int end, int replace);
 @paraam buff --> How long hte src string is
 @param start --> Which character will begin being added to
 @return --> Returns the new start location. Or the index that holds the current null terminator*/
-int safeStrcat(char** dest, char* src, int destLength, int buff, int start); 
+int safeStrcat(char** dest, const char* src, int destLength, int buff, int start); 
    
 #endif
 

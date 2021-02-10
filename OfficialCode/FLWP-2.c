@@ -47,12 +47,10 @@ void WeBeginTheGame();
 void AllConnections(); 
 void AVLTree(); 
 void FreeMainComponents(struct wordConnections*** HashMap, char** wordStorage, char** allWords); 
-
+void PathfinderGameMain(); 
 
 int main(){  
-	
-	PathfinderGameMain(); 
-	return 0;
+
 
 }
 

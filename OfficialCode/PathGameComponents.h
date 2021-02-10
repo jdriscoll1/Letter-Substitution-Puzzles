@@ -2,9 +2,10 @@
 #define seenPathGameComponents
 
 #include "2DLinkedList.h"
+#include "ArrayList.h"
 
 struct  GameComponents{
-	//Now we need an array list which is a string
+
 	//This is the shortest path 
 	char** shortestPath; 
 	//This is the minimum number of connections 
@@ -21,6 +22,10 @@ struct  GameComponents{
 	int numMoves;
 	//This user's previous input 
 	char* prevInput; 
+	//Now we need an array list which is a string
+	struct arrayList* aList; 
+	
+
 };
 
 /*
@@ -49,5 +54,8 @@ int AddWord_Struct(struct GameComponents* gc, const char* newWord, struct wordCo
 
 //This goes through the game components and frees them
 void FreeGameComponents(struct GameComponents *gameComponents);
+
+//This copies a word_ll onto an array list
+void CopyWordLLOntoArrayList(struct GameComponents *gc); 
 
 #endif
