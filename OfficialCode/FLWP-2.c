@@ -33,12 +33,13 @@ int numLetters = 4;
 
 #include "ArrayList.h"
 
+#include "DepthFirstSearch.h"
+
 void WordConnections(); 
 void MainProgram(char* w1, char* w2, struct wordConnections ***HashMap); 
 void GenericLLExample(); 
 void WordLLTest();
 void HashSetExample(); 
-void AllWords();  
 void OneDimArray(); 
 void CreateBasicWordLL(); 
 void RandomizeArrayExample(); 
@@ -50,8 +51,27 @@ void FreeMainComponents(struct wordConnections*** HashMap, char** wordStorage, c
 void PathfinderGameMain(); 
 
 int main(){  
-
-
+	struct wordConnections **(*HashMap) = AllocateHashMap();	
+	char** wordStorage = FillHashMap(HashMap, 0);
+	struct word* path =  BreadthFirstSearch_Dest("cast", "part", HashMap, HASH_SET); 
+	Print_WordLL(path, LINKED);
+	
+	int minConnections = 2; 
+	
+	
+	char** pathArr = BreadthFirstSearch_Distance("cast", minConnections, HashMap, HASH_SET); 
+	Print_2DArray(minConnections + 1, (void***)pathArr, STRING); 
+	
+	struct word* pathDFS = DepthFirstSearch_Lobby("pies", "tins", HashMap);
+	Print_WordLL(pathDFS, LINKED); 
+	
+	Free_WordLL(path);  
+	Free_WordLL(pathDFS); 
+	Free_2DArray(minConnections + 1, (void***)pathArr, 0); 
+	
+	FreeWordStorage(wordStorage); 
+	FreeHashMap(HashMap); 
+	return 0; 
 }
 
 void PathfinderGameMain(){
@@ -81,7 +101,7 @@ void MainProgram(char* w1, char* w2, struct wordConnections ***HashMap){
 
 	struct word *connections;  
 	
-	connections = (struct word*)BreadthFirstSearch(w1, w2, -1, HashMap, HASH_SET); 
+	connections = (struct word*)BreadthFirstSearch_Dest(w1, w2, HashMap, HASH_SET); 
 	printf("\n"); 
 	if(connections != NULL){
 		Print_WordLL(connections, LINKED); 
@@ -150,50 +170,6 @@ void WordLLTest(){
 	Remove_WordLL("pies", header); 
 	Print_WordLL(header, SEPERATED); 
 	Free_WordLL(header);   
-	
-}
-void AllWords(){
-	struct wordConnections **(*HashMap) = AllocateHashMap();
-	char** wordStorage = FillHashMap(HashMap, 1);
-	char* wordDocument = "WordDocuments/Four_Letters.txt"; 
-	/*Four Letter Word Document*/
-	FILE *flwd1 = fopen(wordDocument, "r"); 
-	//the pathfind connections 
-	struct GenericLinkedListNode *Connections; 
-	if(flwd1 == NULL){
-		printf("Cold Dog.");
-		
-	}
-	char w1[numLetters + 1]; 
-
-	//While the word is not EOF
-	while(fgets(w1, numLetters + 2, flwd1) != NULL){
-		FILE *flwd2 = fopen(wordDocument, "r");
-		w1[numLetters] = '\0';  
-		char w2[numLetters + 1]; 
-		while(fgets(w2, numLetters + 2, flwd2) != NULL){
-			w2[numLetters] = '\0'; 
-			Connections = Multiple_Pathfinds(w1, w2, 100, HashMap); 
-	
-			if(Connections != NULL){
-				printf("%s->%s\n", w1, w2); 
-				Print_GenericLinkedList(Connections);
-				printf("\n");   
-				Free_GenericLinkedList(Connections);
-		
-			}
-			
-		}
-	//Take the word
-		//Open file 2
-		//while the word is not EOF
-			//Print out the two words
-			//Connections = 
-			//yadda yadda 
-	
-	}
-	FreeWordStorage(wordStorage); 
-	FreeHashMap(HashMap);
 	
 }
 void WordConnections(){

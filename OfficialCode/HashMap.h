@@ -1,6 +1,9 @@
 #ifndef seenHashMap
 #define seenHashMap
 
+
+
+
 /*Hash Map Header File
 @Goal: Takes a word, and efficently returns all words that share a single letter. (Pies --> Pigs, Ties, Dies, Lies, Pins, Pits, Etc.)
 @Defintion: The Hash Map is 4 Dimension.
@@ -49,5 +52,7 @@ void FreeHashMap(struct wordConnections ***HashMap);
 Word Storage contains all of the words within the hash map (it is big)
 @param wordStorage --> the String Array to be freed */
 void FreeWordStorage(char** wordStorage); 
+
+
 
 #endif

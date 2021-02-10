@@ -118,7 +118,7 @@ char** ChoosePath(char** allWords, struct wordConnections*** HashMap, int minCon
 	do{
 	
 		char* start = ChooseStartWord(allWords, HashMap, 0);  
-		shortestConnection = (char**)BreadthFirstSearch(start, NULL, minConnections + 1, HashMap, HASH_SET); 
+		shortestConnection = (char**)BreadthFirstSearch_Distance(start, minConnections + 1, HashMap, HASH_SET); 
 
 	}while(shortestConnection == NULL); 
 	return shortestConnection; 

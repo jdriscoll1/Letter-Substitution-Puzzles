@@ -24,20 +24,20 @@ Focused=7
 [Editor_1]
 CursorCol=1
 CursorRow=35
-TopLine=1
+TopLine=8
 LeftChar=1
 [Editor_10]
-CursorCol=6
-CursorRow=84
-TopLine=1
+CursorCol=3
+CursorRow=16
+TopLine=52
 LeftChar=1
 [Editor_2]
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
-CursorCol=1
-CursorRow=56
-TopLine=73
+CursorCol=12
+CursorRow=53
+TopLine=52
 =======
 CursorCol=24
 CursorRow=56
@@ -55,14 +55,14 @@ TopLine=50
 >>>>>>> AVLDoubleRotationsBranch
 LeftChar=1
 [Editor_5]
-CursorCol=2
-CursorRow=210
-TopLine=28
+CursorCol=1
+CursorRow=6
+TopLine=1
 LeftChar=1
 [Editor_6]
-CursorCol=1
-CursorRow=31
-TopLine=1
+CursorCol=143
+CursorRow=64
+TopLine=24
 LeftChar=1
 [Editor_7]
 <<<<<<< HEAD
@@ -108,9 +108,9 @@ CursorRow=2
 TopLine=1
 LeftChar=1
 [Editor_12]
-CursorCol=18
-CursorRow=119
-TopLine=100
+CursorCol=2
+CursorRow=177
+TopLine=47
 =======
 CursorCol=6
 CursorRow=73
@@ -124,14 +124,14 @@ TopLine=112
 LeftChar=1
 [Editor_13]
 CursorCol=1
-CursorRow=76
-TopLine=1
+CursorRow=3
+TopLine=27
 LeftChar=1
 [Editor_14]
 <<<<<<< HEAD
-CursorCol=2
-CursorRow=410
-TopLine=1
+CursorCol=34
+CursorRow=91
+TopLine=130
 =======
 CursorCol=1
 CursorRow=162
@@ -149,9 +149,9 @@ CursorRow=20
 TopLine=1
 LeftChar=1
 [Editor_15]
-CursorCol=10
-CursorRow=9
-TopLine=1
+CursorCol=1
+CursorRow=56
+TopLine=35
 LeftChar=1
 [Editor_16]
 CursorCol=1
@@ -172,24 +172,24 @@ LeftChar=1
 CursorCol=1
 CursorRow=85
 <<<<<<< HEAD
-TopLine=27
+TopLine=46
 =======
 TopLine=35
 >>>>>>> AVLDeleteNode_Branch
 LeftChar=1
 [Editor_20]
 <<<<<<< HEAD
-CursorCol=39
-CursorRow=249
-TopLine=19
+CursorCol=1
+CursorRow=174
+TopLine=157
 LeftChar=1
 [Editor_24]
-CursorCol=18
-CursorRow=46
+CursorCol=67
+CursorRow=121
 =======
 CursorCol=18
 CursorRow=195
-TopLine=39
+TopLine=102
 LeftChar=1
 [Editor_24]
 CursorCol=30
@@ -204,13 +204,13 @@ TopLine=182
 LeftChar=1
 [Editor_22]
 CursorCol=1
-CursorRow=30
-TopLine=20
+CursorRow=18
+TopLine=30
 LeftChar=1
 [Editor_21]
 CursorCol=35
 CursorRow=64
-TopLine=42
+TopLine=1
 LeftChar=1
 [Editor_25]
 CursorCol=50
@@ -225,10 +225,20 @@ LeftChar=1
 [Editor_28]
 CursorCol=32
 CursorRow=30
-TopLine=16
+TopLine=8
 LeftChar=1
 [Editor_27]
 CursorCol=3
 CursorRow=81
-TopLine=75
+TopLine=9
+LeftChar=1
+[Editor_30]
+CursorCol=89
+CursorRow=15
+TopLine=1
+LeftChar=1
+[Editor_29]
+CursorCol=32
+CursorRow=11
+TopLine=1
 LeftChar=1

@@ -3,6 +3,9 @@
 #include <stddef.h>
 #include <string.h>
 
+
+#include "TreeSet.h"
+#include "HashSet.h"
 #include "HashMap.h"
 #include "2DLinkedList.h"
 #include "HashFunctions.h"
@@ -266,6 +269,8 @@ void FreeWordStorage(char** wordStorage){
 	 
 	free(wordStorage);
 }
+
+
 
 
 
