@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000001000000
-UnitCount=29
+UnitCount=31
 
 [VersionInfo]
 Major=1
@@ -332,6 +332,26 @@ BuildCmd=
 
 [Unit29]
 FileName=ArrayList.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit30]
+FileName=DepthFirstSearch.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit31]
+FileName=DepthFirstSearch.h
 CompileCpp=0
 Folder=
 Compile=1

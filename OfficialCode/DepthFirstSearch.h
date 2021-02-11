@@ -9,9 +9,9 @@ It just sets allocates some memory locations, sets some variables, and frees eve
 @param goal --> the goal to be searched for
 @param HashMap --> The HashMap that stores all of the words
 @return --> Returns a linked list that stores the connections*/ 
-struct word* DepthFirstSearch_Lobby(char* start, char* goal, struct wordConnections **(*HashMap));
+struct word* DFS_Lobby(char* start, char* goal, struct wordConnections **(*HashMap));
 
 /*This goes through and finds a path downwards, rather than outwards*/ 
-struct TreeStorageNode* DepthFirstSearch(char* start, char* goal, struct wordConnections **(*HashMap), struct word **(*HashSet), struct TreeStorageNode *treeStorage); 
+struct TreeStorageNode* DFS(char* start, char* goal, struct wordConnections **(*HashMap), struct word **(*HashSet), struct TreeStorageNode *treeStorage); 
 
 #endif

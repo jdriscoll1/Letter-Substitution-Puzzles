@@ -24,10 +24,7 @@ struct BFSComponents{
 	struct TreeStorageNode *ReverseTreeHeader; 
 	//This object keeps track of where the previous connection is. Example, pies pins pier --> pies (Keeps this at O(1) time
 	struct TreeStorageNode *prevConnection; 
-	/*Declares the Queue -- contains which words are to be searched through*/
-	struct word *Queue; 
-	/*DStores the start of the queue header so that it can be freed at the end*/
-	struct word *QueueHeader;  
+
 	/*The last word of the queue*/
 	struct TreeStorageNode *End; 
 

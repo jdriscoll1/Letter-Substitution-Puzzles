@@ -6,9 +6,9 @@ LeftChar=1
 [Editors]
 <<<<<<< HEAD
 <<<<<<< HEAD
-Order=25,24,26
+Order=2,14,27,28,12,13,3,20
 <<<<<<< HEAD
-Focused=-1
+Focused=2
 =======
 Order=2,14,12,11,22,19,10,9,13,24,3,20
 <<<<<<< HEAD
@@ -35,9 +35,9 @@ LeftChar=1
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
-CursorCol=12
-CursorRow=53
-TopLine=52
+CursorCol=55
+CursorRow=65
+TopLine=46
 =======
 CursorCol=24
 CursorRow=56
@@ -55,14 +55,14 @@ TopLine=50
 >>>>>>> AVLDoubleRotationsBranch
 LeftChar=1
 [Editor_5]
-CursorCol=1
-CursorRow=6
+CursorCol=66
+CursorRow=23
 TopLine=1
 LeftChar=1
 [Editor_6]
-CursorCol=143
-CursorRow=64
-TopLine=24
+CursorCol=46
+CursorRow=24
+TopLine=1
 LeftChar=1
 [Editor_7]
 <<<<<<< HEAD
@@ -108,9 +108,9 @@ CursorRow=2
 TopLine=1
 LeftChar=1
 [Editor_12]
-CursorCol=2
-CursorRow=177
-TopLine=47
+CursorCol=1
+CursorRow=172
+TopLine=149
 =======
 CursorCol=6
 CursorRow=73
@@ -124,14 +124,14 @@ TopLine=112
 LeftChar=1
 [Editor_13]
 CursorCol=1
-CursorRow=3
-TopLine=27
+CursorRow=27
+TopLine=7
 LeftChar=1
 [Editor_14]
 <<<<<<< HEAD
-CursorCol=34
-CursorRow=91
-TopLine=130
+CursorCol=3
+CursorRow=196
+TopLine=170
 =======
 CursorCol=1
 CursorRow=162
@@ -139,8 +139,8 @@ TopLine=146
 >>>>>>> AdjsutBFS_Branch
 LeftChar=1
 [Editor_3]
-CursorCol=29
-CursorRow=11
+CursorCol=1
+CursorRow=14
 TopLine=1
 LeftChar=1
 [Editor_4]
@@ -180,7 +180,7 @@ LeftChar=1
 [Editor_20]
 <<<<<<< HEAD
 CursorCol=1
-CursorRow=174
+CursorRow=172
 TopLine=157
 LeftChar=1
 [Editor_24]
@@ -223,14 +223,14 @@ CursorRow=42
 TopLine=1
 LeftChar=1
 [Editor_28]
-CursorCol=32
-CursorRow=30
-TopLine=8
+CursorCol=1
+CursorRow=33
+TopLine=15
 LeftChar=1
 [Editor_27]
-CursorCol=3
-CursorRow=81
-TopLine=9
+CursorCol=51
+CursorRow=48
+TopLine=40
 LeftChar=1
 [Editor_30]
 CursorCol=89

@@ -1,7 +1,8 @@
 #ifndef seenArrayList
 #define seenArrayList
+//String, Character, Int, Double, TreeStorageNode
 enum alistType{
-		STR, CHARACTER, NUM, DOUBLE 
+		STR, CHARACTER, NUM, DOUBLE, TSN 
 };
 
 struct arrayList{
@@ -29,7 +30,7 @@ void add_ArrayList(void* data, struct arrayList* aList, enum alistType type);
 //If you want to add a string to it 
 void addString_ArrayList(const char* str, struct arrayList* aList); 
 //Prints out the array list
-void print_ArrayList(struct arrayList* aListm, enum alistType type); 
+void print_ArrayList(struct arrayList* aList, enum alistType type); 
 //Remove a certain number from the back of it 
 void removeBackStr_ArrayList(int length, struct arrayList* aList); 
 //Frees the array list

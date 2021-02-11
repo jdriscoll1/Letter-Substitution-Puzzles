@@ -14,7 +14,7 @@
 /*Depth First Search*/
 /*This is essentially the lobby for the depth first search. It's the room before it goes into the hallway and things get going.
 It just sets allocates some memory locations, sets some variables, and frees everything after the main search happened.*/ 
-struct word* DepthFirstSearch_Lobby(char* start, char* goal, struct wordConnections **(*HashMap)){
+struct word* DFS_Lobby(char* start, char* goal, struct wordConnections **(*HashMap)){
 	if(strcmp(start, goal) == 0){
 		printf("Those are the same words, moron.");
 		return NULL;  
@@ -27,7 +27,7 @@ struct word* DepthFirstSearch_Lobby(char* start, char* goal, struct wordConnecti
 	
 	/*Hey! It actually searches for the word with depth first search
 	Depth First Search --> Goes Down One Trail, and doesn't look back until it reaches null*/ 
-	struct TreeStorageNode *last = DepthFirstSearch(start, goal, HashMap, HashSet, treeStorage);
+	struct TreeStorageNode *last = DFS(start, goal, HashMap, HashSet, treeStorage);
 	
 	if(last == NULL){
 		printf("%s couldn't connect to %s", start, goal); 
@@ -46,7 +46,7 @@ struct word* DepthFirstSearch_Lobby(char* start, char* goal, struct wordConnecti
 	return connection; 
 	
 }
-struct TreeStorageNode* DepthFirstSearch(char* start, char* goal, struct wordConnections **(*HashMap), struct word **(*HashSet), struct TreeStorageNode *treeStorage){
+struct TreeStorageNode* DFS(char* start, char* goal, struct wordConnections **(*HashMap), struct word **(*HashSet), struct TreeStorageNode *treeStorage){
 		/*Adds the word to the hash set such that it can't be found again'*/ 
 		AddToHashSet(start, HashSet); 
 		
@@ -82,7 +82,7 @@ struct TreeStorageNode* DepthFirstSearch(char* start, char* goal, struct wordCon
 		
 			//	printf("Word: %s, ", nextWord); 
 		while(list != NULL){
-			struct TreeStorageNode* finalConnection = DepthFirstSearch(list->word, goal, HashMap, HashSet, treeStorage); 
+			struct TreeStorageNode* finalConnection = DFS(list->word, goal, HashMap, HashSet, treeStorage); 
 			if(finalConnection != NULL){
 				Free_WordLL(listHeader); 
 				return finalConnection; 

@@ -259,6 +259,7 @@ Java_flwp_FLWP_StaticCall(JNIEnv * env, jobject obj){
 
 //Change the game Hash Map so that it's a Singleton (Make get and a exist)
 //Change Breadth First Search to Account for all 2nd options, not just the first one alphabetically
+//Dequeue in BFS (DFS too?)
 //Make it so the ToSTring is an arraylist, as well as anythign else that may be a factor
 //Fix AVL Tree
 

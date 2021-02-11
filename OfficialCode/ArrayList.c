@@ -5,11 +5,18 @@
 
 #include "ArrayList.h"
 #include "UserInput.h"
+#include "TreeStorageNode.h"
 /*This is the array list class*/
 //Initialize it
 struct arrayList* init_ArrayList(size_t initSize, size_t moveSize, enum alistType type){
 	struct arrayList* aList = malloc(sizeof(struct arrayList)); 
-	aList->list = malloc((type == NUM) ? sizeof(int) * initSize : sizeof(char) * initSize); 	
+	if(type == TSN){
+		aList->list = malloc(sizeof(struct TreeStorageNode) * initSize); 
+	}
+	else{
+	
+		aList->list = malloc((type == NUM) ? sizeof(int) * initSize : sizeof(char) * initSize); 	
+	}
 	//How big is it to begin with? 
 	aList->initSize = initSize; 
 	aList->currPrecision = 0; 
@@ -26,19 +33,21 @@ struct arrayList* init_ArrayList(size_t initSize, size_t moveSize, enum alistTyp
 //Add to it
 void add_ArrayList(void* data, struct arrayList* aList, enum alistType type){
 	//When I add something, I have to make sure it is big enough for it
-	printf("%zu >= %zu\n", aList->currPrecision, aList->currSize);
 	size_t typeSize;  
 	if(aList->currPrecision + 1 >= aList->currSize){
 		typeSize = aList->currSize + aList->moveSize; 
 		
 		
 		//if it's not big enough, I have to re-allocate the current array list
-		typeSize *= (type == NUM) ? sizeof(int) : sizeof(char); 
-		aList->list = realloc(aList->list, typeSize); 		
-		 
+		if(type == TSN){
+			typeSize *= sizeof(struct TreeStorageNode); 
+		}
+		else{
+			typeSize *= (type == NUM) ? sizeof(int) : sizeof(char); 
+		}
+		aList->list = realloc(aList->list, typeSize); 		 
 			 
 
-		printf("Realloc\n"); 
 		aList->currSize = aList->currSize + aList->moveSize; 
 
 	}
@@ -48,6 +57,9 @@ void add_ArrayList(void* data, struct arrayList* aList, enum alistType type){
 	if(type == NUM){
 	
 		((int*)(aList->list))[aList->currPrecision] = *(int*)data; 
+	}
+	if(type == TSN){
+		((struct TreeStorageNode**)(aList->list))[aList->currPrecision] = (struct TreeStorageNode*)data; 
 	}
 	if(type == STR){
 	
@@ -152,7 +164,10 @@ void print_ArrayList(struct arrayList* aList, enum alistType type){
 	else{
 		for(i = 0; i < aList->currPrecision; i++){
 			if(type == NUM){
-				printf("%d", ((int*)(aList->list))[i]); 
+				printf("%d, ", ((int*)(aList->list))[i]); 
+			}
+			else if(type == TSN){
+				printf("%s, ", ((struct TreeStorageNode**)(aList->list))[i]->word); 
 			}
 	
 	

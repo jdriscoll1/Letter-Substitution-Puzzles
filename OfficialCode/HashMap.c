@@ -20,7 +20,7 @@ struct wordConnections ***AllocateHashMap(){
 	int parse2 = 0;
 	/*Sets up a column for all 26 letters of words (column 0: A, column 1: B, column 2: C etc.)*/
 	for(parse1 = 0; parse1 < 26; parse1++){
-		/* This frees up all of the space of the first category group */
+		/* This frees up all of the space of the first category group (a e i o u y)*/
 			
 		HashMap[parse1] = calloc(6, sizeof(struct wordConnections)); 
 		if(HashMap[parse1] == NULL){

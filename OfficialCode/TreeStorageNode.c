@@ -6,6 +6,7 @@
 #include "TreeStorageNode.h"
 #include "HashSet.h"
 
+
 /*Private Method, For The Tree Storage Node, Checks if the word has been found or the limit has been reached for finding a word
 @param goal --> The goal word to be found, if null it should check the connection count
 @param isEnough --> Checks if the connection count is enough
@@ -36,7 +37,7 @@ struct TreeStorageNode *Add_TreeStorageNode(char* word, struct TreeStorageNode *
 }
 struct TreeStorageNode *Copy_WordLLToTreeStorageNode(struct TreeStorageNode *header, struct TreeStorageNode *prev, struct word *list, char* goal, int minConnections){
 
-	//Goes to the next location of the current list of connections 
+	//It goes to the next location in the word Queue, skipping past the header
 	list = list->next; 
 	//Until there is no more links that the current word has
 	while(list != NULL){	
@@ -59,6 +60,41 @@ struct TreeStorageNode *Copy_WordLLToTreeStorageNode(struct TreeStorageNode *hea
 	return NULL; 
 
 }
+//I need a second Copy_WordLLToTreeStorageNode
+//How it works, is it's given the header of the prevConnection of the Tree Storage LL
+//It's also given the previous location that does not change
+//It's given the linkOutput
+//It's given teh minimum connections
+
+
+struct TreeStorageNode* Copy_WordLL_Onto_TreeStorageNode_Distance(struct TreeStorageNode *currEnd, struct TreeStorageNode *prev, struct word* linkOutput, struct arrayList *options, int minConnections){
+	//We're going to move off of the header
+	linkOutput = linkOutput->next; 
+	//Variable prev depth + 1 = currDepth -- How far out we immediately are
+	int currDepth = prev->depth + 1;
+	
+	//If it has passed it, I will return NULL immediately -- Returns NULL because if it returns the currEnd, it would still be at a depth of minConnections, and would try again
+	if(currDepth > minConnections){
+		return NULL; 
+	} 
+	//Then, while the link output still words in the list,
+	while(linkOutput != NULL){
+		//This is the tree storage node that we just added. It is the most recently added connection, which is also the furthest out 
+		//Curr End is now at the end
+		currEnd = Add_TreeStorageNode(linkOutput->word, prev, currEnd, currDepth); 
+	
+		//If currDepth == minConnections, I will add it to the arrayList list
+		if(currDepth == minConnections){
+			add_ArrayList(currEnd, options, TSN); 			
+		}
+		linkOutput = linkOutput->next; 
+
+		
+	}
+	//So we want to be returned the very last node every single time, 
+	return currEnd; 
+}
+
 
 
 int isFound_TSN(struct TreeStorageNode* curNode, char* goal, int minConnections){

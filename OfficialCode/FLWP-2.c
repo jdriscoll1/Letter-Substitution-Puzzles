@@ -51,24 +51,20 @@ void FreeMainComponents(struct wordConnections*** HashMap, char** wordStorage, c
 void PathfinderGameMain(); 
 
 int main(){  
+	srand(time(0));
 	struct wordConnections **(*HashMap) = AllocateHashMap();	
 	char** wordStorage = FillHashMap(HashMap, 0);
-	struct word* path =  BreadthFirstSearch_Dest("cast", "part", HashMap, HASH_SET); 
-	Print_WordLL(path, LINKED);
+	int minConnections; 
+	for(minConnections = 2; minConnections < 15; minConnections++){
+	printf("%d: \n", minConnections); 
 	
-	int minConnections = 2; 
-	
-	
-	char** pathArr = BreadthFirstSearch_Distance("cast", minConnections, HashMap, HASH_SET); 
-	Print_2DArray(minConnections + 1, (void***)pathArr, STRING); 
-	
-	struct word* pathDFS = DepthFirstSearch_Lobby("pies", "tins", HashMap);
-	Print_WordLL(pathDFS, LINKED); 
-	
-	Free_WordLL(path);  
-	Free_WordLL(pathDFS); 
-	Free_2DArray(minConnections + 1, (void***)pathArr, 0); 
-	
+	char** path =  BreadthFirstSearch_Distance("wait", minConnections, HashMap, HASH_SET); 
+	if(path != NULL){
+		//Print_2DArray(minConnections + 1, (void***)path, STRING);
+		printf("\n"); 
+		Free_2DArray(minConnections + 1, (void***)path, 0); 
+	}
+	}
 	FreeWordStorage(wordStorage); 
 	FreeHashMap(HashMap); 
 	return 0; 
@@ -118,7 +114,7 @@ void RandomizedList(){
 	for(i = 0; i < 100; i++){
 	struct wordConnections **(*HashMap) = AllocateHashMap();
 	char** wordStorage = FillHashMap(HashMap, 1); 
-	struct word* connection = DepthFirstSearch_Lobby("pies", "best", HashMap); 
+	struct word* connection = DFS_Lobby("pies", "best", HashMap); 
 	if(connection != NULL){
 		Print_WordLL(connection, LINKED);
 		Free_WordLL(connection); 
@@ -242,7 +238,7 @@ void AllConnections(){
 	char** wordStorage = FillHashMap(HashMap, 1);  
 	struct word *connections;  
 	
-	connections = DepthFirstSearch_Lobby("pies", "west", HashMap); 
+	connections = DFS_Lobby("pies", "west", HashMap); 
 
 	if(connections != NULL){
 		printf("\n"); 

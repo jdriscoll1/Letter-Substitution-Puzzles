@@ -5,12 +5,14 @@
 #include <stddef.h>
 
 
+#include "ArrayList.h"
 #include "HashMap.h"
 #include "HashFunctions.h"
 #include "HashSet.h"
 #include "GenericLinkedListNode.h"
 #include "GameFunctions.h"
 #include "BreadthFirstSearch.h"
+
 
 #include "Arrays.h"
 #define true 1
@@ -39,15 +41,7 @@ struct BFSComponents* init_BFSComponents(char* start, enum FoundWordStorage stor
 	bc->ReverseTreeHeader = Allocate_TreeStorageNode(start); 
 	//This method keeps track of where the previous connection is. Example, pies pins pier --> pies (Keeps this at O(1) time
 	bc->prevConnection = bc->ReverseTreeHeader; 
-	
-	/*Declares the Queue -- contains which words are to be searched through*/
-	bc->Queue = malloc(sizeof(struct word)); 
-	bc->Queue->next = NULL;
-	bc->Queue->dataMalloc = 0;  
-	AddToBack_WordLL(start, bc->Queue, 0);
-	
-	//This keeps track of the QueueHeader for freeing purposes 
-	bc->QueueHeader = bc->Queue; 
+
 	
 	return bc; 
 
@@ -57,9 +51,6 @@ void Free_BFSComponents(struct BFSComponents* bc, enum FoundWordStorage storageT
 	//Frees the Tree Storage
 	Free_TreeStorageNode(bc->ReverseTreeHeader); 
 	
-	//Frees the Queue
-	Free_WordLL(bc->QueueHeader);
-
 	/*Free The Tree Set*/
 	if(storageType == TREE_SET){
 	
@@ -90,19 +81,18 @@ struct word* BreadthFirstSearch_Dest(char* start, char* goal, struct wordConnect
 	
 	//Until the goal word is found it is going to spread out through every connection, and all of those connections until it finds the goal word
 	while(goalFound == false){
-		bc->Queue = bc->Queue->next; 
-		
+		bc->prevConnection = bc->prevConnection->next; 
 		//This stores the words that connect to the current word being tested
 		struct word *list; 
-
+		
 		if(storageType == TREE_SET){			
-			list = linkOutput(bc->Queue->word, HashMap[FirstHashFunction(bc->Queue->word[0])][SecondHashFunction(bc->Queue->word)], bc->TreeHead, TREE_SET, 0); 
+			list = linkOutput(bc->prevConnection->word, HashMap[FirstHashFunction(bc->prevConnection->word[0])][SecondHashFunction(bc->prevConnection->word)], bc->TreeHead, TREE_SET, 0); 
 		}
 		else{
-			list = linkOutput(bc->Queue->word, HashMap[FirstHashFunction(bc->Queue->word[0])][SecondHashFunction(bc->Queue->word)], bc->HashSet, HASH_SET, 0); 
+			list = linkOutput(bc->prevConnection->word, HashMap[FirstHashFunction(bc->prevConnection->word[0])][SecondHashFunction(bc->prevConnection->word)], bc->HashSet, HASH_SET, 0); 
 		}
 		/*The previous connection is the word that connects to all of the word in the Reverse Tree Set*/ 
-		bc->prevConnection = Search_TreeStorageNode(bc->Queue->word, bc->ReverseTreeHeader);  
+		
 		/*If it is explicitly a word that it is trying to find, then it will go through and try to find the word*/ 
 		
 		bc->End = Copy_WordLLToTreeStorageNode(bc->ReverseTreeHeader, bc->prevConnection, list, goal, -1); 
@@ -111,8 +101,7 @@ struct word* BreadthFirstSearch_Dest(char* start, char* goal, struct wordConnect
 		}
 
 		
-		Copy_WordToWordLL(bc->Queue, list); 
-		if(bc->Queue->next == NULL){			  
+		if(bc->prevConnection->next == NULL){			  
 			printf("\n%s cannot connect with %s\n", start, goal);
 			goalFound = -1;
 		}
@@ -137,6 +126,15 @@ struct word* BreadthFirstSearch_Dest(char* start, char* goal, struct wordConnect
 	 
 } 
 
+/*Things to keep in mind: 
+- assuming minConnections
+- Go past 8 by 1, that is to 9. Store all of them that are equal to 8
+- Do I really need the whole path? 
+- So I need an array list 
+- Once it's hit 8, there has to be an is valid variable
+- If it's null and its isValid == 0, then it has to stop
+- If it's null and its isValid == 1, then it from there has to choose (meaning that 8 connections was it's max point)
+*/ 
 char** BreadthFirstSearch_Distance(char* start, int minConnections, struct wordConnections **(*HashMap), enum FoundWordStorage storageType){
 	//If the number of connections is less than 2, it is pointless. 1? pies->ties. 0. pies->pies -1->???
 	if(minConnections < 2){
@@ -145,50 +143,78 @@ char** BreadthFirstSearch_Distance(char* start, int minConnections, struct wordC
 	}
 	//Instantiates the necessary BFS Components
 	struct BFSComponents* bc = init_BFSComponents(start, storageType);
+	bc->End = bc->prevConnection->next; 
+	//This is the array list that stores the words that are options
+	struct arrayList* options = init_ArrayList(20, 5, TSN); 
 	//Initalize the game Components
-	bool goalFound = false; 
+	bool goalFound = false;
+	
+	//Is it possible to connect this far out
+	bool isPossible = false;  
 	
 	while(goalFound == false){
+		bc->prevConnection = bc->prevConnection->next;
 		
-		bc->Queue = bc->Queue->next;
-		
+		//This is the current list of words that can be connected
 		struct word *list; 
-     
+     	
+     	//This grabs all of the current connections
 		if(storageType == TREE_SET){			
-			list = linkOutput(bc->Queue->word, HashMap[FirstHashFunction(bc->Queue->word[0])][SecondHashFunction(bc->Queue->word)], bc->TreeHead, TREE_SET, 0); 
+			list = linkOutput(bc->prevConnection->word, HashMap[FirstHashFunction(bc->prevConnection->word[0])][SecondHashFunction(bc->prevConnection->word)], bc->TreeHead, TREE_SET, 0); 
 		}
 		else{
-			list = linkOutput(bc->Queue->word, HashMap[FirstHashFunction(bc->Queue->word[0])][SecondHashFunction(bc->Queue->word)], bc->HashSet, HASH_SET, 0); 
+			list = linkOutput(bc->prevConnection->word, HashMap[FirstHashFunction(bc->prevConnection->word[0])][SecondHashFunction(bc->prevConnection->word)], bc->HashSet, HASH_SET, 0); 
 		}
-		/*The previous connection is the word that connects to all of the word in the Reverse Tree Set*/ 
-		bc->prevConnection = Search_TreeStorageNode(bc->Queue->word, bc->ReverseTreeHeader);  
+		
+		
+		//LIGHTBULB: Instead of having a link output, which is based on the queue, I have that occur during the Tree Stroage Node Copying. So, instead of being given the list. It'll be given the word, and it'll do link output while it which'll save it a a timecomplexity of 2E each loopage 
 		/*If it is explicitly a word that it is trying to find, then it will go through and try to find the word*/ 
 		
-		bc->End = Copy_WordLLToTreeStorageNode(bc->ReverseTreeHeader, bc->prevConnection, list, NULL, minConnections); 
-		if(bc->End != NULL){
+		bc->End = Copy_WordLL_Onto_TreeStorageNode_Distance(bc->End, bc->prevConnection, list, options, minConnections); 
+		
+		//If it sees that the current depth is > minConnections it'll return NULL
+		//With this in mind, this means that it has acheived the current depth 
+		if(bc->End == NULL){
 			goalFound = true; 
 		}
-     
 		
-		Copy_WordToWordLL(bc->Queue, list); 
-		if(bc->Queue->next == NULL){			  
-		
-			printf("\nThere are no words %d connections away that connect with %s\n", minConnections - 1, start); 
+		//If it cannot connect as far out as intended
+		if(bc->prevConnection->next == NULL){			  
+			printf("\nThere are no words %d connections away that connect with %s\n", minConnections, start); 
+			//It cannot return or else there will be memory leaks 
 			goalFound = -1;
 		}
 		
 		Free_WordLL(list);	
 		
-	
+		
 		
 	}
+	//This is the path from start to end 
 	char** path; 
-	//This allocates the 2D array, num letters has to be plus one, because of weird indexing, num letters has to be plus one to, for sake of null terminator
-	path = (char**)Allocate_2DArray(minConnections + 1, numLetters + 1); 
-	//Convert the TreeStorageList To Array
-	Convert_TreeStorageNodeTo2DArray(path, bc->End, minConnections);
+	
+	//If the goal isn't found, there will be no options to choose from 
+	if(goalFound != -1){
+		 //This is the total number of options
+		int numOptions = options->currPrecision; 
+		
+		//This is what the computer chooses
+		int choiceIndex = rand() % numOptions;
+	 
+		//This the node that has been chosen
+		struct TreeStorageNode* chosenNode = ((struct TreeStorageNode**)options->list)[choiceIndex]; 
+		
+		//This allocates the 2D array, num letters has to be plus one, because of weird indexing, num letters has to be plus one to, for sake of null terminator
+		path = (char**)Allocate_2DArray(minConnections + 1, numLetters + 1); 
+		
+		//Convert the TreeStorageList To Array
+		Convert_TreeStorageNodeTo2DArray(path, chosenNode, minConnections);
+	}	
 	Free_BFSComponents(bc, storageType);
+	free_ArrayList(options); 
+	
 	return (goalFound == -1)?NULL:path;
+
 }
 
 
