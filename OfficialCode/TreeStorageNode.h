@@ -1,10 +1,14 @@
 #ifndef seenTreeStorage
 #define seenTreeStorage
 
+//#include "BreadthFirstSearch.h"
 #include "ArrayList.h"
+#include "2DLinkedList.h"
+
 /*Goal: The goal of this whole piece of code, is at this point of the program, it's already gone through and found the word through breadth first search
 Now, it's time to show the list of words that demonstrate how they connect. That's the purpose of this
-'*/ 
+'*/
+ 
 
 /*The node for tree storage*/
 struct TreeStorageNode{
@@ -67,15 +71,6 @@ it in the correct order (reverse order to how it is prior this) and also put it 
 @return --> Returns the brand new list of word nodes*/ 
 struct word *Convert_TreeStorageNodeToWordLL(struct word *newList, struct TreeStorageNode *header);
 
-/*This Copies all the words on a linked list to a tree storage node so that all it's previous connections can be tracked 
-@param currEnd --> The current last node in the tree storage node
-@param prev --> The node that all of the newly added words are directly connected to 
-@param linkOutput --> The source from which we will grab all our words
-@param options --> All of the options that will be considered when finding the output 
-@param minConnections --> The absolute minimum number of connections
-@return --> Returns the current last node in the tree storage node linked list 
-*/
-struct TreeStorageNode* Copy_WordLL_Onto_TreeStorageNode_Distance(struct TreeStorageNode *currEnd, struct TreeStorageNode *prev, struct word* linkOutput, struct arrayList *options, int minConnections); 
 /*Converts the Tree Storage Node To A 2D Array, goes from the very back to each previous connection
 @param arr --> The array whose values will take that of the Tree storage list
 @param End --> The very last node in the Tree Storage Array

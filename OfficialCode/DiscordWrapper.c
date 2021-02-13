@@ -257,16 +257,24 @@ Java_flwp_FLWP_StaticCall(JNIEnv * env, jobject obj){
 
 //Make sure to: 
 
-//Change the game Hash Map so that it's a Singleton (Make get and a exist)
-//Change Breadth First Search to Account for all 2nd options, not just the first one alphabetically
-//Dequeue in BFS (DFS too?)
-//Make it so the ToSTring is an arraylist, as well as anythign else that may be a factor
+
+//Hints: 
+/*
+a) Point System
+b) Hint 1: Gives them a single letter between the 2 words
+c) Hint 2: Gives them 5 word connection possibilities
+d) Hint 3: Tells them the minimum number of connections
+//I think the best way to go about this would be to just add it into game functions and have it be a parameter in game component, an integer
+*/
+
+//Tell users there score
+//Retry Round
 //Fix AVL Tree
 
 //PHASE I -- COMPLETED
 
 //Phase II Begins
-//Get Yen K Algorithm to work 
+//Get the Four Letter Word Game to Be Playable 
 
 
 //Once I've done this, I'm ready to get to Yen K's Algorithm and plan out phase II 

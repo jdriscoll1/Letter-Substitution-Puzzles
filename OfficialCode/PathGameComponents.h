@@ -10,6 +10,8 @@ struct  GameComponents{
 	char** shortestPath; 
 	//This is the minimum number of connections 
 	int minConnections; 
+	//This is the amount of hints you can use
+	int hintPoints; 
 	//This is the user's current connections
 	struct word* userConnections; 
 	//This is all of the user's connections, including the old ones

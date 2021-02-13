@@ -10,6 +10,7 @@
 #include "UserInput.h"
 #include "Arrays.h"
 #include "PathGameComponents.h"
+#include "HashMap.h"
 
 
 extern int numLetters; 
@@ -44,7 +45,7 @@ char* ChooseStartWord(char** allWordsArray, struct wordConnections **(*HashMap),
 	 
 	//randomly choosese a word via an index
 	int randIndex = rand() % (totalWordCount[numLetters - 2] + 1);
-	printf("%d: %s", randIndex, allWordsArray[randIndex]);
+
 	char* word; 
 	//TEST_TEMP FOUND HERE -- sets the index to 2, such that it is able
 	if(TEST_TEMP == 1){
@@ -58,7 +59,7 @@ char* ChooseStartWord(char** allWordsArray, struct wordConnections **(*HashMap),
 
 	
 	//It checks to make sure that it can connect to _at least_ one word
-	struct word* connections = linkOutput(word, HashMap[FirstHashFunction(word[0])][SecondHashFunction(word)], NULL, NEITHER_SET, 0);  
+	struct word* connections = hashMapOutput(word, HashMap);  
  	
 	if(connections->next != NULL){
 		Free_WordLL(connections); 
@@ -238,10 +239,17 @@ int trueGame(int minConnections, char** allWords, char** wordStorage, struct wor
 			else if(strcmp(input, "h") == 0){
 				Help(gc->shortestPath[minConnections]); 
 			}
-			
+			else if(strcmp(input, "1") == 0){
+				hint1(gc); 
+				
+			}
+			else if(strcmp(input, "2") == 0){
+				hint2(gc, HashMap); 
+			}
 			else if(strcmp(input, "q") != 0 && strcmp(input, "finish") != 0){
 				AddWord_Struct(gc, input, HashMap); 
 			}
+			
 				
 	
 			printf("%s", (char*)gc->aList->list); 
@@ -258,4 +266,54 @@ int trueGame(int minConnections, char** allWords, char** wordStorage, struct wor
 	return (endCondition == 1)?  0 : 1; 
 	//Until the game is won it just loop s
 	
+}
+
+void hint1(struct GameComponents *gc){
+	if(gc->hintPoints < 25){
+		printf("Not Enough Hint Points.\n"); 
+	}
+	else{
+	
+		gc->hintPoints -= 25; 
+		printf("Hint -- The number of minimum connections is: %d.\n", gc->minConnections);
+		printf("You now have %d hintpoints\n", gc->hintPoints); 
+	}
+}
+		//1: Outputs several words
+		//Need the word they are currently on
+		//2: Outputs a single letter 
+		//Need: the whole list of connections 
+	
+
+void hint2(struct GameComponents *gc, struct wordConnections **(*HashMap)){
+	
+	if(gc->hintPoints < 20){
+		printf("Not Enough Hint Points\n");
+	}
+	else{
+	
+		gc->hintPoints -= 20; 
+		
+		struct word *options = hashMapOutput(gc->prevInput, HashMap);
+		
+		options = options->next; 
+		if(options == NULL){
+		printf("Hint -- I'd Recommend You Undo at least once.\n"); 
+		}
+		else{
+			printf("Hint -- Some options are: "); 
+			int i; 
+			for(i = 0; i < 4 && options->next != NULL; i++){
+				printf("%s, ", options->word);
+				options = options->next;  
+			}	
+			printf("%s.\n", options->word); 
+		}
+		printf("You now have %d hint points.\n", gc->hintPoints); 
+ 	}
+}
+
+void hint3(){
+	//Undeniably the hardest hint. 
+	//So, I have to 
 }

@@ -42,6 +42,11 @@ struct wordConnections* SearchHashMap(struct wordConnections ***HashMap, const c
 @param HashMap --> The Hash Map to be printed*/
 void PrintHashMap(struct wordConnections ***HashMap);
  
+/*This takes a word, and outputs all of the words that directly connect to it
+@param input --> The word whose connections are going to be found
+@param HashMap --> The Hash Map who stores all the connections
+@return --> Returns a linked list of connecting words*/
+struct word *hashMapOutput(char* input, struct wordConnections **(*HashMap)); 
 
 /*Freeing the Hash Map
 This part is specifically designed for the Hash Map part, the arrays, within the 2D for loop is a method, (see 2DLinkedList.h)

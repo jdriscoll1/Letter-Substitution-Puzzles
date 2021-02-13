@@ -11,6 +11,23 @@ enum arrayType{
 	INT, CHAR, STRING
 }arrayType;
 
+struct array{
+	int length; 
+	void* arr; 
+	enum arrayType type; 
+};
+
+struct array2D{
+	int dim1Length;
+	int dim2Length;  
+	void** arr; 
+	enum arrayType type; 	
+	
+};
+
+struct array* init_Array(int length, enum arrayType type);
+
+struct array2D* init_Array2D(int dim1Size, int dim2Size, enum arrayType type); 
 
 /*Create array of void pointers
 @param size --> the size of the array
@@ -76,11 +93,7 @@ void Copy_2DArray(int dim1Size, void*** array1, void*** array2, enum arrayType t
 @param array --> the array to be freed
 @param skipFirst --> Sometimes, the first one will be freed somewhere else, so it is necessary to not free it*/ 
 void Free_2DArray(int dim1Size, void*** array, int skipFirst); 
-
-/*This goes through an array and finds a specific value, it taeks a linear search of O(n) and makes it O(log(n))
-@param size --> The size of the array
-@param array --> This is the array being searched for*/
-int BinarySearch_Array(int size, void* goal, void* array, enum arrayType type); 
+ 
 
 
 int compare_Array(void* array, int index, void* c2, enum arrayType type); 

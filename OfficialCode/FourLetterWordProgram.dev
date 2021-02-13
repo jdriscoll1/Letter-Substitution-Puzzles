@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000001000000
-UnitCount=31
+UnitCount=33
 
 [VersionInfo]
 Major=1
@@ -352,6 +352,26 @@ BuildCmd=
 
 [Unit31]
 FileName=DepthFirstSearch.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit32]
+FileName=ConnectionDistanceStats.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit33]
+FileName=ConnectionDistanceStats.h
 CompileCpp=0
 Folder=
 Compile=1

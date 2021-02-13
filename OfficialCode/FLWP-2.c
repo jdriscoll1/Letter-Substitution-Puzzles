@@ -35,6 +35,8 @@ int numLetters = 4;
 
 #include "DepthFirstSearch.h"
 
+#include "ConnectionDistanceStats.h"
+
 void WordConnections(); 
 void MainProgram(char* w1, char* w2, struct wordConnections ***HashMap); 
 void GenericLLExample(); 
@@ -49,26 +51,18 @@ void AllConnections();
 void AVLTree(); 
 void FreeMainComponents(struct wordConnections*** HashMap, char** wordStorage, char** allWords); 
 void PathfinderGameMain(); 
-
+int ConnectionOptimization(); 
 int main(){  
-	srand(time(0));
 	struct wordConnections **(*HashMap) = AllocateHashMap();	
 	char** wordStorage = FillHashMap(HashMap, 0);
-	int minConnections; 
-	for(minConnections = 2; minConnections < 15; minConnections++){
-	printf("%d: \n", minConnections); 
+	struct arrayList* x= BreadthFirstSearch_Dest_Array("pies", "tins", HashMap, HASH_SET);
 	
-	char** path =  BreadthFirstSearch_Distance("wait", minConnections, HashMap, HASH_SET); 
-	if(path != NULL){
-		//Print_2DArray(minConnections + 1, (void***)path, STRING);
-		printf("\n"); 
-		Free_2DArray(minConnections + 1, (void***)path, 0); 
-	}
-	}
-	FreeWordStorage(wordStorage); 
-	FreeHashMap(HashMap); 
 	return 0; 
 }
+
+
+//So, I need to get a mean, and the upper and lower quartile 
+//What I have to do, Is I have to run through all of the words, and all of their number of connections from 2 to 15 and find
 
 void PathfinderGameMain(){
 	//Goal: User types undo, and gets to the previous move, this can happen as many times as possible
@@ -97,7 +91,7 @@ void MainProgram(char* w1, char* w2, struct wordConnections ***HashMap){
 
 	struct word *connections;  
 	
-	connections = (struct word*)BreadthFirstSearch_Dest(w1, w2, HashMap, HASH_SET); 
+	connections = (struct word*)BreadthFirstSearch_Dest_WordLL(w1, w2, HashMap, HASH_SET); 
 	printf("\n"); 
 	if(connections != NULL){
 		Print_WordLL(connections, LINKED); 
@@ -171,9 +165,8 @@ void WordLLTest(){
 void WordConnections(){
 	struct wordConnections **(*HashMap) = AllocateHashMap();
 	char** wordStorage = FillHashMap(HashMap, 0);
-	struct wordConnections *TwoDim= HashMap[FirstHashFunction('p')][SecondHashFunction("pies")]; 
 	printf("pies:\n"); 
-	Print_WordLL(linkOutput("pies", TwoDim, NULL, NEITHER_SET, 1), LINES); 
+	Print_WordLL(hashMapOutput("pies", HashMap), LINES); 
 }
 
 void OneDimArray(){
@@ -225,10 +218,6 @@ void RandomizeArrayExample(){
 	free(array2); 
 }
 
-void WeBeginTheGame(){
-	
-	
-}
 
 void AllConnections(){
 		srand(time(0));

@@ -5,6 +5,8 @@
 #include "WordLinkedList.h"
 #include "TreeStorageNode.h"
 #include "HashSet.h"
+#include "2DLinkedList.h"
+#include "HashFunctions.h"
 
 
 /*Private Method, For The Tree Storage Node, Checks if the word has been found or the limit has been reached for finding a word
@@ -67,33 +69,7 @@ struct TreeStorageNode *Copy_WordLLToTreeStorageNode(struct TreeStorageNode *hea
 //It's given teh minimum connections
 
 
-struct TreeStorageNode* Copy_WordLL_Onto_TreeStorageNode_Distance(struct TreeStorageNode *currEnd, struct TreeStorageNode *prev, struct word* linkOutput, struct arrayList *options, int minConnections){
-	//We're going to move off of the header
-	linkOutput = linkOutput->next; 
-	//Variable prev depth + 1 = currDepth -- How far out we immediately are
-	int currDepth = prev->depth + 1;
-	
-	//If it has passed it, I will return NULL immediately -- Returns NULL because if it returns the currEnd, it would still be at a depth of minConnections, and would try again
-	if(currDepth > minConnections){
-		return NULL; 
-	} 
-	//Then, while the link output still words in the list,
-	while(linkOutput != NULL){
-		//This is the tree storage node that we just added. It is the most recently added connection, which is also the furthest out 
-		//Curr End is now at the end
-		currEnd = Add_TreeStorageNode(linkOutput->word, prev, currEnd, currDepth); 
-	
-		//If currDepth == minConnections, I will add it to the arrayList list
-		if(currDepth == minConnections){
-			add_ArrayList(currEnd, options, TSN); 			
-		}
-		linkOutput = linkOutput->next; 
 
-		
-	}
-	//So we want to be returned the very last node every single time, 
-	return currEnd; 
-}
 
 
 

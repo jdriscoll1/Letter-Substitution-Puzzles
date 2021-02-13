@@ -231,6 +231,42 @@ void PrintHashMap(struct wordConnections ***HashMap){
 	}
 }
 
+/* This function will accept a word as an input, and output all of the connecting values */
+struct word *hashMapOutput(char* input, struct wordConnections **(*HashMap)){
+	/* Create the linked list into which I put the words */
+	struct word *output = malloc(sizeof(struct word)); 
+	output->next = NULL; 
+	output->dataMalloc = 0; 
+	 
+	
+	struct wordConnections *connections2D = HashMap[FirstHashFunction(input[0])][SecondHashFunction(input)]; 
+	connections2D = connections2D->nextRow; 
+	/* Loop through the array until I find the correct word */ 
+	while(strcmp(connections2D->word, input) != 0){
+		connections2D = connections2D->nextRow; 
+	}
+	//If it can't find it, it crashes
+	if(connections2D == NULL){
+		printf("Error: Can't find word [hashMapOutput]");
+		exit(0);  
+	}
+	
+
+	while(connections2D->nextColumn != NULL){
+		connections2D = connections2D->nextColumn; 
+		AddToBack_WordLL(connections2D->word, output, 0);  		
+	
+	}
+
+	/* Return the Linked List */
+	return output; 
+	
+	
+	
+	
+	
+}
+
 /* This frees all of the words stored in the links list's words storage space */
 void FreeHashMap(struct wordConnections ***HashMap){
 	 

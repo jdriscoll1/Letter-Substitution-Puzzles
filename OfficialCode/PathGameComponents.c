@@ -25,7 +25,8 @@ struct GameComponents *InitializeGameComponents(char** allWords, struct wordConn
 	gameComponents->numMoves = 0;
 	//Instantiates the number of undo calls 
 	gameComponents->undoCalls = 0; 
- 
+ 	//Instantiates the number of hint points
+ 	gameComponents->hintPoints = 50; 
 	//Allocates space for the previous input 
 	gameComponents->prevInput = malloc(numLetters + 1);
 	

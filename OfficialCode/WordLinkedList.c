@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include "UserInput.h"
+#include "ArrayList.h"
 
 #define true 1 
 #define false 0  
@@ -166,22 +167,29 @@ char* toString_WordLL(struct word *header, enum output o){
 		link = (o == LINKED)?"->":", ";
 		linkLen = 2; 
 	}
-	
-	
-	//Initializes the output string
-	char* outputStr = malloc(500); 
+	//Now I'm going to convert it to an array list, still gonna return the string though
+	//I need an array list so that it can be infinitely large
+	struct arrayList* aList = init_ArrayList(5, 10, STR); 
+	 
 	header = header->next; 
 	int start = 0; 
 	while(header != NULL){
-		start = safeStrcat(&outputStr, header->word, 500, numLetters, start); 
+		addString_ArrayList((const char*)header->word, aList);  
 		if(header->next != NULL){
-			start = safeStrcat(&outputStr, link, 500, linkLen, start); 
+			addString_ArrayList((const char*)link, aList);  
 			
 			
 		}
 		header = header->next; 
 	}
+	if(aList->currPrecision == 0){
+		printf("Linked List Empty [toString_WordLL]"); 
+		exit(0); 
+	}
 	
+	char* outputStr = malloc(aList->currPrecision + 1);
+	strcpy(outputStr, aList->list); 
+	free_ArrayList(aList); 	
 
 	return outputStr; 
 	

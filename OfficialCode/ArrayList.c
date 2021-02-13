@@ -13,6 +13,7 @@ struct arrayList* init_ArrayList(size_t initSize, size_t moveSize, enum alistTyp
 	if(type == TSN){
 		aList->list = malloc(sizeof(struct TreeStorageNode) * initSize); 
 	}
+
 	else{
 	
 		aList->list = malloc((type == NUM) ? sizeof(int) * initSize : sizeof(char) * initSize); 	
@@ -29,6 +30,7 @@ struct arrayList* init_ArrayList(size_t initSize, size_t moveSize, enum alistTyp
 	aList->type = type;  
 	
 }
+
 
 //Add to it
 void add_ArrayList(void* data, struct arrayList* aList, enum alistType type){
@@ -58,13 +60,17 @@ void add_ArrayList(void* data, struct arrayList* aList, enum alistType type){
 	
 		((int*)(aList->list))[aList->currPrecision] = *(int*)data; 
 	}
-	if(type == TSN){
+	else if(type == TSN){
 		((struct TreeStorageNode**)(aList->list))[aList->currPrecision] = (struct TreeStorageNode*)data; 
 	}
-	if(type == STR){
+	else if(type == STR){
 	
 		((char*)(aList->list))[aList->currPrecision] = *(char*)data; 
 		((char*)(aList->list))[aList->currPrecision + 1] = '\0';
+	}
+	else if(type == STR_ARR){
+		((char**)(aList->list))[aList->currPrecision] = (char*)data; 
+
 	}
 	aList->currPrecision++; 
 	

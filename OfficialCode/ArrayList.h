@@ -2,7 +2,7 @@
 #define seenArrayList
 //String, Character, Int, Double, TreeStorageNode
 enum alistType{
-		STR, CHARACTER, NUM, DOUBLE, TSN 
+		STR, CHARACTER, NUM, DOUBLE, TSN, STR_ARR
 };
 
 struct arrayList{
@@ -21,6 +21,7 @@ struct arrayList{
 	
 };
 
+
 //Initialize it
 struct arrayList* init_ArrayList(size_t initSize, size_t moveSize, enum alistType type); 
 
@@ -29,6 +30,7 @@ void add_ArrayList(void* data, struct arrayList* aList, enum alistType type);
 
 //If you want to add a string to it 
 void addString_ArrayList(const char* str, struct arrayList* aList); 
+
 //Prints out the array list
 void print_ArrayList(struct arrayList* aList, enum alistType type); 
 //Remove a certain number from the back of it 

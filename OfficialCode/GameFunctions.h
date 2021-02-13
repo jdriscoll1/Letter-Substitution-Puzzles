@@ -3,6 +3,7 @@
 
 #include "2DLinkedList.h"
 #include "GenericLinkedListNode.h"
+#include "PathGameComponents.h"
 enum Difficulty{
 	EASY, MEDIUM, HARD
 }Difficulty;
@@ -64,11 +65,16 @@ void ResetUndo(struct GenericLinkedListNode *storageHeader, struct GenericLinked
 @param goal --> This is the goal word so that when the user types help it turns out alright*/
 void Help(char* goal);
 
+void hint1(struct GameComponents *gc); 
+void hint2(struct GameComponents *gc, struct wordConnections **(*HashMap)); 
+
 /*This is the printed out at the beginning of the game*/ 
 void EnterText(); 
 
 int trueGame(int minConnections, char** allWords, char** wordStorage, struct wordConnections **(*HashMap)); 
 
+/*This Handles the Hints*/
+void hints(struct GameComponents *gc, int hintID, int minConnections, char* currWord, char* goalWord); 
   
 #endif
   

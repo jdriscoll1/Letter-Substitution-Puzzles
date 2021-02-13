@@ -3,12 +3,11 @@
 #include <string.h>
 
 #include "DepthFirstSearch.h"
-#include "WordLinkedList.h"
 #include "TreeStorageNode.h"
 #include "HashMap.h"
 #include "HashSet.h"
 #include "HashFunctions.h"
-#include "BreadthFirstSearch.h"
+
 
 
 /*Depth First Search*/
@@ -51,7 +50,7 @@ struct TreeStorageNode* DFS(char* start, char* goal, struct wordConnections **(*
 		AddToHashSet(start, HashSet); 
 		
 		/*First, we create a list that stores all of the words*/
-		struct word* list =  linkOutput(start, HashMap[FirstHashFunction(start[0])][SecondHashFunction(start)], HashSet, HASH_SET, 1); 
+		struct word* list =  linkOutput_DFS(start, HashMap[FirstHashFunction(start[0])][SecondHashFunction(start)], HashSet, HASH_SET, 1); 
 		struct word* listHeader = list; 
 
 		//finds the location of the word in the tree storage node 
@@ -92,4 +91,59 @@ struct TreeStorageNode* DFS(char* start, char* goal, struct wordConnections **(*
 
 		//printf("start: %s", start); 
 		Free_WordLL(listHeader); 
+}
+
+
+
+/* This function will accept a word as an input, and output all of the connecting values */
+struct word *linkOutput_DFS(char* wordInput, struct wordConnections *header, void* FoundStorage, enum FoundWordStorage storageType, int readOnly){
+	/* Create the linked list into which I put the words */
+	struct word *wordOutput = malloc(sizeof(struct word)); 
+	wordOutput->next = NULL; 
+	wordOutput->dataMalloc = 0; 
+	header = header->nextRow; 
+	/* Loop through the array until I find the correct word */ 
+	while(strcmp(header->word, wordInput) != 0){
+		header = header->nextRow; 
+	}
+
+	while(header->nextColumn != NULL){
+		header = header->nextColumn; 
+		/*If the word hasn't been added
+		if it's a tree set that we're using, then it uses the tree set methods, otherwise it uses the hash set methods
+		*/
+		if(storageType == TREE_SET){
+		
+			if(Search_TreeSet(header->word, ((struct DummyHeadNode*)(FoundStorage))->start, WORD) == 0){
+				if(readOnly == 0){	
+					AddNode_TreeSet(header->word, FoundStorage, ((struct DummyHeadNode*)(FoundStorage))->start, DUMMY,  WORD);
+				}
+				AddToBack_WordLL(header->word, wordOutput, 0);  		
+			}
+		}
+		
+		else if(storageType == HASH_SET){
+			if(Search_HashSet(header->word, FoundStorage) == 0){
+				/*if it's read only, then we don't want to add it to the Hash Set, we just want to read from the hash set*/ 
+				if(readOnly == 0){
+					AddToHashSet(header->word, FoundStorage);
+				}
+				AddToBack_WordLL(header->word, wordOutput, 0);  	
+			}
+		}
+		
+		else if(storageType == NEITHER_SET){
+			AddToBack_WordLL(header->word, wordOutput, 0); 
+		}
+		
+	}
+	/* Let's make a find method, 'cause quite frankly, I'm going to need that later anyways... */	
+	/* Print the Linked List */
+	/* Return the Linked List */
+	return wordOutput; 
+	
+	
+	
+	
+	
 }

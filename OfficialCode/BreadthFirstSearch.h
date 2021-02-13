@@ -3,6 +3,8 @@
 
 #include "TreeStorageNode.h"
 #include "TreeSet.h"
+#include "ArrayList.h"
+
 //#include "2DLinkedList.h"
 /*PATHFINDING METHODS*/
 
@@ -13,7 +15,7 @@ enum FoundWordStorage{
 };
 
 //This structures that contains all of the components of the BFS
-struct BFSComponents{	
+struct BFSComponents {	
 	//This is the AVL Tree Set
 	struct DummyHeadNode *TreeHead;
 	
@@ -38,7 +40,16 @@ struct BFSComponents{
 @param HashMap --> The HashMap that contains all the words and their connections
 @param storageType --> Are you using the Tree Set or the Hash Set to store found words
 @return --> Returns the connections as a linked list*/
-struct word* BreadthFirstSearch_Dest(char* start, char* goal, struct wordConnections **(*HashMap), enum FoundWordStorage storageType);
+struct word* BreadthFirstSearch_Dest_WordLL(char* start, char* goal, struct wordConnections **(*HashMap), enum FoundWordStorage storageType);
+
+/*This is the Breadth First Search Who Searches Given A Goal Word
+@param start --> The word at which the search begins
+@param goal --> The word at which the search ends
+@param HashMap --> The HashMap that contains all the words and their connections
+@param storageType --> Are you using the Tree Set or the Hash Set to store found words
+@return --> Returns the connections as an array as well as the size*/
+struct arrayList* BreadthFirstSearch_Dest_Array(char* start, char* goal, struct wordConnections **(*HashMap), enum FoundWordStorage storageType);
+
 
 /*This is the Breadth First Search Who Searches Given a Distance
 @param start --> This is where the search begins
@@ -47,6 +58,16 @@ struct word* BreadthFirstSearch_Dest(char* start, char* goal, struct wordConnect
 @param storageType --> This is the word that is stored
 @return --> Returns an array which is the connections (Advantage, easy access of the furthest connection*/
 char** BreadthFirstSearch_Distance(char* start, int minConnections, struct wordConnections **(*HashMap), enum FoundWordStorage storageType); 
+
+/*This outputs the number of options that a Breadth First Search has from a certain distance away
+@param start --> The wrod to be started on
+@param minConnections --> How far away should the number of connections be
+@param HashMap --> The ability to find the connections
+@param storageType --> The type of storage, HashSet? TreeSet?
+@return --> Returns the number of connections there are a certain distance away*/
+int BreadthFirstSearch_DistanceOptions(char* start, int minConnections, struct wordConnections **(*HashMap), enum FoundWordStorage storageType); 
+
+
 
 /*This initalizes all of the necessary components of the Breadth First Search Method
 @param start --> This is the start word
@@ -59,18 +80,22 @@ struct BFSComponents* init_BFSComponents(char* start, enum FoundWordStorage stor
 @param storageType --> Is it AVL Tree? HashMap? Etc?*/
 void Free_BFSComponents(struct BFSComponents* bc, enum FoundWordStorage storageType); 
 
-
-/*Takes a word, outputs all the connecting words that haven't already been found
-@param wordInput --> the word that's used to find the connecting word, the anchor
-@param header --> This is a 2D Linked list that stores all of the words which shares the first letter and first vowel.
-cont) Each word contains a list of words that connect to it through single letter substitution
-@param FoundStorage --> The storage that contains the words that have already been checked by the program. Tree Sets have been proven to be slower than Hash Sets, however, you can input either one
-@param storageType --> either a TREE_SET, HASH_SET, or NEITHER_SET 
-@param readOnly --> do we want to add to the foundStorage, or do we want to edit it? Generally, breadth first search == edit, depth first search == probably read only
-@return word a linked list of words that connect to the anchor word, wordInput*/
-struct word *linkOutput(char* wordInput, struct wordConnections *header, void* FoundStorage, enum FoundWordStorage storageType, int readOnly);
+/*This finds all of the connections a word has and puts them on the back of a tree storage node
+@param bc --> The components of a breadth first search
+@param goal --> Which word is being searched for
+@param storageType --> Tree Set? Hash Set? 
+@param HashMap --> How we actually find what we are searching for*/
+struct TreeStorageNode* AddToTreeStorage_Dist_BFS(struct BFSComponents *bc, char* goal, enum FoundWordStorage storageType,  struct wordConnections **(*HashMap)); 
 
 
+/*This Copies all the words on a linked list to a tree storage node so that all it's previous connections can be tracked 
+@param bc --> All of the breadth first search components
+@param minConnections --> How far it goes till it returns NULL 
+@param storageType --> Are we using a Hash Map? An AVL Tree? 
+@param options --> All of the options that will be considered when finding the output 
+@param HashMap --> This is what documents all of the words and their connections
+@return --> Returns the current last node in the tree storage node linked list */
+struct TreeStorageNode* AddToTreeStorage_BFS(struct BFSComponents *bc, int minConnections, enum FoundWordStorage storageType, struct arrayList *options, struct wordConnections **(*HashMap)); 
 
 
 #endif
