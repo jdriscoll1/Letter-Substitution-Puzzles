@@ -35,7 +35,7 @@ struct BFSComponents* init_BFSComponents(char* start, enum FoundWordStorage stor
 	//If we want the Hash Set, we allocate it 
 	else{
 		bc->HashSet = AllocateHashSet();
-		AddToHashSet(start, bc->HashSet); 
+		AddToHashSet(start, bc->HashSet, 0); 
 
 	}
 	
@@ -299,7 +299,7 @@ struct TreeStorageNode* AddToTreeStorage_Dist_BFS(struct BFSComponents *bc, char
 		else if(storageType == HASH_SET){
 			if(Search_HashSet(currWord, bc->HashSet) == 0){
 				bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, currDepth); 
-				AddToHashSet(currWord, bc->HashSet); 
+				AddToHashSet(currWord, bc->HashSet, 0); 
 			}
 		} 
 		if(strcmp(currWord, goal) == 0){
@@ -370,7 +370,7 @@ struct TreeStorageNode* AddToTreeStorage_BFS(struct BFSComponents *bc, int minCo
 		else if(storageType == HASH_SET){
 			if(Search_HashSet(currWord, bc->HashSet) == 0){
 				bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, currDepth); 
-				AddToHashSet(currWord, bc->HashSet); 
+				AddToHashSet(currWord, bc->HashSet, 0); 
 				if(currDepth == minConnections){
 					add_ArrayList(bc->End, options, TSN); 			
 				}

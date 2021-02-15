@@ -85,7 +85,7 @@ char* enumToString(enum Difficulty difficulty){
 }
 
 /*Method that determines when the game will be stopped*/ 
-int goalCheck(char* input, char* goal){
+int goalCheck(char* input, char* goal, int isValid){
 
 	if(strcmp("\n\0", input) == 0){
 		free(input); 
@@ -100,7 +100,7 @@ int goalCheck(char* input, char* goal){
 		return 2; 
 	}
 	//Is the inputted word equal to the goal word
-	int gameWon = (strcmp(inputTrue, goal) == 0) ? 1 : 0; 
+	int gameWon = (isValid == 1 && strcmp(input, goal) == 0) ? 1 : 0; 
 	
 	//it is necessary to free the input after it has been checked (kind of the whole reason for this method)
 	free(input); 
@@ -126,14 +126,15 @@ char** ChoosePath(char** allWords, struct wordConnections*** HashMap, int minCon
 	
 }
 
-void AfterGameOutput(int gameEndCondition){
+void AfterGameOutput(int gameEndCondition, struct GameComponents* gc){
 	switch(gameEndCondition){
 	
 		case(0):
 			printf("\nError!\n");
 			break;
 		case(1):
-			printf("\nCongratulations! You Won\n");
+			printf("\nCongratulations! You Won! Your Score is: %d%%\n", getScore(gc));
+			//Don't forget, when they add a word, add it to the goal hash set
 			break; 
 		case(2):
 			printf("\nBetter Luck Next Time.\n");
@@ -201,9 +202,11 @@ int trueGame(int minConnections, char** allWords, char** wordStorage, struct wor
 	printf("Your goal is to start at %s, and arrive at %s\n", gc->shortestPath[0], gc->shortestPath[minConnections]); 
 	//If the user asks to remove a word
 	int isRemove; 
+	int isValid; 
 	do{
 		//The user has not yet asked to remove a word
 		isRemove = 0; 
+		isValid = 0; 
 		input = toLowerCase(Take_Input_NoSize());
 		if(strcmp(input, "\n\0") != 0){
 			
@@ -256,7 +259,7 @@ int trueGame(int minConnections, char** allWords, char** wordStorage, struct wor
 				free(output);  
 			}
 			else if(strcmp(input, "q") != 0 && strcmp(input, "finish") != 0){
-				AddWord_Struct(gc, input, HashMap); 
+				isValid = AddWord_Struct(gc, input, HashMap); 
 			}
 			
 				
@@ -268,13 +271,16 @@ int trueGame(int minConnections, char** allWords, char** wordStorage, struct wor
 		
 		}
 		//If the user removes a word (isRemove == 1), then we don't need to check. Otherwise, we do
-	}while((isRemove == 1)?1:(endCondition = goalCheck(input, gc->shortestPath[minConnections])) == 0); 
+	}while((isRemove == 1)?1:(endCondition = goalCheck(input, gc->shortestPath[gc->minConnections], isValid)) == 0); 
 
-	AfterGameOutput(endCondition); 
+	AfterGameOutput(endCondition, gc); 
 	FreeGameComponents(gc);
 	return (endCondition == 1)?  0 : 1; 
 	//Until the game is won it just loop s
 	
 }
 
+int getScore(struct GameComponents* gc){
+	return 100 * ((double)gc->minConnections / (double)gc->numMoves); 
+}
 

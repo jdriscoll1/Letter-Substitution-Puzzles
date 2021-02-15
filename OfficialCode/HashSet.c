@@ -48,9 +48,9 @@ struct word ***AllocateHashSet(){
 }
 
 /*Add to Hash Set */ 
-void AddToHashSet(char* word, struct word **(*HashSet)){
+void AddToHashSet(char* word, struct word **(*HashSet), int dataMalloc){
 	struct word *list = HashSetArray(word, (void*)HashSet); 
-	AddToFront_WordLL(word, list, 0); 
+	AddToFront_WordLL(word, list, dataMalloc); 
 	
 }
 int Search_HashSet(char* word, struct word **(*HashSet)){
@@ -59,7 +59,7 @@ int Search_HashSet(char* word, struct word **(*HashSet)){
 	while(header != NULL){
 		if(strcmp(header->word, word) == 0){
 			return 1; 
-		}
+		} 
 		header = header->next; 
 	}
 	return 0; 
@@ -68,6 +68,19 @@ int Search_HashSet(char* word, struct word **(*HashSet)){
 int Remove_HashSet(char* word, struct word **(*HashSet)){
 	struct word *list = (struct word*)HashSetArray(word, ((void*)(HashSet))); 
 	Remove_WordLL(word, list); 
+	
+}
+
+void Print_HashSet(struct word **(*HashSet)){
+	int i; 
+	int j; 
+	for(i = 0; i < 25; i++){
+		for(j = 0; j < 5; j++){
+			printf("[%d][%d] = ", i, j); 
+			Print_WordLL(HashSet[i][j], SEPERATED); 
+		}
+		
+	}
 	
 }
 

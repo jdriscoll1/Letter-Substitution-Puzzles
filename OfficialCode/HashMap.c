@@ -293,11 +293,11 @@ struct word *hashMapOutput_Restrictions(char* input, struct word*** HashSet, int
 		connections2D = connections2D->nextColumn; 
 		//Search the HashSet
 		if(Search_HashSet(connections2D->word, HashSet) == 0){
-		
+
 			//If it's in the Hash Set it should add it to the back
 			AddToBack_WordLL(connections2D->word, output, 0);  	
 			//Then it should add it to the Hash Set
-			AddToHashSet(connections2D->word, HashSet); 
+			AddToHashSet(connections2D->word, HashSet, 0); 
 			//Then the words found should go up should go up
 			foundWords++;  
 			//If the cap has been met, it should return the output	

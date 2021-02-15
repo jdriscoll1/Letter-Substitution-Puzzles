@@ -62,14 +62,6 @@ int main(){
 //What I have to do, Is I have to run through all of the words, and all of their number of connections from 2 to 15 and find
 
 void PathfinderGameMain(){
-	//Goal: User types undo, and gets to the previous move, this can happen as many times as possible
-	//First, I need a Generic Linked List that Holds all of the information
-	//Then, every time the user makes a move, I have to add the information in, by first adding to front, then copying it in 
-	//Then I need to print it out to test that it worked 
-	//Once that works, then It's time to get started on the undo
-	//if we get the output of "u": 
-	//It will be necessary to just go back one in the list 
-	//Also, we need a pointer to free it at the head, so a header pointer 
 	
 	srand(time(0)); 
 	struct wordConnections **(*HashMap) = AllocateHashMap();	
@@ -116,36 +108,6 @@ void RandomizedList(){
 
 }
 
-/*void GenericLLExample(){
-	struct GenericLinkedListNode *header = malloc(sizeof(struct GenericLinkedListNode)); 
-	header->next = NULL; 
-	header->listHeader = NULL; 
-	Add_GenericLinkedListNode(header, TREE_SET_LL); 
-	printf("Pointer: %p", header->next); 
-	printf("\n"); 
-	The basics for getting the tree set to work
-	header->next->listHeader= AllocateTreeSet("pies"); 
-	AddToTreeSet("ties", ((struct DummyHeadNode*)(header->next->listHeader)), ((struct DummyHeadNode*)(header->next->listHeader))->start, WORD); 
-	AddToTreeSet("dies",((struct DummyHeadNode*)(header->next->listHeader)), ((struct DummyHeadNode*)(header->next->listHeader))->start, WORD); 
-	printf("%s", ((struct DummyHeadNode*)(header->next->listHeader)), (char*)((struct TreeSetNode*)((struct DummyHeadNode*)(header->next->listHeader))->start)->smaller->data);  
-	printf("\n"); 
-	
-	int o; 
-	for(o = 0; o < 5; o++){
-		Add_GenericLinkedListNode(header, TREE_SET_LL);
-		struct GenericLinkedListNode *cur = ReturnIndex_GenericLinkedListNode(o + 1, header);
-		cur->listHeader = AllocateTreeSet("lips");
-		AddToTreeSet("tips", ((struct DummyHeadNode*)(header->next->listHeader)), ((struct DummyHeadNode*)(cur->listHeader))->start, WORD); 
-		AddToTreeSet("hips", ((struct DummyHeadNode*)(header->next->listHeader)), ((struct DummyHeadNode*)(cur->listHeader))->start, WORD);
-		AddToTreeSet("sips", ((struct DummyHeadNode*)(header->next->listHeader)), ((struct DummyHeadNode*)(cur->listHeader))->start, WORD);
-		AddToTreeSet("laps", ((struct DummyHeadNode*)(header->next->listHeader)), ((struct DummyHeadNode*)(cur->listHeader))->start, WORD);
-	}
-	struct GenericLinkedListNode temp = *ReturnIndex_GenericLinkedListNode(1, header); 
-	printf("%s", (char*)(((struct DummyHeadNode*)(temp.listHeader))->start)->data); 
-
-	Free_GenericLinkedListNode(header->next); 
-	free(header); 
-}*/
 
 void WordLLTest(){
 	struct word *header = malloc(sizeof(struct word)); 

@@ -17,7 +17,7 @@ struct word ***AllocateHashSet();
 1) Less loopage while being added
 2) It always will remove the more recently added words, therefore, less loopage in that respect too 
 */ 
-void AddToHashSet(char* word, struct word **(*HashSet));
+void AddToHashSet(char* word, struct word **(*HashSet), int dataMalloc);
 
 /*Searches through a hash set to see if a word is on it
 @param word --> the word it's searching for
@@ -26,6 +26,8 @@ void AddToHashSet(char* word, struct word **(*HashSet));
 int Search_HashSet(char* word, struct word **(*HashSet));  
 /*Remove From Hash Set*/
 int Remove_HashSet(char* word, struct word **(*HashSet)); 
+/*Print HashSet*/
+void Print_HashSet(struct word **(*HashSet)); 
 /*Free Hash Set */  
 void Free_HashSet(struct word **(*HashSet));  
 

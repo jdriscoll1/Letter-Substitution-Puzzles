@@ -11,6 +11,8 @@
 #include "PathGameComponents.h"
 #include "Hints.h"
 
+#define SIZE 255
+
 
 extern int numLetters; 
 
@@ -254,6 +256,10 @@ Java_flwp_FLWP_TakeInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jl
 		//if the goal is = to 0, or not met, return a -2
 		return (isGoal == 0) ? -2 : -1; 
 	}
+	//If the goal is met, then it wants to return hint points
+	char output[SIZE];  
+	snprintf(output, SIZE, "Congratulations!! You Won! Your Score Is %d%%. Would you like to advance?? Type y to advance, r to try again, or n to end the game", getScore(gc)); 
+	javaOutput(env, obj, output, textChannel); 
 	return gc->hc->hintPoints; 
 }
 

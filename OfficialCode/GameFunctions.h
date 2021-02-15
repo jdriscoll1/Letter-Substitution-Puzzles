@@ -33,9 +33,9 @@ char* ChooseStartWord(char** allWordsArray, struct wordConnections **(*HashMap),
 
 /*Method that determines when the game will be stopped
 @param input --> the current word who may be the end
-@param goal --> The goal
+@param isValid --> Is it valid?
 @return --> 1) The goal has been met. 0) The goal has not been met 2) User quit*/ 
-int goalCheck(char* input, char* goal); 
+int goalCheck(char* input, char* goal, int isValid); 
 
 
 /*Returns a string that is the difficulty*/ 
@@ -50,7 +50,7 @@ char** ChoosePath(char** allWords, struct wordConnections*** HashMap, int minCon
 /*This is the output after the game ends
 @param gameEndCondition --> The condition after the game ended:
 @cont: 0)Error 1)They Won 2)They Gave Up */ 
-void AfterGameOutput(int gameEndCondition); 
+void AfterGameOutput(int gameEndCondition, struct GameComponents* gc); 
 
 
 /*When someone undoes and redoes, if they add or remove this method will be called
@@ -64,6 +64,9 @@ void ResetUndo(struct GenericLinkedListNode *storageHeader, struct GenericLinked
 /*This is the command that runs when the user types help
 @param goal --> This is the goal word so that when the user types help it turns out alright*/
 void Help(char* goal);
+
+/*this gets the game score*/
+int getScore(struct GameComponents* gc); 
 
 
 /*This is the printed out at the beginning of the game*/ 

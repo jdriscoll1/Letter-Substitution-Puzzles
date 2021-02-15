@@ -9,6 +9,7 @@
 #include "Arrays.h"
 #include "GenericLinkedListNode.h"
 #include "HashMap.h"
+#include "HashSet.h"
 
 extern int numLetters;
 
@@ -27,6 +28,7 @@ struct GameComponents *InitializeGameComponents(char** allWords, struct wordConn
 	gameComponents->undoCalls = 0; 
  	//Instantiates the number of hint points
  	gameComponents->hc = init_HintComponents(); 
+ 	AddToHashSet(gameComponents->shortestPath[0],  gameComponents->hc->wordsGiven, 0); 
 	//Allocates space for the previous input 
 	gameComponents->prevInput = malloc(numLetters + 1);
 	
@@ -135,7 +137,7 @@ void Redo_Struct(struct GameComponents* gc){
 }
 int AddWord_Struct(struct GameComponents* gc, const char* newWord, struct wordConnections **(*HashMap)){
 	//Checks if the word is valid based on the previous input 
-	int isValid = Check_Input(gc->prevInput, newWord, HashMap);  
+	int isValid = Check_Input(gc->prevInput, newWord, HashMap); 
 	if(isValid == 1){
 			//If I have previously undone a move, I need to free that move		
 			if(gc->undoCalls != 0){
@@ -156,7 +158,9 @@ int AddWord_Struct(struct GameComponents* gc, const char* newWord, struct wordCo
 			AddToFront_GenericLinkedListNode(gc->storage, WORD_LL); 
 			//Copies userConnections list to the front of the Generic Linked List Node
 			CopyInto_GenericLinkedListNode(gc->userConnections, gc->storage, 1, WORD_LL); 
-			//Another move :)
+			//Put the new word into the Hash Set
+			AddToHashSet(strdup((char*)newWord), gc->hc->wordsGiven, 1);  
+			//Another move added
 			(gc->numMoves)++;
 	}
 	//TO-DO:Change isValid to have more specific outputs (Probably just 0 or 1. Perhaps have 2 for not long enough. And 3 for too long?) 

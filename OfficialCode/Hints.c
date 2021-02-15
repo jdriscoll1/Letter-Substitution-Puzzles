@@ -34,9 +34,9 @@ struct HintComponents* init_HintComponents(){
 	//The starting amount of hint points
 	hc->hintPoints = 50; 
 	//The weight of hint 1
-	hc->hint1Weight = 25;
+	hc->hint1Weight = 35;
 	//The weight of hint 2
-	hc->hint2Weight = 35;
+	hc->hint2Weight = 0;
 	//The weight of hint 3 
 	hc->hint3Weight = 15; 
 	

@@ -47,7 +47,7 @@ struct word* DFS_Lobby(char* start, char* goal, struct wordConnections **(*HashM
 }
 struct TreeStorageNode* DFS(char* start, char* goal, struct wordConnections **(*HashMap), struct word **(*HashSet), struct TreeStorageNode *treeStorage){
 		/*Adds the word to the hash set such that it can't be found again'*/ 
-		AddToHashSet(start, HashSet); 
+		AddToHashSet(start, HashSet, 0); 
 		
 		/*First, we create a list that stores all of the words*/
 		struct word* list =  linkOutput_DFS(start, HashMap[FirstHashFunction(start[0])][SecondHashFunction(start)], HashSet, HASH_SET, 1); 
@@ -66,7 +66,7 @@ struct TreeStorageNode* DFS(char* start, char* goal, struct wordConnections **(*
 		*cont) It is necessary to add it here, because if it is found, then it will return itself as a node*/ 
 		struct TreeStorageNode *End = Copy_WordLLToTreeStorageNode(treeStorage, prevConnection, list, goal, -1);  
 		if(End != NULL){
-			AddToHashSet(goal, HashSet); 
+			AddToHashSet(goal, HashSet, 0); 
 			Free_WordLL(listHeader); 
 			return End; 
 		}
@@ -126,7 +126,7 @@ struct word *linkOutput_DFS(char* wordInput, struct wordConnections *header, voi
 			if(Search_HashSet(header->word, FoundStorage) == 0){
 				/*if it's read only, then we don't want to add it to the Hash Set, we just want to read from the hash set*/ 
 				if(readOnly == 0){
-					AddToHashSet(header->word, FoundStorage);
+					AddToHashSet(header->word, FoundStorage, 0);
 				}
 				AddToBack_WordLL(header->word, wordOutput, 0);  	
 			}
