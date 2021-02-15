@@ -42,15 +42,6 @@ struct BFSComponents {
 @return --> Returns the connections as a linked list*/
 struct word* BreadthFirstSearch_Dest_WordLL(char* start, char* goal, struct wordConnections **(*HashMap), enum FoundWordStorage storageType);
 
-/*This is the Breadth First Search Who Searches Given A Goal Word
-@param start --> The word at which the search begins
-@param goal --> The word at which the search ends
-@param HashMap --> The HashMap that contains all the words and their connections
-@param storageType --> Are you using the Tree Set or the Hash Set to store found words
-@return --> Returns the connections as an array as well as the size*/
-struct arrayList* BreadthFirstSearch_Dest_Array(char* start, char* goal, struct wordConnections **(*HashMap), enum FoundWordStorage storageType);
-
-
 /*This is the Breadth First Search Who Searches Given a Distance
 @param start --> This is where the search begins
 @param minConnections --> This is the absolute minimum number of connections that must be betwen the start, and the found word

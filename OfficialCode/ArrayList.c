@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
@@ -14,9 +13,14 @@ struct arrayList* init_ArrayList(size_t initSize, size_t moveSize, enum alistTyp
 		aList->list = malloc(sizeof(struct TreeStorageNode) * initSize); 
 	}
 
-	else{
-	
-		aList->list = malloc((type == NUM) ? sizeof(int) * initSize : sizeof(char) * initSize); 	
+	else if(type == NUM){
+		aList->list = malloc(sizeof(int) * initSize); 
+	}
+	else if(type == CHARACTER){
+		aList->list = malloc(initSize); 	
+	}
+	else if(type == STR){
+		aList->list = malloc(sizeof(char*) * initSize); 
 	}
 	//How big is it to begin with? 
 	aList->initSize = initSize; 
@@ -44,8 +48,12 @@ void add_ArrayList(void* data, struct arrayList* aList, enum alistType type){
 		if(type == TSN){
 			typeSize *= sizeof(struct TreeStorageNode); 
 		}
-		else{
-			typeSize *= (type == NUM) ? sizeof(int) : sizeof(char); 
+		else if(type == NUM){
+			typeSize *= sizeof(int); 	
+		}
+		else if(type == CHARACTER){
+		
+			typeSize *= sizeof(char); 
 		}
 		aList->list = realloc(aList->list, typeSize); 		 
 			 
@@ -68,11 +76,56 @@ void add_ArrayList(void* data, struct arrayList* aList, enum alistType type){
 		((char*)(aList->list))[aList->currPrecision] = *(char*)data; 
 		((char*)(aList->list))[aList->currPrecision + 1] = '\0';
 	}
-	else if(type == STR_ARR){
-		((char**)(aList->list))[aList->currPrecision] = (char*)data; 
+
+	else if(type == CHARACTER){
+		((char*)(aList->list))[aList->currPrecision] = *(char*)data; 
 
 	}
 	aList->currPrecision++; 
+	
+}
+
+
+void remove_ArrayList(void* data, struct arrayList* aList, enum alistType type){
+	//So, the best way to have it remove from the array list 
+	//Ngl, probably just copy all of them to a new linked list
+	//Well it depends, if currSize - 1 <= currSize - moveSize, then we want to shrink it by move size
+	//If currSize - 1 > currSize - moveSize, then we want to shrink it by only 1 
+	int i;
+	//We need to figure out the new size
+	//We will allocate the array based on that size
+	int newSize = (aList->currSize - 1 <= aList->currSize - aList->moveSize) ? aList->currSize - aList->moveSize : aList->currSize; 
+	int newPrecision = aList->currPrecision - 1; 
+	//Create a new list that's the current precision - 1
+	void* newArr; 
+	if(type == CHARACTER){
+		newArr = malloc(newSize);	
+		
+	}   
+	int newArrIndex = 0;
+	int oldArrIndex;   
+	for(oldArrIndex = 0; oldArrIndex < aList->currPrecision; oldArrIndex++){
+		//Loop through the list and search for the data
+		//If it has not found it, just add it to the list
+		//If it has found it, don't add it, and subtract i by 1 
+		if(type == CHARACTER){
+			if(((char*)(aList->list))[oldArrIndex] == *(char*)data){
+				//It'll add it to the new location again, writing over the old one 
+				newArrIndex--; 
+			}
+			else{
+				((char*)(newArr))[newArrIndex] = ((char*)aList->list)[oldArrIndex]; 
+			}		
+	
+		}
+	
+		newArrIndex++; 
+		
+	}
+	free(aList->list); 
+	aList->list = newArr; 
+	aList->currPrecision = newPrecision; 
+	aList->currSize = newSize; 
 	
 }
 
@@ -174,6 +227,9 @@ void print_ArrayList(struct arrayList* aList, enum alistType type){
 			}
 			else if(type == TSN){
 				printf("%s, ", ((struct TreeStorageNode**)(aList->list))[i]->word); 
+			}
+			else if(type == CHARACTER){
+				printf("%c", ((char*)(aList->list))[i]); 
 			}
 	
 	

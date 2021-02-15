@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -11,9 +10,10 @@
 #include "GenericLinkedListNode.h"
 #include "GameFunctions.h"
 #include "BreadthFirstSearch.h"
-
-
 #include "Arrays.h"
+#include "ArrayList.h"
+#include "Hints.h"
+
 #define true 1
 #define false 0
 typedef int bool; 
@@ -116,53 +116,7 @@ struct word* BreadthFirstSearch_Dest_WordLL(char* start, char* goal, struct word
 	 
 } 
 
-struct arrayList* BreadthFirstSearch_Dest_Array(char* start, char* goal, struct wordConnections **(*HashMap), enum FoundWordStorage storageType ){
-	 
-	//If the start word and goal word are equal, it returns 0
-	if(strcmp(start,goal) == 0){
-		printf("EqualWords_[BreadthFirstSearch_Dest]\n"); 
-		exit(0); 
-	}
-	
-	struct BFSComponents* bc = init_BFSComponents(start, storageType);
-	bool goalFound = false; 
-
-	
-	//Until the goal word is found it is going to spread out through every connection, and all of those connections until it finds the goal word
-	while(goalFound == false){
  
-		bc->prevConnection = bc->prevConnection->next;
-		
-		bc->End = AddToTreeStorage_Dist_BFS(bc, goal, storageType,  HashMap); 
-		if(strcmp(bc->End->word, goal) == 0){
-			goalFound = true; 
-		}
-
-		
-		if(bc->prevConnection == NULL){			  
-			printf("\n%s cannot connect with %s\n", start, goal);
-			goalFound = -1;
-		}
-		
-		//The previous connection moves forward one, going to the next word whose connections should be searched
-		
-		
-		
-	}
-
-	
-	int length = bc->End->depth; 
-	struct arrayList* output = init_ArrayList(length, 5, STR_ARR);
-	
-	Convert_TreeStorageNodeTo2DArray((char**)output->list, bc->End, length);
-	Print_2DArray(length, (void***)output->list, STRING);
-	//Frees the structure
-	Free_BFSComponents(bc, storageType); 
-	
-	return (goalFound == -1)?NULL:output; 
-	
-	 
-} 
 
 /*Things to keep in mind: 
 - assuming minConnections

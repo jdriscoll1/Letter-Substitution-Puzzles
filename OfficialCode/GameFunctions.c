@@ -240,11 +240,20 @@ int trueGame(int minConnections, char** allWords, char** wordStorage, struct wor
 				Help(gc->shortestPath[minConnections]); 
 			}
 			else if(strcmp(input, "1") == 0){
-				hint1(gc); 
+				char* output = hint1((unsigned long long)gc); 
+				printf("%s\n", output);
+				free(output);  
 				
 			}
 			else if(strcmp(input, "2") == 0){
-				hint2(gc, HashMap); 
+				char* output = hint2((unsigned long long)gc, HashMap); 
+				printf("%s\n", output);
+				free(output);  
+			}
+			else if(strcmp(input, "3") == 0){
+				char* output = hint3((unsigned long long)gc, HashMap); 
+				printf("%s\n", output);
+				free(output);  
 			}
 			else if(strcmp(input, "q") != 0 && strcmp(input, "finish") != 0){
 				AddWord_Struct(gc, input, HashMap); 
@@ -268,52 +277,4 @@ int trueGame(int minConnections, char** allWords, char** wordStorage, struct wor
 	
 }
 
-void hint1(struct GameComponents *gc){
-	if(gc->hintPoints < 25){
-		printf("Not Enough Hint Points.\n"); 
-	}
-	else{
-	
-		gc->hintPoints -= 25; 
-		printf("Hint -- The number of minimum connections is: %d.\n", gc->minConnections);
-		printf("You now have %d hintpoints\n", gc->hintPoints); 
-	}
-}
-		//1: Outputs several words
-		//Need the word they are currently on
-		//2: Outputs a single letter 
-		//Need: the whole list of connections 
-	
 
-void hint2(struct GameComponents *gc, struct wordConnections **(*HashMap)){
-	
-	if(gc->hintPoints < 20){
-		printf("Not Enough Hint Points\n");
-	}
-	else{
-	
-		gc->hintPoints -= 20; 
-		
-		struct word *options = hashMapOutput(gc->prevInput, HashMap);
-		
-		options = options->next; 
-		if(options == NULL){
-		printf("Hint -- I'd Recommend You Undo at least once.\n"); 
-		}
-		else{
-			printf("Hint -- Some options are: "); 
-			int i; 
-			for(i = 0; i < 4 && options->next != NULL; i++){
-				printf("%s, ", options->word);
-				options = options->next;  
-			}	
-			printf("%s.\n", options->word); 
-		}
-		printf("You now have %d hint points.\n", gc->hintPoints); 
- 	}
-}
-
-void hint3(){
-	//Undeniably the hardest hint. 
-	//So, I have to 
-}

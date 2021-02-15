@@ -48,6 +48,14 @@ void PrintHashMap(struct wordConnections ***HashMap);
 @return --> Returns a linked list of connecting words*/
 struct word *hashMapOutput(char* input, struct wordConnections **(*HashMap)); 
 
+/*This is the Hash Map Output with Restrictions
+@Restriction HashSet --> If a word is a part of the Hash Set of found words, it will be included in the Hash Set
+@Restriction cap --> It is only allowed to find a set quantity of words
+@param input --> This is the word whose connections are to be found
+@param HashMap --> This is how it can find the word's connections
+@return --> Returns a linked list with a certain number of words*/
+struct word *hashMapOutput_Restrictions(char* input, struct word*** HashSet, int cap, struct wordConnections **(*HashMap));
+
 /*Freeing the Hash Map
 This part is specifically designed for the Hash Map part, the arrays, within the 2D for loop is a method, (see 2DLinkedList.h)
 @param HashMap --> The HashMap to be freed*/

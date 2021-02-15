@@ -11,23 +11,44 @@ enum arrayType{
 	INT, CHAR, STRING
 }arrayType;
 
+
+//This is the single array structure, convenient if you need the length type and array in one neat package
 struct array{
+	//The length of the array
 	int length; 
-	void* arr; 
+	//The actual array
+	void** arr; 
+	//The type of the array 
 	enum arrayType type; 
 };
 
+//This is a 2D array structure, convenient if you need the length type and array in one neat package
 struct array2D{
+	//This is the 1st diemnsion { {}, {}, {} }{ {}, {}, {} } = 2
 	int dim1Length;
+	//This is the 2nd dimension { {}, {}, {} }{ {}, {}, {} } = 3
 	int dim2Length;  
-	void** arr; 
+	//This is the 2nd dimensional array
+	void*** arr; 
+	//This is the type of the array
 	enum arrayType type; 	
 	
 };
 
+//This initalizes the array structure
 struct array* init_Array(int length, enum arrayType type);
 
+//This initliazes the 2D array structure
 struct array2D* init_Array2D(int dim1Size, int dim2Size, enum arrayType type); 
+
+//This frees the 1D array structure
+void free_Array(struct array* a); 
+
+//This frees the 2D array structure
+void free_2DArray(struct array2D* a); 
+
+
+
 
 /*Create array of void pointers
 @param size --> the size of the array
@@ -80,6 +101,9 @@ void* Randomize_Array(int size, void** array, enum arrayType type);
 @param type --> the type of the array, whether it be string, int, etc.
 @return --> returns a brand spankin' new array w/ the same elements of the inserted array, just now with a different order*/ 
 void*** Randomize_2DArray(int dim1Size, int dim2Size, void*** array, enum arrayType type); 
+
+/*This does a binary search on an array*/
+int BinarySearch_Array(int size, void* goal, void* array, enum arrayType type); 
 
 /*Copies one array onto the other
 @param dim1Size --> the size of the first dimension of each array

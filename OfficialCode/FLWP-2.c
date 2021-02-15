@@ -53,10 +53,7 @@ void FreeMainComponents(struct wordConnections*** HashMap, char** wordStorage, c
 void PathfinderGameMain(); 
 int ConnectionOptimization(); 
 int main(){  
-	struct wordConnections **(*HashMap) = AllocateHashMap();	
-	char** wordStorage = FillHashMap(HashMap, 0);
-	struct arrayList* x= BreadthFirstSearch_Dest_Array("pies", "tins", HashMap, HASH_SET);
-	
+	PathfinderGameMain(); 
 	return 0; 
 }
 

@@ -6,6 +6,8 @@
 #include "TreeSet.h"
 #include "WordLinkedList.h"
 #include "GenericLinkedListNode.h"
+#include "Hints.h"
+#include "ArrayList.h"
 //Add one
 void Add_GenericLinkedListNode(struct GenericLinkedListNode *header, const enum listType type){
 	while(header->next != NULL){
@@ -136,6 +138,11 @@ void Free_GenericLinkedList(struct GenericLinkedListNode *header){
 		
 		else if(header->listType == WORD_LL ){
 			Free_WordLL(((struct word*)(header->listHeader))); 
+		}
+		else if(header->listType == HINT3){
+			free_ArrayList(((struct hint3Struct*)(header->listHeader))->letters); 
+	
+			free(header->listHeader);  
 		}
 		/*Temp variable for freeing the actual generic linked list node*/
 		struct GenericLinkedListNode temp = *header; 

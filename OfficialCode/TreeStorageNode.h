@@ -75,7 +75,7 @@ struct word *Convert_TreeStorageNodeToWordLL(struct word *newList, struct TreeSt
 @param arr --> The array whose values will take that of the Tree storage list
 @param End --> The very last node in the Tree Storage Array
 @param minConnections --> The starting index*/ 
-void Convert_TreeStorageNodeTo2DArray(char** arr, struct TreeStorageNode *End, int minConnections);  
+void Convert_TreeStorageNodeTo2DArray(char** arr, struct TreeStorageNode *End, int minConnections);   
 
 /*A method that's not actually used anywhere in the program, it starts at a word, and prints out all of the previous nodes, this was more inteded for testing purposes
 @param header --> a word in the list*/

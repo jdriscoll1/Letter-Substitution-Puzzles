@@ -8,6 +8,37 @@
 
 extern int numLetters; 
 
+
+struct array* init_Array(int length, enum arrayType type){
+	struct array* a = malloc(sizeof(struct array)); 
+	a->length = length; 
+	a->arr = Allocate_Array(length); 
+	a->type = type; 
+	
+}
+
+struct array2D* init_Array2D(int dim1Size, int dim2Size, enum arrayType type){
+	struct array2D* a = malloc(sizeof(struct array2D)); 
+	a->dim1Length = dim1Size; 
+	a->dim2Length = dim2Size; 
+	a->arr = Allocate_2DArray(dim1Size, dim2Size); 
+	a->type = type; 
+	
+	
+	
+}
+
+void free_Array(struct array* a){
+	free(a->arr); 
+	free(a); 
+}
+
+void free_2DArray(struct array2D* a){
+	Free_2DArray(a->dim1Length, a->arr, 0);
+	free(a);  
+}
+
+
 void** Allocate_Array(int size){
 	/*ALlocates the array*/ 
 	void** array = malloc(sizeof(void*) * size);  

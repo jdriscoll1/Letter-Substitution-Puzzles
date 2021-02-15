@@ -1,5 +1,7 @@
 #ifndef seenArrayList
 #define seenArrayList
+
+#include <stdlib.h>
 //String, Character, Int, Double, TreeStorageNode
 enum alistType{
 		STR, CHARACTER, NUM, DOUBLE, TSN, STR_ARR
@@ -27,6 +29,13 @@ struct arrayList* init_ArrayList(size_t initSize, size_t moveSize, enum alistTyp
 
 //Add to it
 void add_ArrayList(void* data, struct arrayList* aList, enum alistType type); 
+
+/*This removes a piece of data from an array list
+@param data --> The data to be removed
+@param aList --> The array list which is to be removed from
+@param type --> The type of data
+@time --> O(n)*/
+void remove_ArrayList(void* data, struct arrayList* aList, enum alistType type); 
 
 //If you want to add a string to it 
 void addString_ArrayList(const char* str, struct arrayList* aList); 

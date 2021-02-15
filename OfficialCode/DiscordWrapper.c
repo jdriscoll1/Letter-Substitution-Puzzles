@@ -9,6 +9,7 @@
 #include "GenericLinkedListNode.h"
 #include "GameFunctions.h"
 #include "PathGameComponents.h"
+#include "Hints.h"
 
 
 extern int numLetters; 
@@ -73,6 +74,24 @@ int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong ha
 		return -1; 
 		
 	
+	}
+	//Next for the hitns
+	else if(strcmp(input, "1") == 0){
+		char* output =  hint1(gameComponentsLong);
+		javaOutput(env, obj, output, textChannel); 
+		free(output); 
+	}
+	
+	else if(strcmp(input, "2") == 0){
+		char* output =  hint2(gameComponentsLong, (struct wordConnections***)hashMapLong);
+		javaOutput(env, obj, output, textChannel); 
+		free(output); 
+	}
+	
+	else if(strcmp(input, "3") == 0){
+		char* output =  hint3(gameComponentsLong, (struct wordConnections***)hashMapLong);
+		javaOutput(env, obj, output, textChannel); 
+		free(output); 
 	}
 
 	//Otherwise, it'll add a word
@@ -184,13 +203,13 @@ Java_flwp_FLWP_CreateAllWordsList(JNIEnv * env, jobject obj){
 }
 
 JNIEXPORT long JNICALL
-Java_flwp_FLWP_InstantiateGame(JNIEnv * env, jobject obj, jlong allWords, jlong hashMapLong, int minConnections, jobject textChannel){
+Java_flwp_FLWP_InstantiateGame(JNIEnv * env, jobject obj, jlong allWords, jlong hashMapLong, int minConnections, int hintPoints, jobject textChannel){
 	
 	srand(time(0));
 	struct GameComponents *gameComponents = InitializeGameComponents((char**)allWords, (struct wordConnections***)hashMapLong, minConnections);
-	
+	gameComponents->hc->hintPoints = hintPoints; 
 	char outputGoal[255]; 
-	snprintf(outputGoal, sizeof(outputGoal), "Your task is to start with %s and arrive at %s", gameComponents->shortestPath[0], gameComponents->shortestPath[minConnections]); 
+	snprintf(outputGoal, sizeof(outputGoal), "Your task is to start with %s and arrive at %s\nYou have %d hint points.\n", gameComponents->shortestPath[0], gameComponents->shortestPath[minConnections], gameComponents->hc->hintPoints); 
 	javaOutput(env, obj, outputGoal, textChannel); 
 	
 	return (jlong)gameComponents; 
@@ -210,7 +229,7 @@ Java_flwp_FLWP_DeleteGame(JNIEnv * env, jobject obj, jlong gameComponentsLong){
 JNIEXPORT int JNICALL
 Java_flwp_FLWP_TakeInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong hashMapLong, jstring text, jobject textChannel){
 	//So, now we have the input -- in the Java portion we make sure it's not too long
-
+	struct GameComponents *gc = (struct GameComponents*)gameComponentsLong; 
 	int j = 0; 
 
 	//We have to first convert it to a char* 
@@ -231,7 +250,11 @@ Java_flwp_FLWP_TakeInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jl
 	
 	//We have to Free the char* object
 	(*env)->ReleaseStringUTFChars(env, text, input); 
-	return isGoal; 
+	if(isGoal < 1){
+		//if the goal is = to 0, or not met, return a -2
+		return (isGoal == 0) ? -2 : -1; 
+	}
+	return gc->hc->hintPoints; 
 }
 
 
@@ -258,16 +281,7 @@ Java_flwp_FLWP_StaticCall(JNIEnv * env, jobject obj){
 //Make sure to: 
 
 
-//Hints: 
-/*
-a) Point System
-b) Hint 1: Gives them a single letter between the 2 words
-c) Hint 2: Gives them 5 word connection possibilities
-d) Hint 3: Tells them the minimum number of connections
-//I think the best way to go about this would be to just add it into game functions and have it be a parameter in game component, an integer
-*/
-
-//Tell users there score
+//Tell users their score
 //Retry Round
 //Fix AVL Tree
 

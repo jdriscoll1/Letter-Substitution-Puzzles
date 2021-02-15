@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000001000000
-UnitCount=33
+UnitCount=35
 
 [VersionInfo]
 Major=1
@@ -372,6 +372,26 @@ BuildCmd=
 
 [Unit33]
 FileName=ConnectionDistanceStats.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit35]
+FileName=Hints.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit34]
+FileName=Hints.c
 CompileCpp=0
 Folder=
 Compile=1

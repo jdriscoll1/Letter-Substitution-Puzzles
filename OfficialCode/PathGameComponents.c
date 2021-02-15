@@ -26,7 +26,7 @@ struct GameComponents *InitializeGameComponents(char** allWords, struct wordConn
 	//Instantiates the number of undo calls 
 	gameComponents->undoCalls = 0; 
  	//Instantiates the number of hint points
- 	gameComponents->hintPoints = 50; 
+ 	gameComponents->hc = init_HintComponents(); 
 	//Allocates space for the previous input 
 	gameComponents->prevInput = malloc(numLetters + 1);
 	
@@ -169,7 +169,7 @@ void FreeGameComponents(struct GameComponents *gameComponents){
 	free(gameComponents->prevInput);
 	Free_WordLL(gameComponents->userConnections); 
 	
-	
+	free_HintComponents((unsigned long long)gameComponents->hc); 
 	Free_2DArray(gameComponents->minConnections + 2, (void***)(gameComponents->shortestPath), 0);   
 	Free_GenericLinkedList(gameComponents->storageHeader); 
 	free_ArrayList(gameComponents->aList); 

@@ -267,6 +267,56 @@ struct word *hashMapOutput(char* input, struct wordConnections **(*HashMap)){
 	
 }
 
+struct word *hashMapOutput_Restrictions(char* input, struct word*** HashSet, int cap, struct wordConnections **(*HashMap)){
+	int foundWords = 0; 
+	/* Create the linked list into which I put the words */
+	struct word *output = malloc(sizeof(struct word)); 
+	output->next = NULL; 
+	output->dataMalloc = 0; 
+	 
+	
+	struct wordConnections *connections2D = HashMap[FirstHashFunction(input[0])][SecondHashFunction(input)]; 
+	connections2D = connections2D->nextRow; 
+	/* Loop through the array until I find the correct word */ 
+	while(strcmp(connections2D->word, input) != 0){
+		connections2D = connections2D->nextRow; 
+	}
+	//If it can't find it, it crashes
+	if(connections2D == NULL){
+		printf("Error: Can't find word [hashMapOutput]");
+		exit(0);  
+	}
+	
+
+	while(connections2D->nextColumn != NULL){
+		
+		connections2D = connections2D->nextColumn; 
+		//Search the HashSet
+		if(Search_HashSet(connections2D->word, HashSet) == 0){
+		
+			//If it's in the Hash Set it should add it to the back
+			AddToBack_WordLL(connections2D->word, output, 0);  	
+			//Then it should add it to the Hash Set
+			AddToHashSet(connections2D->word, HashSet); 
+			//Then the words found should go up should go up
+			foundWords++;  
+			//If the cap has been met, it should return the output	
+			if(foundWords == cap){
+				return output; 
+			}
+		}
+	}
+
+	/* Return the Linked List */
+	return output; 
+	
+	
+	
+	
+	
+}
+
+
 /* This frees all of the words stored in the links list's words storage space */
 void FreeHashMap(struct wordConnections ***HashMap){
 	 
