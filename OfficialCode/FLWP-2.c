@@ -57,19 +57,13 @@ int ConnectionOptimization();
 void FLWP(); 
 
 
-int main(){  
-	int length = 10; 
-	int* a = FillRange_Array(0, length, 0);
-	struct DummyHeadNode *tree = Allocate_TreeSet((void*)a); 
-	int i = 0; 
-	for(i = 1; i < length; i++){
-	
-		printf("%d\n", (void*)&(a+i)); 
-	} 
-	Print_TreeSet(tree->start, INT); 
-	free(a); 
-	Free_TreeSet(tree->start); 
-	free(tree); 
+int main(){ 
+	struct wordConnections **(*HashMap) = AllocateHashMap();	
+	char** wordStorage = FillHashMap(HashMap, 0);
+	char** allWords = ExtrapolateAllWords(); 
+	char* l = BreadthFirstSearch_Distance_Goal("ruff", 10, HashMap, TREE_SET);
+	free(l);  
+	FreeMainComponents(HashMap, wordStorage, allWords);
 	return 0;  
 }
 

@@ -6,7 +6,7 @@ LeftChar=1
 [Editors]
 <<<<<<< HEAD
 <<<<<<< HEAD
-Order=2,7,8,19,20
+Order=2,7,8,19,20,13
 <<<<<<< HEAD
 Focused=2
 =======
@@ -35,9 +35,9 @@ LeftChar=1
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
-CursorCol=31
-CursorRow=56
-TopLine=49
+CursorCol=24
+CursorRow=51
+TopLine=50
 =======
 CursorCol=24
 CursorRow=56
@@ -69,17 +69,17 @@ LeftChar=1
 <<<<<<< HEAD
 CursorCol=1
 CursorRow=14
-TopLine=13
+TopLine=19
 LeftChar=1
 [Editor_8]
-CursorCol=53
-CursorRow=37
-TopLine=110
+CursorCol=130
+CursorRow=46
+TopLine=32
 =======
 CursorCol=3
 CursorRow=25
 TopLine=545
-LeftChar=1
+LeftChar=28
 [Editor_8]
 CursorCol=47
 CursorRow=111
@@ -123,10 +123,10 @@ TopLine=112
 >>>>>>> AdjsutBFS_Branch
 LeftChar=1
 [Editor_13]
-CursorCol=1
+CursorCol=142
 CursorRow=43
 TopLine=35
-LeftChar=1
+LeftChar=6
 [Editor_14]
 <<<<<<< HEAD
 CursorCol=3
