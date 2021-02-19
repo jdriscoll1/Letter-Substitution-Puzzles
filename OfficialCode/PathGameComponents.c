@@ -10,16 +10,21 @@
 #include "GenericLinkedListNode.h"
 #include "HashMap.h"
 #include "HashSet.h"
+#include "HashFunctions.h"
 
 extern int numLetters;
 
 struct GameComponents *InitializeGameComponents(char** allWords, struct wordConnections **(*HashMap), int minConnections){
 		//Instantiate the Structure
 	struct GameComponents* gameComponents = malloc(sizeof(struct GameComponents)); 
+	do{
+		//This chooses the start word
+		gameComponents->start = ChooseStart(allWords, HashMap, 0);  
+		//Finds the goal word 
+		gameComponents->goal = BreadthFirstSearch_Distance_Goal(gameComponents->start, minConnections, HashMap, HASH_SET); 
 
-	//Create the shortest path from the beginning word and the goal word, whcih shall both be determined in this method
-	gameComponents->shortestPath = ChoosePath(allWords, HashMap, minConnections); 
-	//printf("%s", gameComponents->shortestPath[0]); 
+	}while(gameComponents->goal == NULL); 
+	
 	//Sets the minimum number of connection
 	gameComponents->minConnections = minConnections; 
 	//Sets the number of moves
@@ -28,12 +33,12 @@ struct GameComponents *InitializeGameComponents(char** allWords, struct wordConn
 	gameComponents->undoCalls = 0; 
  	//Instantiates the number of hint points
  	gameComponents->hc = init_HintComponents(); 
- 	AddToHashSet(gameComponents->shortestPath[0],  gameComponents->hc->wordsGiven, 0); 
+ 	AddToHashSet(gameComponents->start,  gameComponents->hc->wordsGiven, 0); 
 	//Allocates space for the previous input 
 	gameComponents->prevInput = malloc(numLetters + 1);
 	
 	//Sets the previous input to the starting word
-	strcpy(gameComponents->prevInput, gameComponents->shortestPath[0]); 
+	strcpy(gameComponents->prevInput, gameComponents->start); 
  
 	//Initialize the arrayList 
 	gameComponents->aList = init_ArrayList(numLetters * (minConnections * 1.5), numLetters * (minConnections), STR); 
@@ -53,9 +58,9 @@ struct GameComponents *InitializeGameComponents(char** allWords, struct wordConn
 	gameComponents->userConnections->dataMalloc = 0; 
 
 	//Insert the word into the back of the word linked list
-	AddToBack_WordLL(strdup(gameComponents->shortestPath[0]), gameComponents->userConnections, 1); 
+	AddToBack_WordLL(strdup(gameComponents->start), gameComponents->userConnections, 1); 
  
- 	addString_ArrayList(gameComponents->shortestPath[0], gameComponents->aList); 
+ 	addString_ArrayList(gameComponents->start, gameComponents->aList); 
  	 
 	//Allocates space at the beginning of the generic linked list node
 	AddToFront_GenericLinkedListNode(gameComponents->storage, WORD_LL); 
@@ -66,6 +71,54 @@ struct GameComponents *InitializeGameComponents(char** allWords, struct wordConn
 	return gameComponents;
 
 }
+
+
+void ResetGameComponents(struct GameComponents *gc){
+	gc->numMoves = 0;
+	//Instantiates the number of undo calls 
+	gc->undoCalls = 0; 
+ 	//Instantiates the number of hint points
+	
+	//Sets the previous input to the starting word
+	strcpy(gc->prevInput, gc->start); 
+ 
+ 	//Frees, then initializes the array list
+	free_ArrayList(gc->aList); 
+	//Initialize the arrayList 
+	gc->aList = init_ArrayList(numLetters * (gc->minConnections * 1.5), numLetters * (gc->minConnections), STR); 
+	
+	Free_GenericLinkedList(gc->storageHeader); 
+	
+	//Instantiate the input storage 
+	gc->storage = malloc(sizeof(struct GenericLinkedListNode)); 
+	gc->storage->next = NULL; 
+	gc->storage->prev =  NULL; 
+
+	//Creates the storage header
+	gc->storageHeader = gc->storage; 
+
+	Free_WordLL(gc->userConnections); 
+	//Instantiates the user connection
+	gc->userConnections = malloc(sizeof(struct word)); 
+	gc->userConnections->next = NULL; 
+	//There is no input to be freed
+	gc->userConnections->dataMalloc = 0; 
+
+	//Insert the word into the back of the word linked list
+	AddToBack_WordLL(strdup(gc->start), gc->userConnections, 1); 
+ 
+ 	addString_ArrayList(gc->start, gc->aList); 
+ 	 
+	//Allocates space at the beginning of the generic linked list node
+	AddToFront_GenericLinkedListNode(gc->storage, WORD_LL); 
+
+	//Insert the word into the front of the Generic Linked List
+	CopyInto_GenericLinkedListNode(gc->userConnections, gc->storage, 1, WORD_LL);
+
+
+}
+
+
 void RemoveWord_Struct(struct GameComponents* gc, char* input, int freeInput){
 	//If I have previously undone a move, I need to free that move
 	if(gc->undoCalls != 0){
@@ -98,6 +151,27 @@ void RemoveWord_Struct(struct GameComponents* gc, char* input, int freeInput){
 	
 	
 }
+int inDictionary(const char* word, struct wordConnections ***HashMap){
+	int element1 = FirstHashFunction(word[0]); 
+	int element2 = SecondHashFunction(word);  
+	struct wordConnections* wordOptions = HashMap[element1][element2];  
+	//So, first I have to open up the hash set
+	wordOptions = wordOptions->nextRow; 
+	//Then I have to loop through it
+	while(wordOptions != NULL){
+		if(strcmp(word, wordOptions->word) == 0){
+			return 1; 
+			
+		}
+		wordOptions = wordOptions->nextRow; 
+		
+	}
+	return 0; 
+	
+	
+}
+
+
 void Undo_Struct(struct GameComponents* gc){
 	
 	if(gc->numMoves == 0){
@@ -174,7 +248,8 @@ void FreeGameComponents(struct GameComponents *gameComponents){
 	Free_WordLL(gameComponents->userConnections); 
 	
 	free_HintComponents((unsigned long long)gameComponents->hc); 
-	Free_2DArray(gameComponents->minConnections + 2, (void***)(gameComponents->shortestPath), 0);   
+ 	//Only want to free the goal, because the start is in the array of all the words
+    free(gameComponents->goal); 
 	Free_GenericLinkedList(gameComponents->storageHeader); 
 	free_ArrayList(gameComponents->aList); 
 	free(gameComponents);  

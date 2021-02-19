@@ -174,6 +174,42 @@ int Check_Input(char* prevWord, const char* currWord, struct wordConnections ***
 	
 }
 
+int ContinueGames(){
+	printf("\nWould you like to advance??\ny - harder level \nr - equal level\np - easier level\nq - quit\n");
+	
+	char* s = Take_Input_NoSize();
+	//If the user chooses to quit it returns 1
+	if(strcmp(s, "q\n") == 0 || strcmp(s, "n\n") == 0){
+		free(s); 
+		return 1; 
+	}
+	//If the uesr wants to continue, it returns 0 
+	else if(strcmp(s, "y\n") == 0){
+		free(s); 
+		return 0;  
+	}  
+	
+	//If the user wants to go back a level, it'll return 2
+	else if(strcmp(s, "p\n") == 0){
+		free(s);
+		return 2; 
+	}
+	
+	//If the user wants to stay at the same level it'll return 3 
+	else if(strcmp(s, "s\n") == 0){
+		free(s); 
+		return 3; 
+	}
+	else if(strcmp(s, "r\n")== 0){
+		free(s); 
+		return 4; 
+	}
+		
+}
+	
+
+
+
 char* toLowerCase(char* input){
 	//This is the new, lowercase word that will be used for comparing
 	char* lower = malloc(sizeof(char) * MAX_SIZE); 
@@ -230,4 +266,5 @@ int safeStrcat(char** dest, const char* src, int destLength, int buff, int start
 	return i; 
 	//So how this is supposed to work. 
 }
+
 

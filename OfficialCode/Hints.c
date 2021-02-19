@@ -36,7 +36,7 @@ struct HintComponents* init_HintComponents(){
 	//The weight of hint 1
 	hc->hint1Weight = 35;
 	//The weight of hint 2
-	hc->hint2Weight = 0;
+	hc->hint2Weight = 30;
 	//The weight of hint 3 
 	hc->hint3Weight = 15; 
 	
@@ -167,7 +167,7 @@ char* hint3(unsigned long long gcLong, struct wordConnections **(*HashMap)){
 		
 		//If there is no structure for this particular word, I need to
 		if(isFound == false){
-			init_hint3(hc, currWord, gc->shortestPath[gc->minConnections], HashMap); 
+			init_hint3(hc, currWord, gc->goal, HashMap); 
 		
 		}	
 		

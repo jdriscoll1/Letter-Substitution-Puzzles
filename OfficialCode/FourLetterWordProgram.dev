@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000001000000
-UnitCount=35
+UnitCount=37
 
 [VersionInfo]
 Major=1
@@ -392,6 +392,26 @@ BuildCmd=
 
 [Unit34]
 FileName=Hints.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit36]
+FileName=PathfinderGame.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit37]
+FileName=PathfinderGame.c
 CompileCpp=0
 Folder=
 Compile=1

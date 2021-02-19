@@ -50,6 +50,10 @@ struct word* BreadthFirstSearch_Dest_WordLL(char* start, char* goal, struct word
 @return --> Returns an array which is the connections (Advantage, easy access of the furthest connection*/
 char** BreadthFirstSearch_Distance(char* start, int minConnections, struct wordConnections **(*HashMap), enum FoundWordStorage storageType); 
 
+
+/*This is the breadth first search, the only difference is that it returns a single word as opposed to the whole array*/
+char* BreadthFirstSearch_Distance_Goal(char* start, int minConnections, struct wordConnections **(*HashMap), enum FoundWordStorage storageType); 
+
 /*This outputs the number of options that a Breadth First Search has from a certain distance away
 @param start --> The wrod to be started on
 @param minConnections --> How far away should the number of connections be

@@ -37,6 +37,8 @@ int numLetters = 4;
 
 #include "ConnectionDistanceStats.h"
 
+#include "PathfinderGame.h"
+
 void WordConnections(); 
 void MainProgram(char* w1, char* w2, struct wordConnections ***HashMap); 
 void GenericLLExample(); 
@@ -52,30 +54,49 @@ void AVLTree();
 void FreeMainComponents(struct wordConnections*** HashMap, char** wordStorage, char** allWords); 
 void PathfinderGameMain(); 
 int ConnectionOptimization(); 
+void FLWP(); 
+
+
 int main(){  
-	PathfinderGameMain(); 
-	return 0; 
+	int length = 10; 
+	int* a = FillRange_Array(0, length, 0);
+	struct DummyHeadNode *tree = Allocate_TreeSet((void*)a); 
+	int i = 0; 
+	for(i = 1; i < length; i++){
+	
+		printf("%d\n", (void*)&(a+i)); 
+	} 
+	Print_TreeSet(tree->start, INT); 
+	free(a); 
+	Free_TreeSet(tree->start); 
+	free(tree); 
+	return 0;  
 }
 
 
-//So, I need to get a mean, and the upper and lower quartile 
-//What I have to do, Is I have to run through all of the words, and all of their number of connections from 2 to 15 and find
 
-void PathfinderGameMain(){
-	
+void FLWP(){
 	srand(time(0)); 
 	struct wordConnections **(*HashMap) = AllocateHashMap();	
 	char** wordStorage = FillHashMap(HashMap, 0);
 	char** allWords = ExtrapolateAllWords();
-	int i = 2; 
-	int quit = 0; 
-	for(i = 2; i < 12 && quit == 0; i++){
-		quit = trueGame(i, allWords, wordStorage, HashMap); 
-	}
+	Play_FLWP(HashMap, wordStorage, allWords); 
+	//Play_FLWP(HashMap, wordStorage, allWords); 
 	FreeMainComponents(HashMap, wordStorage, allWords); 
-	
-}
 
+}
+//So, I need to get a mean, and the upper and lower quartile 
+//What I have to do, Is I have to run through all of the words, and all of their number of connections from 2 to 15 and find
+//Now, how in the hell am I going to be able to redo a round? 
+//I have to ask the user if they'd like to move on to the next round
+//They will have 3 options, yes, no, or redo
+//If they choose yes, it will move them along
+//If they choose no, it will end the game
+//If they choose retry, it'll re-initialize the game Components, but this time the score and the goal will be the old score and also goal 
+//So, I think I have no choice but to create a structure that stores everything 
+//it'll store their score
+//The the round they are on
+//Their total score
 void MainProgram(char* w1, char* w2, struct wordConnections ***HashMap){
 
 	struct word *connections;  

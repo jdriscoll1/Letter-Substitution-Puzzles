@@ -4,6 +4,7 @@
 #include "2DLinkedList.h"
 #include "GenericLinkedListNode.h"
 #include "PathGameComponents.h"
+#include "PathfinderGame.h"
 enum Difficulty{
 	EASY, MEDIUM, HARD
 }Difficulty;
@@ -16,7 +17,7 @@ enum Difficulty StartGame();
 @param allWords --> Every single word that can be chosen
 @param HashMap --> A Hashmap that helps determine what words can be chosen
 @return --> Returns the word connections*/
-char** ChoosePathway(char** allWords, struct wordConnections **(*HashMap)); 
+char* ChooseGoal(char* start, struct wordConnections*** HashMap, int minConnections); 
 
 /*This takes the difficulty of the game and chooses the minimum number of connections the goal word should be from the start word
 @param difficulty --> This is the games difficulty
@@ -28,7 +29,7 @@ int GetMinConnections(enum Difficulty difficulty);
 @param HashMap --> The Hash Map that has all of the word's connections
 @param TEST_TEMP --> TEMPORARY VARIABLE THAT IS ONLY USED FOR TEMPORARY PURPOSES
 @return --> Returns a word that will be considered the start word*/ 
-char* ChooseStartWord(char** allWordsArray, struct wordConnections **(*HashMap), int TEST_TEMP); 
+char* ChooseStart(char** allWordsArray, struct wordConnections **(*HashMap), int TEST_TEMP); 
 
 
 /*Method that determines when the game will be stopped
@@ -68,11 +69,21 @@ void Help(char* goal);
 /*this gets the game score*/
 int getScore(struct GameComponents* gc); 
 
+/*This takes 2 numbers and calculates the score*/
+int calcScore(int n1, int n2); 
 
 /*This is the printed out at the beginning of the game*/ 
 void EnterText(); 
 
-int trueGame(int minConnections, char** allWords, char** wordStorage, struct wordConnections **(*HashMap)); 
+/*This is the game being played
+@param minConnections --> The minimum number of connections in the round
+@param allWords --> These are all of the words that can be chosen from
+@param HashMap --> This is the HashMap of all words
+@param gc --> These are all of the game components for this individual round
+@param pc --> These are the variables stored throughout the entire game 
+@return --> It returns the score
+@case -1 = the user quit*/
+int round_FLWP(int minConnections, char** allWords, struct wordConnections **(*HashMap), struct GameComponents* gc, struct PathfinderGame *pc); 
 
 #endif
   

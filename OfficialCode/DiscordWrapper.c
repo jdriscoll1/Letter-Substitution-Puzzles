@@ -10,6 +10,7 @@
 #include "GameFunctions.h"
 #include "PathGameComponents.h"
 #include "Hints.h"
+#include "UserInput.h"
 
 #define SIZE 255
 
@@ -36,6 +37,10 @@ int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong ha
 	//If the string starts with a - 
 	//Remove the word from the list
 	int isValid = 1; 
+	
+	//The hint taken is equal to 0 originally
+	int hintTaken = 0; 
+	
 	//If it starts with a -, and it's less than numLetters - 2, it's going to remove the word
 	if(input[0] == '-' && strlen(input) <= numLetters + 2){
 		//Remove word cannot have a constant char* because it needs it to change to remove the -. That is, there needs to be a word that removes it
@@ -48,6 +53,17 @@ int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong ha
 		RemoveWord_Struct(gc, removeWord, 0); 
 		//Frees the removeWord
 		free(removeWord);  
+	}
+	else if(input[0] == '?'){
+		char* testInput = substr((char*)input, 1, numLetters + 1, 0);
+		int inDic = inDictionary(testInput, HashMap); 
+		if(inDic == 1){
+			javaOutput(env, obj, "That is a valid word\n", textChannel); 
+		}
+		else{
+			javaOutput(env, obj, "That is not a valid word\n", textChannel); 
+		}
+		free(testInput); 
 	}
 	
 	//If the user wants to undo the previous move
@@ -65,15 +81,15 @@ int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong ha
 	//If the user queries for their goal
 	else if(strcmp(input, "g") == 0){
 		char goalOutput[50]; 
-		snprintf(goalOutput, 50, "Your Goal: %s", gc->shortestPath[gc->minConnections]); 
+		snprintf(goalOutput, 50, "Your Goal: %s", gc->goal); 
 		javaOutput(env, obj, goalOutput, textChannel);
-		return 0; 
+		return -1; 
 	
 	}	
 	//If user ends the game
 	else if (strcmp(input, "q") == 0 || strcmp(input, "finish") == 0){
 		javaOutput(env, obj, "Better Luck Next Time.", textChannel); 
-		return -1; 
+		return -2; 
 		
 	
 	}
@@ -82,18 +98,30 @@ int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong ha
 		char* output =  hint1(gameComponentsLong);
 		javaOutput(env, obj, output, textChannel); 
 		free(output); 
+		hintTaken = 1; 
+ 
 	}
 	
 	else if(strcmp(input, "2") == 0){
 		char* output =  hint2(gameComponentsLong, (struct wordConnections***)hashMapLong);
 		javaOutput(env, obj, output, textChannel); 
-		free(output); 
+		free(output);
+		hintTaken = 1;  
 	}
 	
 	else if(strcmp(input, "3") == 0){
 		char* output =  hint3(gameComponentsLong, (struct wordConnections***)hashMapLong);
 		javaOutput(env, obj, output, textChannel); 
 		free(output); 
+		hintTaken = 1; 
+
+	}
+	
+	else if(strcmp(input, "p") == 0){
+		char goalOutput[50]; 
+		snprintf(goalOutput, 50, "Hint Points Available: %d", gc->hc->hintPoints); 
+		javaOutput(env, obj, goalOutput, textChannel);
+		
 	}
 
 	//Otherwise, it'll add a word
@@ -101,9 +129,9 @@ int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong ha
 		
 		isValid = AddWord_Struct(gc, input, HashMap); 
 		//The user won
-		if(strcmp(input, gc->shortestPath[gc->minConnections]) == 0 && isValid == 1){
+		if(strcmp(input, gc->goal) == 0 && isValid == 1){
 			
-			return 1; 
+			return getScore(gc); 
 		
 		}	
 		
@@ -119,9 +147,12 @@ int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong ha
 	//Outputs the new string 
 	javaOutput(env, obj, output, textChannel); 
 		
-
-
-	return 0; 
+	if(hintTaken == 1){
+		return gc->hc->hintPoints + 101; 
+		
+	}
+	
+	return -1; 
 
 	
 	
@@ -211,7 +242,7 @@ Java_flwp_FLWP_InstantiateGame(JNIEnv * env, jobject obj, jlong allWords, jlong 
 	struct GameComponents *gameComponents = InitializeGameComponents((char**)allWords, (struct wordConnections***)hashMapLong, minConnections);
 	gameComponents->hc->hintPoints = hintPoints; 
 	char outputGoal[255]; 
-	snprintf(outputGoal, sizeof(outputGoal), "Your task is to start with %s and arrive at %s\nYou have %d hint points.\n", gameComponents->shortestPath[0], gameComponents->shortestPath[minConnections], gameComponents->hc->hintPoints); 
+	snprintf(outputGoal, sizeof(outputGoal), "Your task is to start with %s and arrive at %s\nYou have %d hint points.\nYou are on round %d", gameComponents->start, gameComponents->goal, gameComponents->hc->hintPoints, minConnections - 1); 
 	javaOutput(env, obj, outputGoal, textChannel); 
 	
 	return (jlong)gameComponents; 
@@ -227,6 +258,21 @@ Java_flwp_FLWP_DeleteGame(JNIEnv * env, jobject obj, jlong gameComponentsLong){
 
 }
 
+JNIEXPORT void JNICALL
+Java_flwp_FLWP_ResetRound(JNIEnv * env, jobject obj, jlong gameComponentsLong, jobject textChannel){
+	struct GameComponents *gc = (struct GameComponents*)gameComponentsLong; 
+	ResetGameComponents(gc);
+	char outputGoal[255]; 
+	snprintf(outputGoal, sizeof(outputGoal), "Your task is to start with %s and arrive at %s\nYou have %d hint points.\nYou are on round %d", gc->start, gc->goal, gc->hc->hintPoints, gc->minConnections - 1); 
+	javaOutput(env, obj, outputGoal, textChannel); 
+
+
+
+
+
+}
+
+
 
 JNIEXPORT int JNICALL
 Java_flwp_FLWP_TakeInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong hashMapLong, jstring text, jobject textChannel){
@@ -240,8 +286,7 @@ Java_flwp_FLWP_TakeInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jl
 	if(input == NULL){
 		exit(0); 
 	}
-	int isGoal = InterpretInput(env, obj, gameComponentsLong, hashMapLong, input, textChannel);
-
+	int score = InterpretInput(env, obj, gameComponentsLong, hashMapLong, input, textChannel);
 		//If the user wins
 		//We want to go on to the next round 
 		//We want to ask the user if they would like to advance to the next level
@@ -252,15 +297,15 @@ Java_flwp_FLWP_TakeInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jl
 	
 	//We have to Free the char* object
 	(*env)->ReleaseStringUTFChars(env, text, input); 
-	if(isGoal < 1){
-		//if the goal is = to 0, or not met, return a -2
-		return (isGoal == 0) ? -2 : -1; 
-	}
-	//If the goal is met, then it wants to return hint points
-	char output[SIZE];  
-	snprintf(output, SIZE, "Congratulations!! You Won! Your Score Is %d%%. Would you like to advance?? Type y to advance, r to try again, or n to end the game", getScore(gc)); 
-	javaOutput(env, obj, output, textChannel); 
-	return gc->hc->hintPoints; 
+	
+	//This sends the score back
+	//if it's greater than 0 -- it's the score of the game
+	//If it's -1 -- the user did not win -- it's normal 
+	//If it's -2 -- the user quit 
+	//if it's > 100 -- the hintpoints changed
+	return score; 
+	
+	//Tomorrow make it so that it can deal with hint points
 }
 
 
@@ -287,8 +332,11 @@ Java_flwp_FLWP_StaticCall(JNIEnv * env, jobject obj){
 //Make sure to: 
 
 
-//Tell users their score
-//Retry Round
+//~<word> --> Checks if a word is in the dictionary 
+//Add sark into the dictionary
+//Add sade into the dictionary 
+//Add bonk into the dictionary
+//Make the final round
 //Fix AVL Tree
 
 //PHASE I -- COMPLETED

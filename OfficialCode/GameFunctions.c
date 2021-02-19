@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 #include "GameFunctions.h"
 #include "WordLinkedList.h"
@@ -38,7 +39,7 @@ int GetMinConnections(enum Difficulty difficulty){
 
 
 /*Randomly chooses a word based on an index*/ 
-char* ChooseStartWord(char** allWordsArray, struct wordConnections **(*HashMap), int TEST_TEMP){
+char* ChooseStart(char** allWordsArray, struct wordConnections **(*HashMap), int TEST_TEMP){
 	//srand(time(0)); 
 	//the total number of words
 	int totalWordCount[3] = {30, 590, 2233}; 
@@ -51,11 +52,11 @@ char* ChooseStartWord(char** allWordsArray, struct wordConnections **(*HashMap),
 	if(TEST_TEMP == 1){
 		//randIndex = 27;
 		//Also try bevy 
+		randIndex = 164; 
+		
+	}
+	word = allWordsArray[randIndex]; 
 
-	}
-	else{
-		word = allWordsArray[randIndex]; 
-	}
 
 	
 	//It checks to make sure that it can connect to _at least_ one word
@@ -67,7 +68,7 @@ char* ChooseStartWord(char** allWordsArray, struct wordConnections **(*HashMap),
 	}
 	Free_WordLL(connections);
 	//If the word it happens to choose can't connect to anything (for example, ahoy) it retries
-	return ChooseStartWord(allWordsArray, HashMap, 0);  
+	return ChooseStart(allWordsArray, HashMap, 0);  
 }
 
 
@@ -110,21 +111,6 @@ int goalCheck(char* input, char* goal, int isValid){
 }
   
 
-
-
-char** ChoosePath(char** allWords, struct wordConnections*** HashMap, int minConnections){
-	char** shortestConnection; 
-	//printf("Your Commands are: \nAdd <word> - which adds a word.\nRemove <word> - Removes a word, and all words after it.\nUndo - Undoes your previous turn\nFinish - Ends the game\nHelp - Shows this again"); 
-	
-	do{
-	
-		char* start = ChooseStartWord(allWords, HashMap, 0);  
-		shortestConnection = (char**)BreadthFirstSearch_Distance(start, minConnections + 1, HashMap, HASH_SET); 
-
-	}while(shortestConnection == NULL); 
-	return shortestConnection; 
-	
-}
 
 void AfterGameOutput(int gameEndCondition, struct GameComponents* gc){
 	switch(gameEndCondition){
@@ -194,12 +180,12 @@ void EnterText(){
 }
 
 
-int trueGame(int minConnections, char** allWords, char** wordStorage, struct wordConnections **(*HashMap)){
-	//All it does it initialize the Pathfinder Pointers
-	struct GameComponents *gc = InitializeGameComponents(allWords, HashMap, minConnections);
+int round_FLWP(int minConnections, char** allWords, struct wordConnections **(*HashMap), struct GameComponents* gc, struct PathfinderGame *pc){
+
+	gc->hc->hintPoints = pc->hintPoints; 
 	int endCondition;
 	char* input;  
-	printf("Your goal is to start at %s, and arrive at %s\n", gc->shortestPath[0], gc->shortestPath[minConnections]); 
+	printf("Your goal is to start at %s, and arrive at %s\nYou have %d hint points.\n", gc->start, gc->goal, gc->hc->hintPoints); 
 	//If the user asks to remove a word
 	int isRemove; 
 	int isValid; 
@@ -223,6 +209,16 @@ int trueGame(int minConnections, char** allWords, char** wordStorage, struct wor
 				RemoveWord_Struct(gc, input, 1); 
 				isRemove = 1; 
 			}
+			else if(input[0] == '?'){
+				input = substr(input, 1, numLetters + 1, 1);
+				int inDic = inDictionary(input, HashMap); 
+				if(inDic == 1){
+					printf("That is a valid word\n"); 
+				}
+				else{
+					printf("That is not a valid word\n"); 
+				}
+			}
 			 
 		
 			//if they want to undo their previous move
@@ -236,11 +232,11 @@ int trueGame(int minConnections, char** allWords, char** wordStorage, struct wor
 				
 			}
 			else if(strcmp(input, "g") == 0){
-				printf("Your goal word is %s\n", gc->shortestPath[minConnections]); 
+				printf("Your goal word is %s\n", gc->goal); 
 			}
 			//Help command
 			else if(strcmp(input, "h") == 0){
-				Help(gc->shortestPath[minConnections]); 
+				Help(gc->goal); 
 			}
 			else if(strcmp(input, "1") == 0){
 				char* output = hint1((unsigned long long)gc); 
@@ -258,6 +254,11 @@ int trueGame(int minConnections, char** allWords, char** wordStorage, struct wor
 				printf("%s\n", output);
 				free(output);  
 			}
+			else if(strcmp(input, "p") == 0){ 
+				printf("Hint Points Available: %d", gc->hc->hintPoints); 
+		
+		
+			}		
 			else if(strcmp(input, "q") != 0 && strcmp(input, "finish") != 0){
 				isValid = AddWord_Struct(gc, input, HashMap); 
 			}
@@ -271,16 +272,43 @@ int trueGame(int minConnections, char** allWords, char** wordStorage, struct wor
 		
 		}
 		//If the user removes a word (isRemove == 1), then we don't need to check. Otherwise, we do
-	}while((isRemove == 1)?1:(endCondition = goalCheck(input, gc->shortestPath[gc->minConnections], isValid)) == 0); 
-
+	}while((isRemove == 1)?1:(endCondition = goalCheck(input, gc->goal, isValid)) == 0); 
+	int score = (endCondition == 2)? -1 : getScore(gc); 
 	AfterGameOutput(endCondition, gc); 
-	FreeGameComponents(gc);
-	return (endCondition == 1)?  0 : 1; 
+	return score; 
+
+	
 	//Until the game is won it just loop s
 	
 }
 
 int getScore(struct GameComponents* gc){
-	return 100 * ((double)gc->minConnections / (double)gc->numMoves); 
+	double a = gc->minConnections; 
+	double x = gc->numMoves; 
+	//This is how many times the min connection should be equal to 0%
+	double c = 5; 
+	double y = -( (x-a) / (a * (c - 1)) ) + 1;  
+	y *= 100; 
+	y = ceil(y); 
+	//Makes sure y is never less than 0 
+	if(y < 0){
+		y = 0; 
+	}
+	return (int)y; 
+}
+
+int calcScore(int n1, int n2){
+	double a = n1; 
+	double x = n2; 
+	//This is how many times the min connection should be equal to 0%
+	double c = 5; 
+	double y = -( (x-a) / (a * (c - 1)) ) + 1;  
+	y *= 100; 
+	y = ceil(y); 
+	//Makes sure y is never less than 0 
+	if(y < 0){
+		y = 0; 
+	}
+	return (int)y; 
 }
 

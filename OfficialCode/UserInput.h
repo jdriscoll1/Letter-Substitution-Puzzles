@@ -45,6 +45,14 @@ int Check_Input(char* prevWord, const char* currWord, struct wordConnections ***
 /*This Converts a word to lowercase*/ 
 char* toLowerCase(char* input); 
 
+/*Between rounds it asks if you'd like to continue
+@return cases: 
+@return 0: User chose advance
+@return 1: User chose quit 
+@return 2: User chose to go back a level
+@return 3: User chose same difficulty*/
+int ContinueGames(); 
+
 /*This extracts a substring from a string
 @param word --> The string to be extracted from
 @param start --> The first letter to be chosen

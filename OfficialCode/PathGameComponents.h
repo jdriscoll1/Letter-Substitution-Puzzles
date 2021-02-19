@@ -6,9 +6,10 @@
 #include "Hints.h"
 
 struct  GameComponents{
-
+	//This is where it starts
+	char* start; 
 	//This is the shortest path 
-	char** shortestPath; 
+	char* goal; 
 	//This is the minimum number of connections 
 	int minConnections; 
 	//This is the amount of hints you can use
@@ -31,13 +32,22 @@ struct  GameComponents{
 
 };
 
-/*
-This instantiates the Game Components
+/*This instantiates the Game Components
 @param allWords --> The array that stores all of the words
 @param HashMap --> The HashMap that stores all word's connections
 @param minConnections --> The minimum number of connections needed to connect
 @return --> Returns all of the Initalized Game Components, including the Start & Goal Word*/
 struct GameComponents *InitializeGameComponents(char** allWords, struct wordConnections **(*HashMap), int minConnections);
+
+/*This resets the Game Components so if the user decides to redo the round, they can*/
+void ResetGameComponents(struct GameComponents *gc);
+
+/*This checks if a word is in the game
+@param word --> This is the word that the user wants to see if it's in the Hash Map
+@param Hash Map --> This will be checked
+@return 1 -- it is in the dictionary 0 -- it is not in dictionary*/
+int inDictionary(const char* word, struct wordConnections ***HashMap); 
+
 
 /*This removes a desired word
 @param gc --> All of the initalized game components
