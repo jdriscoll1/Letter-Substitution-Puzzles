@@ -137,5 +137,9 @@ void* Remove_TwoNodeAttatchment(void* pointer, struct TreeSetNode *curNode, int 
 Don't forget to free the tree head
 Should look like: FreeTreeSet(TreeHead->start); free(TreeHead); */ 
 void Free_TreeSet(struct TreeSetNode *header);
+
+void preorder_TreeSet(struct TreeSetNode *header); 
+
+void postorder_TreeSet(struct TreeSetNode *header); 
 	
 #endif

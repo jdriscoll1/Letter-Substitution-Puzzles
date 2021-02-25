@@ -150,8 +150,11 @@ char** BreadthFirstSearch_Distance(char* start, int minConnections, struct wordC
 	bool isPossible = false;  
 	
 	while(goalFound == false){
+	
 		bc->prevConnection = bc->prevConnection->next;
 
+		
+		
 		bc->End = AddToTreeStorage_BFS(bc, minConnections, storageType, options, HashMap); 
 		
 		//If it sees that the current depth is > minConnections it'll return NULL
@@ -223,10 +226,14 @@ char* BreadthFirstSearch_Distance_Goal(char* start, int minConnections, struct w
 	bool isPossible = false;  
 	
 	while(goalFound == false){
+	
 		bc->prevConnection = bc->prevConnection->next;
-
+		printf("%s: \n", bc->prevConnection->word); 
+		if(strcmp(bc->prevConnection->word, "line") == 0){
+			printf("Here"); 
+		}
 		bc->End = AddToTreeStorage_BFS(bc, minConnections, storageType, options, HashMap); 
-		
+		 
 		//If it sees that the current depth is > minConnections it'll return NULL
 		//With this in mind, this means that it has acheived the current depth 
 		if(bc->End == NULL){
@@ -236,13 +243,12 @@ char* BreadthFirstSearch_Distance_Goal(char* start, int minConnections, struct w
 		//If it cannot connect as far out as intended
 		if(bc->prevConnection->next == NULL){			  
 			//No need to let the user know this lol
-			//printf("\nThere are no words %d connections away that connect with %s\n", minConnections, start); 
+		
 			//It cannot return or else there will be memory leaks 
 			goalFound = -1;
 		}
 		
-		//Free_WordLL(list);	
-		
+	
 		
 		
 	}
@@ -297,7 +303,7 @@ int BreadthFirstSearch_DistanceOptions(char* start, int minConnections, struct w
 	while(goalFound == false){
 		bc->prevConnection = bc->prevConnection->next;
 
-		
+
 		bc->End = AddToTreeStorage_BFS(bc, minConnections, storageType, options, HashMap); 
 		
 		//If it sees that the current depth is > minConnections it'll return NULL
@@ -428,9 +434,10 @@ struct TreeStorageNode* AddToTreeStorage_BFS(struct BFSComponents *bc, int minCo
 		
 		//Now we have to add it to the HashSet or TreeSet, depending which one the programmer chooses to use 
 		if(storageType == TREE_SET){
-		
+			
 			if(Search_TreeSet(currWord, bc->TreeHead->start, WORD) == 0){
 				bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, currDepth); 
+				AddNode_TreeSet((void*)currWord, bc->TreeHead, bc->TreeHead->start, DUMMY, WORD); 
 				if(currDepth == minConnections){
 					add_ArrayList(bc->End, options, TSN); 			
 				}		

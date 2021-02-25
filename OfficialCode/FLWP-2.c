@@ -58,13 +58,51 @@ void FLWP();
 
 
 int main(){ 
-	struct wordConnections **(*HashMap) = AllocateHashMap();	
-	char** wordStorage = FillHashMap(HashMap, 0);
-	char** allWords = ExtrapolateAllWords(); 
-	char* l = BreadthFirstSearch_Distance_Goal("ruff", 10, HashMap, TREE_SET);
-	free(l);  
-	FreeMainComponents(HashMap, wordStorage, allWords);
+	int a[] = {0, 1, 2, 7, 4};
+	int lengthA = sizeof(a)/sizeof(int);
+	struct DummyHeadNode *tree = Allocate_TreeSet(a);
+	int i;  
+	for(i = 1; i < lengthA; i++){
+		AddNode_TreeSet((void*)&(a[i]), tree, tree->start, DUMMY, INTEGER);
+	 
+		Print_TreeSet(tree->start, INTEGER); 
+		printf("\n"); 
+	} 
+	printf("%p", tree->start->greater->greater->greater); 
+	//I think I may have found the issue
+	//It claims taht teh depth of 
+	/*
+	1
+  0   4	<-- 0?
+	 2 7 <-- 1?
+	*///Fix this tmrw. For now I need a break.
+
+	Free_TreeSet(tree->start);
+	free(tree);  
+	
 	return 0;  
+}
+void AVLTest1(){
+		int a[] = {5, 4, 3, 2, 1, 0}; 
+	int length = sizeof(a)/sizeof(int); 
+	struct DummyHeadNode *tree = Allocate_TreeSet(a);
+	int i; 
+	for(i = 1; i < length; i++){
+		AddNode_TreeSet((void*)&(a[i]), tree, tree->start, DUMMY, INTEGER);  
+		Print_TreeSet(tree->start, INTEGER); 
+		printf("\n"); 
+		preorder_TreeSet(tree->start); 
+		printf("\n"); 
+	} 
+
+	Free_TreeSet(tree->start);
+	free(tree);  
+	
+	
+}
+void AVLTest2(){
+	
+	
 }
 
 
@@ -219,13 +257,13 @@ void AVLTree(){
 	srand(time(0)); 
 	int min = 0; 
 	int max = 200; 
-	char* x[] = {"pies", "ties", "lies", "dies"}; 
+	char* x[] = {"tied", "tier", "tics", "tees", "dies", "lies", "pies", "ties", "vies", "toes", "tins", "tips", "tits"}; 
 	int length = sizeof(x) / sizeof(char*);  
 	 
 	struct DummyHeadNode *header = Allocate_TreeSet((void*)(*x)); 
 	int i = 0; 
 	for(i = 1; i < length; i++){ 
-		AddNode_TreeSet((void*)*(x+i), (void*)header, header->start, DUMMY, INTEGER);
+		AddNode_TreeSet((void*)*(x+i), (void*)header, header->start, DUMMY, WORD);
 		 
 	}
 	printf("Originally: "); 
