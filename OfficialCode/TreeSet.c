@@ -26,6 +26,7 @@ struct DummyHeadNode *Allocate_TreeSet(void* data){
 
 
 int AddNode_TreeSet(void* data, void* pointer, struct TreeSetNode *curNode, enum dataType pointerType, enum dataType valueType){
+	//printf("Checking: %d\n", *(int*)curNode->data); 
 	//we have to compare if the node is smaller or greater
 	int isSmaller = compare(data, curNode->data, valueType); 
 	//they are the same
@@ -45,6 +46,7 @@ int AddNode_TreeSet(void* data, void* pointer, struct TreeSetNode *curNode, enum
 			//Set the new node
 			AddNode(data, curNode, isSmaller); 
 			DetermineDepth(curNode);  
+			//printf("\nData: %d, Depth: %d\n", *(int*)curNode->data, curNode->depth); 
 			return 1; 
 		}
 	}
@@ -58,28 +60,36 @@ int AddNode_TreeSet(void* data, void* pointer, struct TreeSetNode *curNode, enum
 		else{
 			//add the new node
 			AddNode(data, curNode, isSmaller);
+			//It determines the depth, not of the node it just sent in, but the node that connected to the node that was just sent in 
+		 
 			DetermineDepth(curNode); 
 			return 1;  
 		}
 		
 	}
-	balance(pointer, curNode, pointerType, valueType); 
+  
+	balance(pointer, curNode, pointerType, valueType);   
 	DetermineDepth(curNode);  
 	
 }
 //This determines what the depth of a node should be when a node has recently been added 
 void DetermineDepth(struct TreeSetNode *curNode){
-	printf("\nDetermining..\n"); 
+	//printf("Determine Depth Start: Node: %d, D: %d.\n", *(int*)curNode->data, curNode->depth); 
+	//printf("\nDetermining..\n"); 
 	//First, Determine if it has either a greater or smaller, or perhaps both
 	int greater = (curNode->greater != NULL)?1:0; 
 	int smaller = (curNode->smaller != NULL)?1:0; 
 	//if it only has a greater node, its depth should be one larger than that of its child
 	if(greater && !smaller){
 		curNode->depth = curNode->greater->depth + 1; 
+		//printf("Changing Node: %d. New Depth: %d\n", *(int*)curNode->data, curNode->depth);  
+	
 	//if it only has a smaller node, its depth should be one larger than that of its child	
 	}
 	else if(smaller && !greater){
+	
 		curNode->depth = curNode->smaller->depth + 1; 
+		//printf("Changing Node: %d. New Depth: %d\n", *(int*)curNode->data, curNode->depth); 
 	}
 	//if it has both of its nodes, it gets a bit trickier
 	else if(greater && smaller){
@@ -90,17 +100,20 @@ void DetermineDepth(struct TreeSetNode *curNode){
 		//if it's greater childs depth is larger than that of its smaller child
 		if(greaterDepth > smallerDepth){
 			//it gets added one plus the greater depth
-			curNode->depth = greaterDepth + 1; 
+			curNode->depth = greaterDepth + 1;
+			//printf("Changing Node: %d. New Depth: %d\n", *(int*)curNode->data, curNode->depth);  
 		}
 		//if the smaller depth is greater or equal
 		else{
 			curNode->depth = smallerDepth + 1; 
+			//printf("Changing Node: %d. New Depth: %d\n", *(int*)curNode->data, curNode->depth); 
 		}
 	
 	}
 	//if not greater and not smaller
 	else{
-		curNode->depth = 0; 
+		curNode->depth = 0;
+		//printf("Changing Node: %d. New Depth: %d\n", *(int*)curNode->data, curNode->depth); 
 	}
 	
 }
@@ -236,7 +249,7 @@ void balance(void* pointer, struct TreeSetNode *header, enum dataType nodeType, 
 		//offset on the left
 		if(offset == 1){
 			if(header->smaller->greater != NULL){
-				printf("\n"); 
+				//printf("\n"); 
 				if( (header->smaller->greater->greater != NULL) ||
 					(header->smaller->greater->smaller != NULL) ){
 					//printf("\n[Double Rotate Right] "); 
@@ -269,7 +282,7 @@ void balance(void* pointer, struct TreeSetNode *header, enum dataType nodeType, 
 			}
 			//If it's offset on the right, it is again, necessary to check if it needs to be rotated upon
 			rotateLeft(pointer, header, nodeType, valueType);
-			//printf("  [Double Rotate Left]"); 
+			//printf("  [Rotate Left]"); 
 			
 		}	
 	
@@ -279,7 +292,7 @@ void rotateRight(void *pointer, struct TreeSetNode *header, enum dataType nodeTy
 	 
 	//If the left is not being pointed at 
 	if(header->smaller == NULL){
-		//printf("\n[Rotate Right] --> No node on which to pivot");
+		printf("\n[Rotate Right] --> No node on which to pivot");
 		exit(0);  
 	}
 		/*3
@@ -334,6 +347,8 @@ void rotateRight(void *pointer, struct TreeSetNode *header, enum dataType nodeTy
 		/*First set the two nodes to which 2 connects to as temporaries*/
 		struct TreeSetNode *tempSmall = header->smaller->greater->smaller; 
 		struct TreeSetNode *tempBig = header->smaller->greater->greater; 
+		header->smaller->depth--; 
+		header->smaller->greater->depth++; 
 		/*Secondly, have the 2 greater point to the 3*/
 		header->smaller->greater->greater = header; 
 		/*Thirdly, have the 2 smaller point to the 1*/
@@ -432,6 +447,13 @@ void rotateLeft(void* pointer, struct TreeSetNode *header, enum dataType nodeTyp
 	
 	//Case 1
 	else if(header->greater->smaller != NULL){
+		//Set the depth of the header->greater and the header->greater->smaller because there will be no point at which their depth will be determiend
+		//The greater node will be pushed down one, since it just added a node, it's number should be pushed up one. So now, since it's being moved down, it will go down 1
+		header->greater->depth--; 
+		//The node that was just added will be the new top, since it's going up one, its depth should reflect that
+		header->greater->smaller->depth++; 
+		
+		//These are the two values that may or may not be null
 		struct TreeSetNode *tempSmall = header->greater->smaller->smaller; 
 		struct TreeSetNode *tempBig = header->greater->smaller->greater; 
 		//Make the 2 greater connect to the 3 
@@ -467,6 +489,8 @@ void rotateLeft(void* pointer, struct TreeSetNode *header, enum dataType nodeTyp
 		header->greater->smaller =  tempBig; 
 		//Disconnect the 1 from the 3
 		header->greater = tempSmall; 
+		
+		
 		
 		
 	}

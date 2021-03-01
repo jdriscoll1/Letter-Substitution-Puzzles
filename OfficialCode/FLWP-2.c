@@ -55,30 +55,19 @@ void FreeMainComponents(struct wordConnections*** HashMap, char** wordStorage, c
 void PathfinderGameMain(); 
 int ConnectionOptimization(); 
 void FLWP(); 
+void AVLTest1(); 
 
 
 int main(){ 
-	int a[] = {0, 1, 2, 7, 4};
-	int lengthA = sizeof(a)/sizeof(int);
-	struct DummyHeadNode *tree = Allocate_TreeSet(a);
-	int i;  
-	for(i = 1; i < lengthA; i++){
-		AddNode_TreeSet((void*)&(a[i]), tree, tree->start, DUMMY, INTEGER);
-	 
-		Print_TreeSet(tree->start, INTEGER); 
-		printf("\n"); 
-	} 
-	printf("%p", tree->start->greater->greater->greater); 
-	//I think I may have found the issue
-	//It claims taht teh depth of 
-	/*
-	1
-  0   4	<-- 0?
-	 2 7 <-- 1?
-	*///Fix this tmrw. For now I need a break.
-
-	Free_TreeSet(tree->start);
-	free(tree);  
+	srand(time(0)); 
+	struct wordConnections **(*HashMap) = AllocateHashMap();	
+	char** wordStorage = FillHashMap(HashMap, 0);
+	int distance = 10; 
+	char** l = BreadthFirstSearch_Distance("ruff", distance, HashMap, TREE_SET);
+	Print_2DArray(distance + 1, (void***)l, STRING);  
+	Free_2DArray(distance + 1, (void***)l, 0); 
+	FreeWordStorage(wordStorage); 
+	FreeHashMap(HashMap); 
 	
 	return 0;  
 }

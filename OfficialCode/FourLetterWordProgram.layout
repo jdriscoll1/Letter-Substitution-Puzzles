@@ -35,9 +35,9 @@ LeftChar=1
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
-CursorCol=44
-CursorRow=78
-TopLine=61
+CursorCol=23
+CursorRow=75
+TopLine=52
 =======
 CursorCol=24
 CursorRow=56
@@ -68,13 +68,13 @@ LeftChar=1
 <<<<<<< HEAD
 <<<<<<< HEAD
 CursorCol=5
-CursorRow=117
-TopLine=1
+CursorRow=519
+TopLine=16
 LeftChar=1
 [Editor_8]
-CursorCol=13
-CursorRow=130
-TopLine=1
+CursorCol=1
+CursorRow=141
+TopLine=121
 =======
 CursorCol=3
 CursorRow=25
