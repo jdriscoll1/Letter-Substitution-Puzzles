@@ -6,7 +6,7 @@ LeftChar=1
 [Editors]
 <<<<<<< HEAD
 <<<<<<< HEAD
-Order=2,7,8
+Order=2,13,7
 <<<<<<< HEAD
 Focused=7
 =======
@@ -35,8 +35,8 @@ LeftChar=1
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
-CursorCol=9
-CursorRow=56
+CursorCol=18
+CursorRow=61
 TopLine=79
 =======
 CursorCol=24
@@ -67,8 +67,8 @@ LeftChar=1
 [Editor_7]
 <<<<<<< HEAD
 <<<<<<< HEAD
-CursorCol=20
-CursorRow=1064
+CursorCol=15
+CursorRow=1049
 TopLine=1040
 LeftChar=1
 [Editor_8]
@@ -124,9 +124,9 @@ TopLine=112
 LeftChar=1
 [Editor_13]
 CursorCol=142
-CursorRow=51
-TopLine=44
-LeftChar=39
+CursorRow=43
+TopLine=32
+LeftChar=9
 [Editor_14]
 <<<<<<< HEAD
 CursorCol=1
