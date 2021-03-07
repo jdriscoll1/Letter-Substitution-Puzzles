@@ -94,13 +94,98 @@ void balance(void* pointer, struct TreeSetNode* header, enum dataType nodeType, 
 @return 0 -- if it is balanced. 1 -- If it is long on the left. 2-- if it is too long on the right.*/
 int checkBalance(struct TreeSetNode *header);
 
+/*This method takes 1 node, and figures out which side is deeper
+@param header--> The method whose values will be checked
+@param pointerRight --> This checks whether how it is linked to pointer, necessary in the event depth is equal  
+  O                       O
+   \   ---> 1            /    ---> 0
+    O                   O
+    
+
+*/
+int isDeeperLeft(struct TreeSetNode *header, int pointedLeft); 
+
+/*If it is offset on the left
+@param pointer --> The header being pointing at the list 
+@param header --> The header who may be offset on the left
+@param valueType --> The dataType that may be offset
+@param nodeType --> Is the header a DummyHeader Node, or instead a Tree Set Node*/
+void leftOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType); 
+
+/*If it is offset on the right
+@param pointer --> The header being pointing at the list
+@param header --> The header who will get rotated
+@param valueType --> The dataType (Integer)
+@param nodeType --> Is the header a DummyHeader Node, or instead  */
+void rightOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType); 
+
+
+
 /*Rotates a set of nodes rightwards
 @param pointer --> the pointer that will soon be appointed to a new node*/
 void rotateRight(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType type); 
 
+/*
+     c
+    /
+   b
+  /
+ a 
+*/
+void rotateRightCase1(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType); 
+
+/*
+     c
+    /
+   a
+   \
+    b 
+*/
+void rotateRightCase2(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType); 
+
+/*
+     b
+    / \
+   a   c
+
+*/
+void rotateRightCase3(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType); 
+
 /*Rotates a set of nodes leftwards
 @param pointer --> the pointer that will soon be appointed to a new node*/
 void rotateLeft(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType type); 
+
+
+/*
+      a
+       \
+        c
+       /
+      b
+*/
+void rotateLeftCase1(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType); 
+
+/*  a
+     \ 
+      b
+       \
+        c
+*/
+void rotateLeftCase2(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType); 
+/*
+	b
+   / \
+  a   c
+*/
+void rotateLeftCase3(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType);
+
+
+/*This is the method where the pointer figures out exactly what it is pointing at
+@param pointer --> The pointer who will point at a new node
+@param node --> The node at which the pointer will point
+@param nodeType --> What is the node?
+@param valueType --> The is the type of value?*/
+void reappoint(void* pointer, struct TreeSetNode* node, enum dataType nodeType, enum dataType valueType); 
 
 /*Finds the word that is to be removed from the tree set, and removes it
 @param data --> the data to be removed
@@ -140,6 +225,26 @@ void Free_TreeSet(struct TreeSetNode *header);
 
 void preorder_TreeSet(struct TreeSetNode *header); 
 
-void postorder_TreeSet(struct TreeSetNode *header); 
+void postorder_TreeSet(struct TreeSetNode *header);
+
+/*Takes an array and converts it into a tree set
+@param dim1Size --> The length of the array
+@param arr --> The array being inserted
+@time --> O(n)
+@return --> Returns a tree set with nothing but the values in the array*/
+struct DummyHeadNode* ConvertArrayToTree(int dim1Size, void** arr, enum dataType data);  
+
+/*This is a huge AVL Tree Test*/	
+void BigAVLTest(); 
+
+/*This takes an array, converts it into an AVL tree, and outputs the preorder for testing purposes
+@param a --> The array to be converted
+@param length --> The length of that array */
+void AVLTestQuick(int* a, int length); 	
 	
+	
+void arrayPermutations_Lobby(); 
+void permute(int *arr, int l, int r); 
+void swap(int* arr, int i, int j);  	
+
 #endif

@@ -55,44 +55,23 @@ void FreeMainComponents(struct wordConnections*** HashMap, char** wordStorage, c
 void PathfinderGameMain(); 
 int ConnectionOptimization(); 
 void FLWP(); 
-void AVLTest1(); 
 
 
 int main(){ 
 	srand(time(0)); 
 	struct wordConnections **(*HashMap) = AllocateHashMap();	
 	char** wordStorage = FillHashMap(HashMap, 0);
-	int distance = 10; 
-	char** l = BreadthFirstSearch_Distance("ruff", distance, HashMap, TREE_SET);
-	Print_2DArray(distance + 1, (void***)l, STRING);  
-	Free_2DArray(distance + 1, (void***)l, 0); 
-	FreeWordStorage(wordStorage); 
-	FreeHashMap(HashMap); 
-	
+	char** allWords = ExtrapolateAllWords();
+	int i = 0; 
+	for(i = 0; i < 500; i++){
+		struct word* l = BreadthFirstSearch_Dest_WordLL("ruff", "king", HashMap, HASH_SET);
+		 
+		Free_WordLL(l); 
+	}
+	FreeMainComponents(HashMap, wordStorage, allWords); 
 	return 0;  
 }
-void AVLTest1(){
-		int a[] = {5, 4, 3, 2, 1, 0}; 
-	int length = sizeof(a)/sizeof(int); 
-	struct DummyHeadNode *tree = Allocate_TreeSet(a);
-	int i; 
-	for(i = 1; i < length; i++){
-		AddNode_TreeSet((void*)&(a[i]), tree, tree->start, DUMMY, INTEGER);  
-		Print_TreeSet(tree->start, INTEGER); 
-		printf("\n"); 
-		preorder_TreeSet(tree->start); 
-		printf("\n"); 
-	} 
 
-	Free_TreeSet(tree->start);
-	free(tree);  
-	
-	
-}
-void AVLTest2(){
-	
-	
-}
 
 
 
