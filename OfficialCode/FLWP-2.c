@@ -57,21 +57,21 @@ int ConnectionOptimization();
 void FLWP(); 
 
 
-int main(){  
-	int length = 10; 
-	int* a = FillRange_Array(0, length, 0);
-	struct DummyHeadNode *tree = Allocate_TreeSet((void*)a); 
+int main(){ 
+	srand(time(0)); 
+	struct wordConnections **(*HashMap) = AllocateHashMap();	
+	char** wordStorage = FillHashMap(HashMap, 0);
+	char** allWords = ExtrapolateAllWords();
 	int i = 0; 
-	for(i = 1; i < length; i++){
-	
-		printf("%d\n", (void*)&(a+i)); 
-	} 
-	Print_TreeSet(tree->start, INT); 
-	free(a); 
-	Free_TreeSet(tree->start); 
-	free(tree); 
+	for(i = 0; i < 500; i++){
+		struct word* l = BreadthFirstSearch_Dest_WordLL("ruff", "king", HashMap, HASH_SET);
+		 
+		Free_WordLL(l); 
+	}
+	FreeMainComponents(HashMap, wordStorage, allWords); 
 	return 0;  
 }
+
 
 
 
@@ -225,13 +225,13 @@ void AVLTree(){
 	srand(time(0)); 
 	int min = 0; 
 	int max = 200; 
-	char* x[] = {"pies", "ties", "lies", "dies"}; 
+	char* x[] = {"tied", "tier", "tics", "tees", "dies", "lies", "pies", "ties", "vies", "toes", "tins", "tips", "tits"}; 
 	int length = sizeof(x) / sizeof(char*);  
 	 
 	struct DummyHeadNode *header = Allocate_TreeSet((void*)(*x)); 
 	int i = 0; 
 	for(i = 1; i < length; i++){ 
-		AddNode_TreeSet((void*)*(x+i), (void*)header, header->start, DUMMY, INTEGER);
+		AddNode_TreeSet((void*)*(x+i), (void*)header, header->start, DUMMY, WORD);
 		 
 	}
 	printf("Originally: "); 
