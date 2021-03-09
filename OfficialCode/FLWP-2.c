@@ -64,8 +64,9 @@ int main(){
 	char** allWords = ExtrapolateAllWords();
 	int i = 0; 
 	for(i = 0; i < 500; i++){
-		struct word* l = BreadthFirstSearch_Dest_WordLL("ruff", "king", HashMap, HASH_SET);
-		 
+		struct word* l = BreadthFirstSearch_Dest_WordLL("pork", "melt", HashMap, TREE_SET);
+		Print_WordLL(l, LINKED); 
+		printf("\n");  
 		Free_WordLL(l); 
 	}
 	FreeMainComponents(HashMap, wordStorage, allWords); 
