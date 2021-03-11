@@ -132,7 +132,7 @@ void Free_GenericLinkedList(struct GenericLinkedListNode *header){
 		 
 		//If it's a tree set
 		if(header->listType == TREE_SET_LL){
-			Free_TreeSet(((struct DummyHeadNode*)(header)->listHeader)->start);  
+			Free_TreeSet(((struct DummyHeadNode*)(header)->listHeader)->start, WORD);  
 			free(header->listHeader); 
 		}
 		

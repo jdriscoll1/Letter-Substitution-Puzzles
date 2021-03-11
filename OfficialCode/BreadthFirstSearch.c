@@ -57,7 +57,7 @@ void Free_BFSComponents(struct BFSComponents* bc, enum FoundWordStorage storageT
 	/*Free The Tree Set*/
 	if(storageType == TREE_SET){
 	
-		Free_TreeSet(bc->TreeHead->start);
+		Free_TreeSet(bc->TreeHead->start, WORD);
 		free(bc->TreeHead);  
 	}
 	//Frees the Hash Set

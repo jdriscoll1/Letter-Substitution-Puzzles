@@ -18,10 +18,10 @@ int SecondHashFunction(const char* word){
 	char vowels[] = {'a', 'e', 'i', 'o', 'u', 'y'}; 
 	/*The parser that goes through each letter in the word*/
 	int wordParse = 0; 
-	
+	int vowelCheck; 
 	/*Loops through until it finds a vowel*/
 	for(wordParse = 1; wordParse < numLetters; wordParse++){
-		 int vowelCheck = VowelSearch(word[wordParse], vowels);
+		 vowelCheck = VowelSearch(word[wordParse], vowels);
 		 if(vowelCheck != -1){
 			 return vowelCheck; 
 			 
@@ -29,8 +29,8 @@ int SecondHashFunction(const char* word){
 		
 		
 	}
-	
-	return VowelSearch(word[0], vowels);
+	vowelCheck = VowelSearch(word[0], vowels); 
+	return (vowelCheck != -1) ? vowelCheck : 0;
 }
 /*Loops through a word searching for a letter*/
 int VowelSearch(char letter, char vowels[6]){
@@ -45,7 +45,7 @@ int VowelSearch(char letter, char vowels[6]){
 		
 		
 	}
-	return 0; 
+	return -1; 
 }
 
 /*Returns the Array That a word would be in

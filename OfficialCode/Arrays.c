@@ -146,7 +146,7 @@ void*** Randomize_2DArray(int dim1Size, int dim2Size, void*** array, enum arrayT
 		
 		AddNode_TreeSet(&*(randValues + index + 1), (void*)header, header->start, DUMMY, type);  
 	} 
-	Free_TreeSet(header->start); 
+	Free_TreeSet(header->start, INTEGER); 
 	free(header); 
 	free(randValues); 
 	return newArray; 

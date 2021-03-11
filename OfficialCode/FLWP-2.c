@@ -13,6 +13,8 @@ int numLetters = 4;
 
 #include "HashMap.h"
 
+#include "HashMap2.h"
+
 #include "Arrays.h"
 
 #include "BreadthFirstSearch.h"
@@ -57,19 +59,15 @@ int ConnectionOptimization();
 void FLWP(); 
 
 
-int main(){ 
-	srand(time(0)); 
-	struct wordConnections **(*HashMap) = AllocateHashMap();	
-	char** wordStorage = FillHashMap(HashMap, 0);
-	char** allWords = ExtrapolateAllWords();
-	int i = 0; 
-	for(i = 0; i < 500; i++){
-		struct word* l = BreadthFirstSearch_Dest_WordLL("pork", "melt", HashMap, TREE_SET);
-		Print_WordLL(l, LINKED); 
-		printf("\n");  
-		Free_WordLL(l); 
+int main(){
+	int i;  
+	for(i = 0; i < 5000; i++){
+		struct wordConnections **(*HashMap) = AllocateHashMap();	
+		char** wordStorage = FillHashMap(HashMap, 0);
+		FreeWordStorage(wordStorage); 
+		FreeHashMap(HashMap); 
+ 
 	}
-	FreeMainComponents(HashMap, wordStorage, allWords); 
 	return 0;  
 }
 
@@ -278,7 +276,7 @@ void AVLTree(){
 	//printf("\nHeader->smaller->greater->greater->greater: %d", *(int*)header->start->smaller->greater->greater->greater->data); 
 	//printf("\nHeader->smaller->greater->greater->smaller: %d", *(int*)header->start->smaller->greater->greater->smaller->data); 
 	
-	Free_TreeSet(header->start);
+	Free_TreeSet(header->start, INTEGER);
 	free(header);
 	
 	

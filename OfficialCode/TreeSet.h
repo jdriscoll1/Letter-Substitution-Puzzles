@@ -1,5 +1,7 @@
 #ifndef seenTree
 #define seenTree
+
+#include "WordLinkedList.h"
 /*This is the tree set Node
 The primary use of the tree set node is to store the words that have already been looked through while pathfinding, to avoid it running indefintely
 How it works --> It starts off with a word, for example, pies. Then when a word is added, depending on if it is smaller or bigger, it will
@@ -9,7 +11,7 @@ When calling header, always use header->start because the dummy head node is a d
 */ 
 
 enum dataType{
-	INTEGER, WORD, DUMMY, SET_NODE
+	INTEGER, WORD, DUMMY, SET_NODE, GENERIC_NODE, WORDLL
 };
 /*The Structure of the Tree Set*/ 
 struct TreeSetNode {
@@ -42,8 +44,9 @@ struct DummyHeadNode *Allocate_TreeSet(void* data);
 @param pointer --> This is what points to the current node, could either be a dummy header node, or a tree set node
 @param curNode --> the current node that the person is on
 @param valueType --> the type of data, Word? Int? Char?
-@param pointerType --> The type of pointer that points to the current node*/ 
-int AddNode_TreeSet(void* data, void* pointer, struct TreeSetNode *curNode, enum dataType pointerType, enum dataType valueType); 
+@param pointerType --> The type of pointer that points to the current node
+@return --> Returns the added node*/ 
+struct TreeSetNode*  AddNode_TreeSet(void* data, void* pointer, struct TreeSetNode *curNode, enum dataType pointerType, enum dataType valueType); 
 
 /*This determines the depth of a node when a node has just been added
 @param curNode --> the nodes whose depth will be determined*/ 
@@ -63,6 +66,11 @@ int nextIsNull(int isSmaller, struct TreeSetNode *check);
 
 /*Prints out a tree set*/
 void Print_TreeSet(struct TreeSetNode *header, enum dataType type);  
+
+/*Compares a word to a header of a link list
+@param word --> The word being compared
+@param header --> The header of the word linked list whose nodes will be compared*/
+int wordLLCompare(struct word* newHeader, struct word* oldHeader); 
 /*Compares two words to see which is larger
 @param word1 --> the first word, contextually it is not part of the tree set
 @param word2 --> the second word, contextuallly it is part of the tree set
@@ -221,7 +229,7 @@ void* Remove_TwoNodeAttatchment(void* pointer, struct TreeSetNode *curNode, int 
 @param header --> the head of the tree node
 Don't forget to free the tree head
 Should look like: FreeTreeSet(TreeHead->start); free(TreeHead); */ 
-void Free_TreeSet(struct TreeSetNode *header);
+void Free_TreeSet(struct TreeSetNode *header, enum dataType type);
 
 void preorder_TreeSet(struct TreeSetNode *header); 
 

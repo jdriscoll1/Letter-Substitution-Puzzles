@@ -10,7 +10,7 @@ extern int numLetters;
 @param data --> The data that is to be added
 @param pointer --> The Node That Points to the New Node
 @return --> Doesn't return anything*/
-static void AddNode(void* data, struct TreeSetNode *pointer, int isSmaller); 
+struct TreeSetNode* AddNode(void* data, struct TreeSetNode *pointer, int isSmaller); 
 
 struct DummyHeadNode *Allocate_TreeSet(void* data){
 	struct DummyHeadNode *header = malloc(sizeof(struct DummyHeadNode)); 
@@ -26,13 +26,17 @@ struct DummyHeadNode *Allocate_TreeSet(void* data){
 } 
 
 
-int AddNode_TreeSet(void* data, void* pointer, struct TreeSetNode *curNode, enum dataType pointerType, enum dataType valueType){
-	//printf("Checking: %d\n", *(int*)curNode->data); 
+struct TreeSetNode* AddNode_TreeSet(void* data, void* pointer, struct TreeSetNode *curNode, enum dataType pointerType, enum dataType valueType){
+
 	//we have to compare if the node is smaller or greater
-	int isSmaller = compare(data, curNode->data, valueType); 
+	int isSmaller = compare(data, curNode->data, valueType);  
+	
+	//The node to be outputted
+	struct TreeSetNode* outputNode = NULL; 
+	
 	//they are the same
 	if(isSmaller == -1){
-		return -1; 
+		return curNode; 
 		
 	}
 	//if the new node is smaller than what it's compared against
@@ -40,15 +44,14 @@ int AddNode_TreeSet(void* data, void* pointer, struct TreeSetNode *curNode, enum
 		//if the smaller is already there
 		if(curNode->smaller != NULL){
 			//go into the smaller
-			AddNode_TreeSet(data, curNode, curNode->smaller, SET_NODE, valueType); 
+			outputNode = AddNode_TreeSet(data, curNode, curNode->smaller, SET_NODE, valueType); 
 			
 		}
 		else{
 			//Set the new node
-			AddNode(data, curNode, isSmaller); 
+			outputNode = AddNode(data, curNode, isSmaller); 
 			DetermineDepth(curNode);  
-			//printf("\nData: %d, Depth: %d\n", *(int*)curNode->data, curNode->depth); 
-			return 1; 
+			return outputNode; 
 		}
 	}
 	//if the new node is greater
@@ -56,22 +59,22 @@ int AddNode_TreeSet(void* data, void* pointer, struct TreeSetNode *curNode, enum
 		//if greater exists
 		if(curNode->greater != NULL){
 			//go to the greater and check it
-			AddNode_TreeSet(data, curNode, curNode->greater, SET_NODE, valueType); 
+			outputNode = AddNode_TreeSet(data, curNode, curNode->greater, SET_NODE, valueType); 
 		}
 		else{
 			//add the new node
-			AddNode(data, curNode, isSmaller);
+			outputNode = AddNode(data, curNode, isSmaller);
 			//It determines the depth, not of the node it just sent in, but the node that connected to the node that was just sent in 
 		 
 			DetermineDepth(curNode); 
-			return 1;  
+			return outputNode;  
 		}
 		
 	}
   
 	balance(pointer, curNode, pointerType, valueType);   
 	DetermineDepth(curNode);  
-	
+	return outputNode;
 }
 //This determines what the depth of a node should be when a node has recently been added 
 void DetermineDepth(struct TreeSetNode *curNode){
@@ -122,7 +125,7 @@ void DetermineDepth(struct TreeSetNode *curNode){
 	
 }
 
-static void AddNode(void* data, struct TreeSetNode *pointer, int isSmaller){
+struct TreeSetNode*  AddNode(void* data, struct TreeSetNode *pointer, int isSmaller){
 	/*Create the new node*/ 
 	struct TreeSetNode *newNode = malloc(sizeof(struct TreeSetNode));
 	newNode->data = data; 
@@ -137,6 +140,7 @@ static void AddNode(void* data, struct TreeSetNode *pointer, int isSmaller){
 		pointer->greater = newNode; 
 	}
 	
+	return newNode; 
 }
 
 
@@ -175,10 +179,15 @@ int nextIsNull(int isSmaller, struct TreeSetNode *check){
 	
 	
 }
+
+int wordLLCompare(struct word* newHeader, struct word* oldHeader){
+	return stringCompare(newHeader->word, oldHeader->word); 
+}
+
 //Compares two strings
 int stringCompare(char* word1, char* word2){
 	int i; 
-	 
+	
 	//Goes through the letters of both words
 	for(i = 0; i < numLetters; i++){
 		//if they aren't equal
@@ -219,6 +228,11 @@ void Print_TreeSet(struct TreeSetNode *header, enum dataType type){
 		if(type == WORD){
 			printf("%s, ", (char*)header->data); 
 		}
+		if(type == WORDLL){
+			printf("%s: ", ((struct word*)(header->data))->word); 
+			Print_WordLL(((struct word*)(header->data)), SEPERATED); 
+			printf("\n"); 
+		}
 		if(header->greater != NULL){
 			Print_TreeSet(header->greater, type); 
 		}
@@ -232,8 +246,14 @@ int compare(void* data1, void* data2, enum dataType type){
 		#Note *(int*)(data) --> (int) just a plain ol' integer, (int*) an integer pointer *(int*) a pointer to an integer pointer'*/ 
 		return intCompare(*(int*)(data1), *(int*)(data2));
 	}
-	int compare = stringCompare((char*)data1, (char*)data2);  
-	return compare; 
+	else if(type == WORD){
+		return stringCompare((char*)data1, (char*)data2);  
+	}
+	else if(type == WORDLL){
+		return wordLLCompare((struct word*)data1, (struct word*)data2);
+	}
+	printf("Incorrect Enum [compare]");
+	exit(0); 
 }
 
 
@@ -819,23 +839,25 @@ void* Remove_TwoNodeAttatchment(void* pointer, struct TreeSetNode *curNode, int 
 }
 
 /*Goes through and frees the tree set*/ 
-void Free_TreeSet(struct TreeSetNode *header){
-	if(header == NULL){
-		printf("\n[Free_TreeSet]: Empty List\n"); 
-	}
-	else{
+void Free_TreeSet(struct TreeSetNode *header, enum dataType type){
+
+	if(header != NULL){
 	
 		/*Checks if the greater location exists, if it does, it goes into it and repeats this*/ 
 		if(header->greater != NULL){ 
-			Free_TreeSet(header->greater); 
+			Free_TreeSet(header->greater, type); 
 
 		}
 		/*Checks if the smaller location exists, if it does, it goes into it and checks it's greater and smaller'*/ 
 		if(header->smaller != NULL){
-			Free_TreeSet(header->smaller); 
+			Free_TreeSet(header->smaller, type); 
 	 
 		}
 		//Now that both the greater and smaller were null, or have been freed, it frees the header
+		if(type == WORDLL){
+			//Frees the linked list 
+			Free_WordLL(header->data); 
+		}
 		free(header); 
 	}
 	
@@ -1016,7 +1038,7 @@ void AVLTestQuick(int* a, int length){
 	Print_TreeSet(tree->start, INTEGER); 
 	printf("\n"); 
 	preorder_TreeSet(tree->start); 
-	Free_TreeSet(tree->start);
+	Free_TreeSet(tree->start, INTEGER);
 	free(tree); 	
 	
 	
