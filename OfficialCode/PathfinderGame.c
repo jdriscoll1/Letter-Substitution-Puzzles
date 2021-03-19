@@ -34,7 +34,7 @@ struct PathfinderGame* init_PathfinderGame(){
 //Nothing should update 
 
 
-void Play_FLWP(struct wordConnections*** HashMap, char** wordStorage, char** allWords){
+void Play_FLWP(struct DummyHeadNode*** HashMap, char** allWords){
 	struct PathfinderGame* pc = init_PathfinderGame(); 
 	int score = 0; 
 	int i; 
@@ -110,6 +110,7 @@ void Play_FLWP(struct wordConnections*** HashMap, char** wordStorage, char** all
 			}		
 		
 	}
+	
 	FreeGameComponents(gc); 
 	printf("Final Score: %d%%", finalScore(pc)); 	
 

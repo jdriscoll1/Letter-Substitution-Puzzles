@@ -2,7 +2,7 @@
 #define seenInput
 
 #include "WordLinkedList.h"
-#include "2DLinkedList.h"
+#include "TreeSet.h"
 /*Necessary commands: 
 \n Start Game
 \n*/ 
@@ -39,7 +39,7 @@ char* Interpret_Input(struct word* userConnections, char* prevWord, char* input)
 4 - not enough letters in common
 5 - word = to prev
 6 - word does not exist*/ 
-int Check_Input(char* prevWord, const char* currWord, struct wordConnections ***HashMap); 
+int Check_Input(char* prevWord, const char* currWord, struct DummyHeadNode** (*HashMap)); 
 
 
 /*This Converts a word to lowercase*/ 

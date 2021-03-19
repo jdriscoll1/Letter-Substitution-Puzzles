@@ -9,6 +9,7 @@
 #include "Arrays.h"
 #include "HashMap.h"
 #include "UserInput.h"
+#include "HashMap2.h"
 
 #define SIZE 255
 #define NUM_LETTERS 26
@@ -72,7 +73,7 @@ char* hint1(unsigned long long gcLong){
 @param gc --> The number of game components
 @param HashMap --> How the game finds the connections
 @return --> Returns what it describes to the user*/ 
-char* hint2(unsigned long long gcLong, struct wordConnections **(*HashMap)){
+char* hint2(unsigned long long gcLong, struct DummyHeadNode **(*HashMap)){
 	char* output = malloc(SIZE); 
 	struct GameComponents *gc = (struct GameComponents*)gcLong; 
 	if(gc->hc->hintPoints < gc->hc->hint2Weight){
@@ -83,7 +84,7 @@ char* hint2(unsigned long long gcLong, struct wordConnections **(*HashMap)){
 		gc->hc->hintPoints -= gc->hc->hint2Weight; 
 		
 		//This goes through and find all of the acceptable words in the Hash Map output
-		struct word* options = hashMapOutput_Restrictions(gc->prevInput, gc->hc->wordsGiven, gc->hc->hint2OutputQuantity, HashMap);
+		struct word* options = getList_Restrictions(gc->prevInput, gc->hc->wordsGiven, gc->hc->hint2OutputQuantity, HashMap);
 		//This creates a header so that when the options move, they can still be freed
 		struct word* optionsHeader = options; 
 		//Skips the header
@@ -133,7 +134,7 @@ char* hint2(unsigned long long gcLong, struct wordConnections **(*HashMap)){
 /*Hint 3: Offers the user a letter that is used be from the first word to the last word
 @param gc --> The current game componenents
 @param HashMap --> How the user figures out a letter*/
-char* hint3(unsigned long long gcLong, struct wordConnections **(*HashMap)){
+char* hint3(unsigned long long gcLong, struct DummyHeadNode **(*HashMap)){
 	//This is the output 
 	char* output = malloc(SIZE); 
 	//Converts the long into a structure
@@ -263,7 +264,7 @@ void free_HintComponents(unsigned long long hcLong){
 
 
 
-struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(char* start, char* goal, struct wordConnections **(*HashMap), struct hint3Struct *hc, bool* HashSet, enum FoundWordStorage storageType){
+struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(char* start, char* goal, struct DummyHeadNode **(*HashMap), struct hint3Struct *hc, bool* HashSet){
 	 
 	//If the start word and goal word are equal, it returns 0
 	if(strcmp(start,goal) == 0){
@@ -271,7 +272,7 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(char* start, char* go
 		exit(0); 
 	}
 	
-	struct BFSComponents* bc = init_BFSComponents(start, storageType);
+	struct BFSComponents* bc = init_BFSComponents(start);
 
 	bool goalFound = false; 
 
@@ -281,7 +282,7 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(char* start, char* go
  
 		bc->prevConnection = bc->prevConnection->next;
 		
-		bc->End = AddToTreeStorage_Dist_BFS(bc, goal, storageType,  HashMap);  
+		bc->End = AddToTreeStorage_Dist_BFS(bc, goal, HashMap);  
 		if(strcmp(bc->End->word, goal) == 0){
 			goalFound = true; 
 		}
@@ -310,7 +311,7 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(char* start, char* go
 	Convert_TreeStorageNodeArrayList_HintRestrictions(output, HashSet, bc->End);
 
 	//Frees the structure
-	Free_BFSComponents(bc, storageType); 
+	Free_BFSComponents(bc); 
 	
 	return (goalFound == -1)?NULL:output; 
 	
@@ -321,7 +322,7 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(char* start, char* go
 	 	//If there are no words in between, that is, if the connection is direct
 }
 
-void init_hint3(struct HintComponents *hc, char* currWord, char* goal, struct wordConnections **(*HashMap)){
+void init_hint3(struct HintComponents *hc, char* currWord, char* goal, struct DummyHeadNode **(*HashMap)){
 	//First, get back to the front of the generic linked list 
 	hc->letterOptions = hc->letterOptionsHeader; 
 	//Then, I have to add a new location (which I do believe gets added to the front)
@@ -332,7 +333,7 @@ void init_hint3(struct HintComponents *hc, char* currWord, char* goal, struct wo
 	hc->letterOptions->listHeader = malloc(sizeof(struct hint3Struct)); 
 	((struct hint3Struct*)(hc->letterOptions->listHeader))->word = currWord; 
 	//Then, find the available letters using the Breadth First Search Distance array and set that to the array list 
-	((struct hint3Struct*)(hc->letterOptions->listHeader))->letters = BreadthFirstSearch_Dest_HintRestrictions(currWord, goal, HashMap, ((struct hint3Struct*)(hc->letterOptions->listHeader)), hc->lettersGiven, HASH_SET); 
+	((struct hint3Struct*)(hc->letterOptions->listHeader))->letters = BreadthFirstSearch_Dest_HintRestrictions(currWord, goal, HashMap, ((struct hint3Struct*)(hc->letterOptions->listHeader)), hc->lettersGiven); 
 
 	
 }

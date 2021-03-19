@@ -1,7 +1,7 @@
 #ifndef seenPathGameComponents
 #define seenPathGameComponents
 
-#include "2DLinkedList.h"
+#include "TreeSet.h"
 #include "ArrayList.h"
 #include "Hints.h"
 
@@ -37,7 +37,7 @@ struct  GameComponents{
 @param HashMap --> The HashMap that stores all word's connections
 @param minConnections --> The minimum number of connections needed to connect
 @return --> Returns all of the Initalized Game Components, including the Start & Goal Word*/
-struct GameComponents *InitializeGameComponents(char** allWords, struct wordConnections **(*HashMap), int minConnections);
+struct GameComponents *InitializeGameComponents(char** allWords, struct DummyHeadNode** (*HashMap), int minConnections);
 
 /*This resets the Game Components so if the user decides to redo the round, they can*/
 void ResetGameComponents(struct GameComponents *gc);
@@ -46,7 +46,7 @@ void ResetGameComponents(struct GameComponents *gc);
 @param word --> This is the word that the user wants to see if it's in the Hash Map
 @param Hash Map --> This will be checked
 @return 1 -- it is in the dictionary 0 -- it is not in dictionary*/
-int inDictionary(const char* word, struct wordConnections ***HashMap); 
+int inDictionary(const char* word, struct DummyHeadNode** (*HashMap)); 
 
 
 /*This removes a desired word
@@ -63,7 +63,7 @@ void ResetUndo_Struct(struct GameComponents* gc);
 @param newWord --> The new word that the user entered
 @param HashMap --> The Hash Map who is checked to see if the word is valid
 @return --> Returns a 0 if it failed, and a 1 if it worked TO-DO: More specific fail messages (2 = Too Short?)*/
-int AddWord_Struct(struct GameComponents* gc, const char* newWord, struct wordConnections **(*HashMap));
+int AddWord_Struct(struct GameComponents* gc, const char* newWord, struct DummyHeadNode** (*HashMap));
 
 //This goes through the game components and frees them
 void FreeGameComponents(struct GameComponents *gameComponents);

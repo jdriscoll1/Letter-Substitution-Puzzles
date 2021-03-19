@@ -1,3 +1,5 @@
+#ifndef HashMap2
+#define HashMap2
 #include "TreeSet.h"
 
 /*
@@ -26,7 +28,16 @@ struct TreeSetNode* addRow(char* currWord, struct DummyHeadNode* header);
 //function for adding a column
 void addCol(char* currWord, struct word* header);
 
+struct word* getList(const char* word, struct DummyHeadNode*** HashMap);
+
 void Print_HashMap(struct DummyHeadNode** (*HashMap)); 
 
 //Frees the Hash Map
 void Free_HashMap(struct DummyHeadNode*** HashMap); 
+
+//Restrictions for getting the list
+struct word *getList_Restrictions(char* input, struct word*** HashSet, int cap, struct DummyHeadNode **(*HashMap));
+
+FILE *OpenFile(); 
+
+#endif

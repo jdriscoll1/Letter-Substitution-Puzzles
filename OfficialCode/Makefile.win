@@ -4,8 +4,8 @@
 CPP      = g++.exe -D__DEBUG__
 CC       = gcc.exe -D__DEBUG__
 WINDRES  = windres.exe
-OBJ      = ../OfficialCode/2DLinkedList.o ../OfficialCode/FLWP-2.o ../OfficialCode/HashFunctions.o ../OfficialCode/HashMap.o ../OfficialCode/TreeSet.o ../OfficialCode/WordLinkedList.o ../OfficialCode/TreeStorageNode.o ../OfficialCode/BreadthFirstSearch.o ../OfficialCode/GenericLinkedListNode.o ../OfficialCode/HashSet.o ../OfficialCode/Arrays.o ../OfficialCode/UserInput.o ../OfficialCode/GameFunctions.o ../OfficialCode/PathGameComponents.o ../OfficialCode/ArrayList.o ../OfficialCode/DepthFirstSearch.o ../OfficialCode/ConnectionDistanceStats.o ../OfficialCode/Hints.o ../OfficialCode/PathfinderGame.o ../OfficialCode/HashMap2.o
-LINKOBJ  = ../OfficialCode/2DLinkedList.o ../OfficialCode/FLWP-2.o ../OfficialCode/HashFunctions.o ../OfficialCode/HashMap.o ../OfficialCode/TreeSet.o ../OfficialCode/WordLinkedList.o ../OfficialCode/TreeStorageNode.o ../OfficialCode/BreadthFirstSearch.o ../OfficialCode/GenericLinkedListNode.o ../OfficialCode/HashSet.o ../OfficialCode/Arrays.o ../OfficialCode/UserInput.o ../OfficialCode/GameFunctions.o ../OfficialCode/PathGameComponents.o ../OfficialCode/ArrayList.o ../OfficialCode/DepthFirstSearch.o ../OfficialCode/ConnectionDistanceStats.o ../OfficialCode/Hints.o ../OfficialCode/PathfinderGame.o ../OfficialCode/HashMap2.o
+OBJ      = ../OfficialCode/FLWP-2.o ../OfficialCode/HashFunctions.o ../OfficialCode/TreeSet.o ../OfficialCode/WordLinkedList.o ../OfficialCode/TreeStorageNode.o ../OfficialCode/BreadthFirstSearch.o ../OfficialCode/GenericLinkedListNode.o ../OfficialCode/HashSet.o ../OfficialCode/Arrays.o ../OfficialCode/UserInput.o ../OfficialCode/GameFunctions.o ../OfficialCode/PathGameComponents.o ../OfficialCode/ArrayList.o ../OfficialCode/Hints.o ../OfficialCode/PathfinderGame.o ../OfficialCode/HashMap2.o
+LINKOBJ  = ../OfficialCode/FLWP-2.o ../OfficialCode/HashFunctions.o ../OfficialCode/TreeSet.o ../OfficialCode/WordLinkedList.o ../OfficialCode/TreeStorageNode.o ../OfficialCode/BreadthFirstSearch.o ../OfficialCode/GenericLinkedListNode.o ../OfficialCode/HashSet.o ../OfficialCode/Arrays.o ../OfficialCode/UserInput.o ../OfficialCode/GameFunctions.o ../OfficialCode/PathGameComponents.o ../OfficialCode/ArrayList.o ../OfficialCode/Hints.o ../OfficialCode/PathfinderGame.o ../OfficialCode/HashMap2.o
 LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -g3
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
@@ -24,17 +24,11 @@ clean: clean-custom
 $(BIN): $(OBJ)
 	$(CC) $(LINKOBJ) -o $(BIN) $(LIBS)
 
-../OfficialCode/2DLinkedList.o: 2DLinkedList.c
-	$(CC) -c 2DLinkedList.c -o ../OfficialCode/2DLinkedList.o $(CFLAGS)
-
 ../OfficialCode/FLWP-2.o: FLWP-2.c
 	$(CC) -c FLWP-2.c -o ../OfficialCode/FLWP-2.o $(CFLAGS)
 
 ../OfficialCode/HashFunctions.o: HashFunctions.c
 	$(CC) -c HashFunctions.c -o ../OfficialCode/HashFunctions.o $(CFLAGS)
-
-../OfficialCode/HashMap.o: HashMap.c
-	$(CC) -c HashMap.c -o ../OfficialCode/HashMap.o $(CFLAGS)
 
 ../OfficialCode/TreeSet.o: TreeSet.c
 	$(CC) -c TreeSet.c -o ../OfficialCode/TreeSet.o $(CFLAGS)
@@ -68,12 +62,6 @@ $(BIN): $(OBJ)
 
 ../OfficialCode/ArrayList.o: ArrayList.c
 	$(CC) -c ArrayList.c -o ../OfficialCode/ArrayList.o $(CFLAGS)
-
-../OfficialCode/DepthFirstSearch.o: DepthFirstSearch.c
-	$(CC) -c DepthFirstSearch.c -o ../OfficialCode/DepthFirstSearch.o $(CFLAGS)
-
-../OfficialCode/ConnectionDistanceStats.o: ConnectionDistanceStats.c
-	$(CC) -c ConnectionDistanceStats.c -o ../OfficialCode/ConnectionDistanceStats.o $(CFLAGS)
 
 ../OfficialCode/Hints.o: Hints.c
 	$(CC) -c Hints.c -o ../OfficialCode/Hints.o $(CFLAGS)

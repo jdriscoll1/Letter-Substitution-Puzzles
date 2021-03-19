@@ -11,7 +11,6 @@ int numLetters = 4;
 
 
 
-#include "HashMap.h"
 
 #include "HashMap2.h"
 
@@ -25,8 +24,6 @@ int numLetters = 4;
 
 #include "HashFunctions.h"
 
-#include "HashMap.h"
-
 #include "UserInput.h"
 
 #include "GameFunctions.h"
@@ -37,12 +34,10 @@ int numLetters = 4;
 
 #include "DepthFirstSearch.h"
 
-#include "ConnectionDistanceStats.h"
 
 #include "PathfinderGame.h"
 
 void WordConnections(); 
-void MainProgram(char* w1, char* w2, struct wordConnections ***HashMap); 
 void GenericLLExample(); 
 void WordLLTest();
 void HashSetExample(); 
@@ -53,21 +48,18 @@ void RandomizedList();
 void WeBeginTheGame(); 
 void AllConnections(); 
 void AVLTree(); 
-void FreeMainComponents(struct wordConnections*** HashMap, char** wordStorage, char** allWords); 
 void PathfinderGameMain(); 
 int ConnectionOptimization(); 
 void FLWP(); 
 
 
 int main(){
-	int i;  
-	for(i = 0; i < 5000; i++){
-		struct wordConnections **(*HashMap) = AllocateHashMap();	
-		char** wordStorage = FillHashMap(HashMap, 0);
-		FreeWordStorage(wordStorage); 
-		FreeHashMap(HashMap); 
- 
-	}
+	srand(time(0)); 
+	struct DummyHeadNode*** H = Create_HashMap();
+	char** allWords = ExtrapolateAllWords();
+	Play_FLWP(H, allWords); 
+	Free_HashMap(H); 
+	Free_2DArray(2235, (void***)allWords, 0);  
 	return 0;  
 }
 
@@ -76,12 +68,17 @@ int main(){
 
 void FLWP(){
 	srand(time(0)); 
-	struct wordConnections **(*HashMap) = AllocateHashMap();	
-	char** wordStorage = FillHashMap(HashMap, 0);
+	struct DummyHeadNode*** H = Create_HashMap();
 	char** allWords = ExtrapolateAllWords();
-	Play_FLWP(HashMap, wordStorage, allWords); 
-	//Play_FLWP(HashMap, wordStorage, allWords); 
-	FreeMainComponents(HashMap, wordStorage, allWords); 
+	char* s = ChooseStart(allWords, H, 0); 
+	int i = 0; 
+	
+	struct word* l=  BreadthFirstSearch_Dest_WordLL("pies", "vine", H); 
+	Print_WordLL(l, LINKED);  
+
+	Free_HashMap(H); 
+	Free_2DArray(2235, (void***)allWords, 0); 
+
 
 }
 //So, I need to get a mean, and the upper and lower quartile 
@@ -96,37 +93,7 @@ void FLWP(){
 //it'll store their score
 //The the round they are on
 //Their total score
-void MainProgram(char* w1, char* w2, struct wordConnections ***HashMap){
 
-	struct word *connections;  
-	
-	connections = (struct word*)BreadthFirstSearch_Dest_WordLL(w1, w2, HashMap, HASH_SET); 
-	printf("\n"); 
-	if(connections != NULL){
-		Print_WordLL(connections, LINKED); 
-		Free_WordLL(connections);
-	
-	}
-
-	
-}
-
-void RandomizedList(){
-	srand(time(0)); 
-	int i; 
-	for(i = 0; i < 100; i++){
-	struct wordConnections **(*HashMap) = AllocateHashMap();
-	char** wordStorage = FillHashMap(HashMap, 1); 
-	struct word* connection = DFS_Lobby("pies", "best", HashMap); 
-	if(connection != NULL){
-		Print_WordLL(connection, LINKED);
-		Free_WordLL(connection); 
-	}
-	FreeWordStorage(wordStorage); 
-	FreeHashMap(HashMap);
-	}
-
-}
 
 
 void WordLLTest(){
@@ -141,12 +108,7 @@ void WordLLTest(){
 	Free_WordLL(header);   
 	
 }
-void WordConnections(){
-	struct wordConnections **(*HashMap) = AllocateHashMap();
-	char** wordStorage = FillHashMap(HashMap, 0);
-	printf("pies:\n"); 
-	Print_WordLL(hashMapOutput("pies", HashMap), LINES); 
-}
+
 
 void OneDimArray(){
 	int* array = (int*)Allocate_Array(5);  
@@ -197,148 +159,5 @@ void RandomizeArrayExample(){
 	free(array2); 
 }
 
-
-void AllConnections(){
-		srand(time(0));
-	int i;  
-	for(i = 0; i < 100; i++){
-	struct wordConnections **(*HashMap) = AllocateHashMap();
-	char** wordStorage = FillHashMap(HashMap, 1);  
-	struct word *connections;  
-	
-	connections = DFS_Lobby("pies", "west", HashMap); 
-
-	if(connections != NULL){
-		printf("\n"); 
-		Print_WordLL(connections, LINKED); 
-		Free_WordLL(connections);
-	
-	}
-
-	FreeWordStorage(wordStorage); 
-	FreeHashMap(HashMap);
-	}
-}
-
-void AVLTree(){
-	srand(time(0)); 
-	int min = 0; 
-	int max = 200; 
-	char* x[] = {"tied", "tier", "tics", "tees", "dies", "lies", "pies", "ties", "vies", "toes", "tins", "tips", "tits"}; 
-	int length = sizeof(x) / sizeof(char*);  
-	 
-	struct DummyHeadNode *header = Allocate_TreeSet((void*)(*x)); 
-	int i = 0; 
-	for(i = 1; i < length; i++){ 
-		AddNode_TreeSet((void*)*(x+i), (void*)header, header->start, DUMMY, WORD);
-		 
-	}
-	printf("Originally: "); 
-	Print_TreeSet(header->start, WORD);
-	printf("\n"); 
-	char* o[] = {"ties", "west"};
-	char **p = o;
-	int lengthRem = sizeof(o)/sizeof(char*);  
-	for(i = 0; i < lengthRem; i++){
-		
-		Remove_TreeSet((void*)*(p + i), header, header->start, DUMMY, WORD); 
-	}
-
-	printf("After Removal: "); 
-	Print_TreeSet(header->start, WORD);
-	
- 
- 	printf("\n\n  RESULTS:\n"); 
-	printf("  Balanced: %d", checkBalance(header->start)); 
-
-	printf("\n  Header: %s. Depth: %d", (char*)header->start->data, header->start->depth); 
-	printf("\n  Header->greater: %s. Depth: %d", (char*)header->start->greater->data, header->start->greater->depth); 
-	printf("\n  Header->smaller: %s. Depth: %d", (char*)header->start->smaller->data, header->start->smaller->depth); 
-	//printf("\n  Header->smaller->smaller: %d. Depth: %d", *(int*)header->start->smaller->smaller->data, header->start->smaller->smaller->depth);
-	//printf("\n  Header->smaller->greater: %d. Depth: %d", *(int*)header->start->smaller->greater->data, header->start->smaller->greater->depth); 
-	//printf("\n  Header->greater->greater: %d. Depth: %d", *(int*)header->start->greater->greater->data, header->start->greater->greater->depth);
-	//printf("\nHeader->greater->smaller: %d", *(int*)header->start->greater->smaller->data); 
-	//printf("\nHeader->smaller->smaller->greater: %d", *(int*)header->start->smaller->smaller->greater->data);
-	//printf("\nHeader->smaller->smaller->smaller: %d", *(int*)header->start->smaller->smaller->smaller->data);
-	//printf("\nHeader->smaller->greater->smaller: %d", *(int*)header->start->smaller->greater->smaller->data);
-	//printf("\nHeader->smaller->greater->greater: %d. Depth: %d", *(int*)header->start->smaller->greater->greater->data, header->start->smaller->greater->greater->depth); 
-	//printf("\nHeader->greater->greater->smaller: %d", *(int*)header->start->greater->greater->smaller->data); 
-	//printf("\nHeader->greater->greater->greater: %d", *(int*)header->start->greater->greater->greater->data);
-	//printf("\nHeader->greater->smaller->smaller: %d", *(int*)header->start->greater->smaller->smaller->data);
-	
-	//printf("\nHeader->greater->smaller->greater: %d", *(int*)header->start->greater->smaller->greater->data);    
-	//printf("\nHeader->greater->smaller->smaller->smaller: %d", *(int*)header->start->greater->smaller->smaller->smaller->data);  
-	//printf("\nHeader->greater->smaller->smaller->greater: %d", *(int*)header->start->greater->smaller->smaller->greater->data);  
-	//printf("\nHeader->greater->greater->greater->greater: %d", *(int*)header->start->greater->greater->greater->greater->data);
-	//printf("\nHeader->greater->greater->greater->smaller: %d", *(int*)header->start->greater->greater->greater->smaller->data);
-	//printf("\nHeader->smaller->smaller->smaller->greater: %d", *(int*)header->start->smaller->smaller->smaller->greater->data); 
-	//printf("\nHeader->smaller->smaller->greater->smaller: %d", *(int*)header->start->smaller->smaller->greater->smaller->data); 
-	//printf("\nHeader->smaller->greater->greater->greater: %d", *(int*)header->start->smaller->greater->greater->greater->data); 
-	//printf("\nHeader->smaller->greater->greater->smaller: %d", *(int*)header->start->smaller->greater->greater->smaller->data); 
-	
-	Free_TreeSet(header->start, INTEGER);
-	free(header);
-	
-	
-}
-
-	
-void FreeMainComponents(struct wordConnections*** HashMap, char** wordStorage, char** allWords){
-	//used to free the array
-	int totalWordCount[3] = {30, 590, 2235}; 
-	Free_2DArray(totalWordCount[numLetters - 2], (void***)allWords, 0); 
-	FreeWordStorage(wordStorage); 
-	FreeHashMap(HashMap); 
-	
-}
-/*NEW PLAN: 
-- We need to make FLWP
- - Take User Input
-  - Start
-  - End Game/Q
-  - Help
-  - Add Word
-  - Remove Word
-  - Undo
-  -  
- - Win Condition --> If the word is identical to the goal 
- 
- - Lose Condition --> Non existant (no timer)
- - First, what should the game look like
-  - It should Open up and say, welcome to the four letter word game
-  - Type (s)tart to begin, q, or end game to quit, or (h)elp for help 
-  - If you type help, it should give you a readable help link that will give you all the commands 
-  - If you type quit, the program should shut down
-  - If you type start, it should give you the difficulty option. Depending on whether the user types 0, 1, or 2 will determine the connections
-  - Then, the game will say, connect w1 to w2
-  - You will be given commands
-  - You can either do: add, remove, end game or undo 
-   - Add <word>: 
-    - The word will be added, and it will print out the list 
-    - Checks: Make sure the word is exactly three letters different than the previous
-              Make sure it is exactly numLetters Letters
-              
-   - Remove <word>: 
-    - The word will be removed, and all words after it will be removed 
-    - Make sure that the word actually exists 
-  
-   - End Game: 
-    - The game will end, and everything will be freed 
-  
-   - Undo
-    - It will undo the previous action, this will repeat until the very first move 
-    
-    
-    Plan of Attack: 
-     First, get the game playable before you do a start menu 
-      First, Add a "get user input"
-       - Implement add word
-       - Check The Word to make sure it is available
-       - Implement remove word
-       - Implement end game
-       - Implement undo 
-
-  
-*/ 
 
 

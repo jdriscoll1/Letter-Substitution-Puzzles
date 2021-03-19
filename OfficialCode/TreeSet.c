@@ -144,9 +144,10 @@ struct TreeSetNode*  AddNode(void* data, struct TreeSetNode *pointer, int isSmal
 }
 
 
-int Search_TreeSet(void* data, struct TreeSetNode *header, enum dataType type){
+struct TreeSetNode* Search_TreeSet(void* data, struct TreeSetNode *header, enum dataType type){
 	//if the word is smaller then the word it is on, and the smaller/greater position is not null. Then it traverses to that word
 	int isEqual = compare(data, header->data, type);  
+	struct TreeSetNode* nodeOutput = NULL; 
 	//until it runs into a null value
 	while(nextIsNull(isEqual, header) == 0 && isEqual != -1){
 		
@@ -160,10 +161,11 @@ int Search_TreeSet(void* data, struct TreeSetNode *header, enum dataType type){
 		}
 	
 		isEqual = compare(data, header->data, type);
+		nodeOutput = header; 
 		
 	} 
 	
-	return (isEqual == -1)?1:0;
+	return header;
 
 
 }
@@ -187,7 +189,7 @@ int wordLLCompare(struct word* newHeader, struct word* oldHeader){
 //Compares two strings
 int stringCompare(char* word1, char* word2){
 	int i; 
-	
+ 
 	//Goes through the letters of both words
 	for(i = 0; i < numLetters; i++){
 		//if they aren't equal
@@ -251,6 +253,9 @@ int compare(void* data1, void* data2, enum dataType type){
 	}
 	else if(type == WORDLL){
 		return wordLLCompare((struct word*)data1, (struct word*)data2);
+	}
+	else if(type == WORD4LL){
+		return stringCompare((char*)data1, (char*)(((struct word*)(data2))->word)); 
 	}
 	printf("Incorrect Enum [compare]");
 	exit(0); 

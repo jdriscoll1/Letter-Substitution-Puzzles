@@ -11,7 +11,7 @@
 #include "UserInput.h"
 #include "Arrays.h"
 #include "PathGameComponents.h"
-#include "HashMap.h"
+#include "HashMap2.h"
 
 
 extern int numLetters; 
@@ -39,7 +39,7 @@ int GetMinConnections(enum Difficulty difficulty){
 
 
 /*Randomly chooses a word based on an index*/ 
-char* ChooseStart(char** allWordsArray, struct wordConnections **(*HashMap), int TEST_TEMP){
+char* ChooseStart(char** allWordsArray, struct DummyHeadNode **(*HashMap), int TEST_TEMP){
 	//srand(time(0)); 
 	//the total number of words
 	int totalWordCount[3] = {30, 590, 2233}; 
@@ -51,7 +51,7 @@ char* ChooseStart(char** allWordsArray, struct wordConnections **(*HashMap), int
 	//TEST_TEMP FOUND HERE -- sets the index to 2, such that it is able
 	if(TEST_TEMP == 1){
 		//randIndex = 27;
-		//Also try bevy 
+		//Also try bevy 164 
 		randIndex = 164; 
 		
 	}
@@ -60,13 +60,12 @@ char* ChooseStart(char** allWordsArray, struct wordConnections **(*HashMap), int
 
 	
 	//It checks to make sure that it can connect to _at least_ one word
-	struct word* connections = hashMapOutput(word, HashMap);  
+	struct word* connections = getList(word, HashMap);  
  	
 	if(connections->next != NULL){
-		Free_WordLL(connections); 
 		return word; 
 	}
-	Free_WordLL(connections);
+
 	//If the word it happens to choose can't connect to anything (for example, ahoy) it retries
 	return ChooseStart(allWordsArray, HashMap, 0);  
 }
@@ -180,7 +179,7 @@ void EnterText(){
 }
 
 
-int round_FLWP(int minConnections, char** allWords, struct wordConnections **(*HashMap), struct GameComponents* gc, struct PathfinderGame *pc){
+int round_FLWP(int minConnections, char** allWords, struct DummyHeadNode **(*HashMap), struct GameComponents* gc, struct PathfinderGame *pc){
 
 	gc->hc->hintPoints = pc->hintPoints; 
 	int endCondition;

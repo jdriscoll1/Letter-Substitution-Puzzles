@@ -7,6 +7,7 @@
 #include "GenericLinkedListNode.h"
 #include "TreeStorageNode.h"
 #include "BreadthFirstSearch.h"
+#include "TreeSet.h"
 
 typedef int bool; 
 #define true 1
@@ -53,18 +54,18 @@ char* hint1(unsigned long long gcLong);
 @param gc --> The number of game components
 @param HashMap --> How the game finds the connections
 @return --> Returns what it describes to the user*/ 
-char* hint2(unsigned long long gcLong, struct wordConnections **(*HashMap)); 
+char* hint2(unsigned long long gcLong, struct DummyHeadNode **(*HashMap)); 
 /*Hint 3: Offers the user a letter that is used be from the first word to the last word
 @param gc --> The current game componenents
 @param HashMap --> How the user figures out a letter*/
-char* hint3(unsigned long long gcLong, struct wordConnections **(*HashMap)); 
+char* hint3(unsigned long long gcLong, struct DummyHeadNode **(*HashMap)); 
 
 /*This initializes a new Hint 3 Structure
 @param hc --> The hint components
 @param currWord --> This is the current word the user is on
 @param goal --> This is the word the user searches for
 @param HashMap --> This is the map used to get teh connection*/
-void init_hint3(struct HintComponents *hc, char* currWord, char* goal, struct wordConnections **(*HashMap)); 
+void init_hint3(struct HintComponents *hc, char* currWord, char* goal, struct DummyHeadNode **(*HashMap)); 
 
 /*Converts the Tree Storage Node To An Array List - starts at the back and goes to the front
 @Restriction --> Neither adds the first, nor last node. Only adds the ones in between
@@ -83,7 +84,7 @@ void Convert_TreeStorageNodeArrayList_HintRestrictions(struct arrayList* aList, 
 @param HashMap --> The HashMap that contains all the words and their connections
 @param storageType --> Are you using the Tree Set or the Hash Set to store found words
 @return --> Returns the connections as an array as well as the size*/
-struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(char* start, char* goal, struct wordConnections **(*HashMap), struct hint3Struct *hc, bool* HashSet, enum FoundWordStorage storageType); 
+struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(char* start, char* goal, struct DummyHeadNode **(*HashMap), struct hint3Struct *hc, bool* HashSet); 
 
 void free_HintComponents(unsigned long long hcLong);
 

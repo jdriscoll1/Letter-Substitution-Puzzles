@@ -31,13 +31,4 @@ void Print_HashSet(struct word **(*HashSet));
 /*Free Hash Set */  
 void Free_HashSet(struct word **(*HashSet));  
 
-/*void HashSetExample(){
-	struct word **(*HashSet) = AllocateHashSet(); 
-	AddToHashSet("aero", HashSet);
-	AddToHashSet("aekc", HashSet);
-	AddToHashSet("aemn", HashSet); 
-	printf("%d\n", Search_HashSet("aero", HashSet));  
-	Print_WordLL(HashSet[FirstHashFunction('a')][SecondHashFunction("aero")], LINKED);
-	Free_HashSet(HashSet); 
-}*/ 
 #endif

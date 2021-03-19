@@ -5,8 +5,8 @@
 #include <ctype.h>
 #include "UserInput.h"
 #include "GameFunctions.h"
-#include "HashMap.h"
-//#include "2DLinkedList.h"
+#include "HashMap2.h"
+
 
 #define MAX_SIZE 256
 
@@ -123,7 +123,7 @@ char* Interpret_Input(struct word* userConnections, char* prevWord, char* input)
 	   
 }
 
-int Check_Input(char* prevWord, const char* currWord, struct wordConnections ***HashMap){
+int Check_Input(char* prevWord, const char* currWord, struct DummyHeadNode ***HashMap){
 	//Has to make sure that word is numLetters letters
 	//Has to make sure that word has numLetters - 1 letters in commond
 	//First, find prev word 
@@ -160,7 +160,7 @@ int Check_Input(char* prevWord, const char* currWord, struct wordConnections ***
 	//First: Make sure it is a real word
 	//Go into the hash map
 	//Find it in the hash map
-	if(SearchHashMap(HashMap, currWord) == NULL){
+	if(getList(currWord, HashMap) == NULL){
 		printf("Word does not exist\n"); 
 		return 6; 
 	}

@@ -10,6 +10,7 @@
 
 #include "HashMap.h"
 #include "HashMap2.h"
+#include "HashSet.h"
 #include "GenericNode.h"
 #include "HashFunctions.h"
 #include "WordLinkedList.h"
@@ -117,6 +118,28 @@ void addCol(char* currWord, struct word* header){
 	
 }
 
+FILE *OpenFile(){
+	char* wordDocuments[3] = {"WordDocuments/Two_Letter_Connections.txt", "WordDocuments/Three_Letter_Connections.txt", "WordDocuments/Four_Letter_Connections.txt"};
+	/*Four Letter Word Document*/
+	FILE *flwd = fopen(wordDocuments[numLetters - 2], "r"); 
+	if(flwd == NULL){
+		printf("Could not open file: %s\n", wordDocuments[numLetters - 2]);
+		
+	}
+	return flwd;
+}
+
+struct word* getList(const char* word, struct DummyHeadNode*** HashMap){
+	int index1 = FirstHashFunction(word[0]); 
+	int index2 = SecondHashFunction((const char*)word); 
+	struct DummyHeadNode* tree = HashMap[index1][index2]; 
+	struct TreeSetNode* tNode = Search_TreeSet((char*)word, tree->start, WORD4LL); 
+	
+	return (tNode != NULL) ? (struct word*)tNode->data : NULL; 
+	
+}
+
+
 void Print_HashMap(struct DummyHeadNode** (*HashMap)){
 	int i, j; 
 	for(i = 0; i < LETTER_COUNT; i++){
@@ -159,5 +182,52 @@ void Free_HashMap(struct DummyHeadNode*** HashMap){
 		free(HashMap[i]); 
 	}
 	free(HashMap); 
+	
+}
+
+struct word *getList_Restrictions(char* input, struct word*** HashSet, int cap, struct DummyHeadNode **(*HashMap)){
+	int foundWords = 0; 
+	/* Create the linked list into which I put the words */
+	struct word *output = malloc(sizeof(struct word)); 
+	output->next = NULL; 
+	output->dataMalloc = 0; 
+	 
+	
+	struct word* wordOptions = getList(input, HashMap); 
+
+	
+	//If it can't find it, it crashes
+	if(wordOptions == NULL){
+		printf("Error: Can't find word [hashMapOutput]");
+		exit(0);  
+	}
+	
+
+	while(wordOptions->next != NULL){
+		
+		wordOptions = wordOptions->next; 
+		char* currWord = wordOptions->word; 
+		//Search the HashSet
+		if(Search_HashSet(currWord, HashSet) == 0){
+
+			//If it's in the Hash Set it should add it to the back
+			AddToBack_WordLL(currWord, output, 0);  	
+			//Then it should add it to the Hash Set
+			AddToHashSet(currWord, HashSet, 0); 
+			//Then the words found should go up should go up
+			foundWords++;  
+			//If the cap has been met, it should return the output	
+			if(foundWords == cap){
+				return output; 
+			}
+		}
+	}
+
+	/* Return the Linked List */
+	return output; 
+	
+	
+	
+	
 	
 }

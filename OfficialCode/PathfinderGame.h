@@ -1,7 +1,7 @@
 #ifndef seenPathGame
 #define seenPathGame
 
-#include "2DLinkedList.h"
+#include "TreeSet.h"
 #include "PathGameComponents.h"
 
 #define NUM_ROUNDS 10
@@ -22,7 +22,7 @@ struct PathfinderGame{
 struct PathfinderGame* init_PathfinderGame();
 
 
-void Play_FLWP(struct wordConnections*** HashMap, char** wordStorage, char** allWords); 
+void Play_FLWP(struct DummyHeadNode*** HashMap, char** allWords); 
 
 /*This gives the final score of the game*/
 int finalScore(struct PathfinderGame* pc); 

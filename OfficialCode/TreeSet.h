@@ -11,7 +11,7 @@ When calling header, always use header->start because the dummy head node is a d
 */ 
 
 enum dataType{
-	INTEGER, WORD, DUMMY, SET_NODE, GENERIC_NODE, WORDLL
+	INTEGER, WORD, DUMMY, SET_NODE, GENERIC_NODE, WORDLL, WORD4LL
 };
 /*The Structure of the Tree Set*/ 
 struct TreeSetNode {
@@ -56,7 +56,7 @@ void DetermineDepth(struct TreeSetNode *curNode);
 @param word --> the word it searches for 
 @param header --> the first word in the Tree Set (the top) always use DummyHeaderNode->start
 @return 1 if the word is found, 0 if it isn't*/ 
-int Search_TreeSet(void* data, struct TreeSetNode *header, enum dataType type);  
+struct TreeSetNode* Search_TreeSet(void* data, struct TreeSetNode *header, enum dataType type);  
 
 /*Checks if the next location is null
 @param isSmaller --> 1: Checks the smaller node 0: checks the bigger node

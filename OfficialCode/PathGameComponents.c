@@ -14,15 +14,15 @@
 
 extern int numLetters;
 
-struct GameComponents *InitializeGameComponents(char** allWords, struct wordConnections **(*HashMap), int minConnections){
+struct GameComponents *InitializeGameComponents(char** allWords, struct DummyHeadNode **(*HashMap), int minConnections){
 		//Instantiate the Structure
 	struct GameComponents* gameComponents = malloc(sizeof(struct GameComponents)); 
 	do{
 		//This chooses the start word
-		gameComponents->start = ChooseStart(allWords, HashMap, 0);  
+		gameComponents->start = ChooseStart(allWords, HashMap, 0);   
 		//Finds the goal word 
-		gameComponents->goal = BreadthFirstSearch_Distance_Goal(gameComponents->start, minConnections, HashMap, HASH_SET); 
-
+		gameComponents->goal = BreadthFirstSearch_Distance_Goal(gameComponents->start, minConnections, HashMap); 
+		
 	}while(gameComponents->goal == NULL); 
 	
 	//Sets the minimum number of connection
@@ -151,23 +151,15 @@ void RemoveWord_Struct(struct GameComponents* gc, char* input, int freeInput){
 	
 	
 }
-int inDictionary(const char* word, struct wordConnections ***HashMap){
+int inDictionary(const char* word, struct DummyHeadNode** (*HashMap)){
 	int element1 = FirstHashFunction(word[0]); 
 	int element2 = SecondHashFunction(word);  
-	struct wordConnections* wordOptions = HashMap[element1][element2];  
-	//So, first I have to open up the hash set
-	wordOptions = wordOptions->nextRow; 
-	//Then I have to loop through it
-	while(wordOptions != NULL){
-		if(strcmp(word, wordOptions->word) == 0){
-			return 1; 
-			
-		}
-		wordOptions = wordOptions->nextRow; 
-		
+	//Safeguard to verify that there will be no misconduct
+	if(element1 == -1 || element2 == -1){
+		return 0; 
 	}
-	return 0; 
-	
+	struct DummyHeadNode* wordOptions = HashMap[element1][element2];  
+	return (Search_TreeSet((void*)word, wordOptions->start, WORD4LL) == NULL) ? 0 : 1 ;
 	
 }
 
@@ -209,7 +201,7 @@ void Redo_Struct(struct GameComponents* gc){
 		CopyWordLLOntoArrayList(gc); 
 	}
 }
-int AddWord_Struct(struct GameComponents* gc, const char* newWord, struct wordConnections **(*HashMap)){
+int AddWord_Struct(struct GameComponents* gc, const char* newWord, struct DummyHeadNode** (*HashMap)){
 	//Checks if the word is valid based on the previous input 
 	int isValid = Check_Input(gc->prevInput, newWord, HashMap); 
 	if(isValid == 1){

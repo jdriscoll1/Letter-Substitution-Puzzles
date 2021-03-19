@@ -14,6 +14,7 @@
 #include "ArrayList.h"
 #include "Hints.h"
 #include "UserInput.h"
+#include "HashMap2.h"
 
 #define true 1
 #define false 0
@@ -24,21 +25,18 @@ extern int numLetters;
 
 
 
-struct BFSComponents* init_BFSComponents(char* start, enum FoundWordStorage storageType){
+struct BFSComponents* init_BFSComponents(char* start){
 	struct BFSComponents* bc = malloc(sizeof(struct BFSComponents)); 
  
 
 	
-	//If we want the tree, we allocate it  
-	if(storageType == TREE_SET){
-		bc->TreeHead = Allocate_TreeSet(start);
-	}
-	//If we want the Hash Set, we allocate it 
-	else{
-		bc->HashSet = AllocateHashSet();
-		AddToHashSet(start, bc->HashSet, 0); 
 
-	}
+	//the Hash Set, we allocate it 
+
+	bc->HashSet = AllocateHashSet();
+	AddToHashSet(start, bc->HashSet, 0); 
+
+	
 	
 	/*Creates the Tree Storage Node Header -- This makes it so it can track through the connections */
 	bc->ReverseTreeHeader = Allocate_TreeStorageNode(start); 
@@ -50,27 +48,20 @@ struct BFSComponents* init_BFSComponents(char* start, enum FoundWordStorage stor
 
 };
 
-void Free_BFSComponents(struct BFSComponents* bc, enum FoundWordStorage storageType){
+void Free_BFSComponents(struct BFSComponents* bc){
 	//Frees the Tree Storage
 	Free_TreeStorageNode(bc->ReverseTreeHeader); 
 	
-	/*Free The Tree Set*/
-	if(storageType == TREE_SET){
+
+	Free_HashSet(bc->HashSet); 
 	
-		Free_TreeSet(bc->TreeHead->start, WORD);
-		free(bc->TreeHead);  
-	}
-	//Frees the Hash Set
-	else{
-		Free_HashSet(bc->HashSet); 
-	}
 	
 	//Frees the structure
 	free(bc); 
 	
 } 
 
-struct word* BreadthFirstSearch_Dest_WordLL(char* start, char* goal, struct wordConnections **(*HashMap), enum FoundWordStorage storageType){
+struct word* BreadthFirstSearch_Dest_WordLL(char* start, char* goal, struct DummyHeadNode **(*HashMap)){
 	 
 	//If the start word and goal word are equal, it returns 0
 	if(strcmp(start,goal) == 0){
@@ -78,7 +69,7 @@ struct word* BreadthFirstSearch_Dest_WordLL(char* start, char* goal, struct word
 		exit(0); 
 	}
 	
-	struct BFSComponents* bc = init_BFSComponents(start, storageType);
+	struct BFSComponents* bc = init_BFSComponents(start);
 	bool goalFound = false; 
 
 	
@@ -87,7 +78,7 @@ struct word* BreadthFirstSearch_Dest_WordLL(char* start, char* goal, struct word
  
 		bc->prevConnection = bc->prevConnection->next;
 		
-		bc->End = AddToTreeStorage_Dist_BFS(bc, goal, storageType,  HashMap); 
+		bc->End = AddToTreeStorage_Dist_BFS(bc, goal, HashMap); 
 		if(strcmp(bc->End->word, goal) == 0){
 			goalFound = true; 
 		}
@@ -110,7 +101,7 @@ struct word* BreadthFirstSearch_Dest_WordLL(char* start, char* goal, struct word
 	path = Convert_TreeStorageNodeToWordLL(path, bc->End);
 	
 	//Frees the structure
-	Free_BFSComponents(bc, storageType); 
+	Free_BFSComponents(bc); 
 	
 	return (goalFound == -1)?NULL:path; 
 	
@@ -128,7 +119,7 @@ struct word* BreadthFirstSearch_Dest_WordLL(char* start, char* goal, struct word
 - If it's null and its isValid == 0, then it has to stop
 - If it's null and its isValid == 1, then it from there has to choose (meaning that 8 connections was it's max point)
 */ 
-char** BreadthFirstSearch_Distance(char* start, int minConnections, struct wordConnections **(*HashMap), enum FoundWordStorage storageType){
+char** BreadthFirstSearch_Distance(char* start, int minConnections, struct DummyHeadNode **(*HashMap)){
 	//If the number of connections is less than 2, it is pointless. 1? pies->ties. 0. pies->pies -1->???
 	if(minConnections < 2){
 		printf("MinConnections < 2 [BFS_Distance]"); 
@@ -139,7 +130,7 @@ char** BreadthFirstSearch_Distance(char* start, int minConnections, struct wordC
 	int arraySize[][2] = {{43, 61},{152, 141}, {351, 183}, {516, 150}, {427, 188}, {277, 239}, {164, 300}, {83, 21}, {39, 332},{18, 361}, {15, 200}, {10, 354}, {8, 143}, {2, 28}, {2, 4}, {2, 4}}; 
 	
 	//Instantiates the necessary BFS Components
-	struct BFSComponents* bc = init_BFSComponents(start, storageType);
+	struct BFSComponents* bc = init_BFSComponents(start);
 	bc->End = bc->prevConnection->next; 
 	//This is the array list that stores the words that are options
 	struct arrayList* options = init_ArrayList(arraySize[minConnections - 2][0], arraySize[minConnections - 2][1], TSN); 
@@ -155,7 +146,7 @@ char** BreadthFirstSearch_Distance(char* start, int minConnections, struct wordC
 
 		
 		
-		bc->End = AddToTreeStorage_BFS(bc, minConnections, storageType, options, HashMap); 
+		bc->End = AddToTreeStorage_BFS(bc, minConnections, options, HashMap); 
 		
 		//If it sees that the current depth is > minConnections it'll return NULL
 		//With this in mind, this means that it has acheived the current depth 
@@ -195,7 +186,7 @@ char** BreadthFirstSearch_Distance(char* start, int minConnections, struct wordC
 		//Convert the TreeStorageList To Array
 		Convert_TreeStorageNodeTo2DArray(path, chosenNode, minConnections);
 	}	
-	Free_BFSComponents(bc, storageType);
+	Free_BFSComponents(bc);
 	free_ArrayList(options); 
 	
 	return (goalFound == -1)?NULL:path;
@@ -204,7 +195,7 @@ char** BreadthFirstSearch_Distance(char* start, int minConnections, struct wordC
 
 
 
-char* BreadthFirstSearch_Distance_Goal(char* start, int minConnections, struct wordConnections **(*HashMap), enum FoundWordStorage storageType){
+char* BreadthFirstSearch_Distance_Goal(char* start, int minConnections, struct DummyHeadNode **(*HashMap)){
 	//If the number of connections is less than 2, it is pointless. 1? pies->ties. 0. pies->pies -1->???
 	if(minConnections < 2){
 		printf("MinConnections < 2 [BFS_Distance]"); 
@@ -213,12 +204,14 @@ char* BreadthFirstSearch_Distance_Goal(char* start, int minConnections, struct w
 	//This array determines how much an array list should start and grow. [minConnections - 2][0] = initSize [minConnections - 2][1] = move size
 	//These numbers were found by taking the mean, and the avg of the mean and the max
 	int arraySize[][2] = {{43, 61},{152, 141}, {351, 183}, {516, 150}, {427, 188}, {277, 239}, {164, 300}, {83, 21}, {39, 332},{18, 361}, {15, 200}, {10, 354}, {8, 143}, {2, 28}, {2, 4}, {2, 4}}; 
+	int arrListInitSize = (minConnections < 13) ? arraySize[minConnections - 2][0] : 5; 
+	int arrListMoveSize = (minConnections < 13) ? arraySize[minConnections - 2][1] : 5; 
 	
 	//Instantiates the necessary BFS Components
-	struct BFSComponents* bc = init_BFSComponents(start, storageType);
+	struct BFSComponents* bc = init_BFSComponents(start);
 	bc->End = bc->prevConnection->next; 
 	//This is the array list that stores the words that are options
-	struct arrayList* options = init_ArrayList(arraySize[minConnections - 2][0], arraySize[minConnections - 2][1], TSN); 
+	struct arrayList* options = init_ArrayList(arrListInitSize, arrListMoveSize, TSN); 
 	//Initalize the game Components
 	bool goalFound = false;
 	
@@ -228,11 +221,8 @@ char* BreadthFirstSearch_Distance_Goal(char* start, int minConnections, struct w
 	while(goalFound == false){
 	
 		bc->prevConnection = bc->prevConnection->next;
-		printf("%s: \n", bc->prevConnection->word); 
-		if(strcmp(bc->prevConnection->word, "line") == 0){
-			printf("Here"); 
-		}
-		bc->End = AddToTreeStorage_BFS(bc, minConnections, storageType, options, HashMap); 
+	
+		bc->End = AddToTreeStorage_BFS(bc, minConnections, options, HashMap); 
 		 
 		//If it sees that the current depth is > minConnections it'll return NULL
 		//With this in mind, this means that it has acheived the current depth 
@@ -270,7 +260,7 @@ char* BreadthFirstSearch_Distance_Goal(char* start, int minConnections, struct w
 		safeStrcat(&goal, (const char*) chosenNode->word, numLetters + 1, numLetters, 0);  
 	
 	}	
-	Free_BFSComponents(bc, storageType);
+	Free_BFSComponents(bc);
 	free_ArrayList(options); 
 
 	return (goalFound == -1)?NULL:goal;
@@ -283,14 +273,14 @@ char* BreadthFirstSearch_Distance_Goal(char* start, int minConnections, struct w
 
 
 
-int BreadthFirstSearch_DistanceOptions(char* start, int minConnections, struct wordConnections **(*HashMap), enum FoundWordStorage storageType){
+int BreadthFirstSearch_DistanceOptions(char* start, int minConnections, struct DummyHeadNode **(*HashMap)){
 	//If the number of connections is less than 2, it is pointless. 1? pies->ties. 0. pies->pies -1->???
 	if(minConnections < 2){
 		printf("MinConnections < 2 [BFS_Distance]"); 
 		return 0; 
 	}
 	//Instantiates the necessary BFS Components
-	struct BFSComponents* bc = init_BFSComponents(start, storageType);
+	struct BFSComponents* bc = init_BFSComponents(start);
 	bc->End = bc->prevConnection->next; 
 	//This is the array list that stores the words that are options
 	struct arrayList* options = init_ArrayList(20, 5, TSN); 
@@ -304,7 +294,7 @@ int BreadthFirstSearch_DistanceOptions(char* start, int minConnections, struct w
 		bc->prevConnection = bc->prevConnection->next;
 
 
-		bc->End = AddToTreeStorage_BFS(bc, minConnections, storageType, options, HashMap); 
+		bc->End = AddToTreeStorage_BFS(bc, minConnections, options, HashMap); 
 		
 		//If it sees that the current depth is > minConnections it'll return NULL
 		//With this in mind, this means that it has acheived the current depth 
@@ -326,7 +316,7 @@ int BreadthFirstSearch_DistanceOptions(char* start, int minConnections, struct w
 	int output = options->currPrecision; 
 
 	//Frees everything
-	Free_BFSComponents(bc, storageType);
+	Free_BFSComponents(bc);
 	free_ArrayList(options); 
 
 	return output; 
@@ -337,56 +327,38 @@ int BreadthFirstSearch_DistanceOptions(char* start, int minConnections, struct w
 
 
 
-struct TreeStorageNode* AddToTreeStorage_Dist_BFS(struct BFSComponents *bc, char* goal, enum FoundWordStorage storageType,  struct wordConnections **(*HashMap)){
+struct TreeStorageNode* AddToTreeStorage_Dist_BFS(struct BFSComponents *bc, char* goal,  struct DummyHeadNode **(*HashMap)){
 	//The word whose connections we're going to find, and add to the TreeStorageNode
 	char* baseWord = bc->prevConnection->word; 
  	int currDepth = bc->prevConnection->depth + 1; 
 	
-	//We want to get the current word's location in the HashMap
-	//First, we have to get the 2D Linked List that has all of the connections of the letter
-	struct wordConnections* connections2D = HashMap[FirstHashFunction(baseWord[0])][SecondHashFunction(baseWord)]; 
-	//Get off of the header 
-	connections2D = connections2D->nextRow; 
-	
-	//We have to loop through those to find the current word
-	while(strcmp(connections2D->word, baseWord) != 0){
-		if(connections2D == NULL){
-			printf("Error: Could Not Find Word in Hash Map [Copy_WordLL_Onto_TSN_Distance]");
-			exit(0);  
-		}
-		connections2D = connections2D->nextRow; 
-	}
-	
+	struct word* newWords = getList(baseWord, HashMap);
+
 	//Then, while there are still connections in the list,
-	while(connections2D->nextColumn != NULL){
+	while(newWords->next != NULL){
 		//We want to move off of the header of the 2Dconnection 
-		connections2D = connections2D->nextColumn; 
-		char* currWord = connections2D->word; 
+		newWords = newWords->next; 
+		char* currWord = newWords->word; 
 		
 		
-		//Now we have to add it to the HashSet or TreeSet, depending which one the programmer chooses to use 
-		if(storageType == TREE_SET){
 		
-			if(Search_TreeSet(currWord, bc->TreeHead->start, WORD) == 0){
-				bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, currDepth); 	
-			}
+		
+	
+		if(Search_HashSet(currWord, bc->HashSet) == 0){
+			bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, currDepth); 
+			AddToHashSet(currWord, bc->HashSet, 0); 
 		}
-		
-		else if(storageType == HASH_SET){
-			if(Search_HashSet(currWord, bc->HashSet) == 0){
-				bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, currDepth); 
-				AddToHashSet(currWord, bc->HashSet, 0); 
-			}
-		} 
 		if(strcmp(currWord, goal) == 0){
 			return bc->End; 
 		}
+	} 
+	
 		
 		
 
 
 		
-	}
+	
 	//So we want to be returned the very last node every single time, 
 	return bc->End; 
 
@@ -398,7 +370,7 @@ struct TreeStorageNode* AddToTreeStorage_Dist_BFS(struct BFSComponents *bc, char
 
 
 //This Adds the Upcoming Words Into the Tree Storage
-struct TreeStorageNode* AddToTreeStorage_BFS(struct BFSComponents *bc, int minConnections, enum FoundWordStorage storageType, struct arrayList *options, struct wordConnections **(*HashMap)){
+struct TreeStorageNode* AddToTreeStorage_BFS(struct BFSComponents *bc, int minConnections, struct arrayList *options, struct DummyHeadNode **(*HashMap)){
 	//The word whose connections we're going to find
 	char* baseWord = bc->prevConnection->word; 
 	//Variable prev depth + 1 = currDepth -- How far out we immediately are
@@ -408,51 +380,32 @@ struct TreeStorageNode* AddToTreeStorage_BFS(struct BFSComponents *bc, int minCo
 	if(currDepth > minConnections){
 		return NULL; 
 	} 
-	
+
 	//We want to get the current word's location in the HashMap
 	//First, we have to get the 2D Linked List that has all of the connections of the letter
-	struct wordConnections* connections2D = HashMap[FirstHashFunction(baseWord[0])][SecondHashFunction(baseWord)]; 
-	//Get off of the header 
-	connections2D = connections2D->nextRow; 
-	//We have to loop through those to find the current word
-	while(strcmp(connections2D->word, baseWord) != 0){
-		if(connections2D == NULL){
-			printf("Error: Could Not Find Word in Hash Map [Copy_WordLL_Onto_TSN_Distance]");
-			exit(0);  
-		}
-		connections2D = connections2D->nextRow; 
-	}
+
+	struct word* newWords = getList(baseWord, HashMap);
+
 	//Yo, don't forget to add teh Tree Set, DUDE!
 	//Then, while the link output still words in the list,
-	while(connections2D->nextColumn != NULL){
+	while(newWords->next != NULL){
 		//We want to move off of the header of the 2Dconnection 
-		connections2D = connections2D->nextColumn; 
-		char* currWord = connections2D->word; 
+		newWords = newWords->next; 
+		char* currWord = newWords->word; 
 		//This is the tree storage node that we just added. It is the most recently added connection, which is also the furthest out 
 		//Curr End is now at the end
 
+
 		
-		//Now we have to add it to the HashSet or TreeSet, depending which one the programmer chooses to use 
-		if(storageType == TREE_SET){
-			
-			if(Search_TreeSet(currWord, bc->TreeHead->start, WORD) == 0){
-				bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, currDepth); 
-				AddNode_TreeSet((void*)currWord, bc->TreeHead, bc->TreeHead->start, DUMMY, WORD); 
-				if(currDepth == minConnections){
-					add_ArrayList(bc->End, options, TSN); 			
-				}		
+
+		if(Search_HashSet(currWord, bc->HashSet) == 0){
+			bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, currDepth); 
+			AddToHashSet(currWord, bc->HashSet, 0); 
+			if(currDepth == minConnections){
+				add_ArrayList(bc->End, options, TSN); 			
 			}
 		}
-		
-		else if(storageType == HASH_SET){
-			if(Search_HashSet(currWord, bc->HashSet) == 0){
-				bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, currDepth); 
-				AddToHashSet(currWord, bc->HashSet, 0); 
-				if(currDepth == minConnections){
-					add_ArrayList(bc->End, options, TSN); 			
-				}
-			}
-		}
+
 		
 			//If currDepth == minConnections, I will add it to the arrayList list
 		

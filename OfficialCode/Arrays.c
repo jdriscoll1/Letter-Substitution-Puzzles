@@ -109,7 +109,7 @@ void* Randomize_Array(int size, void** array, enum arrayType type){
 				*((int*)randValues + index + 1) = rand() % size;   
 			}
 			/*If it's 1, we want to try again'*/ 
-			while(Search_TreeSet(&*(randValues + index + 1), header->start, type) == 1 && index < size - 1);  
+			while(Search_TreeSet(&*(randValues + index + 1), header->start, type) != NULL && index < size - 1);  
 			AddNode_TreeSet(&*(randValues + index + 1), (void*)header, header->start, DUMMY, type);
 			
 		}
@@ -142,7 +142,7 @@ void*** Randomize_2DArray(int dim1Size, int dim2Size, void*** array, enum arrayT
 		
 			*((int*)randValues + index + 1) = rand() % dim1Size;  
 		
-		}while(Search_TreeSet(&*(randValues + index + 1), header->start, type) == 1 && index < dim1Size - 1); 
+		}while(Search_TreeSet(&*(randValues + index + 1), header->start, type) != NULL && index < dim1Size - 1); 
 		
 		AddNode_TreeSet(&*(randValues + index + 1), (void*)header, header->start, DUMMY, type);  
 	} 

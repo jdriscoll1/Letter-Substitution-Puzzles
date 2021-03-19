@@ -9,7 +9,13 @@ extern int numLetters;
 
 /*returns First Letter of a word*/
 int FirstHashFunction(const char firstLetter){
-	return  firstLetter - 97; 
+	int output = firstLetter - 97; 
+	//Returns the word 
+	if(output < 0 || output > 25){
+		return -1; 
+	}
+	//Returns the letter it acquired
+	return output; 
 	
 }
 /*returns the fist vowel in the word*/
@@ -54,5 +60,9 @@ void* HashSetArray(const char* word, void* **(*HashSet)){
  
 	int element1 = FirstHashFunction(word[0]); 
 	int element2 = SecondHashFunction(word); 
+	if(element1 == -1){
+		printf("Element 1 is incorrect"); 
+		exit(0); 
+	}
 	return HashSet[element1][element2]; 	
 }

@@ -1,7 +1,7 @@
 #ifndef seenGame
 #define seenGame
 
-#include "2DLinkedList.h"
+#include "TreeSet.h"
 #include "GenericLinkedListNode.h"
 #include "PathGameComponents.h"
 #include "PathfinderGame.h"
@@ -17,7 +17,7 @@ enum Difficulty StartGame();
 @param allWords --> Every single word that can be chosen
 @param HashMap --> A Hashmap that helps determine what words can be chosen
 @return --> Returns the word connections*/
-char* ChooseGoal(char* start, struct wordConnections*** HashMap, int minConnections); 
+char* ChooseGoal(char* start, struct DummyHeadNode **(*HashMap), int minConnections); 
 
 /*This takes the difficulty of the game and chooses the minimum number of connections the goal word should be from the start word
 @param difficulty --> This is the games difficulty
@@ -29,7 +29,7 @@ int GetMinConnections(enum Difficulty difficulty);
 @param HashMap --> The Hash Map that has all of the word's connections
 @param TEST_TEMP --> TEMPORARY VARIABLE THAT IS ONLY USED FOR TEMPORARY PURPOSES
 @return --> Returns a word that will be considered the start word*/ 
-char* ChooseStart(char** allWordsArray, struct wordConnections **(*HashMap), int TEST_TEMP); 
+char* ChooseStart(char** allWordsArray, struct DummyHeadNode** (*HashMap), int TEST_TEMP); 
 
 
 /*Method that determines when the game will be stopped
@@ -46,7 +46,7 @@ char* enumToString(enum Difficulty difficulty);
 @param allWords --> This stores all of the words 
 @param HashMap --> The Hash Map used to find connections
 @param minConnections --> The number of connections it takes*/ 
-char** ChoosePath(char** allWords, struct wordConnections*** HashMap, int minConnections); 
+char** ChoosePath(char** allWords, struct DummyHeadNode **(*HashMap), int minConnections); 
 
 /*This is the output after the game ends
 @param gameEndCondition --> The condition after the game ended:
@@ -83,7 +83,7 @@ void EnterText();
 @param pc --> These are the variables stored throughout the entire game 
 @return --> It returns the score
 @case -1 = the user quit*/
-int round_FLWP(int minConnections, char** allWords, struct wordConnections **(*HashMap), struct GameComponents* gc, struct PathfinderGame *pc); 
+int round_FLWP(int minConnections, char** allWords, struct DummyHeadNode **(*HashMap), struct GameComponents* gc, struct PathfinderGame *pc); 
 
 #endif
   

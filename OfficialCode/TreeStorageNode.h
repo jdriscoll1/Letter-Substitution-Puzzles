@@ -1,9 +1,9 @@
 #ifndef seenTreeStorage
 #define seenTreeStorage
 
-//#include "BreadthFirstSearch.h"
+
 #include "ArrayList.h"
-#include "2DLinkedList.h"
+#include "WordLinkedList.h"
 
 /*Goal: The goal of this whole piece of code, is at this point of the program, it's already gone through and found the word through breadth first search
 Now, it's time to show the list of words that demonstrate how they connect. That's the purpose of this
@@ -44,7 +44,7 @@ Copies the Word Linked List to the Tree Storage Node. Loops through the word lin
 @param list --> the list that will be copied into the Tree Storage List
 @param goal --> necessary, because once found, it will immediately return itself  
 @return --> Returns itself everytime, so that when the goal is found, it will immediately be able to read through its previous locations in the Pathfind Method*/ 
-struct TreeStorageNode *Copy_WordLLToTreeStorageNode(struct TreeStorageNode *header, struct TreeStorageNode *prev, struct word *list, char* goal, int minConnWections);
+struct TreeStorageNode *Copy_WordLLToTreeStorageNode(struct TreeStorageNode *header, struct TreeStorageNode *prev, struct word *list, char* goal, int minConnections);
 
 
 /*Searches through the tree storage node such that it will be able to connect the previous locations
