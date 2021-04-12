@@ -4,7 +4,7 @@
 #include <time.h>
 
 #include "WordLinkedList.h"
-#include "HashMap.h"
+#include "HashMap2.h"
 #include "Arrays.h"
 #include "GenericLinkedListNode.h"
 #include "GameFunctions.h"
@@ -25,15 +25,15 @@ void javaOutput(JNIEnv * env, jobject obj, char* output, jobject textChannel);
 @param gameComponentsLong --> This is the long value of the game Components structure
 @param textChannel --> This is the text channel from which the input was sent
 @return --> 0) The goal has not been found 1) The goal has not been met 2) The user has quit*/
-int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong hashMapLong,  const char* input, jobject textChannel);
+int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong hashMapLong,  const char* input, int strLength, jobject textChannel);
 
 //These are all of the components of the game 
 void validOutput(JNIEnv * env, jobject obj, int valid, jobject textChannel); 
 
 
-int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong hashMapLong, const char* input, jobject textChannel){
+int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong hashMapLong, const char* input, int strLength, jobject textChannel){
 	struct GameComponents* gc = (struct GameComponents*)gameComponentsLong; 
-	struct wordConnections **(*HashMap) = (struct wordConnections***)hashMapLong; 
+	struct DummyHeadNode **(*HashMap) = (struct DummyHeadNode***)hashMapLong; 
 	//If the string starts with a - 
 	//Remove the word from the list
 	int isValid = 1; 
@@ -42,11 +42,11 @@ int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong ha
 	int hintTaken = 0; 
 	
 	//If it starts with a -, and it's less than numLetters - 2, it's going to remove the word
-	if(input[0] == '-' && strlen(input) <= numLetters + 2){
+	if(input[0] == '-' && strLength <= numLetters + 2){
 		//Remove word cannot have a constant char* because it needs it to change to remove the -. That is, there needs to be a word that removes it
-		char* removeWord = malloc(sizeof(numLetters + 2)); 
+		char* removeWord = malloc(numLetters + 2); 
 		//Copies the const char* into the non const char*
-		strcpy(removeWord, input);
+		safeStrcpy(&removeWord, input, numLetters + 2, numLetters + 2); 
 		//Throws on a \0 in the end, for safe measures
 		removeWord[numLetters + 2] = '\0'; 
 		//Removes the word
@@ -103,14 +103,14 @@ int InterpretInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong ha
 	}
 	
 	else if(strcmp(input, "2") == 0){
-		char* output =  hint2(gameComponentsLong, (struct wordConnections***)hashMapLong);
+		char* output =  hint2(gameComponentsLong, (struct DummyHeadNode***)hashMapLong);
 		javaOutput(env, obj, output, textChannel); 
 		free(output);
 		hintTaken = 1;  
 	}
 	
 	else if(strcmp(input, "3") == 0){
-		char* output =  hint3(gameComponentsLong, (struct wordConnections***)hashMapLong);
+		char* output =  hint3(gameComponentsLong, (struct DummyHeadNode***)hashMapLong);
 		javaOutput(env, obj, output, textChannel); 
 		free(output); 
 		hintTaken = 1; 
@@ -215,18 +215,11 @@ JNIEXPORT long JNICALL
 Java_flwp_FLWP_CreateHashMap(JNIEnv * env, jobject obj){
 	 
 	 srand(time(0)); 
-	struct wordConnections **(*HashMap) = AllocateHashMap();
+	struct DummyHeadNode **(*HashMap) = Create_HashMap();
 	return (jlong)HashMap; 
 	
 }
 
-
-JNIEXPORT long JNICALL
-Java_flwp_FLWP_CreateWordStorage(JNIEnv * env, jobject obj, jlong HashMap){
-	char** wordStorage = FillHashMap((struct wordConnections***)HashMap, 0);
-	return (jlong)wordStorage; 
-	
-}
 
 JNIEXPORT long JNICALL
 Java_flwp_FLWP_CreateAllWordsList(JNIEnv * env, jobject obj){
@@ -239,7 +232,7 @@ JNIEXPORT long JNICALL
 Java_flwp_FLWP_InstantiateGame(JNIEnv * env, jobject obj, jlong allWords, jlong hashMapLong, int minConnections, int hintPoints, jobject textChannel){
 	
 	srand(time(0));
-	struct GameComponents *gameComponents = InitializeGameComponents((char**)allWords, (struct wordConnections***)hashMapLong, minConnections);
+	struct GameComponents *gameComponents = InitializeGameComponents((char**)allWords, (struct DummyHeadNode***)hashMapLong, minConnections);
 	gameComponents->hc->hintPoints = hintPoints; 
 	char outputGoal[255]; 
 	snprintf(outputGoal, sizeof(outputGoal), "Your task is to start with %s and arrive at %s\nYou have %d hint points.\nYou are on round %d", gameComponents->start, gameComponents->goal, gameComponents->hc->hintPoints, minConnections - 1); 
@@ -275,7 +268,7 @@ Java_flwp_FLWP_ResetRound(JNIEnv * env, jobject obj, jlong gameComponentsLong, j
 
 
 JNIEXPORT int JNICALL
-Java_flwp_FLWP_TakeInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong hashMapLong, jstring text, jobject textChannel){
+Java_flwp_FLWP_TakeInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jlong hashMapLong, jstring text, int strLength, jobject textChannel){
 	//So, now we have the input -- in the Java portion we make sure it's not too long
 	struct GameComponents *gc = (struct GameComponents*)gameComponentsLong; 
 	int j = 0; 
@@ -286,7 +279,7 @@ Java_flwp_FLWP_TakeInput(JNIEnv * env, jobject obj, jlong gameComponentsLong, jl
 	if(input == NULL){
 		exit(0); 
 	}
-	int score = InterpretInput(env, obj, gameComponentsLong, hashMapLong, input, textChannel);
+	int score = InterpretInput(env, obj, gameComponentsLong, hashMapLong, input, strLength, textChannel);
 		//If the user wins
 		//We want to go on to the next round 
 		//We want to ask the user if they would like to advance to the next level

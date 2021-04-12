@@ -145,11 +145,16 @@ struct TreeSetNode*  AddNode(void* data, struct TreeSetNode *pointer, int isSmal
 
 
 struct TreeSetNode* Search_TreeSet(void* data, struct TreeSetNode *header, enum dataType type){
+
 	//if the word is smaller then the word it is on, and the smaller/greater position is not null. Then it traverses to that word
 	int isEqual = compare(data, header->data, type);  
-	struct TreeSetNode* nodeOutput = NULL; 
-	//until it runs into a null value
-	while(nextIsNull(isEqual, header) == 0 && isEqual != -1){
+	struct TreeSetNode* nodeOutput = NULL;
+	
+	//Can't be found
+	int outOfBounds; 
+	 
+	//until it runs into a null value	
+	while((outOfBounds = nextIsNull(isEqual, header)) == 0 && isEqual != -1){
 		
 		//if it's greater
 		if(isEqual == 0){
@@ -164,7 +169,7 @@ struct TreeSetNode* Search_TreeSet(void* data, struct TreeSetNode *header, enum 
 		nodeOutput = header; 
 		
 	} 
-	
+
 	return header;
 
 

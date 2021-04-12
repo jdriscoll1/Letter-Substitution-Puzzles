@@ -36,7 +36,7 @@ struct word ***AllocateHashSet(){
 			/* This makes it so the stuff pre-stored isn't junk */
 			HashMap[parse1][parse2]->next = NULL;
 			HashMap[parse1][parse2]->dataMalloc = 0; 
-	
+	        HashMap[parse1][parse2]->size = 0; 
 			
 			
 		}

@@ -14,13 +14,13 @@ int main(){
 	/*Words in a document*/
 	int wordCount = 0; 
 	/*Number of letters per word*/
-	int maxNum = 2; 
+	int maxNum = 4; 
 	/* The character we are on in the All English Words file */
 	char ch; 
 	/*File of All English Words*/
-	FILE *allWords = fopen("WordDocuments\\Four_Letters.txt", "r");
+	FILE *allWords = fopen("Nodes.txt", "r");
 	/*File of All Certain Letter Quanitity Words*/
-	FILE *letterQuantity = fopen("WordDocuments\\Four_Letter_Connections.txt", "w"); 
+	FILE *letterQuantity = fopen("Node_Connections.txt", "w"); 
 	/*The character that reads from the 2nd file*/
 	char ch2; 
 	/* The letter that we are on in going through the word */
@@ -61,7 +61,7 @@ int main(){
 				
 				fputs(currentWord, letterQuantity);
 				printf("%s", currentWord); 
-				FILE *allWords2 = fopen("WordDocuments\\Two_Letters.txt", "r");
+				FILE *allWords2 = fopen("Nodes.txt", "r");
 				if(allWords2 == NULL){
 					printf("File Could Not Be Found");
 					return 0; 

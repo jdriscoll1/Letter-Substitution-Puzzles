@@ -22,6 +22,8 @@ struct word{
 	char* word;
 	/*Does the user use strdup to allocate the information*/
 	int dataMalloc;  
+	//How many pieces of data are in this particular linked list
+	int size; 
 	
 };
 

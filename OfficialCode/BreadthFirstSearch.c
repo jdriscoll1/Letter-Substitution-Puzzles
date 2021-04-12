@@ -4,7 +4,6 @@
 #include <stddef.h>
 
 
-#include "HashMap.h"
 #include "HashFunctions.h"
 #include "HashSet.h"
 #include "GenericLinkedListNode.h"
@@ -39,7 +38,7 @@ struct BFSComponents* init_BFSComponents(char* start){
 	
 	
 	/*Creates the Tree Storage Node Header -- This makes it so it can track through the connections */
-	bc->ReverseTreeHeader = Allocate_TreeStorageNode(start); 
+	bc->ReverseTreeHeader = Allocate_TreeStorageNode(start, 0); 
 	//This method keeps track of where the previous connection is. Example, pies pins pier --> pies (Keeps this at O(1) time
 	bc->prevConnection = bc->ReverseTreeHeader; 
 	bc->End = bc->ReverseTreeHeader; 
@@ -97,6 +96,7 @@ struct word* BreadthFirstSearch_Dest_WordLL(char* start, char* goal, struct Dumm
 	struct word* path; 
 	path = malloc(sizeof(struct word)); 
 	path->dataMalloc = 0; 
+	path->size = 0; 
 	path->next = NULL; 
 	path = Convert_TreeStorageNodeToWordLL(path, bc->End);
 	
@@ -345,7 +345,7 @@ struct TreeStorageNode* AddToTreeStorage_Dist_BFS(struct BFSComponents *bc, char
 		
 	
 		if(Search_HashSet(currWord, bc->HashSet) == 0){
-			bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, currDepth); 
+			bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, 0); 
 			AddToHashSet(currWord, bc->HashSet, 0); 
 		}
 		if(strcmp(currWord, goal) == 0){
@@ -399,7 +399,7 @@ struct TreeStorageNode* AddToTreeStorage_BFS(struct BFSComponents *bc, int minCo
 		
 
 		if(Search_HashSet(currWord, bc->HashSet) == 0){
-			bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, currDepth); 
+			bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, 0); 
 			AddToHashSet(currWord, bc->HashSet, 0); 
 			if(currDepth == minConnections){
 				add_ArrayList(bc->End, options, TSN); 			

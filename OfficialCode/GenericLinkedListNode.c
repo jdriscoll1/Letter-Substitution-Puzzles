@@ -56,6 +56,7 @@ void CopyInto_GenericLinkedListNode(void* copy, struct GenericLinkedListNode *he
 		//then I set the next to null to not cause any friction 
 		((struct word*)(header->listHeader))->next = NULL; 
 		((struct word*)(header->listHeader))->dataMalloc = 0;
+		((struct word*)(header->listHeader))->size = 0; 
 		//Then I move copy because I do not need a new header 
 		copy = ((struct word*)(copy))->next; 
 		//While the copy isn't null, add it's word to the back of the generic's sublist

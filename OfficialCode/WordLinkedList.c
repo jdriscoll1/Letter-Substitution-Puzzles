@@ -33,6 +33,7 @@ int getSize(struct word *header){
  	newNode->word = word; 
  	newNode->dataMalloc = dataMalloc; 
 	header->next = newNode;
+	header->size++; 
  	
  }
 
@@ -40,17 +41,20 @@ void AddToBack_WordLL(char* word, struct word *header, int dataMalloc){
 	struct word *newNode = malloc(sizeof(struct word));
 	newNode->next = NULL;
 	newNode->word = word;
-	newNode->dataMalloc = dataMalloc; 
+	newNode->dataMalloc = dataMalloc;
+	header->size++;  
 	/*You want to get to the very last one, and set it to the new node*/  
 	while(header->next != NULL){
 		header = header->next; 
 	}
-	header->next = newNode; 
+	header->next = newNode;
+	 
 }
 void Remove_WordLL(char* word, struct word *header){
 	//prev always stays behind the header so that it can connect with the next node after header, and header can be freed
 	struct word *prev; 
-	bool isFound = false; 
+	bool isFound = false;
+	header->size++;  
 	while(isFound == false && header->next != NULL){
 		prev = header;  
 		header = header->next;
@@ -73,10 +77,18 @@ void Remove_WordLL(char* word, struct word *header){
 }
 /*Remove first index*/
 void RemoveFront_WordLL(struct word *header){
-	//we need this such that it can be freed
-	struct word *temp = header->next;
-	header->next = header->next->next; 
-	free(temp);
+	if(header->size == 0){
+		printf("Cannot Remove From Front"); 
+	}
+	else{
+	
+		//we need this such that it can be freed
+		header->size--; 
+	
+		struct word *temp = header->next;
+		header->next = header->next->next; 
+		free(temp);
+	}
 	 
 	
 	
@@ -84,6 +96,7 @@ void RemoveFront_WordLL(struct word *header){
 void RemoveFrom_WordLL(char* word, struct word *header){
 	bool found = false; 
 	struct word* prev = header; 
+	header->size--; 
 	header = header->next; 
 	while(header != NULL && found == false){
 		if(strcmp(word, header->word) == 0){
@@ -115,6 +128,7 @@ int Search_WordLL(char* word, struct word* header){
 }
 void RemoveBack_WordLL(struct word *header){
 	struct word *temp = header; 
+	header->size--; 
 	while(header->next != NULL){
 		temp = header; 
 		header = header->next; 
@@ -174,9 +188,9 @@ char* toString_WordLL(struct word *header, enum output o){
 	header = header->next; 
 	int start = 0; 
 	while(header != NULL){
-		addString_ArrayList((const char*)header->word, aList);  
+		addString_ArrayList((const char*)header->word, numLetters, aList);  
 		if(header->next != NULL){
-			addString_ArrayList((const char*)link, aList);  
+			addString_ArrayList((const char*)link, 2, aList);  
 			
 			
 		}
@@ -188,7 +202,7 @@ char* toString_WordLL(struct word *header, enum output o){
 	}
 	
 	char* outputStr = malloc(aList->currPrecision + 1);
-	strcpy(outputStr, aList->list); 
+	safeStrcpy(&outputStr, (const char*)aList->list, aList->currPrecision, aList->currPrecision + 1); 
 	free_ArrayList(aList); 	
 
 	return outputStr; 

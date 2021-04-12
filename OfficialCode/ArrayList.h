@@ -37,8 +37,11 @@ void add_ArrayList(void* data, struct arrayList* aList, enum alistType type);
 @time --> O(n)*/
 void remove_ArrayList(void* data, struct arrayList* aList, enum alistType type); 
 
-//If you want to add a string to it 
-void addString_ArrayList(const char* str, struct arrayList* aList); 
+/*Add a string to an array list
+@param str --> The string to be added
+@param strLen --> The length of the string to be added
+@param aList --> The array list which is being added to*/
+void addString_ArrayList(const char* str, int strLen, struct arrayList* aList); 
 
 //Prints out the array list
 void print_ArrayList(struct arrayList* aList, enum alistType type); 

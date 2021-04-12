@@ -58,10 +58,10 @@ char* ChooseStart(char** allWordsArray, struct DummyHeadNode **(*HashMap), int T
 	word = allWordsArray[randIndex]; 
 
 
-	
+	printf("%s", word); 
 	//It checks to make sure that it can connect to _at least_ one word
 	struct word* connections = getList(word, HashMap);  
- 	
+ 	printf(" %s", connections->word); 
 	if(connections->next != NULL){
 		return word; 
 	}
@@ -199,8 +199,7 @@ int round_FLWP(int minConnections, char** allWords, struct DummyHeadNode **(*Has
 			if(strcmp(input, "\n") != 0){	
 				input = strtok(input, "\n"); 
 			}
-			//Runs a command based on the input 
-			//cmd = Interpret_Input(userConnections, prevInput, input);
+
 			//If they want to remove from a word
 	
 	

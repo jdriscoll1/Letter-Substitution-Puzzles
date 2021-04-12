@@ -1,7 +1,7 @@
 #ifndef HashMap2
 #define HashMap2
 #include "TreeSet.h"
-
+#include "Arrays.h"
 /*
 Date: 3/8/21
 Purpose: This is to create a faster, more efficent Hash Map
@@ -13,7 +13,7 @@ This Hash Map's structure will be a 2D Array, This will connect to a Dummy Head 
 
 //Create a fill Hash Map Method
 //This both allocates and fills the new Hash Map
-struct DummyHeadNode*** Create_HashMap();
+struct DummyHeadNode*** Create_HashMap(char** allWords);
 //Create a Get Dummy Head Node Method
 
 //This allocates the hash map
@@ -34,6 +34,11 @@ void Print_HashMap(struct DummyHeadNode** (*HashMap));
 
 //Frees the Hash Map
 void Free_HashMap(struct DummyHeadNode*** HashMap); 
+
+
+void Remove_HashMap(char* word, struct DummyHeadNode** (*HashMap)); 
+
+void RemoveOnce_HashMap(char* connector, char* removed, struct DummyHeadNode** (*HashMap)); 
 
 //Restrictions for getting the list
 struct word *getList_Restrictions(char* input, struct word*** HashSet, int cap, struct DummyHeadNode **(*HashMap));

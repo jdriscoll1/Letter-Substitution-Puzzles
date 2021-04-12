@@ -18,17 +18,6 @@ char* Take_Input_NoSize();
 /*This asks the user what they'd like the difficulty to be*/ 
 enum Difficulty ChooseDifficulty(); 
 
-
-/*This takes an input, and interprets what to do with it
-@param userConnections --> The list of words the user has inputted
-@prevWord --> The previous word added 
-@param input --> The input to be interpreted
-@return case 1 --> If it retuns a word, just a word, then that word will be added to the list
-@return case 2 --> If it returns r, for remove, then it removes a word from the list
-@return case 3 --> If it returns f, for finish, then it the game ends
-@return case 4 --> If it returns u, for undo, then it undoes the previous turn (easy for add, hard for remove)*/ 
-char* Interpret_Input(struct word* userConnections, char* prevWord, char* input); 
-
 /*This method checks the input to make sure that it is valid
 @param prevWord --> The previous word, the word it is checking the current characters against
 @param currWord --> The word who is being judged
@@ -70,6 +59,16 @@ char* substr(char* word, int start, int end, int replace);
 @param start --> Which character will begin being added to
 @return --> Returns the new start location. Or the index that holds the current null terminator*/
 int safeStrcat(char** dest, const char* src, int destLength, int buff, int start); 
+
+/*This is a safe version of the dangerous strcpy function
+@param dest --> The string who will be copied into
+@param src --> The string whose components will be copied
+@param minLength --> The length of the string to be copied (not including \0) pies = 4
+@param maxLength --> the absolute maximum length of the destination string (including \0) pies = 5
+@reason --> I have chosen to do minLength because the \0 will not be considered, yet with maxlength it will be*/
+void safeStrcpy(char** dest, const char* src, int minLength, int maxLength); 
+
+
    
 #endif
 

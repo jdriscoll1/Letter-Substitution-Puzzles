@@ -84,23 +84,8 @@ void Print_2DArray(int dim1Size, void*** array, enum arrayType type);
 @Note --> Must be an integer array
 @Note --> To get the length, make sure to do max - min + 1. 
 @Returns an integer array with the values from min all the way to and including max*/ 
-int* FillRange_Array(int min, int max, int randomized); 
+int* FillRange_Array(int min, int max); 
 
-/*Randomize Array -- Goes through a singular dimensional array and randomizes all of its values
-@param size --> the size of the array
-@param array --> the array to be randomzied
-@param type --> the type of array that it is
-@return --> returns the array, but with all the positions out of order*/
-void* Randomize_Array(int size, void** array, enum arrayType type); 
-/*Array Conversion, Convert Word Linked List to String array*/
-
-/*Goes through and randomizes the value of a 2 Dimensional array
-@param dim1Size --> the size of the first array
-@param dim2Size --> the size of the second array
-@param array --> the array to be randomized
-@param type --> the type of the array, whether it be string, int, etc.
-@return --> returns a brand spankin' new array w/ the same elements of the inserted array, just now with a different order*/ 
-void*** Randomize_2DArray(int dim1Size, int dim2Size, void*** array, enum arrayType type); 
 
 /*This does a binary search on an array*/
 int BinarySearch_Array(int size, void* goal, void* array, enum arrayType type); 

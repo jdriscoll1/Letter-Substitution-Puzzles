@@ -9,10 +9,7 @@
 /*PATHFINDING METHODS*/
 
 //This structures that contains all of the components of the BFS
-struct BFSComponents {	
-	//This is the AVL Tree Set
-	struct DummyHeadNode *TreeHead;
-	
+struct BFSComponents {		
 	//This is the Hash Set 
 	struct word **(*HashSet);
 	

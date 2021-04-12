@@ -20,6 +20,8 @@ struct TreeStorageNode{
 	char* word; 
 	/*How deep it is in the structure. How many nodes it takes to return to the start*/ 
 	int depth; 
+	/*This is if the node has no connections - 1 or 0*/
+	int noConnections; 
 	
 };
 
@@ -27,7 +29,7 @@ struct TreeStorageNode{
 @param word --> the word for the second creation, that is, the one after the header
 @return --> returns the header of the Tree Storage Linked List 
 */ 
-struct TreeStorageNode *Allocate_TreeStorageNode(char* word); 
+struct TreeStorageNode *Allocate_TreeStorageNode(char* word, int noConnections); 
 
 
 /*This adds a word to the tree storage node, and the previous location from the tree set
@@ -35,7 +37,7 @@ struct TreeStorageNode *Allocate_TreeStorageNode(char* word);
 @param prev --> the previous location from the tree set, that connects this word
 @param header --> The dummy header node of the Tree Storage Linked List
 @return --> Returns the word that it just found*/
-struct TreeStorageNode *Add_TreeStorageNode(char* word, struct TreeStorageNode *prev, struct TreeStorageNode *header, int depth); 
+struct TreeStorageNode *Add_TreeStorageNode(char* word, struct TreeStorageNode *prev, struct TreeStorageNode *header, int noConnections); 
 
 /* 
 Copies the Word Linked List to the Tree Storage Node. Loops through the word linked list, and adds it to the tree storage linked list 
@@ -46,18 +48,6 @@ Copies the Word Linked List to the Tree Storage Node. Loops through the word lin
 @return --> Returns itself everytime, so that when the goal is found, it will immediately be able to read through its previous locations in the Pathfind Method*/ 
 struct TreeStorageNode *Copy_WordLLToTreeStorageNode(struct TreeStorageNode *header, struct TreeStorageNode *prev, struct word *list, char* goal, int minConnections);
 
-
-/*Searches through the tree storage node such that it will be able to connect the previous locations
-@param word --> the word that it attempts to find
-@param header --> the start of the linked list 
-@return --> once it finds its return location, it returns it, and it gets set to the previous location*/ 
-struct TreeStorageNode *Search_TreeStorageNode(char* word, struct TreeStorageNode *header); 
-
-/*This searches for the Node just before the Node that it's given the input for, that is, if it's given ties lies dies pies and it's searching for pies, it will output dies
-@param word --> the word after the word it's looking for
-@param header --> the header of the Tree Storage Linked List
-@return --> Returns the node before the node w/ the word it searches for*/ 
-struct TreeStorageNode *SearchPrev_TreeStorageNode(char* nextWord, struct TreeStorageNode *header); 
 
 /*Returns the last value of the index
 @param header --> the front of the linked list
@@ -96,5 +86,9 @@ Goes from the point of the word and removes all the words afterwords, as well as
 @param header --> the point from which it will start removing the words in the tree storage node
 @param HashSet --> The hash set whose words will soon be removed*/
 void RemoveFromPoint_TreeStorageNode(struct TreeStorageNode *header, struct word *QueueHeader, struct word **(*HashSet)); 
+
+/*This outputs all of the words that it took to connect to this node from the start
+@param End --> This is the endpoint node*/
+void Print_TreeStorageReverseConnections(struct TreeStorageNode *End); 
 
 #endif

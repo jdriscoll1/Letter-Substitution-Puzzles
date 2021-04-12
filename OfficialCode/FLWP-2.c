@@ -32,10 +32,9 @@ int numLetters = 4;
 
 #include "ArrayList.h"
 
-#include "DepthFirstSearch.h"
-
-
 #include "PathfinderGame.h"
+
+#include "FLWGAlgorithm.h"
 
 void WordConnections(); 
 void GenericLLExample(); 
@@ -54,12 +53,18 @@ void FLWP();
 
 
 int main(){
-	srand(time(0)); 
-	struct DummyHeadNode*** H = Create_HashMap();
-	char** allWords = ExtrapolateAllWords();
-	Play_FLWP(H, allWords); 
-	Free_HashMap(H); 
-	Free_2DArray(2235, (void***)allWords, 0);  
+ 	struct DummyHeadNode*** HashMap = Create_HashMap(NULL); 
+ 	
+	 struct word*** HashSet = AllocateHashSet(); 
+	 //Alright now I need to make an algorithm that will go through and find all of the number of nodes each one has as it goes out 
+ 	AddToHashSet("take", HashSet, 1);
+	struct TreeStorageNode* tree = FLWGAlgorithm("take", HashSet, HashMap); 
+	if(tree == NULL){
+		printf("Fail");
+		exit(0);  
+	}
+	Print_TreeStorageReverseConnections(tree);
+
 	return 0;  
 }
 
@@ -68,16 +73,15 @@ int main(){
 
 void FLWP(){
 	srand(time(0)); 
-	struct DummyHeadNode*** H = Create_HashMap();
-	char** allWords = ExtrapolateAllWords();
-	char* s = ChooseStart(allWords, H, 0); 
-	int i = 0; 
-	
-	struct word* l=  BreadthFirstSearch_Dest_WordLL("pies", "vine", H); 
-	Print_WordLL(l, LINKED);  
-
+	int totalWordsCount[3] = {30, 590, 2235};  
+	char** allWords = calloc(totalWordsCount[numLetters - 2], sizeof(char*)); 
+	struct DummyHeadNode*** H = Create_HashMap(allWords);
+	Play_FLWP(H, allWords); 
 	Free_HashMap(H); 
-	Free_2DArray(2235, (void***)allWords, 0); 
+	Free_2DArray(totalWordsCount[numLetters - 2], (void***)allWords, 0); 
+
+	
+ 
 
 
 }
@@ -138,25 +142,6 @@ void CreateBasicWordLL(){
 	 
 	Free_2DArray(6, (void***)array, 0); 
 	Free_WordLL(testList);  
-}
-
-void RandomizeArrayExample(){
-	srand(time(0)); 
-	char** array = (char**)Allocate_2DArray(6, numLetters + 1);
-	strcpy(*(array + 0), "pies");
-	strcpy(*(array + 1), "dies"); 
-	strcpy(*(array + 2), "lies"); 
-	strcpy(*(array + 3), "vies"); 
-	strcpy(*(array + 4), "aids");
-	strcpy(*(array + 5), "pigs");   
-	//for loop that makes it randomize itself several times
-	
-
-	char** array2 = (char**)Randomize_2DArray(6, numLetters + 1, (void***)array, STRING); 
-	Print_2DArray(6, (void***)array2, STRING); 
-	printf("\n");
-	free(array);   
-	free(array2); 
 }
 
 

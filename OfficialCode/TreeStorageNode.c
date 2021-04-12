@@ -6,7 +6,9 @@
 #include "TreeStorageNode.h"
 #include "HashSet.h"
 #include "HashFunctions.h"
+#include "UserInput.h"
 
+extern int numLetters; 
 
 /*Private Method, For The Tree Storage Node, Checks if the word has been found or the limit has been reached for finding a word
 @param goal --> The goal word to be found, if null it should check the connection count
@@ -14,17 +16,18 @@
 @return --> Returns a boolean as to whether or not the goal is found*/ 
 int isFound_TSN(struct TreeStorageNode* curNode, char* goal, int minConnections); 
 
-struct TreeStorageNode *Allocate_TreeStorageNode(char* word){
+struct TreeStorageNode *Allocate_TreeStorageNode(char* word, int noConnections){
 	struct TreeStorageNode *header = malloc(sizeof(struct TreeStorageNode)); 
 	header->next = malloc(sizeof(struct TreeStorageNode)); 
 	header->next->next = NULL; 
 	header->next->word = word; 
 	header->next->prev = NULL; 
+	header->next->noConnections = noConnections; 
 	header->next->depth = 0; 
 	return header; 
 	
 } 
-struct TreeStorageNode *Add_TreeStorageNode(char* word, struct TreeStorageNode *prev, struct TreeStorageNode *header, int depth){
+struct TreeStorageNode *Add_TreeStorageNode(char* word, struct TreeStorageNode *prev, struct TreeStorageNode *header, int noConnections){
 	while(header->next != NULL){
 		header = header->next; 
 	}
@@ -32,7 +35,9 @@ struct TreeStorageNode *Add_TreeStorageNode(char* word, struct TreeStorageNode *
 	header->next->next = NULL; 
 	header->next->prev = prev; 
 	header->next->word = word;  
-	header->next->depth = depth; 
+	header->next->noConnections = noConnections;
+	header->next->depth = prev->depth + 1;
+
 	return header->next; 
 
 }
@@ -43,7 +48,7 @@ struct TreeStorageNode *Copy_WordLLToTreeStorageNode(struct TreeStorageNode *hea
 	//Until there is no more links that the current word has
 	while(list != NULL){	
 		//It adds the word to the tree storage node as well as the Node pointer to which it connects, I need this to return the structure it added
-		struct TreeStorageNode *final = Add_TreeStorageNode(list->word, prev, header, prev->depth + 1);  
+		struct TreeStorageNode *final = Add_TreeStorageNode(list->word, prev, header, 0);  
 		
 		//Checks if it has found the word
 		if(isFound_TSN(final, goal, minConnections)){
@@ -85,34 +90,7 @@ int isFound_TSN(struct TreeStorageNode* curNode, char* goal, int minConnections)
 }
 
 
-struct TreeStorageNode *Search_TreeStorageNode(char* word, struct TreeStorageNode *header){
-	header = header->next; 
-	while(header != NULL && strcmp(word, header->word) != 0){
-		header = header->next; 
-		
-	}
-	if(header == NULL){
-		printf("\nCould Not Find %s [Search_TreeStorageNode]", word);
-		return NULL; 
-	}
-	return header; 
-}
 
-
-
-struct TreeStorageNode *SearchPrev_TreeStorageNode(char* nextWord, struct TreeStorageNode *header){
-	/*In case we want the word before the word it's searching for, this replicates having a prevLoc node on each Tree Storage Node*/ 
-	while(strcmp(nextWord, header->next->word) != 0){
-		header = header->next;  
-		if(header->next == NULL){
-			printf("\nCouldn't Find Word [SearchPrev_TreeStorageNode]");
-			exit(0); 
-		}
-		
-	}
-	return header;
-	
-}
 struct TreeStorageNode *ReturnLast_TreeStorageNode(struct TreeStorageNode *header){
 	//Until the next node is null, it will keep looping through, and then it will return the last value 
 	while(header->next != NULL){
@@ -137,7 +115,8 @@ void Convert_TreeStorageNodeTo2DArray(char** arr, struct TreeStorageNode *End, i
 	int index = minConnections;
 	struct TreeStorageNode *curNode = End; 
 	while(curNode != NULL){ 
-		strcpy(*(arr + index), curNode->word); 
+		char* dest = *(arr + index); 
+		safeStrcpy(&dest, (const char*) curNode->word, numLetters, numLetters + 1); 
 		curNode = curNode->prev; 
 		index--; 
 	} 
@@ -148,17 +127,41 @@ void Convert_TreeStorageNodeTo2DArray(char** arr, struct TreeStorageNode *End, i
 
 
 
+
 void Print_TreeStorageNode(struct TreeStorageNode *header){
+	int i = 0; 
 	header = header->next; 
 	while(header != NULL){
 		printf("%s", header->word);
+		struct TreeStorageNode *temp = header; 
+		while(temp->prev != NULL){
+			temp = temp->prev; 
+			printf("->%s", temp->word); 
+			
+		}
 		if(header->next != NULL){
-			printf("->"); 
+			printf("\n"); 
 		}
 		header = header->next;  
+		i++; 
 	}
+	//printf("\nNodes: %d\n", i); 
 
 
+}
+
+/*This takes a node, and outputs all of the words that lead to it getting connected to*/
+void Print_TreeStorageReverseConnections(struct TreeStorageNode *End){
+	
+ 
+	while(End->prev != NULL){
+		printf("%s->", End->word);
+		End = End->prev; 
+		 
+		
+	}
+	printf("%s", End->word);
+	
 }
 void Free_TreeStorageNode(struct TreeStorageNode *header){
 	while(header != NULL){

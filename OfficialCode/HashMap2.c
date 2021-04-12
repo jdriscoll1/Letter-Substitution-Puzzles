@@ -2,18 +2,21 @@
 //My Goal Is To Have One Method That Both Allocates and Fills the Hash Map as it does
 //Since it's only a loop of 26 * 6 
 //Let's first make it so that it can just output row, columns row columns
+
+//Fix: Starting with # crashes it 
+//Fix: 
 #define BUFSIZ 255
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 
-#include "HashMap.h"
+
 #include "HashMap2.h"
 #include "HashSet.h"
-#include "GenericNode.h"
 #include "HashFunctions.h"
 #include "WordLinkedList.h"
+#include "UserInput.h"
 
 #define LETTER_COUNT 26
 #define VOWEL_COUNT 6
@@ -22,13 +25,16 @@ typedef enum {false, true} bool;
 
 extern int numLetters; 
 
-struct DummyHeadNode*** Create_HashMap(){
+struct DummyHeadNode*** Create_HashMap(char** allWords){
+	
+	
 	
 	
 	
 	struct DummyHeadNode*** HashMap = Allocate_HashMap(); 
 	
-	
+	//The line the file is on 
+	int lineIndex = 0; 
 	/*First, Open the file*/
 	FILE *flwd = OpenFile(); 
 	//This will take each line of the document
@@ -45,7 +51,13 @@ struct DummyHeadNode*** Create_HashMap(){
 	
 		struct DummyHeadNode* header = HashMap[FirstHashFunction(currWord[0])][SecondHashFunction(currWord)]; 
 		if(noConnections == true){
+			if(allWords != NULL){
+			
+				allWords[lineIndex] = malloc(numLetters + 1); 
+				safeStrcpy(&allWords[lineIndex], currWord, numLetters, numLetters + 1); 
+			}
 			addRow(currWord, header); 
+			lineIndex++; 
 		} 
 		struct TreeSetNode* treeSet;
 		while(!noConnections && currWord != NULL){ 
@@ -59,9 +71,13 @@ struct DummyHeadNode*** Create_HashMap(){
 			
 			//If it's a row we add a row
 			if(isRow){
-
-				treeSet = addRow(currWord, header); 
+				if(allWords != NULL){
 				
+					allWords[lineIndex] = malloc(numLetters + 1); 
+					safeStrcpy(&allWords[lineIndex], currWord, numLetters, numLetters + 1); 
+				}
+				treeSet = addRow(currWord, header); 
+				lineIndex++; 
 			}
 			//If it's a column we add a column
 			else{
@@ -72,6 +88,7 @@ struct DummyHeadNode*** Create_HashMap(){
 			currWord = strtok(NULL, " ");
 			isRow = false; 
 		}
+		
 	} 
 	//Close the file 
 	fclose(flwd);
@@ -119,7 +136,7 @@ void addCol(char* currWord, struct word* header){
 }
 
 FILE *OpenFile(){
-	char* wordDocuments[3] = {"WordDocuments/Two_Letter_Connections.txt", "WordDocuments/Three_Letter_Connections.txt", "WordDocuments/Four_Letter_Connections.txt"};
+	char* wordDocuments[3] = {"WordDocuments/Two_Letter_Connections.txt", "WordDocuments/Three_Letter_Connections.txt", /*"WordDocuments/Node_Connections.txt"};*/"WordDocuments/Four_Letter_Connections.txt"};
 	/*Four Letter Word Document*/
 	FILE *flwd = fopen(wordDocuments[numLetters - 2], "r"); 
 	if(flwd == NULL){
@@ -134,8 +151,8 @@ struct word* getList(const char* word, struct DummyHeadNode*** HashMap){
 	int index2 = SecondHashFunction((const char*)word); 
 	struct DummyHeadNode* tree = HashMap[index1][index2]; 
 	struct TreeSetNode* tNode = Search_TreeSet((char*)word, tree->start, WORD4LL); 
-	
-	return (tNode != NULL) ? (struct word*)tNode->data : NULL; 
+
+	return (strcmp(word, ((struct word*)(tNode->data))->word) == 0) ? (struct word*)tNode->data : NULL; 
 	
 }
 
@@ -148,6 +165,25 @@ void Print_HashMap(struct DummyHeadNode** (*HashMap)){
 			Print_TreeSet(HashMap[i][j]->start, WORDLL); 
 		}
 	}
+}
+
+void Remove_HashMap(char* word, struct DummyHeadNode** (*HashMap)){
+	struct word* list = getList(word, HashMap);
+	list = list->next; 
+	while(list != NULL){
+		RemoveOnce_HashMap(list->word, word, HashMap); 
+		list = list->next; 
+	}
+	
+	
+}
+
+void RemoveOnce_HashMap(char* connector, char* removed, struct DummyHeadNode** (*HashMap)){
+	struct word* list = getList(connector, HashMap); 
+	Remove_WordLL(removed, list); 
+	
+	
+	
 }
 
 struct DummyHeadNode*** Allocate_HashMap(){
@@ -191,6 +227,7 @@ struct word *getList_Restrictions(char* input, struct word*** HashSet, int cap, 
 	struct word *output = malloc(sizeof(struct word)); 
 	output->next = NULL; 
 	output->dataMalloc = 0; 
+	output->size = 0; 
 	 
 	
 	struct word* wordOptions = getList(input, HashMap); 

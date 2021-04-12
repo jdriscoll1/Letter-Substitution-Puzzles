@@ -7,7 +7,6 @@
 #include "HashSet.h"
 #include "BreadthFirstSearch.h"
 #include "Arrays.h"
-#include "HashMap.h"
 #include "UserInput.h"
 #include "HashMap2.h"
 
@@ -34,12 +33,12 @@ struct HintComponents* init_HintComponents(){
 	
 	//The starting amount of hint points
 	hc->hintPoints = 50; 
-	//The weight of hint 1
-	hc->hint1Weight = 35;
-	//The weight of hint 2
-	hc->hint2Weight = 30;
-	//The weight of hint 3 
-	hc->hint3Weight = 15; 
+	//The weight of hint 1 -- 35
+	hc->hint1Weight = 0;
+	//The weight of hint 2 -- 30
+	hc->hint2Weight = 0;
+	//The weight of hint 3 -- 15 
+	hc->hint3Weight = 0; 
 	
 	hc->lettersGiven = calloc(NUM_LETTERS, sizeof(bool)); 
 	int i; 
@@ -93,12 +92,15 @@ char* hint2(unsigned long long gcLong, struct DummyHeadNode **(*HashMap)){
 		//In order to get hte \0 to work with the string cat, we have to move the start back one, except for the first one 
 		int notFirst = 0; 
 		if(options == NULL){
-			strcpy(output, "Hint -- I'd Recommend You Undo at least once.\n"); 
+			char* h = "Hint -- I'd Recommend You Undo at least once.\n"; 
+			safeStrcpy(&output, (const char*) h, 47, SIZE); 
 			start = 46; 
 		}
 		else{
-			strcpy(output, "Hint -- Some options are: "); 
-			start = strlen(output); 
+			char* h = "Hint -- Some options are: "; 
+			safeStrcpy(&output, (const char*) h, 26, SIZE); 
+			
+			start = 26; 
 			int wordOutLen = numLetters + 3; 
 			int i; 
 			//It loops through the outputs until the next one after the next one is null
@@ -122,7 +124,7 @@ char* hint2(unsigned long long gcLong, struct DummyHeadNode **(*HashMap)){
 		//This is the new number of points
 		char* newPoints = malloc(50);
 		snprintf(newPoints, SIZE, "You now have %d hint points\n", gc->hc->hintPoints);
-		int size = strlen(newPoints); 
+		int size = 28 + getDigitQuantity(gc->hc->hintPoints); 
 		start = safeStrcat(&output, (const char*)newPoints, SIZE, size, start - notFirst);   
 		free(newPoints);  
 		Free_WordLL(optionsHeader); 
@@ -178,15 +180,20 @@ char* hint3(unsigned long long gcLong, struct DummyHeadNode **(*HashMap)){
 		int numOptions = h3->letters->currPrecision; 
 		//If letter3Storage->minConnections = 1 -- the word is only one connection away 
 		if(h3->minConnections == 1){
-			strcpy(output, "Take a closer look.\n"); 
+			char* l = "Take a closer look.\n";
+			safeStrcpy(&output, (const char*) l, 21, SIZE);  
 		}
 		else if(numOptions == 0){
 			char* out = "Hint -- No more letters to give\n"; 
-			int start = strlen(out);  
+		
+			int start = 32;  
+			start = safeStrcat(&output, (const char*)out, SIZE, start, 0);
 			char* newPoints = malloc(50);
 			snprintf(newPoints, SIZE, "You now have %d hint points\n", gc->hc->hintPoints);
-			int size = strlen(newPoints); 
-			start = safeStrcat(&output, (const char*)newPoints, SIZE, size, start);  	
+			int digs = getDigitQuantity(gc->hc->hintPoints);
+			int size = digs + 27; 
+			start = safeStrcat(&output, (const char*)newPoints, SIZE, size, start);
+			//printf("output: %s",output);  	
 			free(newPoints); 
 		}
 		else{
@@ -202,7 +209,7 @@ char* hint3(unsigned long long gcLong, struct DummyHeadNode **(*HashMap)){
 			
 			char* newPoints = malloc(50);
 			snprintf(newPoints, SIZE, "You now have %d hint points\n", gc->hc->hintPoints);
-			int size = strlen(newPoints); 
+			int size = 27 + getDigitQuantity(gc->hc->hintPoints); 
 			start = safeStrcat(&output, (const char*)newPoints, SIZE, size, start);  	
 			free(newPoints); 
 			 
@@ -216,6 +223,19 @@ char* hint3(unsigned long long gcLong, struct DummyHeadNode **(*HashMap)){
 	return output; 
 	
 	
+}
+
+int getDigitQuantity(int num){
+	int digs = 0; 
+	if(num == 0){
+		return 1; 
+	}
+	while(num != 0){
+	
+		num /= 10;
+		digs++;  
+	}
+	return digs; 
 }
 
 void Convert_TreeStorageNodeArrayList_HintRestrictions(struct arrayList* aList, bool* lettersGiven, struct TreeStorageNode *End){

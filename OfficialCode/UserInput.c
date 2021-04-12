@@ -22,13 +22,14 @@ char* Take_Input(int size){
 		/*The temporary variable that stores the important information, while fgets takes care of the \n*/ 
 		char* temp = malloc(sizeof(char) * size); 
 		/*Copies the important information into the temp*/ 
-		strcpy(temp, input); 
+		safeStrcpy(&temp, (const char*)input, size, size);
 		/*Takes care of the \n*/ 
 		fgets(input, size, stdin);
 		/*Makes the last character on the string the end of the string*/  
 		input[size] == '\0';
 		/*Copies the information from the temp back onto the input*/ 
-		strcpy(input, temp);
+		
+		safeStrcpy(&input, (const char*)temp, size, size);
 		/*The temp value is now, no longer an issue*/ 
 		free(temp);    
 		 
@@ -69,59 +70,6 @@ enum Difficulty ChooseDifficulty(){
 	
 }
 
-char* Interpret_Input(struct word* userConnections, char* prevWord, char* input){
-	//How to read input 
-	//First, we need a scanner that'll scan through the input 
-	//We need to tokenize the string, to do so, we need a delim
-	
-	//This is the first piece of input, the command 
-	
-	char* lower = toLowerCase(input); 
-	char* cmd; 
-	char* output = malloc(MAX_SIZE); 
-
-	if(strchr(lower, ' ')){
-		cmd = strtok(lower, " ");
-	}
-	else{
-		cmd = strtok(lower, "\n"); 
-	}
-	
-	//Determining what the command is: 
-	if(strcmp(cmd, "add") == 0){
-		/*Get the second word*/
-		cmd = strtok(NULL, "\n"); 
-		strcpy(output, cmd); 
-	
-	}
-	else if(strcmp(cmd, "remove") == 0){
-		cmd = strtok(NULL, "\n"); 
-		strcpy(output, cmd); 
-		strcat(output, "!"); 
-		 
-	}
-	else if(strcmp(cmd, "undo") == 0){
-		strcpy(output, "u");  
-	}
-	else if(strcmp(cmd, "redo") == 0){
-		strcpy(output, "r"); 
-	}
-	else if(strcmp(cmd, "finish") == 0){
-		strcpy(output, "q"); 
-	}
-	else if(strcmp(cmd, "help") == 0){
-		strcpy(output, "f"); 
-		 
-	}
-	else{
-		printf("Unrecognized Command. Your Options are:\nAdd <Word>\nRemove <Word>\nUndo\nRedo\nFinish\n");
-		strcpy(output, "f"); 
-	}
-	free(lower);
-	return output; 
-
-	   
-}
 
 int Check_Input(char* prevWord, const char* currWord, struct DummyHeadNode ***HashMap){
 	//Has to make sure that word is numLetters letters
@@ -131,25 +79,31 @@ int Check_Input(char* prevWord, const char* currWord, struct DummyHeadNode ***Ha
 	
 	int i = 0;
 	int equalLetters = 0;  
-	for(i = 0; i < strlen(currWord)+1; i++){
-		if(*(prevWord + i) == '\0' && *(currWord + i) != '\0'){
+	//for(i = 0; i < strlen(currWord)+1; i++){
+	int terminate = 0; 
+	while(terminate == 0){
+		terminate = (*(currWord + i) == '\0') ? 1 : 0;
+		if(i > numLetters){
 			printf("Word is too long\n"); 
 			return 3; 
-			return 0; 
+
 		}
-		else if(*(prevWord + i) != '\0' && *(currWord + i) == '\0'){
+		else if(i < numLetters && *(currWord + i) == '\0'){
 			printf("Word is too short\n");
 			return 2; 
-			return 0; 
+		
 		}
-		else if(equalLetters < i - 1){
+		else if(equalLetters < numLetters - 1 && *(currWord + i) == '\0'){
 			printf("Not enough letters in common\n");
 			return 4;
 		  
 		}
+
 		if(*(prevWord + i) == *(currWord + i)){
 			equalLetters++; 
 		}
+		i++; 
+		  
 	}
 
 	
@@ -266,5 +220,26 @@ int safeStrcat(char** dest, const char* src, int destLength, int buff, int start
 	return i; 
 	//So how this is supposed to work. 
 }
+
+void safeStrcpy(char** dest, const char* src, int minLength, int maxLength){
+	//Makes sure it's not too long
+	if(maxLength >= 4096){
+		printf("Max Length is too Long");
+		exit(0);  
+	}
+	//Make sure the min isn't longer than the max
+	if(minLength > maxLength + 1){
+		printf("Source String Is Too Long");
+		exit(0);  	
+	}
+	int i; 
+	//Goes through and copies it 
+	for(i = 0; i < minLength && src[i] != '\0'; i++){
+		(*dest)[i] = src[i]; 
+	}
+	(*dest)[i] = '\0'; 
+	
+}
+
 
 

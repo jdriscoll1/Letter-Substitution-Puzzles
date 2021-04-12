@@ -5,7 +5,9 @@
 #include <math.h>
 #include "Arrays.h"
 #include "TreeSet.h"
+#include "UserInput.h"
 
+#define MAX_SIZE 4095
 extern int numLetters; 
 
 
@@ -70,93 +72,26 @@ void Print_Array(int size, void** array, enum arrayType type){
 	
 	
 }
-int* FillRange_Array(int min, int max, int randomized){
+int* FillRange_Array(int min, int max){
 	int* newArray = (int*)Allocate_Array(1+ (max - min));
 	int i = 0; 
 	for(i = 0; i <= max - min; i++){
 		newArray[i] = min + i; 
 	}
-	if(randomized == 1){
-		int* randArray = (int*)Randomize_Array((max - min) + 1, (void**)newArray, INT); 
-		free(newArray); 
-		return randArray; 
-	}
+
 	return newArray; 
 	
 	
 }
 
-void* Randomize_Array(int size, void** array, enum arrayType type){ 
-	if(type == INTEGER){
-		int* randValues = (int*)Allocate_Array(size); 
-	
-		/*A new array that will take all of the elements of the old array*/ 
-		int* newArray = (int*)Allocate_Array(size); 
-		/*The index of the array, gone through one by one*/ 
-		int index = 0; 
-		(*(((int*)randValues) + index)) = rand() % size; 
-		/*Tree set to store the used words
-		@param --> the first number that will be added, the first number that is chosen on the run*/
-		struct DummyHeadNode *header = Allocate_TreeSet(&(*(((int*)randValues) + index))); 
-		/*have the integer go through values, making sure that each one is not added to the tree set*/
-		for(index = 0; index < size; index++){  
- 
-			(*((int*)newArray + (*((int*)randValues + index)))) = *(((int*)(array)) + index);
-		 
-			/*Checks to make sure that the index hasn't already been added'*/ 
-			do{
-			
-				*((int*)randValues + index + 1) = rand() % size;   
-			}
-			/*If it's 1, we want to try again'*/ 
-			while(Search_TreeSet(&*(randValues + index + 1), header->start, type) != NULL && index < size - 1);  
-			AddNode_TreeSet(&*(randValues + index + 1), (void*)header, header->start, DUMMY, type);
-			
-		}
-		return newArray;	
-	
-	}
-	 
-	/*go through each value fo the array, and place them at values of the old array*/
-	/*Return the new array, free the old one*/   
-	   
-}
-
-void*** Randomize_2DArray(int dim1Size, int dim2Size, void*** array, enum arrayType type){
-	int* randValues = (int*)Allocate_Array(dim1Size); 
-	void*** newArray = Allocate_2DArray(dim1Size, dim2Size);
-	int index = 0;  
-	(*(((int*)randValues) + index)) = rand() % dim1Size; 
-
-	/*Tree set to store the used words
-
-	@param --> the first number that will be added, the first number that is chosen on the run*/
-
-	struct DummyHeadNode *header = Allocate_TreeSet(&(*(((int*)randValues) + index))); 
-
-	for(index = 0; index < dim1Size; index++){
-		
-		strcpy((*((char**)newArray + (*((int*)randValues + index)))), *(((char**)(array)) + index)); 
-		
-		do{
-		
-			*((int*)randValues + index + 1) = rand() % dim1Size;  
-		
-		}while(Search_TreeSet(&*(randValues + index + 1), header->start, type) != NULL && index < dim1Size - 1); 
-		
-		AddNode_TreeSet(&*(randValues + index + 1), (void*)header, header->start, DUMMY, type);  
-	} 
-	Free_TreeSet(header->start, INTEGER); 
-	free(header); 
-	free(randValues); 
-	return newArray; 
-}
 
 void Copy_2DArray(int dim1Size, void*** array1, void*** array2, enum arrayType type){
 	int i; 
 	for(i = 0; i < dim1Size; i++){
 		if(type == STRING){
-			strcpy((char*)*((char**)array1 + i), (char*)*((char**)array2 + i)); 
+			char* dest = (char*)(*((char**)array1 + i));  
+			const char* src = (char*)*((char**)array2 + i);  
+			safeStrcpy(&dest, src, MAX_SIZE, MAX_SIZE); 
 		}
 	}
 	
@@ -185,7 +120,7 @@ char** ConvertWordLLTo2DArray(struct word *header){
 		//go to the next location
 		header = header->next;
 		//input the word into the array 
-		strcpy(stringArray[i],  header->word);
+		safeStrcpy(&stringArray[i], header->word, numLetters, numLetters + 1); 
 		i++;  
 		
 	}
@@ -227,38 +162,47 @@ char** ExtrapolateAllWords(){
 	while(fgets(word, numLetters + 3, flwd) != NULL && i < totalWordCount[numLetters - 2]){
 		word[numLetters] = '\0'; 
 		*(allWords +  i) = malloc(sizeof(char) * (numLetters + 1)); 
-		strcpy(allWords[i], word);  
+	
+		safeStrcpy(&allWords[i], word, numLetters, numLetters + 1); 
 		i++;  
 	} 
 	fclose(flwd); 
 	return allWords; 	
 }
 
+
+
 int BinarySearch_Array(int size, void* goal, void* array, enum arrayType type){
 	int index = size / 2;
 	int max = size; 
 	int min = 0; 
 	int comparison = compare_Array(array, index, goal, type); 
-	while(comparison != 0){
-		
+	while(min <= max){
+		if(comparison == 0){
+			return index; 
+		}
 		if(comparison == 1){
-			min = index; 
-			index = (max + index) / 2; 
+		
+			index = (max + min) / 2; 
+				min = index + 1; 
 		
 		}
 		else{
-			max = index;  
-			index = (min + index) / 2;
+		
+			index = (min + min) / 2;
+				max = index - 1;  
 			 
 			
 			
 		}
-
+		
 		comparison = compare_Array(array, index, goal, type); 
+		//If the goal is greater than the index value of size return -1
+		//If the goal is lower than the index value of 0, return -1
 		
 	} 
 	
-	return index; 
+	return -1; 
 }
 /*Compares two "objects"*/
 int compare_Array(void* array, int index, void* c2, enum arrayType type){

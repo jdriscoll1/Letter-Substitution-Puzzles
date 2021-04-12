@@ -8,7 +8,6 @@
 #include "UserInput.h"
 #include "Arrays.h"
 #include "GenericLinkedListNode.h"
-#include "HashMap.h"
 #include "HashSet.h"
 #include "HashFunctions.h"
 
@@ -38,8 +37,7 @@ struct GameComponents *InitializeGameComponents(char** allWords, struct DummyHea
 	gameComponents->prevInput = malloc(numLetters + 1);
 	
 	//Sets the previous input to the starting word
-	strcpy(gameComponents->prevInput, gameComponents->start); 
- 
+    safeStrcpy(&gameComponents->prevInput, (const char*)gameComponents->start, numLetters, numLetters + 1);
 	//Initialize the arrayList 
 	gameComponents->aList = init_ArrayList(numLetters * (minConnections * 1.5), numLetters * (minConnections), STR); 
 	
@@ -56,11 +54,11 @@ struct GameComponents *InitializeGameComponents(char** allWords, struct DummyHea
 	gameComponents->userConnections->next = NULL; 
 	//There is no input to be freed
 	gameComponents->userConnections->dataMalloc = 0; 
-
+    gameComponents->userConnections->size = 0; 
 	//Insert the word into the back of the word linked list
 	AddToBack_WordLL(strdup(gameComponents->start), gameComponents->userConnections, 1); 
  
- 	addString_ArrayList(gameComponents->start, gameComponents->aList); 
+ 	addString_ArrayList(gameComponents->start, numLetters, gameComponents->aList); 
  	 
 	//Allocates space at the beginning of the generic linked list node
 	AddToFront_GenericLinkedListNode(gameComponents->storage, WORD_LL); 
@@ -80,8 +78,8 @@ void ResetGameComponents(struct GameComponents *gc){
  	//Instantiates the number of hint points
 	
 	//Sets the previous input to the starting word
-	strcpy(gc->prevInput, gc->start); 
- 
+    safeStrcpy(&gc->prevInput, (const char*)gc->start, numLetters, numLetters + 1); 
+    
  	//Frees, then initializes the array list
 	free_ArrayList(gc->aList); 
 	//Initialize the arrayList 
@@ -103,11 +101,12 @@ void ResetGameComponents(struct GameComponents *gc){
 	gc->userConnections->next = NULL; 
 	//There is no input to be freed
 	gc->userConnections->dataMalloc = 0; 
+	gc->userConnections->size = 0;
 
 	//Insert the word into the back of the word linked list
 	AddToBack_WordLL(strdup(gc->start), gc->userConnections, 1); 
  
- 	addString_ArrayList(gc->start, gc->aList); 
+ 	addString_ArrayList(gc->start, numLetters, gc->aList); 
  	 
 	//Allocates space at the beginning of the generic linked list node
 	AddToFront_GenericLinkedListNode(gc->storage, WORD_LL); 
@@ -132,8 +131,7 @@ void RemoveWord_Struct(struct GameComponents* gc, char* input, int freeInput){
 	RemoveFrom_WordLL(word, gc->userConnections->next);
 			
 	//We have to change the word to be compared to the last word in the list
-	strcpy(gc->prevInput, FindLast_WordLL(gc->userConnections));
-			
+	safeStrcpy(&gc->prevInput, (const char*) FindLast_WordLL(gc->userConnections), numLetters, numLetters + 1); 		
 	//This adds to the storage such that the user can undo a move
 	AddToFront_GenericLinkedListNode(gc->storage, WORD_LL); 
 	CopyInto_GenericLinkedListNode(gc->userConnections, gc->storage, 1, WORD_LL); 
@@ -176,8 +174,8 @@ void Undo_Struct(struct GameComponents* gc){
 		(gc->numMoves)--; 
   
 		gc->storage = gc->storage->next; 
-		//Change previousInput. It has to be changed here so that it if I add one, it will be able to recognize it
-		strcpy(gc->prevInput, FindLast_WordLL((gc->storage)->next->listHeader));  
+
+		safeStrcpy(&gc->prevInput, (const char*)FindLast_WordLL((gc->storage)->next->listHeader), numLetters, numLetters + 1); 
 		//ALthough I would like to just remove the last word. The issue is if the person removes a bunch of words, that won't work
 		CopyWordLLOntoArrayList(gc); 		 
 	
@@ -196,7 +194,7 @@ void Redo_Struct(struct GameComponents* gc){
 		//Changes the turn to the previous one 
 		gc->storage = (gc->storage)->prev; 
 		//makes the previous input the new one
-		strcpy(gc->prevInput, FindLast_WordLL((gc->storage)->next->listHeader));  
+		safeStrcpy(&gc->prevInput, (const char*)FindLast_WordLL((gc->storage)->next->listHeader), numLetters, numLetters + 1);  
 		//This resets the array list with the game component
 		CopyWordLLOntoArrayList(gc); 
 	}
@@ -213,13 +211,13 @@ int AddWord_Struct(struct GameComponents* gc, const char* newWord, struct DummyH
 			AddToBack_WordLL(strdup(newWord), gc->userConnections, 1);
 			
 		
-			addString_ArrayList("->", gc->aList); 
+			addString_ArrayList("->", 2, gc->aList); 
 		
 			//Copies the new word into the string arraylist
-			addString_ArrayList(newWord, gc->aList); 
+			addString_ArrayList(newWord, numLetters, gc->aList); 
 			
-			//Copeis the new word into the prev input
-			strcpy(gc->prevInput, newWord); 
+			//Copies the new word into the prev input
+			safeStrcpy(&gc->prevInput, newWord, numLetters, numLetters + 1); 
 			//Frees a space for the Generic Linked List Storage
 			AddToFront_GenericLinkedListNode(gc->storage, WORD_LL); 
 			//Copies userConnections list to the front of the Generic Linked List Node
@@ -249,10 +247,16 @@ void FreeGameComponents(struct GameComponents *gameComponents){
 }
 
 void CopyWordLLOntoArrayList(struct GameComponents *gc){
-	strcpy(gc->aList->list, ""); 
+
+	char* empty = ""; 
+	char* list = (char*)gc->aList->list; 
+	safeStrcpy(&list, (const char*) empty, 1, gc->aList->currSize); 
 	gc->aList->currSize = gc->aList->initSize; 
 	gc->aList->currPrecision = 0; 
 	char* output = toString_WordLL(gc->storage->next->listHeader, LINKED); 
-	addString_ArrayList(output, gc->aList); 
+
+	int listSize = ((struct word*)(gc->storage->next->listHeader))->size; 
+	int length = (numLetters * (listSize)) + (2 * (listSize - 1)); 
+	addString_ArrayList(output, length, gc->aList); 
 	free(output); 
 }

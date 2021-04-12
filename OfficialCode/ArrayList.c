@@ -5,6 +5,8 @@
 #include "ArrayList.h"
 #include "UserInput.h"
 #include "TreeStorageNode.h"
+
+extern int numLetters; 
 /*This is the array list class*/
 //Initialize it
 struct arrayList* init_ArrayList(size_t initSize, size_t moveSize, enum alistType type){
@@ -130,11 +132,11 @@ void remove_ArrayList(void* data, struct arrayList* aList, enum alistType type){
 }
 
 //This adds a string to an array list
-void addString_ArrayList(const char* str, struct arrayList* aList){
+void addString_ArrayList(const char* str, int strLen, struct arrayList* aList){
 	//So, this has to take the current location, and substr the string onto the back
 	//Because I am exceptionally lazy, I'm gonna use the method I already built
-	//However, FIRST, il faut que figure out just how big the string I'm gonna add is, and see if I need to allocate space for it 
-	int strLen = strlen(str);
+
+	
 
 	//Make sure it is big enough. 
 	//To check this: take the current size (50), subtract it by precise size (47) + strSize (29)

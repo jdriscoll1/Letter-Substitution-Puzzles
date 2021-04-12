@@ -88,4 +88,9 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(char* start, char* go
 
 void free_HintComponents(unsigned long long hcLong);
 
+/*Gets the number of digits
+@param num --> The number whose digits are being put in question
+@return --> Returns the quantity of digits*/
+int getDigitQuantity(int num); 
+
 #endif

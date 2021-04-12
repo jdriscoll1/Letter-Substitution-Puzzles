@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000001000000
-UnitCount=38
+UnitCount=33
 
 [VersionInfo]
 Major=1
@@ -51,26 +51,6 @@ AutoIncBuildNr=0
 SyncProduct=1
 
 [Unit1]
-FileName=2DLinkedList.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit2]
-FileName=2DLinkedList.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit3]
 FileName=FLWP-2.c
 CompileCpp=0
 Folder=
@@ -80,7 +60,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit4]
+[Unit2]
 FileName=HashFunctions.c
 CompileCpp=0
 Folder=
@@ -90,7 +70,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit5]
+[Unit3]
 FileName=HashFunctions.h
 CompileCpp=0
 Folder=
@@ -100,27 +80,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit6]
-FileName=HashMap.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit7]
-FileName=HashMap.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit8]
+[Unit4]
 FileName=TreeSet.c
 CompileCpp=0
 Folder=
@@ -130,7 +90,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit9]
+[Unit5]
 FileName=TreeSet.h
 CompileCpp=0
 Folder=
@@ -140,7 +100,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit10]
+[Unit6]
 FileName=WordLinkedList.c
 CompileCpp=0
 Folder=
@@ -150,7 +110,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit11]
+[Unit7]
 FileName=WordLinkedList.h
 CompileCpp=0
 Folder=
@@ -160,17 +120,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit13]
-FileName=TreeStorageNode.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=$(CC) -c TreeStorageNode.c -o ../OfficialCode/TreeStorageNode.o $(CFLAGS)
-
-[Unit12]
+[Unit8]
 FileName=TreeStorageNode.h
 CompileCpp=1
 Folder=
@@ -180,7 +130,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit14]
+[Unit9]
+FileName=TreeStorageNode.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=$(CC) -c TreeStorageNode.c -o ../OfficialCode/TreeStorageNode.o $(CFLAGS)
+
+[Unit10]
 FileName=BreadthFirstSearch.h
 CompileCpp=1
 Folder=
@@ -190,7 +150,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit15]
+[Unit11]
 FileName=BreadthFirstSearch.c
 CompileCpp=0
 Folder=
@@ -200,17 +160,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=$(CC) -c BreadthFirstSearch.c -o ../OfficialCode/BreadthFirstSearch.o $(CFLAGS)
 
-[Unit16]
-FileName=GenericLinkedListNode.h
-CompileCpp=1
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit17]
+[Unit13]
 FileName=GenericLinkedListNode.c
 CompileCpp=0
 Folder=
@@ -220,9 +170,9 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=$(CC) -c GenericLinkedListNode.c -o ../OfficialCode/GenericLinkedListNode.o $(CFLAGS)
 
-[Unit19]
-FileName=HashSet.c
-CompileCpp=0
+[Unit12]
+FileName=GenericLinkedListNode.h
+CompileCpp=1
 Folder=
 Compile=1
 Link=1
@@ -230,7 +180,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit18]
+[Unit14]
 FileName=HashSet.h
 CompileCpp=0
 Folder=
@@ -240,7 +190,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit20]
+[Unit15]
+FileName=HashSet.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit16]
 FileName=Arrays.h
 CompileCpp=0
 Folder=
@@ -250,7 +210,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit21]
+[Unit17]
 FileName=Arrays.c
 CompileCpp=0
 Folder=
@@ -260,17 +220,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit22]
-FileName=UserInput.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit23]
+[Unit19]
 FileName=GameFunctions.h
 CompileCpp=0
 Folder=
@@ -280,7 +230,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit24]
+[Unit18]
+FileName=UserInput.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit20]
 FileName=UserInput.c
 CompileCpp=0
 Folder=
@@ -290,7 +250,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit25]
+[Unit21]
 FileName=GameFunctions.c
 CompileCpp=0
 Folder=
@@ -300,7 +260,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit26]
+[Unit22]
 FileName=PathGameComponents.c
 CompileCpp=0
 Folder=
@@ -310,7 +270,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit27]
+[Unit23]
 FileName=PathGameComponents.h
 CompileCpp=0
 Folder=
@@ -320,7 +280,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit28]
+[Unit24]
 FileName=ArrayList.c
 CompileCpp=0
 Folder=
@@ -330,7 +290,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit29]
+[Unit25]
 FileName=ArrayList.h
 CompileCpp=0
 Folder=
@@ -340,8 +300,48 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit26]
+FileName=Hints.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit27]
+FileName=Hints.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit28]
+FileName=PathfinderGame.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit29]
+FileName=PathfinderGame.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit30]
-FileName=DepthFirstSearch.c
+FileName=HashMap2.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -351,7 +351,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit31]
-FileName=DepthFirstSearch.h
+FileName=HashMap2.h
 CompileCpp=0
 Folder=
 Compile=1
@@ -431,7 +431,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit32]
-FileName=Hints.c
+FileName=FLWGAlgorithm.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -441,7 +441,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit33]
-FileName=Hints.h
+FileName=FLWGAlgorithm.h
 CompileCpp=0
 Folder=
 Compile=1
