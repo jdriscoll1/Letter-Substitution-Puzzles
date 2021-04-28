@@ -34,36 +34,38 @@ struct PathfinderGame* init_PathfinderGame(){
 //Nothing should update 
 
 
-void Play_FLWP(struct DummyHeadNode*** HashMap, char** allWords){
+void Play_FLWP(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
 	struct PathfinderGame* pc = init_PathfinderGame(); 
 	int score = 0; 
+	int endGame = 0; 
 	int i; 
 	//This initialises the game components
- 	struct GameComponents* gc = InitializeGameComponents(allWords, HashMap, pc->currRound); 
+ 	struct GameComponents* gc = InitializeGameComponents(IntToWord_HashMap, pc->currRound); 
  	
 	//This goes through and plays multiple rounds
-	while(score != -1 && pc->currRound < pc->numRounds){
+	while(endGame == 0 && pc->currRound < pc->numRounds){
 		
 		//This starts a round
 		//quit is based on whether the user chooses to quit
-		score = round_FLWP(pc->currRound, allWords, HashMap, gc, pc); 
+		score = round_FLWP(pc->currRound, gc, pc, WordToInt_HashMap, IntToWord_HashMap); 
 			//Sets the hint points left 
 		pc->hintPoints = gc->hc->hintPoints; 
 		pc->scores[pc->currRound - 2] = score; 
+		printf("Score: %d", score); 
 		//If quit is equal to 0, the user wants to continue 
 		if(score != -1){
 			
 			//Checks if the user would like to continue
 			int quit = ContinueGames();
 			if(quit != 1){
-							//The user wants to advance
+				//The user wants to advance
 				if (quit == 0){
 				 
-					//curr round goes back 1
+					//curr round goes foward 1
 					pc->currRound++;  
 					
 				}
-				
+				//The user wants to go backwards
 				else if(quit == 2){
 				
 					if(pc->currRound > 2){
@@ -78,7 +80,8 @@ void Play_FLWP(struct DummyHeadNode*** HashMap, char** allWords){
 				
 			}
 			else{
-				score = -1; 
+				score = 0; 
+				endGame = 1; 
 			}	
 			
 			//This frees the game components
@@ -88,11 +91,11 @@ void Play_FLWP(struct DummyHeadNode*** HashMap, char** allWords){
 			//Initialize the Game Componenents again
 			if(quit != 4){
 		
-				FreeGameComponents(gc); 
-				gc = InitializeGameComponents(allWords, HashMap, pc->currRound); 	
+				FreeGameComponents(gc, IntToWord_HashMap); 
+				gc = InitializeGameComponents(IntToWord_HashMap, pc->currRound); 	
 			}
 			else{
-				ResetGameComponents(gc); 
+				ResetGameComponents(gc, IntToWord_HashMap); 
 				
 			}
 		
@@ -106,12 +109,13 @@ void Play_FLWP(struct DummyHeadNode*** HashMap, char** allWords){
 		//If the user chooses to quit, it is necessary to free teh components
 			else{
 				printf("Play Again Soon!"); 
-				score = -1; 
+				score = 0; 
+				endGame = 1; 
 			}		
 		
 	}
 	
-	FreeGameComponents(gc); 
+	FreeGameComponents(gc, IntToWord_HashMap); 
 	printf("Final Score: %d%%", finalScore(pc)); 	
 
 	free(pc); 

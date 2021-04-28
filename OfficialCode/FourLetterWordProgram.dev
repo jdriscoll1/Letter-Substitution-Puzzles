@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000001000000
-UnitCount=33
+UnitCount=35
 
 [VersionInfo]
 Major=1
@@ -180,57 +180,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit14]
-FileName=HashSet.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit15]
-FileName=HashSet.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit16]
-FileName=Arrays.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit17]
-FileName=Arrays.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit19]
-FileName=GameFunctions.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit18]
 FileName=UserInput.h
 CompileCpp=0
 Folder=
@@ -240,8 +190,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit20]
-FileName=UserInput.c
+[Unit17]
+FileName=GameFunctions.h
 CompileCpp=0
 Folder=
 Compile=1
@@ -250,7 +200,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit21]
+[Unit19]
 FileName=GameFunctions.c
 CompileCpp=0
 Folder=
@@ -260,7 +210,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit22]
+[Unit18]
+FileName=UserInput.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit20]
 FileName=PathGameComponents.c
 CompileCpp=0
 Folder=
@@ -270,7 +230,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit23]
+[Unit21]
 FileName=PathGameComponents.h
 CompileCpp=0
 Folder=
@@ -280,7 +240,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit24]
+[Unit22]
 FileName=ArrayList.c
 CompileCpp=0
 Folder=
@@ -290,7 +250,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit25]
+[Unit23]
 FileName=ArrayList.h
 CompileCpp=0
 Folder=
@@ -300,7 +260,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit26]
+[Unit24]
 FileName=Hints.c
 CompileCpp=0
 Folder=
@@ -310,7 +270,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit27]
+[Unit25]
 FileName=Hints.h
 CompileCpp=0
 Folder=
@@ -320,8 +280,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit28]
+[Unit26]
 FileName=PathfinderGame.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit27]
+FileName=PathfinderGame.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit28]
+FileName=IntLinkedList.h
 CompileCpp=0
 Folder=
 Compile=1
@@ -331,17 +311,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit29]
-FileName=PathfinderGame.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit30]
-FileName=HashMap2.c
+FileName=IntLinkedList.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -351,7 +321,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit31]
-FileName=HashMap2.h
+FileName=IntHashSet.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -361,17 +331,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit35]
-FileName=PathfinderGame.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit34]
-FileName=PathfinderGame.h
+FileName=HashMaps.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -381,7 +341,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit36]
-FileName=GenericNode.h
+FileName=IntHashSet.h
 CompileCpp=0
 Folder=
 Compile=1
@@ -391,7 +351,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit37]
-FileName=HashMap2.c
+FileName=IntHashSet.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -401,7 +361,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit38]
-FileName=HashMap2.h
+FileName=Minimax.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -411,7 +371,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit39]
-FileName=HashMap2.c
+FileName=Minimax.h
 CompileCpp=0
 Folder=
 Compile=1
@@ -421,17 +381,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit40]
-FileName=HashMap2.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit32]
-FileName=FLWGAlgorithm.c
+FileName=HashMaps.h
 CompileCpp=0
 Folder=
 Compile=1
@@ -441,7 +391,67 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit33]
-FileName=FLWGAlgorithm.h
+FileName=Minimax.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit41]
+FileName=HashMaps.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit14]
+FileName=Arrays.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit15]
+FileName=Arrays.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit30]
+FileName=IntHashSet.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit32]
+FileName=Minimax.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit34]
+FileName=HashMaps.h
 CompileCpp=0
 Folder=
 Compile=1

@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+
 #include "Arrays.h"
-#include "TreeSet.h"
 #include "UserInput.h"
 
 #define MAX_SIZE 4095

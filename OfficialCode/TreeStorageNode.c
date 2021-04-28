@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+
 #include "WordLinkedList.h"
 #include "TreeStorageNode.h"
-#include "HashSet.h"
 #include "HashFunctions.h"
 #include "UserInput.h"
 
@@ -14,41 +14,41 @@ extern int numLetters;
 @param goal --> The goal word to be found, if null it should check the connection count
 @param isEnough --> Checks if the connection count is enough
 @return --> Returns a boolean as to whether or not the goal is found*/ 
-int isFound_TSN(struct TreeStorageNode* curNode, char* goal, int minConnections); 
+int isFound_TSN(struct TreeStorageNode* curNode, int goal, int minConnections); 
 
-struct TreeStorageNode *Allocate_TreeStorageNode(char* word, int noConnections){
+struct TreeStorageNode *Allocate_TreeStorageNode(int id, int noConnections){
 	struct TreeStorageNode *header = malloc(sizeof(struct TreeStorageNode)); 
 	header->next = malloc(sizeof(struct TreeStorageNode)); 
 	header->next->next = NULL; 
-	header->next->word = word; 
+	header->next->id = id; 
 	header->next->prev = NULL; 
 	header->next->noConnections = noConnections; 
 	header->next->depth = 0; 
 	return header; 
 	
 } 
-struct TreeStorageNode *Add_TreeStorageNode(char* word, struct TreeStorageNode *prev, struct TreeStorageNode *header, int noConnections){
+struct TreeStorageNode *Add_TreeStorageNode(int id, struct TreeStorageNode *prev, struct TreeStorageNode *header, int noConnections){
 	while(header->next != NULL){
 		header = header->next; 
 	}
 	header->next = malloc(sizeof(struct TreeStorageNode));
 	header->next->next = NULL; 
 	header->next->prev = prev; 
-	header->next->word = word;  
+	header->next->id = id;  
 	header->next->noConnections = noConnections;
 	header->next->depth = prev->depth + 1;
 
 	return header->next; 
 
 }
-struct TreeStorageNode *Copy_WordLLToTreeStorageNode(struct TreeStorageNode *header, struct TreeStorageNode *prev, struct word *list, char* goal, int minConnections){
+struct TreeStorageNode *Copy_WordLLToTreeStorageNode(struct TreeStorageNode *header, struct TreeStorageNode *prev, struct intList *list, int goal, int minConnections){
 
 	//It goes to the next location in the word Queue, skipping past the header
 	list = list->next; 
 	//Until there is no more links that the current word has
 	while(list != NULL){	
 		//It adds the word to the tree storage node as well as the Node pointer to which it connects, I need this to return the structure it added
-		struct TreeStorageNode *final = Add_TreeStorageNode(list->word, prev, header, 0);  
+		struct TreeStorageNode *final = Add_TreeStorageNode(list->data, prev, header, 0);  
 		
 		//Checks if it has found the word
 		if(isFound_TSN(final, goal, minConnections)){
@@ -77,15 +77,15 @@ struct TreeStorageNode *Copy_WordLLToTreeStorageNode(struct TreeStorageNode *hea
 
 
 
-int isFound_TSN(struct TreeStorageNode* curNode, char* goal, int minConnections){
-	if(goal == NULL){
-		//printf("\nCur Node Depth: %d, Word: %s", curNode->depth, curNode->word); 
+int isFound_TSN(struct TreeStorageNode* curNode, int goal, int minConnections){
+	if(goal == -1){
+
 		return curNode->depth == minConnections; 		
 	}
 	
 	//if they're equal return 1
 	//else, return 2
-	return(strcmp(curNode->word, goal)== 0)?1:0; 
+	return(curNode->id == goal)?1:0; 
 
 }
 
@@ -99,24 +99,23 @@ struct TreeStorageNode *ReturnLast_TreeStorageNode(struct TreeStorageNode *heade
 	return header; 
 	
 }
-struct word *Convert_TreeStorageNodeToWordLL(struct word *newList, struct TreeStorageNode *End){
+struct intList *Convert_TreeStorageNodeToIntLL(struct intList *newList, struct TreeStorageNode *End){
 	
 	if(End->prev != NULL){
-		Convert_TreeStorageNodeToWordLL(newList, End->prev); 
+		Convert_TreeStorageNodeToIntLL(newList, End->prev); 
 	}
-	AddToBack_WordLL(End->word, newList, 0); 
+	AddToBack_IntLL(End->id, newList); 
 	return newList; 
 	
 	
 }
-void Convert_TreeStorageNodeTo2DArray(char** arr, struct TreeStorageNode *End, int minConnections){
+void Convert_TreeStorageNodeToIntArray(int* arr, struct TreeStorageNode *End, int minConnections){
 	/*While the location is not equal to null, make the index go down*/
 	/*The index starts at minConnection -1 , because if it started at minConection it would go 3:3 2:2 1:1, when it needs to be 3:2 2:1 1:0*/ 
 	int index = minConnections;
 	struct TreeStorageNode *curNode = End; 
 	while(curNode != NULL){ 
-		char* dest = *(arr + index); 
-		safeStrcpy(&dest, (const char*) curNode->word, numLetters, numLetters + 1); 
+		arr[index] = curNode->id; 
 		curNode = curNode->prev; 
 		index--; 
 	} 
@@ -132,11 +131,11 @@ void Print_TreeStorageNode(struct TreeStorageNode *header){
 	int i = 0; 
 	header = header->next; 
 	while(header != NULL){
-		printf("%s", header->word);
+		printf("%d", header->id);
 		struct TreeStorageNode *temp = header; 
 		while(temp->prev != NULL){
 			temp = temp->prev; 
-			printf("->%s", temp->word); 
+			printf("->%d", temp->id); 
 			
 		}
 		if(header->next != NULL){
@@ -155,12 +154,12 @@ void Print_TreeStorageReverseConnections(struct TreeStorageNode *End){
 	
  
 	while(End->prev != NULL){
-		printf("%s->", End->word);
+		printf("%d->", End->id);
 		End = End->prev; 
 		 
 		
 	}
-	printf("%s", End->word);
+	printf("%d", End->id);
 	
 }
 void Free_TreeStorageNode(struct TreeStorageNode *header){
@@ -171,11 +170,11 @@ void Free_TreeStorageNode(struct TreeStorageNode *header){
 		
 	}
 } 
-void Remove_TreeStorageNode(char* word, struct TreeStorageNode *header, struct word **(*HashSet)){
+void Remove_TreeStorageNode(int id, struct TreeStorageNode *header, struct wordDataArray* IntToWord_HashMap){
 	struct TreeStorageNode *prev = header;
 	header = header->next; 
 	 
-	while(header != NULL && strcmp(word, header->word) != 0){
+	while(header != NULL && id != header->id){
 		prev = header;
 		header = header->next; 
 		 
@@ -187,20 +186,20 @@ void Remove_TreeStorageNode(char* word, struct TreeStorageNode *header, struct w
 	}
 	//Once it is found
 	prev->next = header->next; 
-	if(HashSet != NULL){
-		Remove_HashSet(header->word, HashSet); 
-	}
+
+	removeAlgFound(id, IntToWord_HashMap); 
+	
 	free(header); 
 	
 }
 
-void RemoveAll_TreeStorageNode(char* word, struct TreeStorageNode *header, struct word **(*HashSet)){
+void RemoveAll_TreeStorageNode(int id, struct TreeStorageNode *header, struct wordDataArray* IntToWord_HashMap){
 	int isFound = 0; 
 	struct TreeStorageNode *prev = header; 
 	header = header->next; 
 	while(header != NULL){
 		
-		if(strcmp(word, header->word) == 0){
+		if(id == header->id){
 			isFound = 1; 
 			prev->next = header->next; 
 			free(header); 
@@ -219,15 +218,14 @@ void RemoveAll_TreeStorageNode(char* word, struct TreeStorageNode *header, struc
 		exit(0); 
 	}
 	else{
-	Remove_HashSet(word, HashSet); 
+		removeAlgFound(id, IntToWord_HashMap);  
 	}
 }
-void RemoveFromPoint_TreeStorageNode(struct TreeStorageNode *header, struct word *QueueHeader, struct word **(*HashSet)){
+void RemoveFromPoint_TreeStorageNode(struct TreeStorageNode *header, struct intList * QueueHeader, struct wordDataArray* IntToWord_HashMap){
 	while(header != NULL){
 		struct TreeStorageNode temp = *header; 
-		if(HashSet != NULL){
-			Remove_HashSet(header->word, HashSet); 
-		} 
+		removeAlgFound(header->id, IntToWord_HashMap); 
+	
 		free(header); 
 		header = temp.next; 
 		

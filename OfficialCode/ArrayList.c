@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
@@ -176,6 +177,7 @@ void addString_ArrayList(const char* str, int strLen, struct arrayList* aList){
 	//Now it is big enough, and we can add the word in using the strcat method 
 	//list->precLoc = int safeStrcat(dest. list->list, input.str, int destLength.curSize, int buff.strLen, int start.precLoc); 
 	aList->currPrecision = safeStrcat((char**)&aList->list, str, aList->currSize, strLen, aList->currPrecision); 
+	
 } 
 
 void removeBackStr_ArrayList(int length, struct arrayList* aList){
@@ -228,7 +230,7 @@ void print_ArrayList(struct arrayList* aList, enum alistType type){
 				printf("%d, ", ((int*)(aList->list))[i]); 
 			}
 			else if(type == TSN){
-				printf("%s, ", ((struct TreeStorageNode**)(aList->list))[i]->word); 
+				printf("%d, ", ((struct TreeStorageNode**)(aList->list))[i]->id); 
 			}
 			else if(type == CHARACTER){
 				printf("%c", ((char*)(aList->list))[i]); 

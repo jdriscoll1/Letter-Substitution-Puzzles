@@ -3,6 +3,8 @@
 
 #include "WordLinkedList.h"
 #include "TreeSet.h"
+#include "ArrayList.h"
+#include "HashMaps.h"
 /*Necessary commands: 
 \n Start Game
 \n*/ 
@@ -28,7 +30,7 @@ enum Difficulty ChooseDifficulty();
 4 - not enough letters in common
 5 - word = to prev
 6 - word does not exist*/ 
-int Check_Input(char* prevWord, const char* currWord, struct DummyHeadNode** (*HashMap)); 
+int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap); 
 
 
 /*This Converts a word to lowercase*/ 
@@ -68,6 +70,15 @@ int safeStrcat(char** dest, const char* src, int destLength, int buff, int start
 @reason --> I have chosen to do minLength because the \0 will not be considered, yet with maxlength it will be*/
 void safeStrcpy(char** dest, const char* src, int minLength, int maxLength); 
 
+
+/*Not so much safe but a more applicable version of the strtok function
+@param line --> The line to be tokenized
+@param token --> The token to be searched for
+@param start --> Where does it start searching*/
+int safeStrtok(char* line, char token, int start); 
+
+//Checks the length of a string
+int safeStrLen(char* word); 
 
    
 #endif

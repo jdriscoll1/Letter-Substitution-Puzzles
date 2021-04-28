@@ -3,6 +3,7 @@
 
 #include "TreeSet.h"
 #include "PathGameComponents.h"
+#include "HashMaps.h"
 
 #define NUM_ROUNDS 10
 
@@ -22,7 +23,7 @@ struct PathfinderGame{
 struct PathfinderGame* init_PathfinderGame();
 
 
-void Play_FLWP(struct DummyHeadNode*** HashMap, char** allWords); 
+void Play_FLWP(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap); 
 
 /*This gives the final score of the game*/
 int finalScore(struct PathfinderGame* pc); 

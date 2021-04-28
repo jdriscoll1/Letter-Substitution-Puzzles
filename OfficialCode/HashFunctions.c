@@ -54,15 +54,4 @@ int VowelSearch(char letter, char vowels[6]){
 	return -1; 
 }
 
-/*Returns the Array That a word would be in
-given pies, it would return the array with [p][i]*/ 
-void* HashSetArray(const char* word, void* **(*HashSet)){
- 
-	int element1 = FirstHashFunction(word[0]); 
-	int element2 = SecondHashFunction(word); 
-	if(element1 == -1){
-		printf("Element 1 is incorrect"); 
-		exit(0); 
-	}
-	return HashSet[element1][element2]; 	
-}
+

@@ -25,10 +25,6 @@ int SecondHashFunction(const char* word);
 */
 int VowelSearch(char letter, char vowels[6]);
 
-/*The purpose of this is to make it so that when it is time to take a linked list from the large 2D array, it will be easier
-@param word --> The word that the array contains
-@param HashSet --> The Hash Set that the word is trying to find its linked list
-@return 1D Linked List --> given pies, it would return the array with [p][i], this is a linked list that the words are stored in*/ 
-void* HashSetArray(const char* word, void* **(*HashSet));  
+
 
 #endif

@@ -7,7 +7,7 @@ Purpose: Now when I make 2D Linked Lists, I will use this (aka what I should hav
 /*The Structure that links to any linked list*/ 
 struct GenericLinkedListNode{
     enum listType{
-		WORD_LL, TREE_SET_LL, HINT3
+		WORD_LL, TREE_SET_LL, HINT3, INT_LL
 	}listType;
 	/*This is generic, therefore as long as you do ( (struct name*)(header->listHeader) )->var it'll be ok'*/ 
 	void* listHeader; 
@@ -54,26 +54,4 @@ void Free_GenericLinkedList(struct GenericLinkedListNode *header);
 
 
 
-/*This is an example of adding a linked list to the set of linked lists
-@param --> header gives the header, an example of using this is: 
-    //adds a node that can link to anotehr linked list
-	Add_GenericLinkedListNode(header); 
-	//prints out its position
-	printf("%p", header->next);
-	//prints another line 
-	printf("\n"); 
-	
-	//The basics for getting the tree set to work 
-	//adds a header node for the list header
-	header->next->listHeader= AllocateTreeSet("pies"); 
-	//adds a word to the newly allocated tree set 
-	AddToTreeSet("ties", ((struct DummyHeadNode*)(header->next->listHeader))->start); 
-	//adds another word to the newly allocated tree set 
-	AddToTreeSet("dies", ((struct DummyHeadNode*)(header->next->listHeader))->start); */ 
-	
-	
-/*Adds another link to the generic node list that can be manipulated in any way and set to any "object"
-@param --> The header to be added
-#Note: It is necessary to allocate the listHeader yourself
-*/ 
 #endif

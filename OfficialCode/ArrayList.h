@@ -1,7 +1,7 @@
 #ifndef seenArrayList
 #define seenArrayList
 
-#include <stdlib.h>
+
 //String, Character, Int, Double, TreeStorageNode
 enum alistType{
 		STR, CHARACTER, NUM, DOUBLE, TSN, STR_ARR

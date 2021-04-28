@@ -11,7 +11,7 @@
 #include "UserInput.h"
 #include "Arrays.h"
 #include "PathGameComponents.h"
-#include "HashMap2.h"
+
 
 
 extern int numLetters; 
@@ -39,35 +39,14 @@ int GetMinConnections(enum Difficulty difficulty){
 
 
 /*Randomly chooses a word based on an index*/ 
-char* ChooseStart(char** allWordsArray, struct DummyHeadNode **(*HashMap), int TEST_TEMP){
-	//srand(time(0)); 
-	//the total number of words
-	int totalWordCount[3] = {30, 590, 2233}; 
+int ChooseStart(struct wordDataArray* IntToWord_HashMap){
+ 
 	 
 	//randomly choosese a word via an index
-	int randIndex = rand() % (totalWordCount[numLetters - 2] + 1);
-
-	char* word; 
-	//TEST_TEMP FOUND HERE -- sets the index to 2, such that it is able
-	if(TEST_TEMP == 1){
-		//randIndex = 27;
-		//Also try bevy 164 
-		randIndex = 164; 
-		
-	}
-	word = allWordsArray[randIndex]; 
-
-
-	printf("%s", word); 
-	//It checks to make sure that it can connect to _at least_ one word
-	struct word* connections = getList(word, HashMap);  
- 	printf(" %s", connections->word); 
-	if(connections->next != NULL){
-		return word; 
-	}
-
-	//If the word it happens to choose can't connect to anything (for example, ahoy) it retries
-	return ChooseStart(allWordsArray, HashMap, 0);  
+	int wordID = rand() % (IntToWord_HashMap->numWords);
+	
+	
+	return wordID;  
 }
 
 
@@ -85,23 +64,34 @@ char* enumToString(enum Difficulty difficulty){
 }
 
 /*Method that determines when the game will be stopped*/ 
-int goalCheck(char* input, char* goal, int isValid){
+int goalCheck(char* input, int goal, int isValid, int isCommand, struct DummyHeadNode*** WordToInt_HashMap){
+	//This is the boolean that determines if the game is won
+	int gameWon = 0; 
 
 	if(strcmp("\n\0", input) == 0){
 		free(input); 
 		return 0; 
 		
 	}
-
-	char* inputTrue = strtok(input, "\n"); 
-	//if user decides to quit
-	if(strcmp(inputTrue, "finish") == 0 || strcmp(inputTrue, "q") == 0){
+	if(isCommand == 1){
+		free(input); 
+		return 0; 
+	}
+	if(isCommand == 2){
 		free(input); 
 		return 2; 
 	}
-	//Is the inputted word equal to the goal word
-	int gameWon = (isValid == 1 && strcmp(input, goal) == 0) ? 1 : 0; 
+
+	char* inputTrue = input; 
+	//if user decides to quit
 	
+	if(isValid == 1){
+	
+
+		int inputNum = Convert_WordToInt(input, WordToInt_HashMap); 
+		//Is the inputted word equal to the goal word
+		gameWon = (inputNum == goal) ? 1 : 0; 
+	}
 	//it is necessary to free the input after it has been checked (kind of the whole reason for this method)
 	free(input); 
 	return gameWon; 
@@ -132,14 +122,14 @@ void AfterGameOutput(int gameEndCondition, struct GameComponents* gc){
 
 
 //if there have been several undo calls, this will reset it
-void ResetUndo(struct GenericLinkedListNode *storageHeader, struct GenericLinkedListNode **storage, struct word* userConnections, int* undoCalls){
+void ResetUndo(struct GenericLinkedListNode *storageHeader, struct GenericLinkedListNode **storage, struct intList* userConnections, int* undoCalls){
 	//To replace the linked list
 	//Free the linked list without freeing the header 
-	Free_WordLL(userConnections->next);
+	Free_IntLL(userConnections->next);
 	userConnections->next = NULL;  
 	//Then add the new list to the back of it 
 	//@param storage->next->listHeader - we need next because taht's how it worked when you printed it out, otherwise you may accidentally print out the header
-	Copy_WordToWordLL(userConnections, (*storage)->next->listHeader);
+	Copy_IntLLToIntLL(userConnections, (*storage)->next->listHeader);
 	//Move the storage to the front
 	*storage = storageHeader;  
 	//I have to free however many calls there are  
@@ -175,22 +165,22 @@ void EnterText(){
 	printf("r --> redoes a move\n");       
 	printf("q or finish --> ends game\n\n");
 	printf("If you have any questions, please type h for help\n"); 
-	printf("After typig a command, please press enter\n");
+	printf("After typing a command, please press enter\n");
 }
 
 
-int round_FLWP(int minConnections, char** allWords, struct DummyHeadNode **(*HashMap), struct GameComponents* gc, struct PathfinderGame *pc){
+int round_FLWP(int minConnections, struct GameComponents* gc, struct PathfinderGame *pc, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
 
 	gc->hc->hintPoints = pc->hintPoints; 
 	int endCondition;
 	char* input;  
-	printf("Your goal is to start at %s, and arrive at %s\nYou have %d hint points.\n", gc->start, gc->goal, gc->hc->hintPoints); 
+	printf("Your goal is to start at %s, and arrive at %s\nYou have %d hint points.\n", Convert_IntToWord(gc->start, IntToWord_HashMap), Convert_IntToWord(gc->goal, IntToWord_HashMap), gc->hc->hintPoints); 
 	//If the user asks to remove a word
-	int isRemove; 
+	int isCommand; 
 	int isValid; 
 	do{
 		//The user has not yet asked to remove a word
-		isRemove = 0; 
+		isCommand = 1; 
 		isValid = 0; 
 		input = toLowerCase(Take_Input_NoSize());
 		if(strcmp(input, "\n\0") != 0){
@@ -203,38 +193,60 @@ int round_FLWP(int minConnections, char** allWords, struct DummyHeadNode **(*Has
 			//If they want to remove from a word
 	
 	
-			if(strchr(input, '-') != NULL){
-				RemoveWord_Struct(gc, input, 1); 
-				isRemove = 1; 
+			if(input[0] == '-'){
+				input = RemoveWord_Struct(gc, input, 1, WordToInt_HashMap, IntToWord_HashMap); 
+		
 			}
 			else if(input[0] == '?'){
 				input = substr(input, 1, numLetters + 1, 1);
-				int inDic = inDictionary(input, HashMap); 
-				if(inDic == 1){
-					printf("That is a valid word\n"); 
+				//Check the length
+				int i = 0; 
+				char c; 
+				while((c = input[i]) != '\0'){
+					i++; 
+				}
+				if(i == numLetters){
+				
+					int id = Convert_WordToInt(input, WordToInt_HashMap); 
+					if(id > pow(26, numLetters) || id <= 0){
+						
+					}
+					int inDic = inDictionary(id); 
+					if(inDic == 1){
+						printf("That is a valid word\n"); 
+					}
+					else{
+						printf("That is not a valid word\n"); 
+					}
 				}
 				else{
-					printf("That is not a valid word\n"); 
+					if(i < numLetters){
+						printf("That word is too short\n"); 
+					}
+					else{
+						printf("That word is too long\n"); 
+					}
+					
 				}
 			}
 			 
 		
 			//if they want to undo their previous move
 			else if(strcmp(input, "u") == 0){
-				Undo_Struct(gc);
+				Undo_Struct(gc, IntToWord_HashMap);
 			}
 			// if cmd equals r -- it will be time to redo the previous move*/
 		
 			else if(strcmp(input, "r") == 0){
-				Redo_Struct(gc);
+				Redo_Struct(gc, IntToWord_HashMap);
 				
 			}
 			else if(strcmp(input, "g") == 0){
-				printf("Your goal word is %s\n", gc->goal); 
+				printf("Your goal word is %s\n", Convert_IntToWord(gc->goal, IntToWord_HashMap)); 
 			}
 			//Help command
 			else if(strcmp(input, "h") == 0){
-				Help(gc->goal); 
+				Help(Convert_IntToWord(gc->goal, IntToWord_HashMap)); 
 			}
 			else if(strcmp(input, "1") == 0){
 				char* output = hint1((unsigned long long)gc); 
@@ -243,12 +255,12 @@ int round_FLWP(int minConnections, char** allWords, struct DummyHeadNode **(*Has
 				
 			}
 			else if(strcmp(input, "2") == 0){
-				char* output = hint2((unsigned long long)gc, HashMap); 
+				char* output = hint2((unsigned long long)gc, IntToWord_HashMap); 
 				printf("%s\n", output);
 				free(output);  
 			}
 			else if(strcmp(input, "3") == 0){
-				char* output = hint3((unsigned long long)gc, HashMap); 
+				char* output = hint3((unsigned long long)gc, IntToWord_HashMap); 
 				printf("%s\n", output);
 				free(output);  
 			}
@@ -257,8 +269,12 @@ int round_FLWP(int minConnections, char** allWords, struct DummyHeadNode **(*Has
 		
 		
 			}		
-			else if(strcmp(input, "q") != 0 && strcmp(input, "finish") != 0){
-				isValid = AddWord_Struct(gc, input, HashMap); 
+			else if(strcmp(input, "q") == 0 || strcmp(input, "finish") == 0){
+				isCommand = 2; 
+			}
+			else{
+				isValid = AddWord_Struct(gc, input, WordToInt_HashMap, IntToWord_HashMap); 
+				isCommand = 0; 
 			}
 			
 				
@@ -269,8 +285,11 @@ int round_FLWP(int minConnections, char** allWords, struct DummyHeadNode **(*Has
 		
 		
 		}
-		//If the user removes a word (isRemove == 1), then we don't need to check. Otherwise, we do
-	}while((isRemove == 1)?1:(endCondition = goalCheck(input, gc->goal, isValid)) == 0); 
+		//Goal Check Returns: 
+		//0 - The user hasn't finished
+		//1 - The user won
+		//2 - The user quit
+	}while( (endCondition = goalCheck(input, gc->goal, isValid, isCommand, WordToInt_HashMap)) == 0)  ; 
 	int score = (endCondition == 2)? -1 : getScore(gc); 
 	AfterGameOutput(endCondition, gc); 
 	return score; 

@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include <ctype.h>
+
 #include "UserInput.h"
 #include "GameFunctions.h"
-#include "HashMap2.h"
+
 
 
 #define MAX_SIZE 256
@@ -71,11 +72,12 @@ enum Difficulty ChooseDifficulty(){
 }
 
 
-int Check_Input(char* prevWord, const char* currWord, struct DummyHeadNode ***HashMap){
+int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
 	//Has to make sure that word is numLetters letters
 	//Has to make sure that word has numLetters - 1 letters in commond
 	//First, find prev word 
-
+	char* prev = Convert_IntToWord(prevWord, IntToWord_HashMap);
+	
 	
 	int i = 0;
 	int equalLetters = 0;  
@@ -99,7 +101,7 @@ int Check_Input(char* prevWord, const char* currWord, struct DummyHeadNode ***Ha
 		  
 		}
 
-		if(*(prevWord + i) == *(currWord + i)){
+		if(*(prev + i) == *(currWord + i)){
 			equalLetters++; 
 		}
 		i++; 
@@ -114,7 +116,9 @@ int Check_Input(char* prevWord, const char* currWord, struct DummyHeadNode ***Ha
 	//First: Make sure it is a real word
 	//Go into the hash map
 	//Find it in the hash map
-	if(getList(currWord, HashMap) == NULL){
+	int id = Convert_WordToInt((char*)currWord, WordToInt_HashMap); 
+ 
+	if(inDictionary(id) == 0){
 		printf("Word does not exist\n"); 
 		return 6; 
 	}
@@ -202,7 +206,6 @@ int safeStrcat(char** dest, const char* src, int destLength, int buff, int start
 	//As long as it is less than the buff, and it's not hit a null pointer, and it's destination can contain it  it's good to go. 
 	int i = start; 
 	 
-	
 	for(; i < buff + start; i++){
 		if(destLength == i){
 			printf("Error - Safe String Cat: Array Out of Bounds Exception");
@@ -238,6 +241,33 @@ void safeStrcpy(char** dest, const char* src, int minLength, int maxLength){
 		(*dest)[i] = src[i]; 
 	}
 	(*dest)[i] = '\0'; 
+	
+}
+
+//Start will begin at where it left off
+int safeStrtok(char* line, char token, int start){
+	//I'm going to take a word, and return an array of strings
+	int i = start + 1; 
+	//It will loop until it reaches the last node
+	while(line[i] != '\0'){
+		if(line[i] == token){
+			return start; 
+		}
+		i++; 
+	} 
+	
+	return start; 
+	
+	
+}
+
+int safeStrLen(char* word){
+	int i = 0;
+	char c;  
+	while((c = word[i]) != '\0'){
+		i++; 
+	}
+	return i; 
 	
 }
 

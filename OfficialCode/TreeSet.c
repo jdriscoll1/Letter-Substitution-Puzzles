@@ -4,6 +4,7 @@
 
 #include "TreeSet.h"
 #include "Arrays.h"
+#include "HashMaps.h"
 extern int numLetters; 
 
 /*This actually adds the node into the tree set
@@ -27,7 +28,19 @@ struct DummyHeadNode *Allocate_TreeSet(void* data){
 
 
 struct TreeSetNode* AddNode_TreeSet(void* data, void* pointer, struct TreeSetNode *curNode, enum dataType pointerType, enum dataType valueType){
-
+	//if this is the first node to be added
+	if(curNode == NULL){
+		/*Create the new node*/ 
+		struct TreeSetNode *newNode = malloc(sizeof(struct TreeSetNode));
+		newNode->data = data; 
+		newNode->depth = 0; 
+		newNode->greater = NULL; 
+		newNode->smaller = NULL;
+		reappoint(pointer, newNode, pointerType, valueType); 
+	
+	
+		return newNode; 
+	}
 	//we have to compare if the node is smaller or greater
 	int isSmaller = compare(data, curNode->data, valueType);  
 	
@@ -166,11 +179,14 @@ struct TreeSetNode* Search_TreeSet(void* data, struct TreeSetNode *header, enum 
 		}
 	
 		isEqual = compare(data, header->data, type);
-		nodeOutput = header; 
+		
 		
 	} 
+	if(isEqual == -1){
+		nodeOutput = header; 
+	}
 
-	return header;
+	return nodeOutput;
 
 
 }
@@ -194,7 +210,7 @@ int wordLLCompare(struct word* newHeader, struct word* oldHeader){
 //Compares two strings
 int stringCompare(char* word1, char* word2){
 	int i; 
- 
+ 	
 	//Goes through the letters of both words
 	for(i = 0; i < numLetters; i++){
 		//if they aren't equal
@@ -209,6 +225,7 @@ int stringCompare(char* word1, char* word2){
 	return -1; 
 }
 
+
 //Compares two integers
 int intCompare(int num1, int num2){
 	//if the numbers are equal, it returns that
@@ -221,7 +238,7 @@ int intCompare(int num1, int num2){
 
 void Print_TreeSet(struct TreeSetNode *header, enum dataType type){
 	if(header == NULL){
-		printf("\n[Print_TreeSet]: Empty List\n"); 
+		printf("Empty Tree Set"); 
 	}
 	else{
 		
@@ -239,6 +256,10 @@ void Print_TreeSet(struct TreeSetNode *header, enum dataType type){
 			printf("%s: ", ((struct word*)(header->data))->word); 
 			Print_WordLL(((struct word*)(header->data)), SEPERATED); 
 			printf("\n"); 
+		}
+		if(type == WORD_STRUCT){
+			printf("%s ", ((struct wordStruct*)(header->data))->word); 
+			
 		}
 		if(header->greater != NULL){
 			Print_TreeSet(header->greater, type); 
@@ -261,6 +282,15 @@ int compare(void* data1, void* data2, enum dataType type){
 	}
 	else if(type == WORD4LL){
 		return stringCompare((char*)data1, (char*)(((struct word*)(data2))->word)); 
+	}
+	else if(type == WORD_STRUCT){
+		//Either, it is taking a word, and throwing it in, or it is taking a node
+		return stringCompare(((struct wordStruct*)(data1))->word, ((struct wordStruct*)(data2))->word); 
+	}
+	else if(type == WORD_STRUCT_CHECK){
+
+		//Either, it is taking a word, and throwing it in, or it is taking a node
+		return stringCompare((char*)data1, ((struct wordStruct*)(data2))->word); 
 	}
 	printf("Incorrect Enum [compare]");
 	exit(0); 
@@ -867,6 +897,9 @@ void Free_TreeSet(struct TreeSetNode *header, enum dataType type){
 		if(type == WORDLL){
 			//Frees the linked list 
 			Free_WordLL(header->data); 
+		}
+		if(type == WORD_STRUCT){
+			Free_WordStruct(header->data); 
 		}
 		free(header); 
 	}

@@ -64,8 +64,28 @@ void CopyInto_GenericLinkedListNode(void* copy, struct GenericLinkedListNode *he
 			AddToBack_WordLL(strdup(((struct word*)(copy))->word), ((struct word*)(header->listHeader)), 1);
 			copy = ((struct word*)(copy))->next;  
 		}
+		
+		
 	}
-	
+	//if it's a word linked list that I'mma copy in 
+	if(type == INT_LL){
+		//then I have to malloc some info fro the list header 
+		header->listHeader = malloc(sizeof(struct intList)); 
+		//then I set the next to null to not cause any friction 
+		((struct intList*)(header->listHeader))->next = NULL; 
+		((struct intList*)(header->listHeader))->size = 0; 
+		//Then I move copy because I do not need a new header 
+		copy = ((struct intList*)(copy))->next; 
+		//While the copy isn't null, add it's word to the back of the generic's sublist
+		while(copy != NULL){
+			AddToBack_IntLL(((struct intList*)(copy))->data, ((struct intList*)(header->listHeader)));
+			copy = ((struct intList*)(copy))->next;  
+		}
+		
+		
+	}
+
+
 	
 	
 }
@@ -110,7 +130,12 @@ void FreeQuantity_GenericLinkedList(int freeAmount, struct GenericLinkedListNode
 	header = header->next; 
 	for(; freeAmount > 0; freeAmount--){
 		if(header != NULL){
-			Free_WordLL(((struct word*)(header->listHeader))); 
+			if(header->listType == WORD_LL){	
+				Free_WordLL(((struct word*)(header->listHeader))); 
+			}
+			else if(header->listType == INT_LL){
+				Free_IntLL(((struct intList*)(header->listHeader))); 
+			}
 			struct GenericLinkedListNode temp = *header; 
 			free(header); 
 			header = temp.next; 
@@ -139,6 +164,9 @@ void Free_GenericLinkedList(struct GenericLinkedListNode *header){
 		
 		else if(header->listType == WORD_LL ){
 			Free_WordLL(((struct word*)(header->listHeader))); 
+		}
+		else if(header->listType == INT_LL ){
+			Free_IntLL(((struct intList*)(header->listHeader))); 
 		}
 		else if(header->listType == HINT3){
 			free_ArrayList(((struct hint3Struct*)(header->listHeader))->letters); 

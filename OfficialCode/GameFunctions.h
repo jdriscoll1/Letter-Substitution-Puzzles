@@ -1,65 +1,48 @@
 #ifndef seenGame
 #define seenGame
 
-#include "TreeSet.h"
+
 #include "GenericLinkedListNode.h"
 #include "PathGameComponents.h"
 #include "PathfinderGame.h"
+#include "HashMaps.h"
+
 enum Difficulty{
 	EASY, MEDIUM, HARD
 }Difficulty;
-/*Start Game*/
-enum Difficulty StartGame(); 
-
-
-
-/*This finds the pathway that starts from the start word and goes all the way to the end word
-@param allWords --> Every single word that can be chosen
-@param HashMap --> A Hashmap that helps determine what words can be chosen
-@return --> Returns the word connections*/
-char* ChooseGoal(char* start, struct DummyHeadNode **(*HashMap), int minConnections); 
 
 /*This takes the difficulty of the game and chooses the minimum number of connections the goal word should be from the start word
 @param difficulty --> This is the games difficulty
 @return --> Returns the minimum number of connections the goal should be from the start*/ 
 int GetMinConnections(enum Difficulty difficulty);
 
+/*This is the output after the game ends
+@param gameEndCondition --> The condition after the game ended:
+@cont: 0)Error 1)They Won 2)They Gave Up */ 
+void AfterGameOutput(int gameEndCondition, struct GameComponents* gc); 
+
 /*This chooses the word that the game starts with, and continues trying until it finds a word that has at least one connection
 @param allWordsArray --> The array that stores every single word in it
-@param HashMap --> The Hash Map that has all of the word's connections
-@param TEST_TEMP --> TEMPORARY VARIABLE THAT IS ONLY USED FOR TEMPORARY PURPOSES
 @return --> Returns a word that will be considered the start word*/ 
-char* ChooseStart(char** allWordsArray, struct DummyHeadNode** (*HashMap), int TEST_TEMP); 
+int ChooseStart(struct wordDataArray* IntToWord_HashMap); 
 
 
 /*Method that determines when the game will be stopped
 @param input --> the current word who may be the end
 @param isValid --> Is it valid?
 @return --> 1) The goal has been met. 0) The goal has not been met 2) User quit*/ 
-int goalCheck(char* input, char* goal, int isValid); 
+int goalCheck(char* input, int goal, int isValid, int isCommand, struct DummyHeadNode*** WordToInt_HashMap); 
 
 
 /*Returns a string that is the difficulty*/ 
 char* enumToString(enum Difficulty difficulty); 
-
-/*This finds a path from teh start word to the goal based on the difficulty
-@param allWords --> This stores all of the words 
-@param HashMap --> The Hash Map used to find connections
-@param minConnections --> The number of connections it takes*/ 
-char** ChoosePath(char** allWords, struct DummyHeadNode **(*HashMap), int minConnections); 
-
-/*This is the output after the game ends
-@param gameEndCondition --> The condition after the game ended:
-@cont: 0)Error 1)They Won 2)They Gave Up */ 
-void AfterGameOutput(int gameEndCondition, struct GameComponents* gc); 
-
 
 /*When someone undoes and redoes, if they add or remove this method will be called
 @param storageHeader --> This stores the header of storage, which will not be accessible (without looping through prev) without it
 @param storage --> This is the current location of the storage
 @param userConnections --> This is the current list of words
 @param undoCalls -->The number of times that the user has made undo calls +*/ 
-void ResetUndo(struct GenericLinkedListNode *storageHeader, struct GenericLinkedListNode **storage, struct word* userConnections, int* undoCalls); 
+void ResetUndo(struct GenericLinkedListNode *storageHeader, struct GenericLinkedListNode **storage, struct intList* userConnections, int* undoCalls); 
 
 
 /*This is the command that runs when the user types help
@@ -83,7 +66,7 @@ void EnterText();
 @param pc --> These are the variables stored throughout the entire game 
 @return --> It returns the score
 @case -1 = the user quit*/
-int round_FLWP(int minConnections, char** allWords, struct DummyHeadNode **(*HashMap), struct GameComponents* gc, struct PathfinderGame *pc); 
+int round_FLWP(int minConnections, struct GameComponents* gc, struct PathfinderGame *pc, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap); 
 
 #endif
   
