@@ -286,7 +286,7 @@ struct intList* getConnections(int id, struct wordDataArray* IntToWord_HashMap){
 };
 
 FILE *OpenFile(){
-	char* wordDocuments[3] = {"WordDocuments/Two_Letter_Connections.txt", "WordDocuments/Three_Letter_Connections.txt", "WordDocuments/Four_Connections_Int.txt"};
+	char* wordDocuments[3] = {"WordDocuments/Two_Letter_Connections.txt", "WordDocuments/Three_Letter_Connections.txt", /*"WordDocuments/Nodes.txt"};*/"WordDocuments/Four_Connections_Int.txt"};
 	/*Four Letter Word Document*/
 	FILE *flwd = fopen(wordDocuments[numLetters - 2], "r"); 
 	if(flwd == NULL){

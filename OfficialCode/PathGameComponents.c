@@ -20,7 +20,6 @@ struct GameComponents *InitializeGameComponents(struct wordDataArray* IntToWord_
 		gameComponents->start = ChooseStart(IntToWord_HashMap);   
 		//Finds the goal word 
 		gameComponents->goal = BreadthFirstSearch_Distance_Goal(gameComponents->start, minConnections, IntToWord_HashMap); 
-		
 	}while(gameComponents->goal == -1); 
 	
 	//Sets the minimum number of connection

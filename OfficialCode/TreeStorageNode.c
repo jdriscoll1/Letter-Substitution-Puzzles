@@ -144,7 +144,7 @@ void Print_TreeStorageNode(struct TreeStorageNode *header){
 		header = header->next;  
 		i++; 
 	}
-	//printf("\nNodes: %d\n", i); 
+	printf("\n\n"); 
 
 
 }

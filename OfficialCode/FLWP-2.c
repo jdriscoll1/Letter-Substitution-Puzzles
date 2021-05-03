@@ -15,6 +15,8 @@ int numLetters = 4;
 #include "TreeSet.h"
 #include "BreadthFirstSearch.h"
 #include "PathfinderGame.h"
+#include "Minimax.h"
+#include "FLWGGame.h"
 
 /*Test 1: Creating and Freeing the Hash Map 5,000 times: 
 a) 35.99, 40.51, 38.78*/
@@ -25,7 +27,7 @@ Test 3: Running a test on it 34.40 Megabytes*/
 int main(){
 	
 
-       
+    srand(time(0)); 
     
 	//The Hash Map that can take a word and find its ID
 	struct DummyHeadNode** *WordToInt_HashMap;
@@ -38,14 +40,16 @@ int main(){
 	IntToWord_HashMap = malloc(sizeof(struct wordDataArray));  
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
 	
-	int i = 0; 
-	for(i = 0; i < 500; i++){
+	//Play_FLWP(WordToInt_HashMap, IntToWord_HashMap); 
+	FLWG(WordToInt_HashMap, IntToWord_HashMap); 
+	//struct minimaxOutput* output = minimax(0, 7, 7, 1, IntToWord_HashMap); 
 	
-		int* l = BreadthFirstSearch_Distance(Convert_WordToInt("pies", WordToInt_HashMap), 13, IntToWord_HashMap); 
-		free(l); 
-	}
+	//printf("\n\nFinal Choice: %d", output->id); 
+
 	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap); 
 
 	return 0;  
 }
+
+
 

@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000001000000
-UnitCount=35
+UnitCount=37
 
 [VersionInfo]
 Major=1
@@ -341,7 +341,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit36]
-FileName=IntHashSet.h
+FileName=FLWGGame.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -351,7 +351,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit37]
-FileName=IntHashSet.c
+FileName=FLWGGame.h
 CompileCpp=0
 Folder=
 Compile=1

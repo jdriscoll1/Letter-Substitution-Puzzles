@@ -214,12 +214,7 @@ int BreadthFirstSearch_Distance_Goal(int start, int minConnections, struct wordD
 		bc->prevConnection = bc->prevConnection->next;
 
 		bc->End = AddToTreeStorage_BFS(bc, minConnections, options, IntToWord_HashMap); 
-		 
-		//If it sees that the current depth is > minConnections it'll return NULL
-		//With this in mind, this means that it has acheived the current depth 
-		if(bc->End == NULL){
-			goalFound = true; 
-		}
+		
 		
 		//If it cannot connect as far out as intended
 		if(bc->prevConnection->next == NULL){			  
@@ -228,6 +223,16 @@ int BreadthFirstSearch_Distance_Goal(int start, int minConnections, struct wordD
 			//It cannot return or else there will be memory leaks 
 			goalFound = -1;
 		}
+		
+		 
+		//If it sees that the current depth is > minConnections it'll return NULL
+		//With this in mind, this means that it has acheived the current depth 
+		
+		if(bc->End == NULL){
+			goalFound = true; 
+		}
+		
+	
 		
 	
 		
@@ -385,13 +390,14 @@ struct TreeStorageNode* AddToTreeStorage_BFS(struct BFSComponents *bc, int minCo
 		//This is the tree storage node that we just added. It is the most recently added connection, which is also the furthest out 
 		//Curr End is now at the end
 
-
+		//Print_TreeStorageNode(bc->ReverseTreeHeader); 
 		
-
 		if(getAlgFound(currWord, IntToWord_HashMap) == 0){
+	 
 			bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, 0); 
 			setAlgFound(currWord, IntToWord_HashMap); 
 			if(currDepth == minConnections){
+				printf("Here we are!!"); 
 				add_ArrayList(bc->End, options, TSN); 			
 			}
 		}
