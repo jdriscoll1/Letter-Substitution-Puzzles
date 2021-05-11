@@ -18,14 +18,14 @@ extern int numLetters;
 
 int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
 	//So, first choose a start word
-	int word = Convert_WordToInt("ways", WordToInt_HashMap); //ChooseStart(IntToWord_HashMap); 
+	int word = 0;//Convert_WordToInt("aaaa", WordToInt_HashMap); //ChooseStart(IntToWord_HashMap); 
 
 	//Variable that determines winner: 1 - Algorithm, 0 - player
 	int winner = -1;
 	
 	//How deep does the bot check? 
 	int depth = 5; 
-	 int rounds = 0; 
+	int rounds = 0; 
 	char* wordStr;   
 	//Determines if a word is valid
 	int isValid = 0; 
@@ -50,7 +50,7 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 		rounds++; 
 		
 	}
-	printf("%s Wins!\n%d Rounds\n", (winner == 0) ? "User": "Bot", rounds); 
+	printf("%s Wins!\n%d Rounds\n", (winner == 0) ? "Bot A": "Bot B", rounds); 
 	//return winner
 	return winner; 
 	
@@ -95,6 +95,7 @@ int Input_FLWG(int prevWord, struct DummyHeadNode*** WordToInt_HashMap, struct w
 		else{
 			free(wordStr); 
 		}
+		printf("\n\n"); 
 		
 	}
 
@@ -106,6 +107,7 @@ int Input_FLWG(int prevWord, struct DummyHeadNode*** WordToInt_HashMap, struct w
 	
 	
 }
+
 
 int botPly(int word, int depth, struct wordDataArray* IntToWord_HashMap){
 
@@ -121,8 +123,9 @@ int botPly(int word, int depth, struct wordDataArray* IntToWord_HashMap){
 	}
 	word = output->id;
 	setAlgFound(word, IntToWord_HashMap);
-
+	//Print_MinimaxOutput(output);
 	free(output); 
+	 
 	return word; 
 	
 }

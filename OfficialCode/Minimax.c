@@ -15,8 +15,7 @@ To Do So, I will make use of the minimax algorithm*/
 struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct wordDataArray* IntToWord_HashMap){
 	//printf("%d\n", depth); 
 	if(depth == 0){
-		return createOutput(0, .5, id); 
-		
+		return createOutput(0, .5, 0, id);  
 	}
 	//First, let's get the list of nodes that we can go to 
 	struct intList* currConnection = getConnections(id, IntToWord_HashMap); 
@@ -39,7 +38,7 @@ struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingP
 
 struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct wordDataArray* IntToWord_HashMap){
 	//The current minimum evaluation is going to be +infinity since we want something lower than that
-	struct minimaxOutput* absEval = (isMaximizingPlayer == 1) ? createOutput(-100, -100, -1) : createOutput(100, 100, -1);  
+	struct minimaxOutput* absEval = (isMaximizingPlayer == 1) ? createOutput(-100, 0, -1, -1) : createOutput(100, 1, -1, -1);  
 	//The current word being checked
 	int currID; 
 	//Integer that keeps track of number of connections
@@ -52,10 +51,13 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 			
 		
 			//Set the algorithm evaluation to minimax making usre that when setting the params, the depth goes down by 1, that the isMinimaxPlayer is true, and that it is putting in the child's ID
-			struct minimaxOutput* potential = minimax2(currID, depth - 1, maxDepth, (isMaximizingPlayer == 1) ? 0 : 1, IntToWord_HashMap); 
+			struct minimaxOutput* potential = minimax(currID, depth - 1, maxDepth, (isMaximizingPlayer == 1) ? 0 : 1, IntToWord_HashMap); 
 			//printf("\nAt %d: %d or %d (min) Choice: %d\n", id, potential->id, minEval->id, (compareOutput(minEval, potential) == 0) ? potential->id : minEval->id); 
 			//printf("Choose Between: %d %d. Compare Min: %d, %d. Output: %d\n", minEval->id, potential->id, minEval->score, potential->score, compareOutput(minEval, potential));
 			//Set the min eval to the min between the algEval or the current minEval
+			//printf("%d -- ", depth); 
+			Print_MinimaxOutput(potential, IntToWord_HashMap); 
+			
 			if(compareOutput(absEval, potential) == isMaximizingPlayer){
 				free(absEval); 
 				absEval = potential; 
@@ -69,6 +71,7 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 		}
 		//Go to the next node
 		currConnection = currConnection->next; 
+		
 	}
 	//If the number of connections is none, create the minimaxOutput node
 	if(numConnections == 0){
@@ -79,7 +82,7 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 			return NULL; 
 		}
 		
-		absEval = (isMaximizingPlayer == 1) ? createOutput(-1, 0, id) : createOutput(1, 100, id); 
+		absEval = (isMaximizingPlayer == 1) ? createOutput(-1, 0, depth, id) : createOutput(1, 1, depth, id); 
 	}
 	if(depth != maxDepth){
 	
@@ -87,12 +90,12 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 	}
 	//if the depth is 0, it cannot go any further, and this node remains a mystery as to whether it is advantageous to go here
 	if(depth == 0){
-		return createOutput(0, .5, id); 
+		return createOutput(0, .5, 0, id); 
 	}
 	if(depth != maxDepth){
 		absEval->id = id; 
 	} 
-	
+
 	//Return the minimum evaluation
 	return absEval; 
 
@@ -128,26 +131,30 @@ int compareOutput(struct minimaxOutput* curr, struct minimaxOutput* potential){
 	if(potential->score > curr->score){
 		return 1; 
 	}
-	else{
-		return 0; 
-	}
+	
+	return 0; 
 	
 }
 
-struct minimaxOutput* createOutput(int score, int winPercent, int id){
+struct minimaxOutput* createOutput(int score, double winPercent, int depth, int id){
 	struct minimaxOutput* newOutput = malloc(sizeof(struct minimaxOutput)); 
 	newOutput->score = score; 
 	newOutput->winPercent = winPercent; 
 	newOutput->id  = id; 
+	newOutput->depth = depth; 
 	return newOutput; 
 	
 }
 
+void Print_MinimaxOutput(struct minimaxOutput *mo, struct wordDataArray* IntToWord_HashMap){
+	 
+	printf("%s: {%d, %d%%, %d}\n", Convert_IntToWord(mo->id, IntToWord_HashMap), mo->score, (int)(mo->winPercent * 100.0), mo->depth); 
+}
 
 struct minimaxOutput* minimax2(int id, int depth, int maxDepth, int isMaximizingPlayer, struct wordDataArray* IntToWord_HashMap){
 
 	if(depth == 0){
-		return createOutput(0, .5, id); 
+		return createOutput(0, .5, 0, id); 
 	}
 	//First, let's get the list of nodes that we can go to 
 	struct intList* currConnection = getConnections(id, IntToWord_HashMap); 
@@ -162,7 +169,7 @@ struct minimaxOutput* minimax2(int id, int depth, int maxDepth, int isMaximizing
 	//if it is the maximizing player's turn, then we want to return the best move
 	if(isMaximizingPlayer == 1){
 		//The current maximimum evaluation is going to be -infinity, since we want something higher than that 
-		struct minimaxOutput* maxEval = createOutput(-100, -100, -1); 
+		struct minimaxOutput* maxEval = createOutput(-100, 0, -1, -1); 
 		//The current id to go with
 		int currID; 
 		//Integer that keeps track of number of connections
@@ -205,7 +212,7 @@ struct minimaxOutput* minimax2(int id, int depth, int maxDepth, int isMaximizing
 				return NULL; 
 			}
 			
-			maxEval = createOutput(-1, 0, id); 
+			maxEval = createOutput(-1, 0, depth, id); 
 		}
 		
 		if(depth != maxDepth){	
@@ -228,7 +235,7 @@ struct minimaxOutput* minimax2(int id, int depth, int maxDepth, int isMaximizing
 	//if it is the minimizing player's turn, then we want to return the min move
 	if(isMaximizingPlayer == 0){
 		//The current minimum evaluation is going to be +infinity since we want something lower than that
-		struct minimaxOutput* minEval = createOutput(100, 100, -1);  
+		struct minimaxOutput* minEval = createOutput(100, 100, -1, -1);  
 		//The current word being checked
 		int currID; 
 		//Integer that keeps track of number of connections
@@ -268,14 +275,14 @@ struct minimaxOutput* minimax2(int id, int depth, int maxDepth, int isMaximizing
 				return NULL; 
 			}
 			
-			minEval = createOutput(1, 100, id); 
+			minEval = createOutput(1, 100, depth, id); 
 		}
 		if(depth != maxDepth){
 		
 			removeAlgFound(id, IntToWord_HashMap); 
 		}
 		if(depth == 0){
-			return createOutput(0, .5, id); 
+			return createOutput(0, .5, 0, id); 
 		}
 		if(depth != maxDepth){
 			minEval->id = id; 

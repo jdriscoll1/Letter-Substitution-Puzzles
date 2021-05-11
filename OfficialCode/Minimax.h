@@ -13,6 +13,8 @@ struct minimaxOutput{
 	int score; 
 	//This is the fraction form of the number of wins to losses ratio
 	double winPercent;
+	//How deep the node is
+	int depth; 
 	//The word ID that contains this percent chance, this will change each time it goes up the recursion 
 	int id; 
 };
@@ -23,10 +25,12 @@ struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingP
 
 struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct wordDataArray* IntToWord_HashMap); 
 
+void Print_MinimaxOutput(struct minimaxOutput *mo, struct wordDataArray* IntToWord_HashMap); 
+
 void DFS(int id, struct wordDataArray* IntToWord_HashMap); 
 
 //This creates a minimax output
-struct minimaxOutput* createOutput(int score, int winPercent, int id); 
+struct minimaxOutput* createOutput(int score, double winPercent, int depth, int id); 
 
 /*This compares two minimax outputs
 @param curr --> The one that is the current best

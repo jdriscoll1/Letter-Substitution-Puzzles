@@ -25,8 +25,6 @@ a) 35.99, 40.51, 38.78*/
 Test 3: Running a test on it 34.40 Megabytes*/
 
 int main(){
-	
-
     srand(time(0)); 
     
 	//The Hash Map that can take a word and find its ID
@@ -41,8 +39,9 @@ int main(){
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
 	
 	//Play_FLWP(WordToInt_HashMap, IntToWord_HashMap); 
-	FLWG(WordToInt_HashMap, IntToWord_HashMap); 
-	//struct minimaxOutput* output = minimax(0, 7, 7, 1, IntToWord_HashMap); 
+	FLWG(WordToInt_HashMap, IntToWord_HashMap);
+	//int depth = 10;  
+	//struct minimaxOutput* output = minimax(0, depth, depth, 1, IntToWord_HashMap); 
 	
 	//printf("\n\nFinal Choice: %d", output->id); 
 
