@@ -1,3 +1,6 @@
+#ifndef seenMinimax
+#define seenMinimax
+
 #include "HashMaps.h"
 /*The purpose of this algorithm is to search depth first down a tree and find the most likely path to trap your opponent
 @param wordID --> The ID of the word being checked
@@ -20,21 +23,40 @@ struct minimaxOutput{
 };
 
 
-struct minimaxOutput* minimax2(int id, int depth, int maxDepth, int isMaximizingPlayer, struct wordDataArray* IntToWord_HashMap);
+
 struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct wordDataArray* IntToWord_HashMap); 
 
 struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct wordDataArray* IntToWord_HashMap); 
 
 void Print_MinimaxOutput(struct minimaxOutput *mo, struct wordDataArray* IntToWord_HashMap); 
 
+/*This compares between two outputs -- the current one already considered to be the best. Or the potential, perhaps better than the current
+@param curr --> The one whose life span has been longer (absEval, usually)
+@param potential --> the one whose life span has been shorter, recently found from child nodes
+@return:
+@case 1 --> Good for the maximizer
+@case 0 --> Good for the minimizer*/
+int compareOutput(struct minimaxOutput* curr, struct minimaxOutput* potential, int isMaximizingPlayer); 
+
+/*Compares the depth of two nodes, if their primary & secondary score are equal
+@return: 
+@param primary == 1 --> Good For Maximizer (max depth), Bad For Minimizer (min depth)
+@param primary == 0 --> Special Case: Both depths will have to be 0 to zero. So this does not matter. Just choose 1. 
+@param primary ==-1 --> Bad For Maximizer (min depth), Good For Minimizer (max depth)
+@case 1 --> If the maximizer knows he is going to win (keeps game short). If the minimizer knows he will lose (draws out game).
+@case 0 --> If the maximizer knows he is going to lose (draws out game). If the minimizer knows he will win (keeps game short). */
+int compareDepth(struct minimaxOutput* curr, struct minimaxOutput* potential, int primary, int isMaximizingPlayer); 
+
+/*Compares for the winPercentage*/
+int compareWinPercent(double potential, double curr); 
+
 void DFS(int id, struct wordDataArray* IntToWord_HashMap); 
 
-//This creates a minimax output
+/*Creates a score box
+@param score --> Primary value {-1, 0, +1}
+@param winPercent --> Secondary value [0, 1]
+@param depth --> How deep is the node the smaller the number the deeper it is {0, 1, ... depth -1, depth}
+@param id --> The word whose score is being measured*/
 struct minimaxOutput* createOutput(int score, double winPercent, int depth, int id); 
 
-/*This compares two minimax outputs
-@param curr --> The one that is the current best
-@param potential --> The new one that may be the best
-@return 1: potential > curr
-		0: curr >= potential*/
-int compareOutput(struct minimaxOutput* curr, struct minimaxOutput* potential); 
+#endif

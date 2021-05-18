@@ -38,8 +38,10 @@ int main(){
 	IntToWord_HashMap = malloc(sizeof(struct wordDataArray));  
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
 	
+	//DFS(0, IntToWord_HashMap); 
 	//Play_FLWP(WordToInt_HashMap, IntToWord_HashMap); 
-	FLWG(WordToInt_HashMap, IntToWord_HashMap);
+	//Print_IntToWord_HashMap(IntToWord_HashMap); 
+	FLWG_Test(WordToInt_HashMap, IntToWord_HashMap);
 	//int depth = 10;  
 	//struct minimaxOutput* output = minimax(0, depth, depth, 1, IntToWord_HashMap); 
 	

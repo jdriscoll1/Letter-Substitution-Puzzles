@@ -1,0 +1,7 @@
+6
+aaaa 1 4
+aaab 2 3 4
+aaac 
+aaad
+aaae 5
+aaaf
