@@ -77,7 +77,9 @@ int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** Word
 	//Has to make sure that word has numLetters - 1 letters in commond
 	//First, find prev word 
 	char* prev = Convert_IntToWord(prevWord, IntToWord_HashMap);
-	
+	if(strcmp(currWord, "amin") == 0){
+		printf("Start");
+	}
 	
 	int i = 0;
 	int equalLetters = 0;  

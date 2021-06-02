@@ -9,6 +9,8 @@
 #include "TreeSet.h"
 #include "IntLinkedList.h"
 
+
+
 typedef enum {false, true} bool;
 
 extern int numLetters;
@@ -286,7 +288,7 @@ struct intList* getConnections(int id, struct wordDataArray* IntToWord_HashMap){
 };
 
 FILE *OpenFile(){
-	char* wordDocuments[3] = {"WordDocuments/Two_Letter_Connections.txt", "WordDocuments/Three_Letter_Connections.txt", /*"WordDocuments/t/e.txt"};*/"WordDocuments/Four_Connections_Int.txt"};
+	char* wordDocuments[3] = {"WordDocuments/Two_Letter_Connections.txt", "WordDocuments/Three_Letter_Connections.txt", /*"WordDocuments/t/ab2.txt"};*/"WordDocuments/Four_Connections_Int.txt"}; 
 	/*Four Letter Word Document*/
 	FILE *flwd = fopen(wordDocuments[numLetters - 2], "r"); 
 	if(flwd == NULL){

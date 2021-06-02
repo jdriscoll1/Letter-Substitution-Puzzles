@@ -3,8 +3,8 @@
 #include <string.h>
 
 #include "TreeSet.h"
-#include "Arrays.h"
 #include "HashMaps.h"
+#include "ArrayList.h"
 extern int numLetters; 
 
 /*This actually adds the node into the tree set
@@ -1126,7 +1126,6 @@ void permute(int *arr, int l, int r) {
 		i = 8; 
 		Remove_TreeSet((void*)p, t, t->start, DUMMY, INTEGER); 
 		Print_TreeSet(t->start, INTEGER);
-		Print_Array(r + 1, (void**)arr, INT);  
 		printf("\n");  
 	}
 	

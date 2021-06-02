@@ -1,7 +1,6 @@
-6
-aaaa 1 2
-bbbb 4 3
-cccc
-dddd 5
+5
+aaaa 2 1
+bbbb
+cccc 3 4
+dddd
 eeee
-ffff

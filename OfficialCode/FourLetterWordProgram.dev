@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000001000000
-UnitCount=39
+UnitCount=37
 
 [VersionInfo]
 Major=1
@@ -181,36 +181,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit16]
-FileName=UserInput.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit17]
-FileName=GameFunctions.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit19]
-FileName=GameFunctions.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit18]
 FileName=UserInput.c
 CompileCpp=0
 Folder=
@@ -220,8 +190,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit20]
-FileName=PathGameComponents.c
+[Unit17]
+FileName=GameFunctions.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -230,7 +200,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit21]
+[Unit19]
 FileName=PathGameComponents.h
 CompileCpp=0
 Folder=
@@ -240,7 +210,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit22]
+[Unit18]
+FileName=PathGameComponents.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit20]
 FileName=ArrayList.c
 CompileCpp=0
 Folder=
@@ -250,7 +230,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit23]
+[Unit21]
 FileName=ArrayList.h
 CompileCpp=0
 Folder=
@@ -260,7 +240,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit24]
+[Unit22]
 FileName=Hints.c
 CompileCpp=0
 Folder=
@@ -270,7 +250,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit25]
+[Unit23]
 FileName=Hints.h
 CompileCpp=0
 Folder=
@@ -280,7 +260,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit26]
+[Unit24]
 FileName=PathfinderGame.h
 CompileCpp=0
 Folder=
@@ -290,7 +270,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit27]
+[Unit25]
 FileName=PathfinderGame.c
 CompileCpp=0
 Folder=
@@ -300,7 +280,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit28]
+[Unit26]
 FileName=IntLinkedList.h
 CompileCpp=0
 Folder=
@@ -310,7 +290,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit29]
+[Unit27]
 FileName=IntLinkedList.c
 CompileCpp=0
 Folder=
@@ -320,7 +300,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit31]
+[Unit28]
+FileName=IntHashSet.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit29]
 FileName=IntHashSet.c
 CompileCpp=0
 Folder=
@@ -330,8 +320,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit31]
+FileName=Minimax.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit35]
-FileName=HashMaps.c
+FileName=FLWGGame.h
 CompileCpp=0
 Folder=
 Compile=1
@@ -341,7 +341,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit36]
-FileName=FLWGGame.c
+FileName=MinimaxTests.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -351,7 +351,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit37]
-FileName=FLWGGame.h
+FileName=MinimaxTests.h
 CompileCpp=0
 Folder=
 Compile=1
@@ -381,7 +381,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit33]
-FileName=Minimax.h
+FileName=HashMaps.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -400,37 +400,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit14]
-FileName=Arrays.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit15]
-FileName=Arrays.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit30]
-FileName=IntHashSet.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit32]
 FileName=Minimax.c
 CompileCpp=0
 Folder=
@@ -440,8 +410,38 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit34]
+[Unit32]
 FileName=HashMaps.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit34]
+FileName=FLWGGame.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit14]
+FileName=UserInput.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit15]
+FileName=GameFunctions.h
 CompileCpp=0
 Folder=
 Compile=1

@@ -13,18 +13,19 @@ Date: 5/1/21
 #include "GameFunctions.h"
 #include "UserInput.h"
 #include "MinimaxTests.h"
+#include "IntLinkedList.h"
 
 extern int numLetters; 
 
 int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
 	//So, first choose a start word
-	int word = 0;//Convert_WordToInt("care", WordToInt_HashMap); //ChooseStart(IntToWord_HashMap); 
+	int word = Convert_WordToInt("scam", WordToInt_HashMap); //ChooseStart(IntToWord_HashMap); 
 	setAlgFound(word, IntToWord_HashMap); 
 	//Variable that determines winner: 1 - Algorithm, 0 - player
 	int winner = -1;
 	
 	//How deep does the bot check? 
-	int depth = 5; 
+	int depth = 12; 
 	int rounds = 0; 
 	char* wordStr;   
 	//Determines if a word is valid
@@ -32,15 +33,34 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 	int whoseTurn = 0; 
 	while(word >= 0){
 		//Output the current word
-		//printf("%s\n", Convert_IntToWord(word, IntToWord_HashMap)); 
+		printf("%s\n", Convert_IntToWord(word, IntToWord_HashMap)); 
 		
 		if(whoseTurn == 0){
-			
-			word = botPly(word, depth, IntToWord_HashMap, minimax); 	
+			/*
+			struct intList* l = IntToWord_HashMap->array[word]->connectionHeader; 
+			int connection = 0; 
+			while(l->next != NULL){
+				l = l->next; 
+				if(IntToWord_HashMap->array[l->data]->algFound == 0){
+					connection = 1;
+					break;  
+				}
+				
+			}
+			if(connection == 0){
+				whoseTurn++; 
+				word = -1; 
+			}
+		*/	
+			word = userPly(word, WordToInt_HashMap, IntToWord_HashMap);
+		
 		}
-		else if(whoseTurn == 1){
-			word = botPly(word, depth, IntToWord_HashMap, minimax_NoBeta);
-			
+		else if(whoseTurn == 1){			
+			word = botPly(word, depth, IntToWord_HashMap, minimax); 
+			//Check the word
+			//Go to the connections, and ask if there are any more
+		
+				
 			
 		 
 		}
@@ -68,27 +88,32 @@ void FLWG_Test(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* 
 	int B = 0; 
 	//So, first choose a start word
 	int w = 0; 
-	int i = 0; 
-	for(i = 0; i < 300; i++){
+	int i = 0;
+	int start = 200; 
+	int end = 1000;  
+	int totalRounds = 0; 
+	for(i = start; i < end; i++){
 		w = i; 
 		setAlgFound(w, IntToWord_HashMap); 
 		//Variable that determines winner: 1 - Algorithm, 0 - player
 		int winner = -1;
 		//How deep does the bot check? 
-		int depth = 5; 
+		int depth = 1; 
 		int rounds = 0; 
 		char* wordStr;   
 		//Determines if a word is valid
 		int isValid = 0; 
 		int whoseTurn = 0; 
 		while(w >= 0){
+			//printf("%s\n", IntToWord_HashMap->array[w]->word); 
 			if(whoseTurn == 0){
-				
-				w = botPly(w, depth, IntToWord_HashMap, minimax); 	
+				//w = weakBotPly(w, IntToWord_HashMap);
+				w = botPly(w, depth, IntToWord_HashMap, minimax);	
 			}
 			else if(whoseTurn == 1){
-				w = botPly(w, depth, IntToWord_HashMap, minimax_NoBeta);
-				
+				//printf("List: %s\n", toString_IntLL(IntToWord_HashMap->array[w]->connectionHeader, SEPERATED, IntToWord_HashMap)); 
+				//w = botPly(w, depth, IntToWord_HashMap, chooseFirst);
+				w = weakBotPly(w, IntToWord_HashMap); 
 				
 			 
 			}
@@ -99,8 +124,10 @@ void FLWG_Test(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* 
 			}
 			rounds++; 
 			
+			
 		}
-		printf("%s Wins!\n%d Rounds\n", (winner == 0) ? "Bot A" : "Bot B", rounds); 
+		totalRounds += rounds; 
+		printf("%s Wins!\n%d Rounds\nRound %d\n", (winner == 0) ? "Bot A" : "Bot B", rounds, i); 
 		if(winner == 0){
 			A++; 
 		} 
@@ -109,7 +136,7 @@ void FLWG_Test(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* 
 		}
 		reset_HashSet(IntToWord_HashMap);
 	}
-	printf("A: %d, B: %d", A, B); 
+	printf("A: %d, B: %d, avg rounds: %d", A, B, totalRounds / (end - start)); 
 	
 	
 	
@@ -163,11 +190,12 @@ int Input_FLWG(int prevWord, struct DummyHeadNode*** WordToInt_HashMap, struct w
 }
 
 
-int botPly(int word, int depth, struct wordDataArray* IntToWord_HashMap, struct minimaxOutput* (*minimax_func)(int, int, int, int, struct wordDataArray*) ){
+int botPly(int word, int depth, struct wordDataArray* IntToWord_HashMap, struct minimaxOutput* (*minimax_func)(int, int, int, int, struct minimaxOutput, struct minimaxOutput, struct wordDataArray*) ){
 
-
+	struct minimaxOutput* alpha = createOutput(-100, 0, -1, -1); 
+	struct minimaxOutput* beta = createOutput(100, 1, -1, -1); 
 	//Then, the bot takes this word and runs the minimax algorithm
-	struct minimaxOutput* output = (*minimax)(word, depth, depth, 1, IntToWord_HashMap);
+	struct minimaxOutput* output = (*minimax_func)(word, depth, depth, 1, *alpha, *beta, IntToWord_HashMap);
 	 
 	//If it returns NULL -- game over
 	if(output == NULL){
@@ -179,6 +207,8 @@ int botPly(int word, int depth, struct wordDataArray* IntToWord_HashMap, struct 
 	setAlgFound(word, IntToWord_HashMap);
 	//Print_MinimaxOutput(output);
 	free(output); 
+	free(alpha); 
+	free(beta); 
 	 
 	return word; 
 	
@@ -188,6 +218,15 @@ int userPly(int word, struct DummyHeadNode*** WordToInt_HashMap, struct wordData
 	//Take the user's input
 	return Input_FLWG(word, WordToInt_HashMap, IntToWord_HashMap); 
 	
+	
+	
+}
+
+int weakBotPly(int word, struct wordDataArray* IntToWord_HashMap){
+	int w = chooseRandom(word, IntToWord_HashMap); 
+	if(w == -1){return -1;}
+	setAlgFound(w, IntToWord_HashMap); 
+	return w; 
 	
 	
 }

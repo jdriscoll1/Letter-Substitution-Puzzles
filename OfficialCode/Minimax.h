@@ -24,12 +24,24 @@ struct minimaxOutput{
 
 
 
-struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct wordDataArray* IntToWord_HashMap); 
+struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap); 
 
-struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct wordDataArray* IntToWord_HashMap); 
+struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap); 
 
-void Print_MinimaxOutput(struct minimaxOutput *mo, struct wordDataArray* IntToWord_HashMap); 
+void Print_MinimaxOutput(struct minimaxOutput *mo); 
 
+/*Compares two minimax outputs
+@param a --> The first node being compared
+@param b --> The second node being compared
+@param isMaximizingPlayer --> Determines if it is the maximizing player being looked at, important for depth node
+@return --> Returns whichever is better, based on whether it is the maximizing player
+@case 1 --> Good for the maximizer
+@case 0 --> Good for the minimizer
+
+*/
+int compare_mo(struct minimaxOutput* a, struct minimaxOutput* b, int isMaximizingPlayer); 
+//Copies the contents of b onto a 
+int copy_mo(struct minimaxOutput* a, struct minimaxOutput* b); 
 /*This compares between two outputs -- the current one already considered to be the best. Or the potential, perhaps better than the current
 @param curr --> The one whose life span has been longer (absEval, usually)
 @param potential --> the one whose life span has been shorter, recently found from child nodes
@@ -46,6 +58,16 @@ int compareOutput(struct minimaxOutput* curr, struct minimaxOutput* potential, i
 @case 1 --> If the maximizer knows he is going to win (keeps game short). If the minimizer knows he will lose (draws out game).
 @case 0 --> If the maximizer knows he is going to lose (draws out game). If the minimizer knows he will win (keeps game short). */
 int compareDepth(struct minimaxOutput* curr, struct minimaxOutput* potential, int primary, int isMaximizingPlayer); 
+
+/*This does the alpha-beta pruning
+@param alpha --> The score that determines if the maximizer can prune 
+@param beta --> The score that determines if the minimizer can prune
+@absEval --> The score whose being tested against
+@param isMaximizingPlayer --> is it the maximizer or minimizer?
+@return --> 1 or 0
+@case 1 --> We pruned
+@case 0 --> We did not prune*/
+int AlphaBetaPruning(struct minimaxOutput *alpha, struct minimaxOutput* beta, struct minimaxOutput* absEval, int isMaximizingPlayer); 
 
 /*Compares for the winPercentage*/
 int compareWinPercent(double potential, double curr); 

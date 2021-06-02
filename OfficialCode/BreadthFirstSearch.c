@@ -7,7 +7,6 @@
 #include "GenericLinkedListNode.h"
 #include "GameFunctions.h"
 #include "BreadthFirstSearch.h"
-#include "Arrays.h"
 #include "ArrayList.h"
 #include "Hints.h"
 #include "UserInput.h"

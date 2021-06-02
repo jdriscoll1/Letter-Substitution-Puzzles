@@ -4,8 +4,8 @@
 CPP      = g++.exe -D__DEBUG__
 CC       = gcc.exe -D__DEBUG__
 WINDRES  = windres.exe
-OBJ      = ../OfficialCode/FLWP-2.o ../OfficialCode/HashFunctions.o ../OfficialCode/TreeSet.o ../OfficialCode/WordLinkedList.o ../OfficialCode/TreeStorageNode.o ../OfficialCode/BreadthFirstSearch.o ../OfficialCode/GenericLinkedListNode.o ../OfficialCode/Arrays.o ../OfficialCode/UserInput.o ../OfficialCode/GameFunctions.o ../OfficialCode/PathGameComponents.o ../OfficialCode/ArrayList.o ../OfficialCode/Hints.o ../OfficialCode/PathfinderGame.o ../OfficialCode/IntLinkedList.o ../OfficialCode/IntHashSet.o ../OfficialCode/Minimax.o ../OfficialCode/HashMaps.o ../OfficialCode/FLWGGame.o ../OfficialCode/MinimaxTests.o
-LINKOBJ  = ../OfficialCode/FLWP-2.o ../OfficialCode/HashFunctions.o ../OfficialCode/TreeSet.o ../OfficialCode/WordLinkedList.o ../OfficialCode/TreeStorageNode.o ../OfficialCode/BreadthFirstSearch.o ../OfficialCode/GenericLinkedListNode.o ../OfficialCode/Arrays.o ../OfficialCode/UserInput.o ../OfficialCode/GameFunctions.o ../OfficialCode/PathGameComponents.o ../OfficialCode/ArrayList.o ../OfficialCode/Hints.o ../OfficialCode/PathfinderGame.o ../OfficialCode/IntLinkedList.o ../OfficialCode/IntHashSet.o ../OfficialCode/Minimax.o ../OfficialCode/HashMaps.o ../OfficialCode/FLWGGame.o ../OfficialCode/MinimaxTests.o
+OBJ      = ../OfficialCode/FLWP-2.o ../OfficialCode/HashFunctions.o ../OfficialCode/TreeSet.o ../OfficialCode/WordLinkedList.o ../OfficialCode/TreeStorageNode.o ../OfficialCode/BreadthFirstSearch.o ../OfficialCode/GenericLinkedListNode.o ../OfficialCode/UserInput.o ../OfficialCode/GameFunctions.o ../OfficialCode/PathGameComponents.o ../OfficialCode/ArrayList.o ../OfficialCode/Hints.o ../OfficialCode/PathfinderGame.o ../OfficialCode/IntLinkedList.o ../OfficialCode/IntHashSet.o ../OfficialCode/Minimax.o ../OfficialCode/HashMaps.o ../OfficialCode/FLWGGame.o ../OfficialCode/MinimaxTests.o
+LINKOBJ  = ../OfficialCode/FLWP-2.o ../OfficialCode/HashFunctions.o ../OfficialCode/TreeSet.o ../OfficialCode/WordLinkedList.o ../OfficialCode/TreeStorageNode.o ../OfficialCode/BreadthFirstSearch.o ../OfficialCode/GenericLinkedListNode.o ../OfficialCode/UserInput.o ../OfficialCode/GameFunctions.o ../OfficialCode/PathGameComponents.o ../OfficialCode/ArrayList.o ../OfficialCode/Hints.o ../OfficialCode/PathfinderGame.o ../OfficialCode/IntLinkedList.o ../OfficialCode/IntHashSet.o ../OfficialCode/Minimax.o ../OfficialCode/HashMaps.o ../OfficialCode/FLWGGame.o ../OfficialCode/MinimaxTests.o
 LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -g3
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
@@ -44,9 +44,6 @@ $(BIN): $(OBJ)
 
 ../OfficialCode/GenericLinkedListNode.o: GenericLinkedListNode.c
 	$(CC) -c GenericLinkedListNode.c -o ../OfficialCode/GenericLinkedListNode.o $(CFLAGS)
-
-../OfficialCode/Arrays.o: Arrays.c
-	$(CC) -c Arrays.c -o ../OfficialCode/Arrays.o $(CFLAGS)
 
 ../OfficialCode/UserInput.o: UserInput.c
 	$(CC) -c UserInput.c -o ../OfficialCode/UserInput.o $(CFLAGS)

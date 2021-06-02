@@ -10,12 +10,13 @@ int numLetters = 4;
 #include <string.h>
 #include <time.h>
 
-#include "Arrays.h"
+
 #include "HashMaps.h"
 #include "TreeSet.h"
 #include "BreadthFirstSearch.h"
 #include "PathfinderGame.h"
 #include "Minimax.h"
+#include "MinimaxTests.h"
 #include "FLWGGame.h"
 
 /*Test 1: Creating and Freeing the Hash Map 5,000 times: 
@@ -25,7 +26,8 @@ a) 35.99, 40.51, 38.78*/
 Test 3: Running a test on it 34.40 Megabytes*/
 
 int main(){
-    srand(time(0)); 
+
+	srand(time(0)); 
     
 	//The Hash Map that can take a word and find its ID
 	struct DummyHeadNode** *WordToInt_HashMap;
@@ -37,20 +39,29 @@ int main(){
 	WordToInt_HashMap = Allocate_WordToInt();
 	IntToWord_HashMap = malloc(sizeof(struct wordDataArray));  
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
-	
+
+	 
+	//printf("\n"); 
 	//DFS(0, IntToWord_HashMap); 
 	//Play_FLWP(WordToInt_HashMap, IntToWord_HashMap); 
 	//Print_IntToWord_HashMap(IntToWord_HashMap); 
-	FLWG_Test(WordToInt_HashMap, IntToWord_HashMap);
-	//int depth = 10;  
-	//struct minimaxOutput* output = minimax(0, depth, depth, 1, IntToWord_HashMap); 
+	FLWG(WordToInt_HashMap, IntToWord_HashMap);
+	/*int depth = 4;  
+	struct minimaxOutput* a = createOutput(-100, 0, -1, -1); 
+	struct minimaxOutput* b = createOutput(100, 1, -1, -1); 
+	struct minimaxOutput* output = minimax(0, depth, depth, 1, *a, *b, IntToWord_HashMap); 
+	printf("Final Choice: %d", output->id); 
 	
-	//printf("\n\nFinal Choice: %d", output->id); 
+	free(output);
+	free(a);
+	free(b); 
+	*/
 
-	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap); 
-
+	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);     
+	
 	return 0;  
 }
+
 
 
 
