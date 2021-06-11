@@ -1,0 +1,79 @@
+# Project: FLWGProj
+# Makefile created by Dev-C++ 5.11
+
+CPP      = g++.exe -D__DEBUG__
+CC       = gcc.exe -D__DEBUG__
+WINDRES  = windres.exe
+OBJ      = objs/FLWP-2.o objs/BreadthFirstSearch.o objs/Minimax.o objs/MinimaxTests.o objs/TreeStorageNode.o objs/FLWGGame.o objs/GameFunctions.o objs/Hints.o objs/PathfinderGame.o objs/PathGameComponents.o objs/UserInput.o objs/ArrayList.o objs/GenericLinkedListNode.o objs/HashFunctions.o objs/HashMap.o objs/IntLinkedList.o objs/TreeSet.o objs/WordLinkedList.o
+LINKOBJ  = objs/FLWP-2.o objs/BreadthFirstSearch.o objs/Minimax.o objs/MinimaxTests.o objs/TreeStorageNode.o objs/FLWGGame.o objs/GameFunctions.o objs/Hints.o objs/PathfinderGame.o objs/PathGameComponents.o objs/UserInput.o objs/ArrayList.o objs/GenericLinkedListNode.o objs/HashFunctions.o objs/HashMap.o objs/IntLinkedList.o objs/TreeSet.o objs/WordLinkedList.o
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -g3
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+BIN      = FourLetterWordProgram.exe
+CXXFLAGS = $(CXXINCS) -g3
+CFLAGS   = $(INCS) -g3
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+objs/FLWP-2.o: FLWP-2.c
+	$(CC) -c FLWP-2.c -o objs/FLWP-2.o $(CFLAGS)
+
+objs/BreadthFirstSearch.o: algs/src/BreadthFirstSearch.c
+	$(CC) -c algs/src/BreadthFirstSearch.c -o objs/BreadthFirstSearch.o $(CFLAGS)
+
+objs/Minimax.o: algs/src/Minimax.c
+	$(CC) -c algs/src/Minimax.c -o objs/Minimax.o $(CFLAGS)
+
+objs/MinimaxTests.o: algs/src/MinimaxTests.c
+	$(CC) -c algs/src/MinimaxTests.c -o objs/MinimaxTests.o $(CFLAGS)
+
+objs/TreeStorageNode.o: algs/src/TreeStorageNode.c
+	$(CC) -c algs/src/TreeStorageNode.c -o objs/TreeStorageNode.o $(CFLAGS)
+
+objs/FLWGGame.o: flwg/src/FLWGGame.c
+	$(CC) -c flwg/src/FLWGGame.c -o objs/FLWGGame.o $(CFLAGS)
+
+objs/GameFunctions.o: flwp/src/GameFunctions.c
+	$(CC) -c flwp/src/GameFunctions.c -o objs/GameFunctions.o $(CFLAGS)
+
+objs/Hints.o: flwp/src/Hints.c
+	$(CC) -c flwp/src/Hints.c -o objs/Hints.o $(CFLAGS)
+
+objs/PathfinderGame.o: flwp/src/PathfinderGame.c
+	$(CC) -c flwp/src/PathfinderGame.c -o objs/PathfinderGame.o $(CFLAGS)
+
+objs/PathGameComponents.o: flwp/src/PathGameComponents.c
+	$(CC) -c flwp/src/PathGameComponents.c -o objs/PathGameComponents.o $(CFLAGS)
+
+objs/UserInput.o: flwp/src/UserInput.c
+	$(CC) -c flwp/src/UserInput.c -o objs/UserInput.o $(CFLAGS)
+
+objs/ArrayList.o: structs/src/ArrayList.c
+	$(CC) -c structs/src/ArrayList.c -o objs/ArrayList.o $(CFLAGS)
+
+objs/GenericLinkedListNode.o: structs/src/GenericLinkedListNode.c
+	$(CC) -c structs/src/GenericLinkedListNode.c -o objs/GenericLinkedListNode.o $(CFLAGS)
+
+objs/HashFunctions.o: structs/src/HashFunctions.c
+	$(CC) -c structs/src/HashFunctions.c -o objs/HashFunctions.o $(CFLAGS)
+
+objs/HashMap.o: structs/src/HashMap.c
+	$(CC) -c structs/src/HashMap.c -o objs/HashMap.o $(CFLAGS)
+
+objs/IntLinkedList.o: structs/src/IntLinkedList.c
+	$(CC) -c structs/src/IntLinkedList.c -o objs/IntLinkedList.o $(CFLAGS)
+
+objs/TreeSet.o: structs/src/TreeSet.c
+	$(CC) -c structs/src/TreeSet.c -o objs/TreeSet.o $(CFLAGS)
+
+objs/WordLinkedList.o: structs/src/WordLinkedList.c
+	$(CC) -c structs/src/WordLinkedList.c -o objs/WordLinkedList.o $(CFLAGS)
