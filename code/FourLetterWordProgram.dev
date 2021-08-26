@@ -24,12 +24,12 @@ HostApplication=
 UseCustomMakefile=0
 CustomMakefile=
 CommandLine=
-Folders=algs,flwg,flwp,structs
+Folders=algs,algs/includes,algs/src,flwg,flwg/includes,flwg/src,flwp,flwp/includes,flwp/src,structs,structs/includes,structs/src
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000001000000
-UnitCount=35
+UnitCount=37
 
 [VersionInfo]
 Major=1
@@ -61,9 +61,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit2]
-FileName=algs\BreadthFirstSearch.c
+FileName=algs\includes\BreadthFirstSearch.h
 CompileCpp=0
-Folder=algs
+Folder=algs/includes
 Compile=1
 Link=1
 Priority=1000
@@ -71,9 +71,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit3]
-FileName=algs\BreadthFirstSearch.h
+FileName=algs\includes\Minimax.h
 CompileCpp=0
-Folder=algs
+Folder=algs/includes
 Compile=1
 Link=1
 Priority=1000
@@ -81,9 +81,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit4]
-FileName=algs\Minimax.c
+FileName=algs\includes\MinimaxTests.h
 CompileCpp=0
-Folder=algs
+Folder=algs/includes
 Compile=1
 Link=1
 Priority=1000
@@ -91,19 +91,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit5]
-FileName=algs\Minimax.h
+FileName=algs\includes\TreeStorageNode.h
 CompileCpp=0
-Folder=algs
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit6]
-FileName=algs\MinimaxTests.c
-CompileCpp=0
-Folder=algs
+Folder=algs/includes
 Compile=1
 Link=1
 Priority=1000
@@ -111,9 +101,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit7]
-FileName=algs\MinimaxTests.h
+FileName=algs\src\Minimax.c
 CompileCpp=0
-Folder=algs
+Folder=algs/src
 Compile=1
 Link=1
 Priority=1000
@@ -121,9 +111,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit8]
-FileName=algs\TreeStorageNode.c
+FileName=algs\src\MinimaxTests.c
 CompileCpp=0
-Folder=algs
+Folder=algs/src
 Compile=1
 Link=1
 Priority=1000
@@ -131,9 +121,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit9]
-FileName=algs\TreeStorageNode.h
+FileName=algs\src\TreeStorageNode.c
 CompileCpp=0
-Folder=algs
+Folder=algs/src
 Compile=1
 Link=1
 Priority=1000
@@ -141,9 +131,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit10]
-FileName=flwg\FLWGGame.c
+FileName=flwg\includes\FLWGGame.h
 CompileCpp=0
-Folder=flwg
+Folder=flwg/includes
 Compile=1
 Link=1
 Priority=1000
@@ -151,9 +141,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit11]
-FileName=flwg\FLWGGame.h
+FileName=flwg\src\FLWGGame.c
 CompileCpp=0
-Folder=flwg
+Folder=flwg/src
 Compile=1
 Link=1
 Priority=1000
@@ -161,9 +151,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit13]
-FileName=flwp\GameFunctions.h
+FileName=flwp\includes\Hints.h
 CompileCpp=0
-Folder=flwp
+Folder=flwp/includes
 Compile=1
 Link=1
 Priority=1000
@@ -171,9 +161,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit12]
-FileName=flwp\GameFunctions.c
+FileName=flwp\includes\GameFunctions.h
 CompileCpp=0
-Folder=flwp
+Folder=flwp/includes
 Compile=1
 Link=1
 Priority=1000
@@ -181,9 +171,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit16]
-FileName=flwp\PathfinderGame.c
+FileName=flwp\includes\UserInput.h
 CompileCpp=0
-Folder=flwp
+Folder=flwp/includes
 Compile=1
 Link=1
 Priority=1000
@@ -191,9 +181,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit17]
-FileName=flwp\PathfinderGame.h
+FileName=flwp\src\GameFunctions.c
 CompileCpp=0
-Folder=flwp
+Folder=flwp/src
 Compile=1
 Link=1
 Priority=1000
@@ -201,9 +191,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit19]
-FileName=flwp\PathGameComponents.h
+FileName=flwp\src\PathfinderGame.c
 CompileCpp=0
-Folder=flwp
+Folder=flwp/src
 Compile=1
 Link=1
 Priority=1000
@@ -211,9 +201,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit18]
-FileName=flwp\PathGameComponents.c
+FileName=flwp\src\Hints.c
 CompileCpp=0
-Folder=flwp
+Folder=flwp/src
 Compile=1
 Link=1
 Priority=1000
@@ -221,9 +211,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit20]
-FileName=flwp\UserInput.c
+FileName=flwp\src\PathGameComponents.c
 CompileCpp=0
-Folder=flwp
+Folder=flwp/src
 Compile=1
 Link=1
 Priority=1000
@@ -231,9 +221,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit21]
-FileName=flwp\UserInput.h
+FileName=flwp\src\UserInput.c
 CompileCpp=0
-Folder=flwp
+Folder=flwp/src
 Compile=1
 Link=1
 Priority=1000
@@ -241,9 +231,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit22]
-FileName=structs\ArrayList.c
+FileName=structs\includes\ArrayList.h
 CompileCpp=0
-Folder=structs
+Folder=structs/includes
 Compile=1
 Link=1
 Priority=1000
@@ -251,9 +241,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit23]
-FileName=structs\ArrayList.h
+FileName=structs\includes\GenericLinkedListNode.h
 CompileCpp=0
-Folder=structs
+Folder=structs/includes
 Compile=1
 Link=1
 Priority=1000
@@ -261,9 +251,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit24]
-FileName=structs\GenericLinkedListNode.c
+FileName=structs\includes\HashFunctions.h
 CompileCpp=0
-Folder=structs
+Folder=structs/includes
 Compile=1
 Link=1
 Priority=1000
@@ -271,9 +261,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit25]
-FileName=structs\GenericLinkedListNode.h
+FileName=structs\includes\HashMap.h
 CompileCpp=0
-Folder=structs
+Folder=structs/includes
 Compile=1
 Link=1
 Priority=1000
@@ -281,9 +271,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit26]
-FileName=structs\HashFunctions.c
+FileName=structs\includes\IntLinkedList.h
 CompileCpp=0
-Folder=structs
+Folder=structs/includes
 Compile=1
 Link=1
 Priority=1000
@@ -291,9 +281,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit27]
-FileName=structs\HashFunctions.h
+FileName=structs\includes\TreeSet.h
 CompileCpp=0
-Folder=structs
+Folder=structs/includes
 Compile=1
 Link=1
 Priority=1000
@@ -301,9 +291,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit29]
-FileName=structs\HashMap.h
+FileName=structs\src\ArrayList.c
 CompileCpp=0
-Folder=structs
+Folder=structs/src
 Compile=1
 Link=1
 Priority=1000
@@ -311,9 +301,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit31]
-FileName=structs\IntLinkedList.h
+FileName=structs\src\HashFunctions.c
 CompileCpp=0
-Folder=structs
+Folder=structs/src
 Compile=1
 Link=1
 Priority=1000
@@ -321,9 +311,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit35]
-FileName=structs\WordLinkedList.h
+FileName=structs\src\WordLinkedList.c
 CompileCpp=0
-Folder=structs
+Folder=structs/src
 Compile=1
 Link=1
 Priority=1000
@@ -331,9 +321,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit36]
-FileName=MinimaxTests.c
+FileName=flwg\src\PythonWrapper.c
 CompileCpp=0
-Folder=
+Folder=flwg/src
 Compile=1
 Link=1
 Priority=1000
@@ -341,9 +331,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit37]
-FileName=MinimaxTests.h
+FileName=flwg\includes\PythonWrapper.h
 CompileCpp=0
-Folder=
+Folder=flwg/includes
 Compile=1
 Link=1
 Priority=1000
@@ -371,9 +361,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit33]
-FileName=structs\TreeSet.h
+FileName=structs\src\IntLinkedList.c
 CompileCpp=0
-Folder=structs
+Folder=structs/src
 Compile=1
 Link=1
 Priority=1000
@@ -391,9 +381,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit30]
-FileName=structs\IntLinkedList.c
+FileName=structs\src\GenericLinkedListNode.c
 CompileCpp=0
-Folder=structs
+Folder=structs/src
 Compile=1
 Link=1
 Priority=1000
@@ -401,9 +391,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit32]
-FileName=structs\TreeSet.c
+FileName=structs\src\HashMap.c
 CompileCpp=0
-Folder=structs
+Folder=structs/src
 Compile=1
 Link=1
 Priority=1000
@@ -411,9 +401,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit34]
-FileName=structs\WordLinkedList.c
+FileName=structs\src\TreeSet.c
 CompileCpp=0
-Folder=structs
+Folder=structs/src
 Compile=1
 Link=1
 Priority=1000
@@ -421,9 +411,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit14]
-FileName=flwp\Hints.c
+FileName=flwp\includes\PathfinderGame.h
 CompileCpp=0
-Folder=flwp
+Folder=flwp/includes
 Compile=1
 Link=1
 Priority=1000
@@ -431,9 +421,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit15]
-FileName=flwp\Hints.h
+FileName=flwp\includes\PathGameComponents.h
 CompileCpp=0
-Folder=flwp
+Folder=flwp/includes
 Compile=1
 Link=1
 Priority=1000
@@ -441,9 +431,19 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit28]
-FileName=structs\HashMap.c
+FileName=structs\includes\WordLinkedList.h
 CompileCpp=0
-Folder=structs
+Folder=structs/includes
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit6]
+FileName=algs\src\BreadthFirstSearch.c
+CompileCpp=0
+Folder=algs/src
 Compile=1
 Link=1
 Priority=1000

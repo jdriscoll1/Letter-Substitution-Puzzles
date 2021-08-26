@@ -28,7 +28,7 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 	int winner = -1;
 	
 	//How deep does the bot check? 
-	int depth = 12; 
+	int depth = 3; 
 	int rounds = 0; 
 	char* wordStr;   
 	//Determines if a word is valid
@@ -55,11 +55,12 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 				word = -1; 
 			}
 		*/	
-			word = userPly(word, WordToInt_HashMap, IntToWord_HashMap);
-		
+			 	word = userPly(word, WordToInt_HashMap, IntToWord_HashMap);
 		}
 		else if(whoseTurn == 1){			
-			word = botPly(word, depth, IntToWord_HashMap, minimax); 
+	
+			
+			word = botPly(word, depth, IntToWord_HashMap, minimax);
 			//Check the word
 			//Go to the connections, and ask if there are any more
 		

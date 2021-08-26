@@ -15,12 +15,12 @@ typedef enum {false, true} bool;
 
 extern int numLetters;
 
-void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
+void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, char* path){
 
 	 
 
 	//Open up the file 
-	FILE* wordDoc = OpenFile(); 
+	FILE* wordDoc = OpenFile(path); 
 	
 
 	
@@ -70,6 +70,11 @@ void Allocate_IntToWord(struct wordDataArray* IntToWord_HashMap, int numWords){
 
 
 }
+
+struct wordDataArray *Allocate_IntToWordStruct(){
+	 struct wordDataArray *IntToWord_Struct = malloc(sizeof(struct wordDataArray)); 
+	 return IntToWord_Struct; 
+}; 
 
 void Fill_HashMaps(FILE* wordDoc, struct DummyHeadNode** *WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
 	char line[BUFSIZ]; 
@@ -292,13 +297,13 @@ struct intList* getConnections(int id, struct wordDataArray* IntToWord_HashMap){
 	return IntToWord_HashMap->array[id]->connectionHeader; 
 };
 
-FILE *OpenFile(){
-	char* wordDocuments[3] = {"../docs/2.txt", "../docs/3.txt", /*"WordDocuments/t/ab2.txt"};*/"../docs/4.txt"}; 
+FILE *OpenFile(char* path){
+	//char* wordDocuments[3] = {"../docs/2.txt", "../docs/3.txt", /*"WordDocuments/t/ab2.txt"};*/"../docs/4.txt"}; 
 	/*Four Letter Word Document*/
-	FILE *flwd = fopen(wordDocuments[numLetters - 2], "r"); 
+	FILE *flwd = fopen(path, "r"); 
 	
 	if(flwd == NULL){
-		printf("Could not open file: %s\n", wordDocuments[numLetters - 2]);
+		printf("Could not open file: %s\n", path);
 		exit(1);		
 
 	}

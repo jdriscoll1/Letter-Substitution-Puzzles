@@ -38,11 +38,14 @@ struct wordDataArray{
 	
 };
 
-void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap); 
+void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, char* path); 
 
 struct DummyHeadNode** *Allocate_WordToInt(); 
 
 void Allocate_IntToWord(struct wordDataArray* IntToWord_HashMap, int numWords); 
+
+//The malloc statement for allocating an int to word struct
+struct wordDataArray *Allocate_IntToWordStruct(); 
 
 /*This takes two hash maps and a file, and reaps from the file its contents and puts it into the two hash maps*/
 void Fill_HashMaps(FILE* wordDoc, struct DummyHeadNode** *WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap); 
@@ -104,7 +107,7 @@ struct intList* getConnections(int id, struct wordDataArray* IntToWord_HashMap);
 struct intList *getConnections_Restrictions(int input, int cap, struct wordDataArray* IntToWord_HashMap); 
 
 /*This opens a file*/ 
-FILE *OpenFile(); 
+FILE *OpenFile(char* filePath); 
 
 //Getters & Setters for the hash set
 void setAlgFound(int wordID, struct wordDataArray* IntToWord_HashMap); 

@@ -37,10 +37,12 @@ int main(){
 	//The Hash Map that can take an integer and find all sorts of information about it, including the word 
 	struct wordDataArray *IntToWord_HashMap; 
 	
+	char* path = "../docs/4.txt"; 
+	
 	//Allocates the Word to Int HashMap
 	WordToInt_HashMap = Allocate_WordToInt();
-	IntToWord_HashMap = malloc(sizeof(struct wordDataArray));  
-	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
+	IntToWord_HashMap = Allocate_IntToWordStruct();  
+	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
 
 
 	//printf("\n"); 
