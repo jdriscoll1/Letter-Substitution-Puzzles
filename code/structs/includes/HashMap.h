@@ -21,6 +21,8 @@ struct wordData{
 	int algFound; 
 	//Finds if it has been given as a hint
 	int hintFound; 
+	//Finds the number of connections a word has
+	int numConnections; 
 };
 
 struct wordStruct{

@@ -4,8 +4,8 @@
 CPP      = g++.exe -D__DEBUG__
 CC       = gcc.exe -D__DEBUG__
 WINDRES  = windres.exe
-OBJ      = objs/FLWP-2.o objs/BreadthFirstSearch.o objs/Minimax.o objs/MinimaxTests.o objs/TreeStorageNode.o objs/FLWGGame.o objs/GameFunctions.o objs/Hints.o objs/PathfinderGame.o objs/PathGameComponents.o objs/UserInput.o objs/ArrayList.o objs/GenericLinkedListNode.o objs/HashFunctions.o objs/HashMap.o objs/IntLinkedList.o objs/TreeSet.o objs/WordLinkedList.o objs/PythonWrapper.o
-LINKOBJ  = objs/FLWP-2.o objs/BreadthFirstSearch.o objs/Minimax.o objs/MinimaxTests.o objs/TreeStorageNode.o objs/FLWGGame.o objs/GameFunctions.o objs/Hints.o objs/PathfinderGame.o objs/PathGameComponents.o objs/UserInput.o objs/ArrayList.o objs/GenericLinkedListNode.o objs/HashFunctions.o objs/HashMap.o objs/IntLinkedList.o objs/TreeSet.o objs/WordLinkedList.o objs/PythonWrapper.o
+OBJ      = objs/FLWP-2.o objs/BreadthFirstSearch.o objs/Minimax.o objs/MinimaxTests.o objs/TreeStorageNode.o objs/FLWGGame.o objs/GameFunctions.o objs/Hints.o objs/PathfinderGame.o objs/PathGameComponents.o objs/UserInput.o objs/ArrayList.o objs/GenericLinkedListNode.o objs/HashFunctions.o objs/HashMap.o objs/IntLinkedList.o objs/TreeSet.o objs/WordLinkedList.o objs/PythonWrapper.o objs/MaxN.o objs/MultiplayerFLWG.o
+LINKOBJ  = objs/FLWP-2.o objs/BreadthFirstSearch.o objs/Minimax.o objs/MinimaxTests.o objs/TreeStorageNode.o objs/FLWGGame.o objs/GameFunctions.o objs/Hints.o objs/PathfinderGame.o objs/PathGameComponents.o objs/UserInput.o objs/ArrayList.o objs/GenericLinkedListNode.o objs/HashFunctions.o objs/HashMap.o objs/IntLinkedList.o objs/TreeSet.o objs/WordLinkedList.o objs/PythonWrapper.o objs/MaxN.o objs/MultiplayerFLWG.o
 LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -g3
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
@@ -80,3 +80,9 @@ objs/WordLinkedList.o: structs/src/WordLinkedList.c
 
 objs/PythonWrapper.o: flwg/src/PythonWrapper.c
 	$(CC) -c flwg/src/PythonWrapper.c -o objs/PythonWrapper.o $(CFLAGS)
+
+objs/MaxN.o: algs/src/MaxN.c
+	$(CC) -c algs/src/MaxN.c -o objs/MaxN.o $(CFLAGS)
+
+objs/MultiplayerFLWG.o: flwg/src/MultiplayerFLWG.c
+	$(CC) -c flwg/src/MultiplayerFLWG.c -o objs/MultiplayerFLWG.o $(CFLAGS)

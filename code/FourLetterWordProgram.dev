@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000001000000
-UnitCount=37
+UnitCount=39
 
 [VersionInfo]
 Major=1
@@ -341,9 +341,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit38]
-FileName=MinimaxTests.c
+FileName=algs\src\MaxN.c
 CompileCpp=0
-Folder=
+Folder=algs/src
 Compile=1
 Link=1
 Priority=1000
@@ -351,9 +351,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit39]
-FileName=MinimaxTests.h
+FileName=algs\includes\MaxN.h
 CompileCpp=0
-Folder=
+Folder=algs/includes
 Compile=1
 Link=1
 Priority=1000

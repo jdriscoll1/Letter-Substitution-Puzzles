@@ -22,13 +22,13 @@ extern int numLetters;
 
 int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
 	//So, first choose a start word
-	int word = ChooseStart(IntToWord_HashMap); 
+	int word = 0;//ChooseStart(IntToWord_HashMap); 
 	setAlgFound(word, IntToWord_HashMap); 
 	//Variable that determines winner: 1 - Algorithm, 0 - player
 	int winner = -1;
 	
 	//How deep does the bot check? 
-	int depth = 3; 
+	int depth = 15; 
 	int rounds = 0; 
 	char* wordStr;   
 	//Determines if a word is valid
@@ -39,27 +39,14 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 		printf("%s\n", Convert_IntToWord(word, IntToWord_HashMap)); 
 		
 		if(whoseTurn == 0){
-			/*
-			struct intList* l = IntToWord_HashMap->array[word]->connectionHeader; 
-			int connection = 0; 
-			while(l->next != NULL){
-				l = l->next; 
-				if(IntToWord_HashMap->array[l->data]->algFound == 0){
-					connection = 1;
-					break;  
-				}
-				
-			}
-			if(connection == 0){
-				whoseTurn++; 
-				word = -1; 
-			}
-		*/	
-			 	word = userPly(word, WordToInt_HashMap, IntToWord_HashMap);
+				word = userPly(word, WordToInt_HashMap, IntToWord_HashMap);
+			
+		
+		
 		}
 		else if(whoseTurn == 1){			
 	
-			
+	
 			word = botPly(word, depth, IntToWord_HashMap, minimax);
 			//Check the word
 			//Go to the connections, and ask if there are any more
@@ -93,21 +80,29 @@ void FLWG_Test(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* 
 	//So, first choose a start word
 	int w = 0; 
 	int i = 0;
-	int start = 200; 
-	int end = 1000;  
+	int start = 0; 
+	int end = 20;  
 	int totalRounds = 0; 
+	int winner; 
 	for(i = start; i < end; i++){
-		w = i; 
-		setAlgFound(w, IntToWord_HashMap); 
+		w = i;
+		
+		setAlgFound(w, IntToWord_HashMap);
+	 
 		//Variable that determines winner: 1 - Algorithm, 0 - player
-		int winner = -1;
+		winner = -1;
 		//How deep does the bot check? 
-		int depth = 1; 
-		int rounds = 0; 
+
+		int depth = 5; 
+	
+		int rounds = 0;
+ 
 		char* wordStr;   
 		//Determines if a word is valid
-		int isValid = 0; 
+		int isValid = 0;
+		
 		int whoseTurn = 0; 
+
 		while(w >= 0){
 			//printf("%s\n", IntToWord_HashMap->array[w]->word); 
 			if(whoseTurn == 0){
@@ -117,8 +112,8 @@ void FLWG_Test(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* 
 			else if(whoseTurn == 1){
 				//printf("List: %s\n", toString_IntLL(IntToWord_HashMap->array[w]->connectionHeader, SEPERATED, IntToWord_HashMap)); 
 				//w = botPly(w, depth, IntToWord_HashMap, chooseFirst);
-				w = weakBotPly(w, IntToWord_HashMap); 
 				
+				w = weakBotPly(w, IntToWord_HashMap);
 			 
 			}
 			
@@ -131,7 +126,8 @@ void FLWG_Test(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* 
 			
 		}
 		totalRounds += rounds; 
-		printf("%s Wins!\n%d Rounds\nRound %d\n", (winner == 0) ? "Bot A" : "Bot B", rounds, i); 
+		//printf("%s Wins!\n%d Rounds\nRound %d\n", (winner == 0) ? "Bot A" : "Bot B", rounds, i); 
+		//printf("Rounds: %d\n", rounds); 
 		if(winner == 0){
 			A++; 
 		} 

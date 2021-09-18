@@ -103,7 +103,10 @@ void Fill_HashMaps(FILE* wordDoc, struct DummyHeadNode** *WordToInt_HashMap, str
 			
 			connection = strtol(currValue, &numBuff, 10); 
 			//Put the word into the link list
-			AddToFront_IntLL(connection, wordData->connectionHeader); 
+			AddToFront_IntLL(connection, wordData->connectionHeader);
+			
+			//each time it adds a word as a connection, it updates the number of connections
+			wordData->numConnections++; 
 			
 			currValue = strtok(NULL, " "); 
 		}	
@@ -222,7 +225,8 @@ struct wordData* Create_WordData(char* word){
 	wordData->connectionHeader->next = NULL; 
 	wordData->word = strdup(word);  
 	wordData->algFound = 0; 
-	wordData->hintFound = 0; 
+	wordData->hintFound = 0;
+	wordData->numConnections = 0;  
 	return wordData; 
 } 
 

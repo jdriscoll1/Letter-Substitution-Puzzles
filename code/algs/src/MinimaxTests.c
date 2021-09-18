@@ -471,17 +471,20 @@ int chooseFirst(int id, struct wordDataArray* IntToWord_HashMap){
 }
 
 int chooseRandom(int id, struct wordDataArray* IntToWord_HashMap){
+
 	//The linked list
 	struct intList* listHeader = IntToWord_HashMap->array[id]->connectionHeader;
 	struct intList* curr = listHeader;  
 	//The total number of options
-	int totalOptions = listHeader->size; 
+	int totalOptions = IntToWord_HashMap->array[id]->numConnections; 
 	//First, choose a random number
 	int randID = rand() % totalOptions + 1; 
+
 	int currID = randID; 
 	//Walk to that point in the linked list
 	
-	int i; 
+	int i = 0; 
+	
 	for(i = 0; i < randID; i++){
 		curr = curr->next; 
 	}
@@ -534,7 +537,6 @@ int chooseRandom(int id, struct wordDataArray* IntToWord_HashMap){
 *****************************************************************/
 
 struct minimaxOutput* minimax_ZeroOptions(int id, int depth, int maxDepth, int isMaximizingPlayer, struct wordDataArray* IntToWord_HashMap){
-	//printf("%d\n", depth); 
 	if(depth == 0){
 		return createOutput(0, .5, 0, id);  
 	}
@@ -579,14 +581,8 @@ struct minimaxOutput* minimaxAlg_ZeroOptions(int id, int depth, int maxDepth, in
 			struct minimaxOutput* potential = minimax_ZeroOptions(currID, depth - 1, maxDepth, (isMaximizingPlayer == 1) ? 0 : 1, IntToWord_HashMap); 
 			
 			winPercent += potential->winPercent; 
-			//printf("\nAt %d: %d or %d (min) Choice: %d\n", id, potential->id, minEval->id, (compareOutput(minEval, potential) == 0) ? potential->id : minEval->id); 
-			//printf("Choose Between: %d %d. Compare Min: %d, %d. Output: %d\n", minEval->id, potential->id, minEval->score, potential->score, compareOutput(minEval, potential));
-			//Set the min eval to the min between the algEval or the current minEval
-			//printf("%d -- ", depth); 
-	
-			
-				//Print_MinimaxOutput(potential, IntToWord_HashMap); 
-			
+		
+			//Set the min eval to the min between the algEval or the current minEval		
 			if(compareOutput(absEval, potential, isMaximizingPlayer) == isMaximizingPlayer){
 				free(absEval); 
 				absEval = potential; 	

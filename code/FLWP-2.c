@@ -13,6 +13,7 @@ int numLetters = 4;
 #include "./algs/includes/Minimax.h"
 #include "./algs/includes/MinimaxTests.h"
 #include "./algs/includes/BreadthFirstSearch.h"
+#include "./algs/includes/MaxN.h"
 
 #include "./structs/includes/HashMap.h"
 #include "./structs/includes/TreeSet.h"
@@ -21,15 +22,12 @@ int numLetters = 4;
 
 #include "./flwg/includes/FLWGGame.h"
 
-/*Test 1: Creating and Freeing the Hash Map 5,000 times: 
-a) 35.99, 40.51, 38.78*/
-/*Test 2: Doing a 13 deep search on it 100,000 times
-66.96, 64.52, 63.71
-Test 3: Running a test on it 34.40 Megabytes*/
-
+void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap); 
 int main(){
 
 	srand(time(0)); 
+	
+	
     
 	//The Hash Map that can take a word and find its ID
 	struct DummyHeadNode** *WordToInt_HashMap;
@@ -39,18 +37,36 @@ int main(){
 	
 	char* path = "../docs/4.txt"; 
 	
+
 	//Allocates the Word to Int HashMap
 	WordToInt_HashMap = Allocate_WordToInt();
+	
 	IntToWord_HashMap = Allocate_IntToWordStruct();  
+	
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
 
+	
+	int numPlayers = 2;
+	
+	int playerID = 0;
+	
+	int wordID = 0;
+	
+	int depth = 2;
+	
+	setAlgFound(wordID, IntToWord_HashMap);
+	
+	int currPlayer = 0;
+	
+	Multiplayer_FLWG(WordToInt_HashMap, IntToWord_HashMap);
+	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
 
-	//printf("\n"); 
-	//DFS(0, IntToWord_HashMap); 
-	//Play_FLWP(WordToInt_HashMap, IntToWord_HashMap); 
-	//Print_IntToWord_HashMap(IntToWord_HashMap); 
-	FLWG(WordToInt_HashMap, IntToWord_HashMap);
-	/*int depth = 4;  
+	return 0;  
+}
+
+
+void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap){
+	int depth = 4;  
 	struct minimaxOutput* a = createOutput(-100, 0, -1, -1); 
 	struct minimaxOutput* b = createOutput(100, 1, -1, -1); 
 	struct minimaxOutput* output = minimax(0, depth, depth, 1, *a, *b, IntToWord_HashMap); 
@@ -59,11 +75,7 @@ int main(){
 	free(output);
 	free(a);
 	free(b); 
-	*/
-
-	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);     
 	
-	return 0;  
 }
 
 

@@ -13,7 +13,6 @@ To Do So, I will make use of the minimax algorithm*/
 #define MAX 100000
 //Uses 50/50 chances for beta variable
 struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap){
-	//printf("%d\n", depth); 
 
 	//First, let's get the list of nodes that we can go to 
 	struct intList* currConnection = getConnections(id, IntToWord_HashMap); 
@@ -36,15 +35,19 @@ struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingP
 
 
 struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap){
-	//printf("id: %d\n", id); 
+
 	//The current minimum evaluation is going to be +infinity since we want something lower than that
 	struct minimaxOutput* absEval = (isMaximizingPlayer == 1) ? createOutput(-100, 0, -1, -1) : createOutput(100, 1, -1, -1);  
+	
 	//The current word being checked
 	int currID; 
+	
 	//Integer that keeps track of number of connections
 	int numConnections = 0; 
+	
 	//This keeps track of the likelyhood of winning in a given round
 	double winPercent = 0; 
+	
 	int isPruned = 0; 
 	//Go through each child node
 	while(currConnection != NULL){
@@ -61,9 +64,11 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 			
 			//Set the algorithm evaluation to minimax making usre that when setting the params, the depth goes down by 1, that the isMinimaxPlayer is true, and that it is putting in the child's ID
 			struct minimaxOutput* potential = minimax(currID, depth - 1, maxDepth, (isMaximizingPlayer == 1) ? 0 : 1, alpha, beta, IntToWord_HashMap); 
-			//printf("return to: %d\n", id); 
+
 			//This only matters during the minimizer's turn
-		
+			if(potential->score <= 1 && potential->score >= -1){
+				winPercent += potential->winPercent;
+			}
 			//Print_MinimaxOutput(potential); 
 			
 			/*
@@ -78,7 +83,7 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 			//If it is the minimizer and it outputs 0, it should choose the first one
 			//If it is the maximizer and it outputs 0, it should choose the second one
 			//If it is the minimizer and it outputs 1, it should choose the second one
-		 
+ 
 			if(compare_mo(absEval, potential, isMaximizingPlayer) == isMaximizingPlayer){
 				free(potential);	
 			}
@@ -88,13 +93,16 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 				absEval = potential; 
 			}
 			
-			
-			//Checks to see if it _really_ needs to check this tree
-			 
-			if(AlphaBetaPruning(&alpha, &beta, absEval, isMaximizingPlayer) == 1){/*printf("Prune: %d\n", absEval->id);*/isPruned = 1;break;}//return absEval;}
-			
 			//Make sure the number of connections goes up
 			numConnections++; 
+			
+			//Checks to see if it _really_ needs to check this tree
+			if(AlphaBetaPruning(&alpha, &beta, absEval, isMaximizingPlayer) == 1){isPruned = 1;break;}//return absEval;}
+			
+			
+			 
+			
+			
 		}
 		//Go to the next node
 		currConnection = currConnection->next; 
@@ -107,14 +115,10 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 		//It also knocks the id off of the HashMap
 		return (isMaximizingPlayer == 1) ? createOutput(-1, 0, depth, id) : createOutput(1, 1, depth, id);  
 	}
-	winPercent /= (double)numConnections; 
-	absEval->winPercent = winPercent; 
 	
 	
-	
-	//If the number of connections is none, create the minimaxOutput node
+	//if it found no nodes
 	if(numConnections == 0 && isPruned == 0){
-		//printf("No Connections\n"); 
 		free(absEval); 
 		//If there are no connections, the algorithm has, albeit sadly, lost. 
 		if(depth == maxDepth){
@@ -124,8 +128,11 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 		absEval = (isMaximizingPlayer == 1) ? createOutput(-1, 0, depth, id) : createOutput(1, 1, depth, id); 
 	}
 	
+	else if(numConnections != 0){
 	
-	
+		winPercent /= (double)numConnections; 
+		absEval->winPercent = winPercent; 
+	}
 	if(depth != maxDepth){
 		absEval->id = id; 
 		removeAlgFound(id, IntToWord_HashMap); 
@@ -167,8 +174,6 @@ int compare_mo(struct minimaxOutput* a, struct minimaxOutput* b, int isMaximizin
 	//If b has a higher chance of winning, return 0
 	if(b->winPercent > a->winPercent){return 0;}
 	
-	//If they are equally likely to win, it is necessary to choose a 
-	if(a->score == 0){return isMaximizingPlayer;}
 	//If it is the maximizing player
 	if(isMaximizingPlayer == 1){
 		//if the maximizing player is winning choose the greatest depth
@@ -213,17 +218,13 @@ int AlphaBetaPruning(struct minimaxOutput *alpha, struct minimaxOutput* beta, st
 	
 	//Alpha Beta Pruning Here
 	//If it is the maximizer's turn
- 	//printf("\nAlpha Beta Pruning:\n");
 	if(isMaximizingPlayer == 1){
 		
-		//printf("Abs Eval: "); Print_MinimaxOutput(absEval);
-		//printf("Alpha: "); Print_MinimaxOutput(alpha); 
 		//Compares the output of the alpha and the output
 		//alpha = max(alpha, absEval)
 		if(compare_mo(absEval, alpha, 1) == 1){
 			 //Alpha becomes absEval 
 			 copy_mo(alpha, absEval); 
-			 //printf("Alpha: "); Print_MinimaxOutput(alpha); 
 		}
 		//If alpha is greater 
 		//Alpha stays the same
@@ -231,10 +232,8 @@ int AlphaBetaPruning(struct minimaxOutput *alpha, struct minimaxOutput* beta, st
 		
 		//Compares alpha to beta 
 		//If alpha is greater than or equal to beta (if beta is less than or equal to alpha)
-		//printf("Beta: "); Print_MinimaxOutput(beta); 
 		//if betea <= alpha
 		if(compare_mo(alpha, beta, 1) == 1){
-			//printf("Alpha: %d, Beta: %d", alpha->score, beta->score); 
 			//it pruned
 			//break
 			return 1;  
@@ -245,15 +244,13 @@ int AlphaBetaPruning(struct minimaxOutput *alpha, struct minimaxOutput* beta, st
 	//If it is the minimizer's turn
 	else{
 		
-		//printf("Abs Eval: "); Print_MinimaxOutput(absEval);
-		//printf("Beta: "); Print_MinimaxOutput(beta); 
+
 		//absEval = min(absEval, beta)
 		if(compare_mo(absEval, beta, 0) == 0){
 			copy_mo(beta, absEval); 
-			//printf("Beta: "); Print_MinimaxOutput(beta); 
 		}
 		
-		//printf("Alpha: "); Print_MinimaxOutput(alpha);
+
 		//if beta <= alpha
 		if(compare_mo(beta, alpha, 0) == 0){
 			//it pruned
@@ -361,13 +358,17 @@ void DFS(int id, struct wordDataArray* IntToWord_HashMap){
 	currConnection = currConnection->next; 
 	//Loop through those connections, running DFS
 	while(currConnection != NULL){
+		
 		if(getAlgFound(currConnection->data, IntToWord_HashMap) == 0){
 			DFS(currConnection->data, IntToWord_HashMap); 
+			
 		}
+		printf("%d ", currConnection->data);
 		currConnection = currConnection->next; 
 		
+		
 	}
-	printf("%d ", id); 
+
 	//Set node found to false
 	removeAlgFound(id, IntToWord_HashMap); 
 	
