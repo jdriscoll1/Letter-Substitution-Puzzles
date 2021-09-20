@@ -35,7 +35,7 @@ int weakBotPly(int word, struct wordDataArray* IntToWord_HashMap);
 @case --> -1 = the user gave up :(*/
 int userPly(int word, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap); 
  
-void FLWG_Test(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap); 
+void FLWG_Test(struct wordDataArray* IntToWord_HashMap); 
 
 
 

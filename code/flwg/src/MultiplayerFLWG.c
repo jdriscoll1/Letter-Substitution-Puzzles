@@ -1,5 +1,8 @@
 /*C File for the Multiplayer FLWG*/
 
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "../includes/MultiplayerFLWG.h"
 #include "../includes/FLWGGame.h"
 
@@ -11,16 +14,15 @@ void Multiplayer_FLWG(struct DummyHeadNode** *WordToInt_HashMap, struct wordData
 	
 	int numPlayers = 2;
 	
-	int wordID = 0;
-	
-	int depth = 3;
+	int wordID = 1430;
+	int depth = 4;
 	
 	setAlgFound(wordID, IntToWord_HashMap);
 	
 	int currPlayer = 0;
 	
 	while(wordID != -1){
-		printf("%s\n", Convert_IntToWord(wordID, IntToWord_HashMap));
+		printf("%c) %s\n", (char)((currPlayer + 1) % numPlayers + 65), Convert_IntToWord(wordID, IntToWord_HashMap));
 		switch(currPlayer){
 		
 			case 0:
@@ -28,15 +30,81 @@ void Multiplayer_FLWG(struct DummyHeadNode** *WordToInt_HashMap, struct wordData
 				break;
 			
 			case 1:
-				wordID = userPly(wordID, WordToInt_HashMap, IntToWord_HashMap);
+				wordID = weakBotPly(wordID, IntToWord_HashMap);
 				break;
 		}
-		currPlayer = (currPlayer + 1) % numPlayers;
+		//if the player quit, let the algorithm know
+		if(wordID != -1){
+			//move to next player
+			currPlayer = (currPlayer + 1) % numPlayers;
+		}
+		
+	}
+	reset_HashSet(IntToWord_HashMap);
+	printf("Player %c Loses!", (char)(currPlayer + 65));
+
+	
+	
+	
+}
+
+void MultiplayerTest(struct wordDataArray *IntToWord_HashMap){
+	int numPlayers = 2;
+	int i;
+	int* wins = malloc(sizeof(int) * numPlayers);
+	for(i = 0; i < numPlayers; i++){
+		wins[i] = 0;
 	}
 	
+	for(i = 0; i < 900; i++){
+
+		int wordID = i;
+		
+		int depth = 4;
+		
+		setAlgFound(wordID, IntToWord_HashMap);
+		
+		int currPlayer = 0;
+		
+		
+		while(wordID != -1){
+			switch(currPlayer){
+			
+				case 0:
+					wordID = multiBotPly(wordID, currPlayer, numPlayers, depth, IntToWord_HashMap);
+					break;
+				
+				case 1:
+					wordID = weakBotPly(wordID, IntToWord_HashMap);
+					break;
+			}
+			//if the player quit, let the algorithm know
+			if(wordID != -1){
+				//move to next player
+				currPlayer = (currPlayer + 1) % numPlayers;
+			}
+			
+		}
+		reset_HashSet(IntToWord_HashMap);
+		//printf("Player %c Loses!\n", (char)(currPlayer + 65));
+		if((char)(currPlayer + 65) == 'A'){
+			printf("Lose: %d", i);
+		}
+		int j; 
+		for(j = 0; j < numPlayers; j++){
+			if(j != currPlayer){
+				wins[j]++;
+			}
+		}
 	
 	
-	
+	}
+	printf("{");
+	for(i = 0; i < numPlayers; i++){
+		printf("%d%s", wins[i], (i == numPlayers - 1) ? "" : ", ");
+	}
+	printf("}");
+	free(wins);
 }
 
 int multiBotPly(int wordID, int playerID, int numPlayers, int depth, struct wordDataArray *IntToWord_HashMap){

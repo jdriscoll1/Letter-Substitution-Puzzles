@@ -22,13 +22,13 @@ extern int numLetters;
 
 int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
 	//So, first choose a start word
-	int word = 0;//ChooseStart(IntToWord_HashMap); 
+	int word = 1430;//ChooseStart(IntToWord_HashMap); 
 	setAlgFound(word, IntToWord_HashMap); 
 	//Variable that determines winner: 1 - Algorithm, 0 - player
 	int winner = -1;
 	
 	//How deep does the bot check? 
-	int depth = 15; 
+	int depth = 4; 
 	int rounds = 0; 
 	char* wordStr;   
 	//Determines if a word is valid
@@ -39,15 +39,15 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 		printf("%s\n", Convert_IntToWord(word, IntToWord_HashMap)); 
 		
 		if(whoseTurn == 0){
-				word = userPly(word, WordToInt_HashMap, IntToWord_HashMap);
+				
 			
-		
+			word = botPly(word, depth, IntToWord_HashMap, minimax);
 		
 		}
 		else if(whoseTurn == 1){			
 	
-	
-			word = botPly(word, depth, IntToWord_HashMap, minimax);
+			word = weakBotPly(word, IntToWord_HashMap);
+			
 			//Check the word
 			//Go to the connections, and ask if there are any more
 		
@@ -74,14 +74,14 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 	
 }
 
-void FLWG_Test(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
+void FLWG_Test(struct wordDataArray* IntToWord_HashMap){
 	int A = 0; 
 	int B = 0; 
 	//So, first choose a start word
 	int w = 0; 
 	int i = 0;
 	int start = 0; 
-	int end = 20;  
+	int end = 900;  
 	int totalRounds = 0; 
 	int winner; 
 	for(i = start; i < end; i++){
@@ -93,7 +93,7 @@ void FLWG_Test(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* 
 		winner = -1;
 		//How deep does the bot check? 
 
-		int depth = 5; 
+		int depth = 4; 
 	
 		int rounds = 0;
  
@@ -127,11 +127,13 @@ void FLWG_Test(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* 
 		}
 		totalRounds += rounds; 
 		//printf("%s Wins!\n%d Rounds\nRound %d\n", (winner == 0) ? "Bot A" : "Bot B", rounds, i); 
+		
 		//printf("Rounds: %d\n", rounds); 
 		if(winner == 0){
 			A++; 
 		} 
 		else{
+			printf("%d\n", i);
 			B++; 
 		}
 		reset_HashSet(IntToWord_HashMap);
@@ -223,7 +225,7 @@ int userPly(int word, struct DummyHeadNode*** WordToInt_HashMap, struct wordData
 }
 
 int weakBotPly(int word, struct wordDataArray* IntToWord_HashMap){
-	int w = chooseRandom(word, IntToWord_HashMap); 
+	int w = chooseFirst(word, IntToWord_HashMap); 
 	if(w == -1){return -1;}
 	setAlgFound(w, IntToWord_HashMap); 
 	return w; 

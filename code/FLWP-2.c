@@ -21,6 +21,7 @@ int numLetters = 4;
 #include "./flwp/includes/PathfinderGame.h"
 
 #include "./flwg/includes/FLWGGame.h"
+#include "./flwg/includes/MultiplayerFLWG.h"
 
 void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap); 
 int main(){
@@ -37,28 +38,44 @@ int main(){
 	
 	char* path = "../docs/4.txt"; 
 	
-
 	//Allocates the Word to Int HashMap
 	WordToInt_HashMap = Allocate_WordToInt();
 	
 	IntToWord_HashMap = Allocate_IntToWordStruct();  
 	
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
+	//printf("%d", Convert_WordToInt("eery", WordToInt_HashMap));
+	//1430
+	int id = Convert_WordToInt("deaf", WordToInt_HashMap);
+	int deanID = Convert_WordToInt("dean", WordToInt_HashMap);
+	int leafID = Convert_WordToInt("leaf", WordToInt_HashMap);
+	int d = 3; 
+	int n = 2; 
+	
+	//setAlgFound(Convert_WordToInt("deaf", WordToInt_HashMap), IntToWord_HashMap);
 
 	
-	int numPlayers = 2;
-	
-	int playerID = 0;
-	
-	int wordID = 0;
-	
-	int depth = 2;
-	
-	setAlgFound(wordID, IntToWord_HashMap);
-	
-	int currPlayer = 0;
-	
 	Multiplayer_FLWG(WordToInt_HashMap, IntToWord_HashMap);
+
+	
+	/************MAX-N STARTS HERE***************/
+	/*
+	printf("----DEAN-----\n");
+	struct maxnNodeScore* deanMax = MaxN(deanID, 0, n, d, d, IntToWord_HashMap);
+	removeAlgFound(deanID, IntToWord_HashMap);
+	
+	printf("\n\n\n----LEAF-----\n");
+	struct maxnNodeScore* leafMax = MaxN(leafID, 0, n, d, d, IntToWord_HashMap);
+	removeAlgFound(leafID, IntToWord_HashMap);
+	
+	printf("\nDean:\n");
+	Print_MaxNNodeScore(deanMax, n);
+	
+	printf("\nLeaf:\n");
+	Print_MaxNNodeScore(leafMax, n);
+	
+	*/
+	
 	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
 
 	return 0;  
@@ -77,6 +94,29 @@ void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap){
 	free(b); 
 	
 }
+
+	/*******MINIMAX STARTS HERE***********/
+	/*
+	struct minimaxOutput* a = createOutput(-100, 0, -1, -1); 
+	struct minimaxOutput* b = createOutput(100, 1, -1, -1); 
+	
+
+	
+	printf("----DEAN-----\n");
+	struct minimaxOutput* deanMO = minimax(deanID, d, d, 1, *a, *b, IntToWord_HashMap);
+	removeAlgFound(deanID, IntToWord_HashMap);
+	
+	printf("\n\n\n----LEAF-----\n");
+	struct minimaxOutput* leafMO = minimax(leafID, d, d, 1, *a, *b, IntToWord_HashMap);
+	removeAlgFound(leafID, IntToWord_HashMap);
+	
+	printf("\n");
+	
+	printf("Dean: \n");
+	Print_MinimaxOutput(deanMO);
+	printf("Leaf: \n");
+	Print_MinimaxOutput(leafMO);
+	*/
 
 
 

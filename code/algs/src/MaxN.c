@@ -23,6 +23,8 @@ Description: Creating the Max-N: Multiplayer Four Letter Word Game Without Alpha
 //the current node it is on - the word it is on (wordID)
 //the current player whose turn it is (playerID)
 struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, int maxDepth, struct wordDataArray* IntToWord_HashMap){
+
+	//printf("Exploring: %d\n", wordID);
 	/**********INITIALIZE IMPORTANT VARIABLES*************************/	
 
 	// information about the current word
@@ -66,6 +68,18 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/*******************STARTS TO LOOP THROUGH CHILD NODES*******************/
 	//it loops through each individual child of the current node
 	while(currChild != NULL){
@@ -74,13 +88,14 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 			 //if it is a leaf node with ? children
 			 //Return an unknown outcome
 			 if(depth == 0){
+			 	
 			 	//Case I: The depth was found
 			 	return unknownOutcome(wordID, numPlayers);
 			 }
 			 
 			//The number of found children increases
 	 		numChildren++; 
-	 		
+	 		//printf("Going Down A Level\n");
 			//for each child it runs this same function setting the currScore 
 			struct maxnNodeScore* childScore = MaxN(
 				currChild->data, //child word id
@@ -90,24 +105,36 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 				maxDepth, //maximum depth
 				IntToWord_HashMap //Hash Map for Information about child node
 			); 
-			
-			
+
+		
+		
 			//Update all of the beta values
 			for(p = 0; p < numPlayers; p++){
 				betaScores[p] += childScore->rawScores[p]->isWinPercent;
 				
 			}
-
-			
+			if(depth == maxDepth){
+				/*printf("\n\n\nHere we are!\n\n\n");
+				printf("Comparing Between:\n");
+				if(bestScore->wordID != -1){
+					printf("%s\n", Convert_IntToWord(bestScore->wordID, IntToWord_HashMap));
+				}
+				Print_MaxNNodeScore(bestScore, numPlayers);
+				printf("Or: \n");
+				printf("%s\n", Convert_IntToWord(childScore->wordID, IntToWord_HashMap));
+				Print_MaxNNodeScore(childScore, numPlayers);*/
+			}
 			//It checks if it is greater than the maxScore
 			if(childScore->scores[playerID] > bestScore->scores[playerID]){
 				Free_MaxNNodeScore(bestScore, numPlayers); 
 				bestScore = childScore; 
+				//printf("Chose Child Score\n");
 				
 			}
 			//If the best score is better than the child score, it will free the child score
 			else{
 				Free_MaxNNodeScore(childScore, numPlayers); 
+				//printf("Chose Current Score\n");
 			}
 			
 			
@@ -116,6 +143,16 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 		}
 		currChild = currChild->next;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/*****IT HAS FINISHED LOOKING THROUGH CHILDREN*****/
 	
@@ -128,13 +165,17 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 		if(depth != 0){
 			Free_MaxNNodeScore(bestScore, numPlayers);
 		}
-		//if this is the first word checked, the player has lost
-		if(depth == maxDepth){
-			wordID = -1;
-		}
+
 		
 		//CASE II: The depth is minimum and it could not find any replacements
-	
+		//printf("This is a bottom move\n");
+		//Print_MaxNNodeScore(assignScore(depth, wordID, playerID, numPlayers), numPlayers);
+		if(depth != maxDepth){
+			removeAlgFound(wordID, IntToWord_HashMap);
+		}
+		else{
+			wordID = -1;
+		}
 		return assignScore(depth, wordID, playerID, numPlayers);
 		//Bad Score: -1, 0%, currDepth
 		//Good Score: +1, 100%, currDepth (a higher score is better if it's good, and worse if it is bad)
@@ -204,7 +245,7 @@ struct maxnNodeScore* assignScore(int depth, int wordID, int playerID, int numPl
 		}	
 		//If it is the current player's move - they lost
 		else{
-			score->rawScores[p] = init_RawScore(0, 0, depth); 
+			score->rawScores[p] = init_RawScore(-1, 0, depth); 
 		}
 		score->scores[p] = Raw2Int(score->rawScores[p]);
 		

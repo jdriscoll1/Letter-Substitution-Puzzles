@@ -83,7 +83,14 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 			//If it is the minimizer and it outputs 0, it should choose the first one
 			//If it is the maximizer and it outputs 0, it should choose the second one
 			//If it is the minimizer and it outputs 1, it should choose the second one
- 
+ 			if(depth == maxDepth){
+			 	printf("Comparing Between:\n");
+ 				printf("%s\n", Convert_IntToWord(absEval->id, IntToWord_HashMap));
+ 				Print_MinimaxOutput(absEval);
+ 				printf("Or:\n%s\n", Convert_IntToWord(potential->id, IntToWord_HashMap));
+ 				Print_MinimaxOutput(potential);
+ 				printf("\n");
+			}
 			if(compare_mo(absEval, potential, isMaximizingPlayer) == isMaximizingPlayer){
 				free(potential);	
 			}
