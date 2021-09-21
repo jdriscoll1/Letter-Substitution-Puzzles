@@ -301,6 +301,19 @@ struct intList* getConnections(int id, struct wordDataArray* IntToWord_HashMap){
 	return IntToWord_HashMap->array[id]->connectionHeader; 
 };
 
+void printOptions(int id, struct wordDataArray* IntToWord_HashMap){
+	struct intList* currOption = IntToWord_HashMap->array[id]->connectionHeader->next;
+	printf("%s Options: ", Convert_IntToWord(id, IntToWord_HashMap));
+	while(currOption != NULL){
+		if(getAlgFound(currOption->data, IntToWord_HashMap) == 0){
+			printf("%s ", Convert_IntToWord(currOption->data, IntToWord_HashMap));
+		}
+		currOption = currOption->next;
+	}
+	printf("\n");
+	
+}
+
 FILE *OpenFile(char* path){
 	//char* wordDocuments[3] = {"../docs/2.txt", "../docs/3.txt", /*"WordDocuments/t/ab2.txt"};*/"../docs/4.txt"}; 
 	/*Four Letter Word Document*/

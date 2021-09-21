@@ -127,13 +127,13 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap){
 		}
 		totalRounds += rounds; 
 		//printf("%s Wins!\n%d Rounds\nRound %d\n", (winner == 0) ? "Bot A" : "Bot B", rounds, i); 
+
 		
 		//printf("Rounds: %d\n", rounds); 
 		if(winner == 0){
 			A++; 
 		} 
 		else{
-			printf("%d\n", i);
 			B++; 
 		}
 		reset_HashSet(IntToWord_HashMap);

@@ -54,6 +54,10 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 		currID = currConnection->data; 
 		//Make sure that the word has not already been found in the hash set
 		if(getAlgFound(currID, IntToWord_HashMap) == 0){
+			
+			//Make sure the number of connections goes up
+			numConnections++; 
+
 			//If it's at 0 depth, if there still exists options, it return 50% as score
 			if(depth == 0){
 				free(absEval); 
@@ -61,7 +65,7 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 				//It also knocks the id off of the HashMap
 				return createOutput(0, .5, 0, id);  
 			}
-			
+
 			//Set the algorithm evaluation to minimax making usre that when setting the params, the depth goes down by 1, that the isMinimaxPlayer is true, and that it is putting in the child's ID
 			struct minimaxOutput* potential = minimax(currID, depth - 1, maxDepth, (isMaximizingPlayer == 1) ? 0 : 1, alpha, beta, IntToWord_HashMap); 
 
@@ -83,14 +87,19 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 			//If it is the minimizer and it outputs 0, it should choose the first one
 			//If it is the maximizer and it outputs 0, it should choose the second one
 			//If it is the minimizer and it outputs 1, it should choose the second one
- 			if(depth == maxDepth){
-			 	printf("Comparing Between:\n");
+ 			//if(depth == maxDepth){
+			 	/*printf("Comparing Between:\n");
  				printf("%s\n", Convert_IntToWord(absEval->id, IntToWord_HashMap));
  				Print_MinimaxOutput(absEval);
  				printf("Or:\n%s\n", Convert_IntToWord(potential->id, IntToWord_HashMap));
+ 				printOptions(potential->id, IntToWord_HashMap);
  				Print_MinimaxOutput(potential);
+ 				if(potential->id == 419){
+ 					printf("\nHere\n");
+				 }
  				printf("\n");
-			}
+ 				*/
+		//	}
 			if(compare_mo(absEval, potential, isMaximizingPlayer) == isMaximizingPlayer){
 				free(potential);	
 			}
@@ -100,8 +109,7 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 				absEval = potential; 
 			}
 			
-			//Make sure the number of connections goes up
-			numConnections++; 
+			
 			
 			//Checks to see if it _really_ needs to check this tree
 			if(AlphaBetaPruning(&alpha, &beta, absEval, isMaximizingPlayer) == 1){isPruned = 1;break;}//return absEval;}
@@ -116,14 +124,16 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 		
 	}
 	
+	//if there are no connections, and the depth is 0
+	/*
 	if(depth == 0){
 		free(absEval); 
 		removeAlgFound(id, IntToWord_HashMap);
 		//It also knocks the id off of the HashMap
 		return (isMaximizingPlayer == 1) ? createOutput(-1, 0, depth, id) : createOutput(1, 1, depth, id);  
 	}
-	
-	
+	*/
+
 	//if it found no nodes
 	if(numConnections == 0 && isPruned == 0){
 		free(absEval); 
@@ -131,7 +141,6 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 		if(depth == maxDepth){
 			return NULL; 
 		}
-		
 		absEval = (isMaximizingPlayer == 1) ? createOutput(-1, 0, depth, id) : createOutput(1, 1, depth, id); 
 	}
 	

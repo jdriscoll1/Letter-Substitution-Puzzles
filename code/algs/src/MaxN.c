@@ -113,17 +113,7 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 				betaScores[p] += childScore->rawScores[p]->isWinPercent;
 				
 			}
-			if(depth == maxDepth){
-				/*printf("\n\n\nHere we are!\n\n\n");
-				printf("Comparing Between:\n");
-				if(bestScore->wordID != -1){
-					printf("%s\n", Convert_IntToWord(bestScore->wordID, IntToWord_HashMap));
-				}
-				Print_MaxNNodeScore(bestScore, numPlayers);
-				printf("Or: \n");
-				printf("%s\n", Convert_IntToWord(childScore->wordID, IntToWord_HashMap));
-				Print_MaxNNodeScore(childScore, numPlayers);*/
-			}
+			
 			//It checks if it is greater than the maxScore
 			if(childScore->scores[playerID] > bestScore->scores[playerID]){
 				Free_MaxNNodeScore(bestScore, numPlayers); 

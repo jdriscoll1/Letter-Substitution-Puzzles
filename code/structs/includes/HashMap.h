@@ -126,4 +126,6 @@ int getHintFound(int wordID, struct wordDataArray* IntToWord_HashMap);
 
 void reset_HashSet(struct wordDataArray* IntToWord_HashMap); 
 
+void printOptions(int id, struct wordDataArray* IntToWord_HashMap);
+
 #endif

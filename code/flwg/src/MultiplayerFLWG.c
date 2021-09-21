@@ -12,17 +12,17 @@
 //This allows the four letter word game to be playable with multiple players
 void Multiplayer_FLWG(struct DummyHeadNode** *WordToInt_HashMap, struct wordDataArray *IntToWord_HashMap){
 	
-	int numPlayers = 2;
+	int numPlayers = 3;
 	
-	int wordID = 1430;
+	int wordID = 4;
 	int depth = 4;
 	
 	setAlgFound(wordID, IntToWord_HashMap);
 	
 	int currPlayer = 0;
-	
+	printf("Start: %s\n", Convert_IntToWord(wordID, IntToWord_HashMap));
 	while(wordID != -1){
-		printf("%c) %s\n", (char)((currPlayer + 1) % numPlayers + 65), Convert_IntToWord(wordID, IntToWord_HashMap));
+		
 		switch(currPlayer){
 		
 			case 0:
@@ -32,9 +32,12 @@ void Multiplayer_FLWG(struct DummyHeadNode** *WordToInt_HashMap, struct wordData
 			case 1:
 				wordID = weakBotPly(wordID, IntToWord_HashMap);
 				break;
+			case 2:
+				wordID = userPly(wordID, WordToInt_HashMap, IntToWord_HashMap);
 		}
 		//if the player quit, let the algorithm know
 		if(wordID != -1){
+			printf("%c) %s\n", (char)((currPlayer) % numPlayers + 65), Convert_IntToWord(wordID, IntToWord_HashMap));
 			//move to next player
 			currPlayer = (currPlayer + 1) % numPlayers;
 		}
@@ -49,14 +52,14 @@ void Multiplayer_FLWG(struct DummyHeadNode** *WordToInt_HashMap, struct wordData
 }
 
 void MultiplayerTest(struct wordDataArray *IntToWord_HashMap){
-	int numPlayers = 2;
+	int numPlayers = 3;
 	int i;
 	int* wins = malloc(sizeof(int) * numPlayers);
 	for(i = 0; i < numPlayers; i++){
 		wins[i] = 0;
 	}
 	
-	for(i = 0; i < 900; i++){
+	for(i = 0; i < 800; i++){
 
 		int wordID = i;
 		
@@ -77,6 +80,8 @@ void MultiplayerTest(struct wordDataArray *IntToWord_HashMap){
 				case 1:
 					wordID = weakBotPly(wordID, IntToWord_HashMap);
 					break;
+				case 2:
+					wordID = weakBotPly(wordID, IntToWord_HashMap);
 			}
 			//if the player quit, let the algorithm know
 			if(wordID != -1){
@@ -87,9 +92,7 @@ void MultiplayerTest(struct wordDataArray *IntToWord_HashMap){
 		}
 		reset_HashSet(IntToWord_HashMap);
 		//printf("Player %c Loses!\n", (char)(currPlayer + 65));
-		if((char)(currPlayer + 65) == 'A'){
-			printf("Lose: %d", i);
-		}
+
 		int j; 
 		for(j = 0; j < numPlayers; j++){
 			if(j != currPlayer){
