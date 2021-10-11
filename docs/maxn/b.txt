@@ -1,0 +1,10 @@
+9
+aaaa 8 1
+bbbb 6 3 2
+cccc
+dddd 4
+eeee 5
+ffff
+gggg 7
+hhhh
+iiii

@@ -24,7 +24,7 @@ Description: Creating the Max-N: Multiplayer Four Letter Word Game Without Alpha
 //the current player whose turn it is (playerID)
 struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, int maxDepth, struct wordDataArray* IntToWord_HashMap){
 
-	//printf("Exploring: %d\n", wordID);
+	
 	/**********INITIALIZE IMPORTANT VARIABLES*************************/	
 
 	// information about the current word
@@ -150,9 +150,10 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 	// it will assign a very bad score for the current player, 
 	// and a very high score to the rest of the players 
 	if(numChildren == 0){
-		//free the beta scores array
-		free(betaScores);
+		
 		if(depth != 0){
+			//free the beta scores array
+			free(betaScores);
 			Free_MaxNNodeScore(bestScore, numPlayers);
 		}
 

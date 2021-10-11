@@ -47,8 +47,9 @@ int main(){
 
 	int d = 4; 
 	int n = 2; 
-
+	
 	Multiplayer_FLWG(WordToInt_HashMap, IntToWord_HashMap);
+	//MultiplayerTest(IntToWord_HashMap);
 	
 	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
 

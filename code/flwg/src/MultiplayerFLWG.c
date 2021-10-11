@@ -7,15 +7,16 @@
 #include "../includes/FLWGGame.h"
 
 #include "../../algs/includes/MaxN.h"
+#include "../../algs/includes/Hypermax.h"
 
 
 //This allows the four letter word game to be playable with multiple players
 void Multiplayer_FLWG(struct DummyHeadNode** *WordToInt_HashMap, struct wordDataArray *IntToWord_HashMap){
 	
-	int numPlayers = 3;
+	int numPlayers = 4;
 	
-	int wordID = 4;
-	int depth = 4;
+	int wordID = ChooseStart(IntToWord_HashMap);
+	int depth = 6;
 	
 	setAlgFound(wordID, IntToWord_HashMap);
 	
@@ -26,14 +27,22 @@ void Multiplayer_FLWG(struct DummyHeadNode** *WordToInt_HashMap, struct wordData
 		switch(currPlayer){
 		
 			case 0:
+				wordID = userPly(wordID, WordToInt_HashMap, IntToWord_HashMap);
+				break;
+
+			case 1:
+				wordID = userPly(wordID, WordToInt_HashMap, IntToWord_HashMap);
+				break;
+		
+			case 2:
+				wordID = userPly(wordID, WordToInt_HashMap, IntToWord_HashMap);
+				break;
+			
+			case 3:
 				wordID = multiBotPly(wordID, currPlayer, numPlayers, depth, IntToWord_HashMap);
 				break;
 			
-			case 1:
-				wordID = weakBotPly(wordID, IntToWord_HashMap);
-				break;
-			case 2:
-				wordID = userPly(wordID, WordToInt_HashMap, IntToWord_HashMap);
+
 		}
 		//if the player quit, let the algorithm know
 		if(wordID != -1){
@@ -52,37 +61,48 @@ void Multiplayer_FLWG(struct DummyHeadNode** *WordToInt_HashMap, struct wordData
 }
 
 void MultiplayerTest(struct wordDataArray *IntToWord_HashMap){
-	int numPlayers = 3;
+	int numPlayers = 4;
 	int i;
 	int* wins = malloc(sizeof(int) * numPlayers);
 	for(i = 0; i < numPlayers; i++){
 		wins[i] = 0;
 	}
 	
-	for(i = 0; i < 800; i++){
+	for(i = 0; i < 100; i++){
 
 		int wordID = i;
 		
-		int depth = 4;
+		int depth = 6;
 		
 		setAlgFound(wordID, IntToWord_HashMap);
 		
 		int currPlayer = 0;
 		
-		
+		printf("Start: %s\n", Convert_IntToWord(wordID, IntToWord_HashMap));
 		while(wordID != -1){
 			switch(currPlayer){
 			
 				case 0:
-					wordID = multiBotPly(wordID, currPlayer, numPlayers, depth, IntToWord_HashMap);
+					wordID = Hypermax(wordID, currPlayer, numPlayers, depth, IntToWord_HashMap);
 					break;
 				
 				case 1:
+					wordID = weakBotPly(wordID, IntToWord_HashMap);;
+					break;
+					
+				case 2:
+					wordID = weakBotPly(wordID, IntToWord_HashMap);;
+					break;
+				case 3:
 					wordID = weakBotPly(wordID, IntToWord_HashMap);
 					break;
-				case 2:
-					wordID = weakBotPly(wordID, IntToWord_HashMap);
+				case 4:
+					break;
+					
+				
+				
 			}
+			printf("%s\n", Convert_IntToWord(wordID, IntToWord_HashMap));
 			//if the player quit, let the algorithm know
 			if(wordID != -1){
 				//move to next player
@@ -91,7 +111,7 @@ void MultiplayerTest(struct wordDataArray *IntToWord_HashMap){
 			
 		}
 		reset_HashSet(IntToWord_HashMap);
-		//printf("Player %c Loses!\n", (char)(currPlayer + 65));
+		printf("%d) Player %c Loses!\n\n\n", i, (char)(currPlayer + 65));
 
 		int j; 
 		for(j = 0; j < numPlayers; j++){
@@ -121,3 +141,4 @@ int multiBotPly(int wordID, int playerID, int numPlayers, int depth, struct word
 	return newWordID;
 	
 }
+

@@ -93,7 +93,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap){
 		winner = -1;
 		//How deep does the bot check? 
 
-		int depth = 4; 
+		int depth = 9; 
 	
 		int rounds = 0;
  

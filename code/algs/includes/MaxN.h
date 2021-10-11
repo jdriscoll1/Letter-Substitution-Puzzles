@@ -5,6 +5,9 @@ Date: 8/27/2021
 Description: Multiplayer Algorithm Headers for the FLWG
 */
 
+#ifndef seenMaxN
+#define seenMaxN
+
 #include "../../structs/includes/HashMap.h"
 
 struct rawScore{
@@ -73,4 +76,6 @@ struct maxnNodeScore* assignScore(int depth, int wordID, int playerID, int numPl
 void Print_MaxNNodeScore(struct maxnNodeScore* node, int numPlayers); 
 
 void Print_RawScore(struct rawScore* r); 
+
+#endif
 

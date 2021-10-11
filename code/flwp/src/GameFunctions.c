@@ -42,11 +42,13 @@ int GetMinConnections(enum Difficulty difficulty){
 
 /*Randomly chooses a word based on an index*/ 
 int ChooseStart(struct wordDataArray* IntToWord_HashMap){
- 
-	 
+ 	int wordID = 0;
+	int validWord = 0;
 	//randomly choosese a word via an index
-	int wordID = rand() % (IntToWord_HashMap->numWords);
-	
+	while(validWord == 0){
+		wordID = rand() % (IntToWord_HashMap->numWords);
+		if(IntToWord_HashMap->array[wordID]->numConnections >= 1){validWord = 1;}
+	}
 	
 	return wordID;  
 }

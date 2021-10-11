@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000001000000
-UnitCount=41
+UnitCount=43
 
 [VersionInfo]
 Major=1
@@ -454,6 +454,26 @@ BuildCmd=
 FileName=flwg\includes\MultiplayerFLWG.h
 CompileCpp=0
 Folder=flwg/includes
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit42]
+FileName=algs\includes\Hypermax.h
+CompileCpp=0
+Folder=algs/includes
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit43]
+FileName=algs\src\Hypermax.c
+CompileCpp=0
+Folder=algs/src
 Compile=1
 Link=1
 Priority=1000
