@@ -14,13 +14,20 @@ Desc: A Hash Set for all words to determine if they are used*/
 #define NUM_BYTES 8
 
 /*Allocates the structure and creates all of the necessary longs*/
-struct WordHashSet* create_WordHashSet(int totalWords){
+struct WordHashSet* init_WordHashSet(int totalWords){
 	//the total number of word blocks
 	int arrLength = ceil(totalWords / (sizeof(unsigned long) * NUM_BYTES));
 	
 	//the hash set that contains whether all words have been, or have not been used 
-	struct WordHashSet *whs = calloc(arrLength, sizeof(unsigned long)); 
-	
+	struct WordHashSet *whs = malloc(sizeof(struct WordHashSet));
+	whs->wordSet = calloc(arrLength, sizeof(unsigned long)); 
+	int i; 
+	for(i = 0; i < arrLength; i++){
+		//setting all the words to be unused
+		whs->wordSet[i] = 0; 
+	}
+	whs->totalWords = totalWords; 
+	return whs; 
 	
 }
 
@@ -36,4 +43,7 @@ void checkIfUsed_WordHashSet(int wordID, struct WordHashSet *whs);
 void reset_WordHashSet(int wordID, struct WordHashSet* whs);
 
 /*frees hash set of all words*/
-void free_WordHashSet(struct WordHashSet* whs);
+void free_WordHashSet(struct WordHashSet* whs){
+	free(whs->wordSet);
+	free(whs);
+}

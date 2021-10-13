@@ -17,6 +17,7 @@ int numLetters = 4;
 
 #include "./structs/includes/HashMap.h"
 #include "./structs/includes/TreeSet.h"
+#include "./structs/includes/WordHashSet.h"
 
 #include "./flwp/includes/PathfinderGame.h"
 
@@ -24,8 +25,30 @@ int numLetters = 4;
 #include "./flwg/includes/MultiplayerFLWG.h"
 
 void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap); 
-int main(){
+void runMultiplayerFLWG();
 
+int main(){
+	
+	//The Hash Map that can take a word and find its ID
+	struct DummyHeadNode** *WordToInt_HashMap;
+	
+	//The Hash Map that can take an integer and find all sorts of information about it, including the word
+	struct wordDataArray *IntToWord_HashMap; 
+	
+	char* path = "../docs/4.txt"; 
+	
+	//Allocates the Word to Int HashMap
+	WordToInt_HashMap = Allocate_WordToInt();
+	
+	IntToWord_HashMap = Allocate_IntToWordStruct();  
+	
+	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
+	struct WordHashSet *whs = init_WordHashSet(IntToWord_HashMap->numWords);
+	free_WordHashSet(whs); 
+	return 0;
+}
+
+void runMultiplayerFLWG(){
 	srand(time(0)); 
 	
 	
@@ -53,10 +76,8 @@ int main(){
 	
 	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
 
-	return 0;
+	
 }
-
-
 void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap){
 	int depth = 4;  
 	struct minimaxOutput* a = createOutput(-100, 0, -1, -1); 
@@ -69,29 +90,4 @@ void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap){
 	free(b); 
 	
 }
-
-	/*******MINIMAX STARTS HERE***********/
-	/*
-
-	
-
-	
-	printf("----DEAN-----\n");
-	struct minimaxOutput* deanMO = minimax(deanID, d, d, 1, *a, *b, IntToWord_HashMap);
-	removeAlgFound(deanID, IntToWord_HashMap);
-	
-	printf("\n\n\n----LEAF-----\n");
-	struct minimaxOutput* leafMO = minimax(leafID, d, d, 1, *a, *b, IntToWord_HashMap);
-	removeAlgFound(leafID, IntToWord_HashMap);
-	
-	printf("\n");
-	
-	printf("Dean: \n");
-	Print_MinimaxOutput(deanMO);
-	printf("Leaf: \n");
-	Print_MinimaxOutput(leafMO);
-	*/
-
-
-
 

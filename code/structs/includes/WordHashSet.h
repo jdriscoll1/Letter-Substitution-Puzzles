@@ -15,7 +15,7 @@ struct WordHashSet{
 };
 
 /*Allocates the structure and creates all of the necessary longs*/
-struct WordHashSet* create_WordHashSet(int totalWords);
+struct WordHashSet* init_WordHashSet(int totalWords);
 
 /*Function that marks a word as used or unused
 @param wordID --> The word that is being marked used or unused
