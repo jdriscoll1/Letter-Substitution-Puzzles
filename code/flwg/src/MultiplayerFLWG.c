@@ -9,6 +9,8 @@
 #include "../../algs/includes/MaxN.h"
 #include "../../algs/includes/Hypermax.h"
 
+#include "../../flwp/includes/GameFunctions.h"
+
 
 //This allows the four letter word game to be playable with multiple players
 void Multiplayer_FLWG(struct DummyHeadNode** *WordToInt_HashMap, struct wordDataArray *IntToWord_HashMap){

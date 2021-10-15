@@ -44,7 +44,30 @@ int main(){
 	
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
 	struct WordHashSet *whs = init_WordHashSet(IntToWord_HashMap->numWords);
+	
+	int i = 500;
+	
+	markUsed_WordHashSet(i, whs);
+	
+	int isUsed = checkIfUsed_WordHashSet(i, whs);
+	
+	markUnused_WordHashSet(i, whs);
+	
+	
+	isUsed = checkIfUsed_WordHashSet(i, whs);
+	
+	/*Go through all the words and mark them unused*/
+	void reset_WordHashSet(int wordID, struct WordHashSet* whs){
+	
+	
+	
+	}
+
+	
+
+	
 	free_WordHashSet(whs); 
+	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
 	return 0;
 }
 

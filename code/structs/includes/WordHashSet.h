@@ -20,13 +20,20 @@ struct WordHashSet* init_WordHashSet(int totalWords);
 /*Function that marks a word as used or unused
 @param wordID --> The word that is being marked used or unused
 @param isUsed --> 1 - the word was just seen 0 - the word is being marked as unseen*/
-void markUsed_WordHashSet(int wordID, int isUsed, struct WordHashSet *whs);
+void markUsed_WordHashSet(int wordID, struct WordHashSet *whs);
+
+/*Function that marks a word as used or unused
+@param wordID --> The word that is being marked used or unused
+@param isUsed --> 1 - the word was just seen 0 - the word is being marked as unseen*/
+void markUnused_WordHashSet(int wordID, struct WordHashSet *whs);
 
 /*Check if word is used*/
-void checkIfUsed_WordHashSet(int wordID, struct WordHashSet *whs);
+int checkIfUsed_WordHashSet(int wordID, struct WordHashSet *whs);
 
 /*Go through all the words and mark them unused*/
 void reset_WordHashSet(int wordID, struct WordHashSet* whs);
 
 /*frees hash set of all words*/
 void free_WordHashSet(struct WordHashSet* whs);
+
+void long2binary(unsigned long hash);

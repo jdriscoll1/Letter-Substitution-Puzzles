@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000001000000
-UnitCount=43
+UnitCount=45
 
 [VersionInfo]
 Major=1
@@ -474,6 +474,26 @@ BuildCmd=
 FileName=algs\src\Hypermax.c
 CompileCpp=0
 Folder=algs/src
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit44]
+FileName=structs\includes\WordHashSet.h
+CompileCpp=0
+Folder=structs/includes
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit45]
+FileName=structs\src\WordHashSet.c
+CompileCpp=0
+Folder=structs/src
 Compile=1
 Link=1
 Priority=1000
