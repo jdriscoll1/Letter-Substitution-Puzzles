@@ -2,6 +2,7 @@
 #define seenMinimax
 
 #include "../../structs/includes/HashMap.h"
+#include "../../structs/includes/WordSet.h"
 
 /*The purpose of this algorithm is to search depth first down a tree and find the most likely path to trap your opponent
 @param wordID --> The ID of the word being checked
@@ -25,9 +26,9 @@ struct minimaxOutput{
 
 
 
-struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap); 
+struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 
-struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap); 
+struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 
 void Print_MinimaxOutput(struct minimaxOutput *mo); 
 
@@ -73,7 +74,7 @@ int AlphaBetaPruning(struct minimaxOutput *alpha, struct minimaxOutput* beta, st
 /*Compares for the winPercentage*/
 int compareWinPercent(double potential, double curr); 
 
-void DFS(int id, struct wordDataArray* IntToWord_HashMap); 
+void DFS(int id, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 
 /*Creates a score box
 @param score --> Primary value {-1, 0, +1}

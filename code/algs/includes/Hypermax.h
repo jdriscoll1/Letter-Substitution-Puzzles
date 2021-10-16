@@ -6,8 +6,10 @@ Description: Multiplayer FLWG with Node Culling, or Alpha-Reduction*/
 
 #include "MaxN.h"
 
+#include "../../structs/includes/WordSet.h"
 
-int Hypermax(int wordID, int playerID, int numPlayers, int depth, struct wordDataArray* IntToWord_HashMap);
+
+int Hypermax(int wordID, int playerID, int numPlayers, int depth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet);
 
 /*Hypermax is "Max-N with alpha beta pruning"
 @param wordID --> The word who is at the top of the tree, the root word
@@ -19,4 +21,4 @@ int Hypermax(int wordID, int playerID, int numPlayers, int depth, struct wordDat
 	@note: The alpha beta scores are only the number representation of the scores, the raw score and wordID is unnecessary 
 @return --> The variable that was deemed best
 */
-struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int depth, int maxDepth, int* alphas, struct wordDataArray* IntToWord_HashMap);
+struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int depth, int maxDepth, int* alphas, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet);

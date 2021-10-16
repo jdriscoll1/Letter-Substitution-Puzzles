@@ -9,6 +9,7 @@ Description: Multiplayer Algorithm Headers for the FLWG
 #define seenMaxN
 
 #include "../../structs/includes/HashMap.h"
+#include "../../structs/includes/WordSet.h"
 
 struct rawScore{
 	//Is this a winning or a losing move?:
@@ -45,7 +46,7 @@ struct maxnNodeScore{
 
 struct maxnNodeScore* init_MaxNNodeScore(int numPlayers); 
 
-struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, int maxDepth, struct wordDataArray* IntToWord_HashMap);
+struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, int maxDepth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet);
 
 /*Convert an array to Zero-Sum*/
 void Int2ZeroSum_Array(int* scores, int numPlayers); 

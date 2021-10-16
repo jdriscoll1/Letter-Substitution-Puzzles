@@ -173,7 +173,7 @@ void EnterText(){
 }
 
 
-int round_FLWP(int minConnections, struct GameComponents* gc, struct PathfinderGame *pc, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
+int round_FLWP(int minConnections, struct GameComponents* gc, struct PathfinderGame *pc, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 
 	gc->hc->hintPoints = pc->hintPoints; 
 	int endCondition;
@@ -264,7 +264,7 @@ int round_FLWP(int minConnections, struct GameComponents* gc, struct PathfinderG
 				free(output);  
 			}
 			else if(strcmp(input, "3") == 0){
-				char* output = hint3((unsigned long long)gc, IntToWord_HashMap); 
+				char* output = hint3((unsigned long long)gc, IntToWord_HashMap, wordSet); 
 				printf("%s\n", output);
 				free(output);  
 			}

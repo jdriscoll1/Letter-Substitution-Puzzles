@@ -12,14 +12,14 @@
 
 extern int numLetters;
 
-struct GameComponents *InitializeGameComponents(struct wordDataArray* IntToWord_HashMap, int minConnections){
+struct GameComponents *InitializeGameComponents(struct wordDataArray* IntToWord_HashMap, int minConnections, struct WordSet *wordSet){
 		//Instantiate the Structure
 	struct GameComponents* gameComponents = malloc(sizeof(struct GameComponents)); 
 	do{
 		//This chooses the start word
 		gameComponents->start = ChooseStart(IntToWord_HashMap);   
 		//Finds the goal word 
-		gameComponents->goal = BreadthFirstSearch_Distance_Goal(gameComponents->start, minConnections, IntToWord_HashMap); 
+		gameComponents->goal = BreadthFirstSearch_Distance_Goal(gameComponents->start, minConnections, IntToWord_HashMap, wordSet); 
 	}while(gameComponents->goal == -1); 
 	
 	//Sets the minimum number of connection

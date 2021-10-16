@@ -481,7 +481,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit44]
-FileName=structs\includes\WordHashSet.h
+FileName=structs\includes\WordSet.h
 CompileCpp=0
 Folder=structs/includes
 Compile=1
@@ -491,7 +491,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit45]
-FileName=structs\src\WordHashSet.c
+FileName=structs\src\WordSet.c
 CompileCpp=0
 Folder=structs/src
 Compile=1

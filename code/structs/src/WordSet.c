@@ -9,32 +9,32 @@ Desc: A Hash Set for all words to determine if they are used*/
 #include <stdlib.h>
 #include <math.h>
 
-#include "../includes/WordHashSet.h"
+#include "../includes/WordSet.h"
 
 #define NUM_BYTES 8
 
 /*Allocates the structure and creates all of the necessary longs*/
-struct WordHashSet* init_WordHashSet(int totalWords){
+struct WordSet* init_WordSet(int totalWords){
 	//the total number of word blocks
 	int arrLength = ceil(totalWords / (sizeof(unsigned long) * NUM_BYTES));
 	
 	//the hash set that contains whether all words have been, or have not been used 
-	struct WordHashSet *whs = malloc(sizeof(struct WordHashSet));
-	whs->wordSet = calloc(arrLength, sizeof(unsigned long)); 
+	struct WordSet *wordSet = malloc(sizeof(struct WordSet));
+	wordSet->words = calloc(arrLength, sizeof(unsigned long)); 
 	int i; 
 	for(i = 0; i < arrLength; i++){
 		//setting all the words to be unused
-		whs->wordSet[i] = 0; 
+		wordSet->words[i] = 0; 
 	}
-	whs->totalWords = totalWords; 
-	return whs; 
+	wordSet->totalWords = totalWords; 
+	return wordSet; 
 	
 }
 
 /*Function that marks a word as used or unused
 @param wordID --> The word that is being marked used or unused
 @param isUsed --> 1 - the word was just seen 0 - the word is being marked as unseen*/
-void markUsed_WordHashSet(int wordID, struct WordHashSet *whs){
+void markUsed_WordSet(int wordID, struct WordSet *wordSet){
 	int numBytes = sizeof(unsigned long) * NUM_BYTES;
 	//First get the block that the word is in 
 	int block = (int)(wordID / numBytes);
@@ -48,7 +48,7 @@ void markUsed_WordHashSet(int wordID, struct WordHashSet *whs){
 	temp <<= (numBytes - byte - 1); 
 
 	//Then it does a bitwise OR on the two operators, and the word that was used should be set to TRUE 
-	whs->wordSet[block] |= temp; 
+	wordSet->words[block] |= temp; 
 	
 
 }
@@ -56,7 +56,7 @@ void markUsed_WordHashSet(int wordID, struct WordHashSet *whs){
 /*Function that marks a word as used or unused
 @param wordID --> The word that is being marked used or unused
 @param isUsed --> 1 - the word was just seen 0 - the word is being marked as unseen*/
-void markUnused_WordHashSet(int wordID, struct WordHashSet *whs){
+void markUnused_WordSet(int wordID, struct WordSet *wordSet){
 	int numBytes = sizeof(unsigned long) * NUM_BYTES;
 	//First get the block that the word is in 
 	int block = (int)(wordID / numBytes);
@@ -71,13 +71,13 @@ void markUnused_WordHashSet(int wordID, struct WordHashSet *whs){
 	temp <<= (numBytes - byte - 1); 
 
 	//Then it does a bitwise OR on the two operators, and the word that was used should be set to TRUE 
-	whs->wordSet[block] &= ~temp; 
+	wordSet->words[block] &= ~temp; 
 	
 	
 }
 
 /*Outputs if a word has been used*/
-int checkIfUsed_WordHashSet(int wordID, struct WordHashSet *whs){
+int checkIfUsed_WordSet(int wordID, struct WordSet *wordSet){
 	int numBytes = sizeof(unsigned long) * NUM_BYTES;
 	//First get the block that the word is in 
 	int block = (int)(wordID / numBytes);
@@ -93,17 +93,24 @@ int checkIfUsed_WordHashSet(int wordID, struct WordHashSet *whs){
 	//This returns whether or not the and results in true. 
 	//If the index at which the byte was moved is True: True
 	//If the index at which the byte was moved is False: False
-	return whs->wordSet[block] & temp; 
+	return wordSet->words[block] & temp; 
 	
 }
 
 /*Go through all the words and mark them unused*/
-void reset_WordHashSet(int wordID, struct WordHashSet* whs);
+void reset_WordSet(struct WordSet* wordSet){
+	int i = 0; 
+	for(i = 0; i < wordSet->totalWords / (sizeof(unsigned long) * NUM_BYTES); i++){
+		wordSet->words[i] = 0;
+	}
+	
+	
+}
 
 /*frees hash set of all words*/
-void free_WordHashSet(struct WordHashSet* whs){
-	free(whs->wordSet);
-	free(whs);
+void free_WordSet(struct WordSet* wordSet){
+	free(wordSet->words);
+	free(wordSet);
 }
 
 

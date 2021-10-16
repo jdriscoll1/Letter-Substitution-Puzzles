@@ -12,7 +12,7 @@ To Do So, I will make use of the minimax algorithm*/
 
 #define MAX 100000
 //Uses 50/50 chances for beta variable
-struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap){
+struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){
 
 	//First, let's get the list of nodes that we can go to 
 	struct intList* currConnection = getConnections(id, IntToWord_HashMap); 
@@ -20,11 +20,11 @@ struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingP
 	currConnection = currConnection->next; 
 	//Then I would also add it into the transposition hash
 	//We will place this node in the HahsMap 
-	setAlgFound(id, IntToWord_HashMap); 
+	markUsed_WordSet(id, wordSet); 
 	//If the depth is equal to 0, or there are no nodes to go to (how to determine that?)
 		//Return the static evaluation of the position
 	
-	return minimaxAlg(id, depth, maxDepth, isMaximizingPlayer, currConnection, alpha, beta, IntToWord_HashMap); 
+	return minimaxAlg(id, depth, maxDepth, isMaximizingPlayer, currConnection, alpha, beta, IntToWord_HashMap, wordSet); 
 	
 
 
@@ -34,7 +34,7 @@ struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingP
 }
 
 
-struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap){
+struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 
 	//The current minimum evaluation is going to be +infinity since we want something lower than that
 	struct minimaxOutput* absEval = (isMaximizingPlayer == 1) ? createOutput(-100, 0, -1, -1) : createOutput(100, 1, -1, -1);  
@@ -53,7 +53,7 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 	while(currConnection != NULL){
 		currID = currConnection->data; 
 		//Make sure that the word has not already been found in the hash set
-		if(getAlgFound(currID, IntToWord_HashMap) == 0){
+		if(checkIfUsed_WordSet(currID, wordSet) == 0){
 			
 			//Make sure the number of connections goes up
 			numConnections++; 
@@ -61,13 +61,13 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 			//If it's at 0 depth, if there still exists options, it return 50% as score
 			if(depth == 0){
 				free(absEval); 
-				removeAlgFound(id, IntToWord_HashMap);
+				markUnused_WordSet(id, wordSet);
 				//It also knocks the id off of the HashMap
 				return createOutput(0, .5, 0, id);  
 			}
 
 			//Set the algorithm evaluation to minimax making usre that when setting the params, the depth goes down by 1, that the isMinimaxPlayer is true, and that it is putting in the child's ID
-			struct minimaxOutput* potential = minimax(currID, depth - 1, maxDepth, (isMaximizingPlayer == 1) ? 0 : 1, alpha, beta, IntToWord_HashMap); 
+			struct minimaxOutput* potential = minimax(currID, depth - 1, maxDepth, (isMaximizingPlayer == 1) ? 0 : 1, alpha, beta, IntToWord_HashMap, wordSet); 
 
 			//This only matters during the minimizer's turn
 			if(potential->score <= 1 && potential->score >= -1){
@@ -151,7 +151,7 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 	}
 	if(depth != maxDepth){
 		absEval->id = id; 
-		removeAlgFound(id, IntToWord_HashMap); 
+		markUnused_WordSet(id, wordSet); 
 		//I would also remove it from the transposition hash
 		
 	}
@@ -362,11 +362,11 @@ void Print_MinimaxOutput(struct minimaxOutput *mo){
 
 
 
-void DFS(int id, struct wordDataArray* IntToWord_HashMap){
+void DFS(int id, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 	//Start at a node
 	
 	//Set that node to true in the hash map
-	setAlgFound(id, IntToWord_HashMap); 
+	markUsed_WordSet(id, wordSet); 
 	//Output the node
 	//Obtain node's connections
 	struct intList* currConnection = getConnections(id, IntToWord_HashMap); 
@@ -375,8 +375,8 @@ void DFS(int id, struct wordDataArray* IntToWord_HashMap){
 	//Loop through those connections, running DFS
 	while(currConnection != NULL){
 		
-		if(getAlgFound(currConnection->data, IntToWord_HashMap) == 0){
-			DFS(currConnection->data, IntToWord_HashMap); 
+		if(checkIfUsed_WordSet(currConnection->data, wordSet) == 0){
+			DFS(currConnection->data, IntToWord_HashMap, wordSet); 
 			
 		}
 		printf("%d ", currConnection->data);
@@ -386,6 +386,6 @@ void DFS(int id, struct wordDataArray* IntToWord_HashMap){
 	}
 
 	//Set node found to false
-	removeAlgFound(id, IntToWord_HashMap); 
+	markUnused_WordSet(id, wordSet); 
 	
 }

@@ -24,7 +24,7 @@ struct PathfinderGame{
 struct PathfinderGame* init_PathfinderGame();
 
 
-void Play_FLWP(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap); 
+void Play_FLWP(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 
 /*This gives the final score of the game*/
 int finalScore(struct PathfinderGame* pc); 

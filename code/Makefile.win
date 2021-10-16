@@ -4,8 +4,8 @@
 CPP      = g++.exe -D__DEBUG__
 CC       = gcc.exe -D__DEBUG__
 WINDRES  = windres.exe
-OBJ      = objs/FLWP-2.o objs/BreadthFirstSearch.o objs/Minimax.o objs/MinimaxTests.o objs/TreeStorageNode.o objs/FLWGGame.o objs/GameFunctions.o objs/Hints.o objs/PathfinderGame.o objs/PathGameComponents.o objs/UserInput.o objs/ArrayList.o objs/GenericLinkedListNode.o objs/HashFunctions.o objs/HashMap.o objs/IntLinkedList.o objs/TreeSet.o objs/WordLinkedList.o objs/PythonWrapper.o objs/MaxN.o objs/MultiplayerFLWG.o objs/Hypermax.o objs/WordHashSet.o
-LINKOBJ  = objs/FLWP-2.o objs/BreadthFirstSearch.o objs/Minimax.o objs/MinimaxTests.o objs/TreeStorageNode.o objs/FLWGGame.o objs/GameFunctions.o objs/Hints.o objs/PathfinderGame.o objs/PathGameComponents.o objs/UserInput.o objs/ArrayList.o objs/GenericLinkedListNode.o objs/HashFunctions.o objs/HashMap.o objs/IntLinkedList.o objs/TreeSet.o objs/WordLinkedList.o objs/PythonWrapper.o objs/MaxN.o objs/MultiplayerFLWG.o objs/Hypermax.o objs/WordHashSet.o
+OBJ      = objs/FLWP-2.o objs/BreadthFirstSearch.o objs/Minimax.o objs/MinimaxTests.o objs/TreeStorageNode.o objs/FLWGGame.o objs/GameFunctions.o objs/Hints.o objs/PathfinderGame.o objs/PathGameComponents.o objs/UserInput.o objs/ArrayList.o objs/GenericLinkedListNode.o objs/HashFunctions.o objs/HashMap.o objs/IntLinkedList.o objs/TreeSet.o objs/WordLinkedList.o objs/PythonWrapper.o objs/MaxN.o objs/MultiplayerFLWG.o objs/Hypermax.o objs/WordSet.o
+LINKOBJ  = objs/FLWP-2.o objs/BreadthFirstSearch.o objs/Minimax.o objs/MinimaxTests.o objs/TreeStorageNode.o objs/FLWGGame.o objs/GameFunctions.o objs/Hints.o objs/PathfinderGame.o objs/PathGameComponents.o objs/UserInput.o objs/ArrayList.o objs/GenericLinkedListNode.o objs/HashFunctions.o objs/HashMap.o objs/IntLinkedList.o objs/TreeSet.o objs/WordLinkedList.o objs/PythonWrapper.o objs/MaxN.o objs/MultiplayerFLWG.o objs/Hypermax.o objs/WordSet.o
 LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -g3
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
@@ -90,5 +90,5 @@ objs/MultiplayerFLWG.o: flwg/src/MultiplayerFLWG.c
 objs/Hypermax.o: algs/src/Hypermax.c
 	$(CC) -c algs/src/Hypermax.c -o objs/Hypermax.o $(CFLAGS)
 
-objs/WordHashSet.o: structs/src/WordHashSet.c
-	$(CC) -c structs/src/WordHashSet.c -o objs/WordHashSet.o $(CFLAGS)
+objs/WordSet.o: structs/src/WordSet.c
+	$(CC) -c structs/src/WordSet.c -o objs/WordSet.o $(CFLAGS)

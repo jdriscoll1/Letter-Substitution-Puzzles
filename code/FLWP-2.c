@@ -17,7 +17,7 @@ int numLetters = 4;
 
 #include "./structs/includes/HashMap.h"
 #include "./structs/includes/TreeSet.h"
-#include "./structs/includes/WordHashSet.h"
+#include "./structs/includes/WordSet.h"
 
 #include "./flwp/includes/PathfinderGame.h"
 
@@ -43,30 +43,11 @@ int main(){
 	IntToWord_HashMap = Allocate_IntToWordStruct();  
 	
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
-	struct WordHashSet *whs = init_WordHashSet(IntToWord_HashMap->numWords);
-	
-	int i = 500;
-	
-	markUsed_WordHashSet(i, whs);
-	
-	int isUsed = checkIfUsed_WordHashSet(i, whs);
-	
-	markUnused_WordHashSet(i, whs);
-	
-	
-	isUsed = checkIfUsed_WordHashSet(i, whs);
-	
-	/*Go through all the words and mark them unused*/
-	void reset_WordHashSet(int wordID, struct WordHashSet* whs){
-	
-	
-	
-	}
+	struct WordSet *wordSet = init_WordSet(IntToWord_HashMap->numWords);
+	FLWG(WordToInt_HashMap, IntToWord_HashMap, wordSet);
 
 	
-
-	
-	free_WordHashSet(whs); 
+	free_WordSet(wordSet); 
 	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
 	return 0;
 }
@@ -89,28 +70,33 @@ void runMultiplayerFLWG(){
 	
 	IntToWord_HashMap = Allocate_IntToWordStruct();  
 	
+	struct WordSet *wordSet = init_WordSet(IntToWord_HashMap->numWords);
+
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
 
 	int d = 4; 
 	int n = 2; 
 	
-	Multiplayer_FLWG(WordToInt_HashMap, IntToWord_HashMap);
+	Multiplayer_FLWG(WordToInt_HashMap, IntToWord_HashMap, wordSet);
 	//MultiplayerTest(IntToWord_HashMap);
+	
+	free_WordSet(wordSet);
 	
 	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
 
 	
 }
 void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap){
+	struct WordSet* wordSet = init_WordSet(IntToWord_HashMap->numWords);
 	int depth = 4;  
 	struct minimaxOutput* a = createOutput(-100, 0, -1, -1); 
 	struct minimaxOutput* b = createOutput(100, 1, -1, -1); 
-	struct minimaxOutput* output = minimax(0, depth, depth, 1, *a, *b, IntToWord_HashMap); 
+	struct minimaxOutput* output = minimax(0, depth, depth, 1, *a, *b, IntToWord_HashMap, wordSet); 
 	printf("Final Choice: %d", output->id); 
 	
 	free(output);
 	free(a);
 	free(b); 
-	
+	free_WordSet(wordSet);
 }
 

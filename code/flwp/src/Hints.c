@@ -139,7 +139,7 @@ char* hint2(unsigned long long gcLong, struct wordDataArray* IntToWord_HashMap){
 /*Hint 3: Offers the user a letter that is used be from the first word to the last word
 @param gc --> The current game componenents
 @param HashMap --> How the user figures out a letter*/
-char* hint3(unsigned long long gcLong, struct wordDataArray* IntToWord_HashMap){
+char* hint3(unsigned long long gcLong, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 	//This is the output 
 	char* output = malloc(SIZE); 
 	//Converts the long into a structure
@@ -173,7 +173,7 @@ char* hint3(unsigned long long gcLong, struct wordDataArray* IntToWord_HashMap){
 		
 		//If there is no structure for this particular word, I need to
 		if(isFound == false){
-			init_hint3(hc, currWord, gc->goal, IntToWord_HashMap); 
+			init_hint3(hc, currWord, gc->goal, IntToWord_HashMap, wordSet); 
 		
 		}	
 		
@@ -287,7 +287,7 @@ void free_HintComponents(unsigned long long hcLong, struct wordDataArray* IntToW
 
 
 
-struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(int start, int goal, struct wordDataArray* IntToWord_HashMap, struct hint3Struct *hc, bool* HashSet){
+struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(int start, int goal, struct wordDataArray* IntToWord_HashMap, struct hint3Struct *hc, bool* HashSet, struct WordSet *wordSet){
 	 
 	//If the start word and goal word are equal, it returns 0
 	if(start == goal){
@@ -295,7 +295,7 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(int start, int goal, 
 		exit(0); 
 	}
 	
-	struct BFSComponents* bc = init_BFSComponents(start, IntToWord_HashMap);
+	struct BFSComponents* bc = init_BFSComponents(start, IntToWord_HashMap, wordSet);
 
 	bool goalFound = false; 
 
@@ -305,7 +305,7 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(int start, int goal, 
  
 		bc->prevConnection = bc->prevConnection->next;
 		
-		bc->End = AddToTreeStorage_Dist_BFS(bc, goal, IntToWord_HashMap);  
+		bc->End = AddToTreeStorage_Dist_BFS(bc, goal, IntToWord_HashMap, wordSet);  
 		if(bc->End->id == goal){
 			goalFound = true; 
 		}
@@ -334,7 +334,7 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(int start, int goal, 
 	Convert_TreeStorageNodeArrayList_HintRestrictions(output, HashSet, bc->End, IntToWord_HashMap);
 
 	//Frees the structure
-	Free_BFSComponents(bc, IntToWord_HashMap); 
+	Free_BFSComponents(bc, IntToWord_HashMap, wordSet); 
 	
 	return (goalFound == -1)?NULL:output; 
 	
@@ -345,7 +345,7 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(int start, int goal, 
 	 	//If there are no words in between, that is, if the connection is direct
 }
 
-void init_hint3(struct HintComponents *hc, int currWord, int goal, struct wordDataArray* IntToWord_HashMap){
+void init_hint3(struct HintComponents *hc, int currWord, int goal, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 	//First, get back to the front of the generic linked list 
 	hc->letterOptions = hc->letterOptionsHeader; 
 	//Then, I have to add a new location (which I do believe gets added to the front)
@@ -356,7 +356,7 @@ void init_hint3(struct HintComponents *hc, int currWord, int goal, struct wordDa
 	hc->letterOptions->listHeader = malloc(sizeof(struct hint3Struct)); 
 	((struct hint3Struct*)(hc->letterOptions->listHeader))->word = currWord; 
 	//Then, find the available letters using the Breadth First Search Distance array and set that to the array list 
-	((struct hint3Struct*)(hc->letterOptions->listHeader))->letters = BreadthFirstSearch_Dest_HintRestrictions(currWord, goal, IntToWord_HashMap, ((struct hint3Struct*)(hc->letterOptions->listHeader)), hc->lettersGiven); 
+	((struct hint3Struct*)(hc->letterOptions->listHeader))->letters = BreadthFirstSearch_Dest_HintRestrictions(currWord, goal, IntToWord_HashMap, ((struct hint3Struct*)(hc->letterOptions->listHeader)), hc->lettersGiven, wordSet); 
 
 	
 }

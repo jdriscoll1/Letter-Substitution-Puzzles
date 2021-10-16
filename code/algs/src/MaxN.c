@@ -22,7 +22,7 @@ Description: Creating the Max-N: Multiplayer Four Letter Word Game Without Alpha
 //Beginning the function, it takes:
 //the current node it is on - the word it is on (wordID)
 //the current player whose turn it is (playerID)
-struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, int maxDepth, struct wordDataArray* IntToWord_HashMap){
+struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, int maxDepth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 
 	
 	/**********INITIALIZE IMPORTANT VARIABLES*************************/	
@@ -33,7 +33,7 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 	//Set that the current word has been found 
 	//only if the depth is not zero
 	if(depth != 0){
-		setAlgFound(wordID, IntToWord_HashMap);
+		markUsed_WordSet(wordID, wordSet);
 	}
 	//The current child that is an option for the algorithm
 	struct intList* currChild = wordInfo->connectionHeader->next; 
@@ -84,7 +84,7 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 	//it loops through each individual child of the current node
 	while(currChild != NULL){
 		//it makes sure that this particular word has not been used
-		if(getAlgFound(currChild->data, IntToWord_HashMap) == 0){
+		if(checkIfUsed_WordSet(currChild->data, wordSet) == 0){
 			 //if it is a leaf node with ? children
 			 //Return an unknown outcome
 			 if(depth == 0){
@@ -103,7 +103,8 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 				numPlayers, //number of players
 				depth - 1, //curr depth
 				maxDepth, //maximum depth
-				IntToWord_HashMap //Hash Map for Information about child node
+				IntToWord_HashMap, //Hash Map for Information about child node
+				wordSet //The words that have already been used
 			); 
 
 		
@@ -162,7 +163,7 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 		//printf("This is a bottom move\n");
 		//Print_MaxNNodeScore(assignScore(depth, wordID, playerID, numPlayers), numPlayers);
 		if(depth != maxDepth){
-			removeAlgFound(wordID, IntToWord_HashMap);
+			markUnused_WordSet(wordID, wordSet);
 		}
 		else{
 			wordID = -1;
@@ -191,7 +192,7 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 		//the word will be the word you are on, regardless
 	if(depth != maxDepth){
 		bestScore->wordID = wordID;
-		removeAlgFound(wordID, IntToWord_HashMap);
+		markUnused_WordSet(wordID, wordSet);
 	}
 	free(betaScores);
 	

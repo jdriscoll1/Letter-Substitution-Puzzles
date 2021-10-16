@@ -34,20 +34,20 @@ struct PathfinderGame* init_PathfinderGame(){
 //Nothing should update 
 
 
-void Play_FLWP(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
+void Play_FLWP(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 	struct PathfinderGame* pc = init_PathfinderGame(); 
 	int score = 0; 
 	int endGame = 0; 
 	int i; 
 	//This initialises the game components
- 	struct GameComponents* gc = InitializeGameComponents(IntToWord_HashMap, pc->currRound); 
+ 	struct GameComponents* gc = InitializeGameComponents(IntToWord_HashMap, pc->currRound, wordSet); 
  	
 	//This goes through and plays multiple rounds
 	while(endGame == 0 && pc->currRound < pc->numRounds){
 		
 		//This starts a round
 		//quit is based on whether the user chooses to quit
-		score = round_FLWP(pc->currRound, gc, pc, WordToInt_HashMap, IntToWord_HashMap); 
+		score = round_FLWP(pc->currRound, gc, pc, WordToInt_HashMap, IntToWord_HashMap, wordSet); 
 			//Sets the hint points left 
 		pc->hintPoints = gc->hc->hintPoints; 
 		pc->scores[pc->currRound - 2] = score; 
@@ -92,7 +92,7 @@ void Play_FLWP(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* 
 			if(quit != 4){
 		
 				FreeGameComponents(gc, IntToWord_HashMap); 
-				gc = InitializeGameComponents(IntToWord_HashMap, pc->currRound); 	
+				gc = InitializeGameComponents(IntToWord_HashMap, pc->currRound, wordSet); 	
 			}
 			else{
 				ResetGameComponents(gc, IntToWord_HashMap); 

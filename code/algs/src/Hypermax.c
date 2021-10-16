@@ -11,7 +11,7 @@ Description: Multiplayer FLWG with Node Culling, or Alpha-Reduction*/
 
 #include "../../structs/includes/IntLinkedList.h"
 
-int Hypermax(int wordID, int playerID, int numPlayers, int depth, struct wordDataArray* IntToWord_HashMap){
+int Hypermax(int wordID, int playerID, int numPlayers, int depth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 	int* alphas = malloc(sizeof(int) * numPlayers);
 	int i = 0; 
 	//Initialize alphas to -infinity equivilent
@@ -19,7 +19,7 @@ int Hypermax(int wordID, int playerID, int numPlayers, int depth, struct wordDat
 		//-2,000,000,000
 		alphas[i] = -2000000000;
 	}
-	struct maxnNodeScore* bestScore = HypermaxAlg(wordID, playerID, numPlayers, depth, depth, alphas, IntToWord_HashMap);
+	struct maxnNodeScore* bestScore = HypermaxAlg(wordID, playerID, numPlayers, depth, depth, alphas, IntToWord_HashMap, wordSet);
 	free(alphas);
 	int outputWord = bestScore->wordID;
 	Free_MaxNNodeScore(bestScore, numPlayers);
@@ -27,7 +27,7 @@ int Hypermax(int wordID, int playerID, int numPlayers, int depth, struct wordDat
 	
 }
 
-struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int depth, int maxDepth, int* alphas, struct wordDataArray* IntToWord_HashMap){
+struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int depth, int maxDepth, int* alphas, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 	
 	
 	/**********INITIALIZE IMPORTANT VARIABLES************/	
@@ -38,7 +38,7 @@ struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int 
 	//Set that the current word has been found 
 	//only if the depth is not zero
 	if(depth != 0){
-		setAlgFound(wordID, IntToWord_HashMap);
+		markUsed_WordSet(wordID, wordSet);
 	}
 	//The current child that is an option for the algorithm
 	struct intList* currChild = wordInfo->connectionHeader->next; 
@@ -78,7 +78,7 @@ struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int 
 	//it loops through each individual child of the current node
 	while(currChild != NULL){
 		//it makes sure that this particular word has not been used
-		if(getAlgFound(currChild->data, IntToWord_HashMap) == 0){
+		if(checkIfUsed_WordSet(currChild->data, wordSet) == 0){
 			if(depth == 0){
 				
 				free(currAlphas);
@@ -86,7 +86,7 @@ struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int 
 			 	return unknownOutcome(wordID, numPlayers);
 			}
 			//gets the child node
-			struct maxnNodeScore* childScore = HypermaxAlg(currChild->data, (playerID + 1) % numPlayers, numPlayers, depth - 1, maxDepth, currAlphas, IntToWord_HashMap);
+			struct maxnNodeScore* childScore = HypermaxAlg(currChild->data, (playerID + 1) % numPlayers, numPlayers, depth - 1, maxDepth, currAlphas, IntToWord_HashMap, wordSet);
 			for(p = 0; p < numPlayers; p++){
 				betaScores[p] += childScore->rawScores[p]->isWinPercent; 
 			}
@@ -166,7 +166,7 @@ struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int 
 		//printf("This is a bottom move\n");
 		//Print_MaxNNodeScore(assignScore(depth, wordID, playerID, numPlayers), numPlayers);
 		if(depth != maxDepth){
-			removeAlgFound(wordID, IntToWord_HashMap);
+			markUnused_WordSet(wordID, wordSet);
 		}
 		else{
 			wordID = -1;
@@ -195,7 +195,7 @@ struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int 
 		//the word will be the word you are on, regardless
 	if(depth != maxDepth){
 		bestScore->wordID = wordID;
-		removeAlgFound(wordID, IntToWord_HashMap);
+		markUnused_WordSet(wordID, wordSet);
 	}
 	
 	free(betaScores);

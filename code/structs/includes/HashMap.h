@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "../includes/TreeSet.h"
+#include "../includes/WordSet.h"
 
 /*This is the Map that will take a word and convert it to an integer*/
 
@@ -17,8 +18,6 @@ struct wordData{
 	char* word; 
 	//Necessary to find word's connections
 	struct intList* connectionHeader; 
-	//Finds if it has been used in algorithm
-	int algFound; 
 	//Finds if it has been given as a hint
 	int hintFound; 
 	//Finds the number of connections a word has
@@ -111,12 +110,7 @@ struct intList *getConnections_Restrictions(int input, int cap, struct wordDataA
 /*This opens a file*/ 
 FILE *OpenFile(char* filePath); 
 
-//Getters & Setters for the hash set
-void setAlgFound(int wordID, struct wordDataArray* IntToWord_HashMap); 
 
-int getAlgFound(int wordID, struct wordDataArray* IntToWord_HashMap); 
-
-void removeAlgFound(int wordID, struct wordDataArray* IntToWord_HashMap); 
 
 void setHintFound(int wordID, struct wordDataArray* IntToWord_HashMap); 
 
@@ -126,6 +120,6 @@ int getHintFound(int wordID, struct wordDataArray* IntToWord_HashMap);
 
 void reset_HashSet(struct wordDataArray* IntToWord_HashMap); 
 
-void printOptions(int id, struct wordDataArray* IntToWord_HashMap);
+void printOptions(int id, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet);
 
 #endif

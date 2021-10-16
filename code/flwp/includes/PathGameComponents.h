@@ -6,6 +6,7 @@
 #include "../../structs/includes/ArrayList.h"
 #include "../../structs/includes/IntLinkedList.h"
 #include "../../structs/includes/HashMap.h"
+#include "../../structs/includes/WordSet.h"
 
 struct  GameComponents{
 	//This is where it starts
@@ -39,7 +40,7 @@ struct  GameComponents{
 @param HashMap --> The HashMap that stores all word's connections
 @param minConnections --> The minimum number of connections needed to connect
 @return --> Returns all of the Initalized Game Components, including the Start & Goal Word*/
-struct GameComponents *InitializeGameComponents(struct wordDataArray* IntToWord_HashMap, int minConnections);
+struct GameComponents *InitializeGameComponents(struct wordDataArray* IntToWord_HashMap, int minConnections, struct WordSet *wordSet);
 
 /*This resets the Game Components so if the user decides to redo the round, they can*/
 void ResetGameComponents(struct GameComponents *gc, struct wordDataArray* IntToWord_HashMap);

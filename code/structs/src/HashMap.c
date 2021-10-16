@@ -224,7 +224,7 @@ struct wordData* Create_WordData(char* word){
 	wordData->connectionHeader = malloc(sizeof(struct intList)); 
 	wordData->connectionHeader->next = NULL; 
 	wordData->word = strdup(word);  
-	wordData->algFound = 0; 
+
 	wordData->hintFound = 0;
 	wordData->numConnections = 0;  
 	return wordData; 
@@ -301,11 +301,11 @@ struct intList* getConnections(int id, struct wordDataArray* IntToWord_HashMap){
 	return IntToWord_HashMap->array[id]->connectionHeader; 
 };
 
-void printOptions(int id, struct wordDataArray* IntToWord_HashMap){
+void printOptions(int id, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 	struct intList* currOption = IntToWord_HashMap->array[id]->connectionHeader->next;
 	printf("%s Options: ", Convert_IntToWord(id, IntToWord_HashMap));
 	while(currOption != NULL){
-		if(getAlgFound(currOption->data, IntToWord_HashMap) == 0){
+		if(checkIfUsed_WordSet(currOption->data, wordSet) == 0){
 			printf("%s ", Convert_IntToWord(currOption->data, IntToWord_HashMap));
 		}
 		currOption = currOption->next;
@@ -377,17 +377,6 @@ struct intList *getConnections_Restrictions(int input, int cap, struct wordDataA
 }
 
 
-void setAlgFound(int wordID, struct wordDataArray* IntToWord_HashMap){
-	IntToWord_HashMap->array[wordID]->algFound = 1; 
-}
-
-void removeAlgFound(int wordID, struct wordDataArray* IntToWord_HashMap){
-	IntToWord_HashMap->array[wordID]->algFound = 0; 	
-}
-
-int getAlgFound(int wordID, struct wordDataArray* IntToWord_HashMap){
-	return IntToWord_HashMap->array[wordID]->algFound; 
-}
 
 void setHintFound(int wordID, struct wordDataArray* IntToWord_HashMap){
 	IntToWord_HashMap->array[wordID]->hintFound = 1; 
@@ -407,6 +396,6 @@ void reset_HashSet(struct wordDataArray* IntToWord_HashMap){
 	int i = 0; 
 	for(i = 0; i < IntToWord_HashMap->numWords; i++){
 		IntToWord_HashMap->array[i]->hintFound = 0; 
-		IntToWord_HashMap->array[i]->algFound = 0;
+
 	}
 }
