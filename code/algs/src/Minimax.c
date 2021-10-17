@@ -12,8 +12,9 @@ To Do So, I will make use of the minimax algorithm*/
 
 #define MAX 100000
 //Uses 50/50 chances for beta variable
-struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){
-
+struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet, unsigned long hash){
+	//update the hash 
+	hash ^= wordSet->words[id  / sizeof(unsigned long)]; 
 	//First, let's get the list of nodes that we can go to 
 	struct intList* currConnection = getConnections(id, IntToWord_HashMap); 
 	//Avoid the header
@@ -24,7 +25,7 @@ struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingP
 	//If the depth is equal to 0, or there are no nodes to go to (how to determine that?)
 		//Return the static evaluation of the position
 	
-	return minimaxAlg(id, depth, maxDepth, isMaximizingPlayer, currConnection, alpha, beta, IntToWord_HashMap, wordSet); 
+	return minimaxAlg(id, depth, maxDepth, isMaximizingPlayer, currConnection, alpha, beta, IntToWord_HashMap, wordSet, hash); 
 	
 
 
@@ -34,7 +35,7 @@ struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingP
 }
 
 
-struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet, unsigned long hash){
 
 	//The current minimum evaluation is going to be +infinity since we want something lower than that
 	struct minimaxOutput* absEval = (isMaximizingPlayer == 1) ? createOutput(-100, 0, -1, -1) : createOutput(100, 1, -1, -1);  
@@ -67,7 +68,25 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 			}
 
 			//Set the algorithm evaluation to minimax making usre that when setting the params, the depth goes down by 1, that the isMinimaxPlayer is true, and that it is putting in the child's ID
-			struct minimaxOutput* potential = minimax(currID, depth - 1, maxDepth, (isMaximizingPlayer == 1) ? 0 : 1, alpha, beta, IntToWord_HashMap, wordSet); 
+			struct minimaxOutput* potential = minimax(
+				// the current word id
+				currID, 
+				// the depth, new search makes it go down
+				depth - 1, 
+				// the furthest its able to search, the starting point
+				maxDepth, 
+				// whether its considering in terms of itself or its enemy 
+				(isMaximizingPlayer == 1) ? 0 : 1, 
+				//alpha in alpha beta pruning
+				alpha, 
+				//beta in alpha beta pruning
+				beta, 
+				//the "game board" 
+				IntToWord_HashMap, 
+				//the set of used words
+				wordSet,
+				//the current game state hash 
+				hash); 
 
 			//This only matters during the minimizer's turn
 			if(potential->score <= 1 && potential->score >= -1){

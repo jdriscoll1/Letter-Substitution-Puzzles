@@ -26,7 +26,7 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 	markUsed_WordSet(word, wordSet); 
 	//Variable that determines winner: 1 - Algorithm, 0 - player
 	int winner = -1;
-	
+	unsigned long hash = 0;
 	//How deep does the bot check? 
 	int depth = 4; 
 	int rounds = 0; 
@@ -41,7 +41,7 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 		if(whoseTurn == 0){
 				
 			
-			word = botPly(word, depth, IntToWord_HashMap, wordSet, minimax);
+			word = botPly(word, depth, hash, IntToWord_HashMap, wordSet, minimax);
 		
 		}
 		else if(whoseTurn == 1){			
@@ -77,6 +77,8 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 	int A = 0; 
 	int B = 0; 
+	
+	unsigned long hash = 0;
 	//So, first choose a start word
 	int w = 0; 
 	int i = 0;
@@ -107,7 +109,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 			//printf("%s\n", IntToWord_HashMap->array[w]->word); 
 			if(whoseTurn == 0){
 				//w = weakBotPly(w, IntToWord_HashMap);
-				w = botPly(w, depth, IntToWord_HashMap, wordSet, minimax);	
+				w = botPly(w, depth, hash, IntToWord_HashMap, wordSet, minimax);	
 			}
 			else if(whoseTurn == 1){
 				//printf("List: %s\n", toString_IntLL(IntToWord_HashMap->array[w]->connectionHeader, SEPERATED, IntToWord_HashMap)); 
@@ -192,12 +194,12 @@ int Input_FLWG(int prevWord, struct DummyHeadNode*** WordToInt_HashMap, struct w
 }
 
 
-int botPly(int word, int depth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet, struct minimaxOutput* (*minimax_func)(int, int, int, int, struct minimaxOutput, struct minimaxOutput, struct wordDataArray*, struct WordSet *wordSet) ){
+int botPly(int word, int depth, unsigned long hash, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet, struct minimaxOutput* (*minimax_func)(int, int, int, int, struct minimaxOutput, struct minimaxOutput, struct wordDataArray*, struct WordSet*, unsigned long) ){
 
 	struct minimaxOutput* alpha = createOutput(-100, 0, -1, -1); 
 	struct minimaxOutput* beta = createOutput(100, 1, -1, -1); 
 	//Then, the bot takes this word and runs the minimax algorithm
-	struct minimaxOutput* output = (*minimax_func)(word, depth, depth, 1, *alpha, *beta, IntToWord_HashMap, wordSet);
+	struct minimaxOutput* output = (*minimax_func)(word, depth, depth, 1, *alpha, *beta, IntToWord_HashMap, wordSet, hash);
 	 
 	//If it returns NULL -- game over
 	if(output == NULL){

@@ -44,7 +44,7 @@ int main(){
 	
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
 	struct WordSet *wordSet = init_WordSet(IntToWord_HashMap->numWords);
-	FLWG(WordToInt_HashMap, IntToWord_HashMap, wordSet);
+	Multiplayer_FLWG(WordToInt_HashMap, IntToWord_HashMap, wordSet);
 
 	
 	free_WordSet(wordSet); 
@@ -91,7 +91,7 @@ void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap){
 	int depth = 4;  
 	struct minimaxOutput* a = createOutput(-100, 0, -1, -1); 
 	struct minimaxOutput* b = createOutput(100, 1, -1, -1); 
-	struct minimaxOutput* output = minimax(0, depth, depth, 1, *a, *b, IntToWord_HashMap, wordSet); 
+	struct minimaxOutput* output = minimax(0, depth, depth, 1, *a, *b, IntToWord_HashMap, wordSet, 0); 
 	printf("Final Choice: %d", output->id); 
 	
 	free(output);
