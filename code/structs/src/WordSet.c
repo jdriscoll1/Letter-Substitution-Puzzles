@@ -77,7 +77,7 @@ void markUnused_WordSet(int wordID, struct WordSet *wordSet){
 }
 
 /*Outputs if a word has been used*/
-int checkIfUsed_WordSet(int wordID, struct WordSet *wordSet){
+long unsigned int checkIfUsed_WordSet(int wordID, struct WordSet *wordSet){
 	int numBytes = sizeof(unsigned long) * NUM_BYTES;
 	//First get the block that the word is in 
 	int block = (int)(wordID / numBytes);
@@ -89,7 +89,8 @@ int checkIfUsed_WordSet(int wordID, struct WordSet *wordSet){
 	//Shifts that 1 to 64 - bytes. If it was 0, it would be all hte way on the left, so this has to get pushed to the left
 	
 	//it has to be -1 because otherwise it will not be 0-index, it will be 1-index
-	temp <<= (numBytes - byte - 1); 
+	temp <<= (numBytes - byte - 1);
+
 	//This returns whether or not the and results in true. 
 	//If the index at which the byte was moved is True: True
 	//If the index at which the byte was moved is False: False
@@ -103,8 +104,7 @@ void reset_WordSet(struct WordSet* wordSet){
 	for(i = 0; i < wordSet->totalWords / (sizeof(unsigned long) * NUM_BYTES); i++){
 		wordSet->words[i] = 0;
 	}
-	
-	
+		
 }
 
 /*frees hash set of all words*/

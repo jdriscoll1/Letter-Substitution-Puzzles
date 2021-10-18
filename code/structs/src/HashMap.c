@@ -224,7 +224,7 @@ struct wordData* Create_WordData(char* word){
 	wordData->connectionHeader = malloc(sizeof(struct intList)); 
 	wordData->connectionHeader->next = NULL; 
 	wordData->word = strdup(word);  
-
+	wordData->transpositionTable = NULL;
 	wordData->hintFound = 0;
 	wordData->numConnections = 0;  
 	return wordData; 

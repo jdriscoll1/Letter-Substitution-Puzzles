@@ -31,7 +31,7 @@ void markUsed_WordSet(int wordID, struct WordSet *wordSet);
 void markUnused_WordSet(int wordID, struct WordSet *wordSet);
 
 /*Check if word is used*/
-int checkIfUsed_WordSet(int wordID, struct WordSet *wordSet);
+long unsigned int checkIfUsed_WordSet(int wordID, struct WordSet *wordSet);
 
 /*Go through all the words and mark them unused*/
 void reset_WordSet(struct WordSet* wordSet);

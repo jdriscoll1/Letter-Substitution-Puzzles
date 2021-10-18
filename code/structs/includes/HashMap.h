@@ -20,6 +20,8 @@ struct wordData{
 	struct intList* connectionHeader; 
 	//Finds if it has been given as a hint
 	int hintFound; 
+	//This stores previously found game states and their corresponding scores
+	struct TranspositionTable* transpositionTable; 
 	//Finds the number of connections a word has
 	int numConnections; 
 };

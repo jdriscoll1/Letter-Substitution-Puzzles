@@ -17,16 +17,20 @@ Date: 5/1/21
 #include "../../flwp/includes/GameFunctions.h"
 
 #include "../../structs/includes/IntLinkedList.h"
+#include "../../structs/includes/TranspositionTable.h"
 
 extern int numLetters; 
 
 int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+	unsigned long hash = 0;
+
 	//So, first choose a start word
-	int word = 1430;//ChooseStart(IntToWord_HashMap); 
+	int word = 1; 
+
 	markUsed_WordSet(word, wordSet); 
 	//Variable that determines winner: 1 - Algorithm, 0 - player
 	int winner = -1;
-	unsigned long hash = 0;
+
 	//How deep does the bot check? 
 	int depth = 4; 
 	int rounds = 0; 
@@ -35,18 +39,21 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 	int isValid = 0; 
 	int whoseTurn = 0; 
 	while(word >= 0){
+		
 		//Output the current word
 		printf("%s\n", Convert_IntToWord(word, IntToWord_HashMap)); 
-		
+		hash = update_GameStateHash(hash, word);
+		printf("%d: ", word % (sizeof(unsigned long) * 8));
+		long2binary(hash);
 		if(whoseTurn == 0){
 				
+			word = userPly(word, WordToInt_HashMap, IntToWord_HashMap, wordSet);
 			
-			word = botPly(word, depth, hash, IntToWord_HashMap, wordSet, minimax);
 		
 		}
 		else if(whoseTurn == 1){			
 	
-			word = userPly(word, WordToInt_HashMap, IntToWord_HashMap, wordSet);
+			word = botPly(word, depth, hash, IntToWord_HashMap, wordSet, minimax);
 			
 			//Check the word
 			//Go to the connections, and ask if there are any more

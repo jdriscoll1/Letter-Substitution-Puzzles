@@ -4,6 +4,7 @@
 
 #include "../includes/Minimax.h"
 #include "../../structs/includes/IntLinkedList.h"
+#include "../../structs/includes/TranspositionTable.h"
 
 /*This is the C file for the minimax algorithm
 
@@ -14,7 +15,7 @@ To Do So, I will make use of the minimax algorithm*/
 //Uses 50/50 chances for beta variable
 struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet, unsigned long hash){
 	//update the hash 
-	hash ^= wordSet->words[id  / sizeof(unsigned long)]; 
+	hash = update_GameStateHash(hash, id); 
 	//First, let's get the list of nodes that we can go to 
 	struct intList* currConnection = getConnections(id, IntToWord_HashMap); 
 	//Avoid the header
@@ -177,7 +178,7 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 	
 	
 	
-
+	hash = update_GameStateHash(hash, id);
 
 	//Return the minimum evaluation
 	return absEval; 
@@ -375,7 +376,11 @@ struct minimaxOutput* createOutput(int score, double winPercent, int depth, int 
 }
 
 void Print_MinimaxOutput(struct minimaxOutput *mo){
-	printf("%d: {%d, %d%%, %d}\n", mo->id, mo->score, (int)(mo->winPercent * 100.0), mo->depth); 
+	printf("%d: {%d, %d%%, %d}\n", 
+		mo->id, 
+		mo->score, 
+		(int)(mo->winPercent * 100.0), 
+		mo->depth); 
 }
 
 
