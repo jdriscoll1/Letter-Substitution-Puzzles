@@ -4,7 +4,7 @@
 
 #include "../includes/Minimax.h"
 #include "../../structs/includes/IntLinkedList.h"
-#include "../../structs/includes/TranspositionTable.h"
+
 
 int TOTAL_MOVES = 0;
 int TRANS_SAVED = 0; 
@@ -16,21 +16,11 @@ To Do So, I will make use of the minimax algorithm*/
 
 #define MAX 100000
 //Uses 50/50 chances for beta variable
-struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet, unsigned long hash){
+struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){
 	TOTAL_MOVES++;
-	
-	//update the hash 
-	hash = update_GameStateHash(hash, id); 
+
 	void* savedScore; 
-	//First, check if this has been saved into the Transposition Table
-	/*if ((savedScore = getScore_TranspositionTable(hash, id, IntToWord_HashMap)) != NULL){
-		TRANS_SAVED++;
-		struct minimaxOutput* scoreCopy = malloc(sizeof(struct minimaxOutput));
-		copy_mo(scoreCopy, (struct minimaxOutput*)savedScore);
-		return scoreCopy;
-		
-		
-	}*/
+
 	//First, let's get the list of nodes that we can go to 
 	struct intList* currConnection = getConnections(id, IntToWord_HashMap); 
 	//Avoid the header
@@ -41,7 +31,7 @@ struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingP
 	//If the depth is equal to 0, or there are no nodes to go to (how to determine that?)
 		//Return the static evaluation of the position
 	
-	return minimaxAlg(id, depth, maxDepth, isMaximizingPlayer, currConnection, alpha, beta, IntToWord_HashMap, wordSet, hash); 
+	return minimaxAlg(id, depth, maxDepth, isMaximizingPlayer, currConnection, alpha, beta, IntToWord_HashMap, wordSet); 
 	
 
 
@@ -51,7 +41,7 @@ struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingP
 }
 
 
-struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet, unsigned long hash){
+struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 
 	//The current minimum evaluation is going to be +infinity since we want something lower than that
 	struct minimaxOutput* absEval = (isMaximizingPlayer == 1) ? createOutput(-100, 0, -1, -1) : createOutput(100, 1, -1, -1);  
@@ -101,9 +91,8 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 				//the "game board" 
 				IntToWord_HashMap, 
 				//the set of used words
-				wordSet,
-				//the current game state hash 
-				hash); 
+				wordSet
+				); 
 
 			//This only matters during the minimizer's turn
 			if(potential->score <= 1 && potential->score >= -1){
@@ -160,15 +149,6 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 		
 	}
 	
-	//if there are no connections, and the depth is 0
-	/*
-	if(depth == 0){
-		free(absEval); 
-		removeAlgFound(id, IntToWord_HashMap);
-		//It also knocks the id off of the HashMap
-		return (isMaximizingPlayer == 1) ? createOutput(-1, 0, depth, id) : createOutput(1, 1, depth, id);  
-	}
-	*/
 
 	//if it found no nodes
 	if(numConnections == 0 && isPruned == 0){
@@ -192,14 +172,7 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 		//I would also remove it from the transposition hash
 		
 	}
-	
-	
-	
-	hash = update_GameStateHash(hash, id);
-	//It removes the current word, because the hash should only contain the words leading up to the current
-	/*if(absEval->winPercent > 50 || absEval->winPercent < 51){
-		addScore_TranspositionTable(id, hash, (void*)absEval, IntToWord_HashMap, MINIMAX_SCORE);
-	}*/
+
 	//Return the minimum evaluation
 	return absEval; 
 

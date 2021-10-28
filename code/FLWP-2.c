@@ -18,7 +18,7 @@ int numLetters = 4;
 #include "./structs/includes/HashMap.h"
 #include "./structs/includes/TreeSet.h"
 #include "./structs/includes/WordSet.h"
-#include "./structs/Includes/TranspositionTable.h"
+
 
 #include "./flwp/includes/PathfinderGame.h"
 
@@ -97,7 +97,7 @@ void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap){
 	int depth = 4;  
 	struct minimaxOutput* a = createOutput(-100, 0, -1, -1); 
 	struct minimaxOutput* b = createOutput(100, 1, -1, -1); 
-	struct minimaxOutput* output = minimax(0, depth, depth, 1, *a, *b, IntToWord_HashMap, wordSet, 0); 
+	struct minimaxOutput* output = minimax(0, depth, depth, 1, *a, *b, IntToWord_HashMap, wordSet); 
 	printf("Final Choice: %d", output->id); 
 	
 	free(output);

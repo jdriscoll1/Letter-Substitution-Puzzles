@@ -5,7 +5,6 @@
 #include "../includes/TreeSet.h"
 #include "../includes/HashMap.h"
 #include "../includes/ArrayList.h"
-#include "../includes/TranspositionTable.h"
 
 #include "../../algs/includes/Minimax.h"
 
@@ -240,18 +239,6 @@ int intCompare(int num1, int num2){
 	//otherwise, if the first number is bigger than the second number, it returns 0; if not, it returns 1. 
 	return (num1 > num2)?0:1; 
 }
-int scoreCompare(int hash1, int hash2){
-	if(hash1 == hash2){
-		return -1; 
-	}
-	return (hash1 > hash2)?0:1;
-}
-int scoreHashCompare(unsigned long hash1, unsigned long hash2){
-	if(hash1 == hash2){
-		return -1;
-	} 	
-	return (hash1 > hash2)?0:1;
-}
 
 void Print_TreeSet(struct TreeSetNode *header, enum dataType type){
 	if(header == NULL){
@@ -278,11 +265,7 @@ void Print_TreeSet(struct TreeSetNode *header, enum dataType type){
 			printf("%s ", ((struct wordStruct*)(header->data))->word); 
 			
 		}
-		if(type == SCORE){
-			printf("%lu: ", (((struct savedScore*) header->data))->hash);
-			Print_MinimaxOutput((struct minimaxOutput*)(((struct savedScore*) header->data))->savedScore);
-			printf("\n");
-		}
+		
 		
 		if(header->greater != NULL){
 			Print_TreeSet(header->greater, type); 
@@ -310,12 +293,7 @@ int compare(void* data1, void* data2, enum dataType type){
 		//Either, it is taking a word, and throwing it in, or it is taking a node
 		return stringCompare(((struct wordStruct*)(data1))->word, ((struct wordStruct*)(data2))->word); 
 	}
-	else if(type == SCORE){
-		return scoreCompare(((struct savedScore*)(data1))->hash, ((struct savedScore*)(data2))->hash); 
-	}
-	else if(type == SCORE_HASH){
-		return scoreHashCompare((*(unsigned long*)(data1)), ((struct savedScore*)(data2))->hash);
-	}
+
 	else if(type == WORD_STRUCT_CHECK){
 
 		//Either, it is taking a word, and throwing it in, or it is taking a node
@@ -930,10 +908,7 @@ void Free_TreeSet(struct TreeSetNode *header, enum dataType type){
 		if(type == WORD_STRUCT){
 			Free_WordStruct(header->data); 
 		}
-		if(type == MINIMAX_SCORE || type == MAXN_SCORE){
-			free_SavedScore((struct savedScore*)header->data, type);
-		}
-		
+	
 		free(header); 
 	}
 	

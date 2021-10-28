@@ -11,7 +11,7 @@ When calling header, always use header->start because the dummy head node is a d
 */ 
 
 enum dataType{
-	INTEGER, WORD, DUMMY, SET_NODE, GENERIC_NODE, WORDLL, WORD4LL, WORD_STRUCT, WORD_STRUCT_CHECK, SCORE, SCORE_HASH, MAXN_SCORE, MINIMAX_SCORE
+	INTEGER, WORD, DUMMY, SET_NODE, GENERIC_NODE, WORDLL, WORD4LL, WORD_STRUCT, WORD_STRUCT_CHECK
 };
 /*The Structure of the Tree Set*/ 
 struct TreeSetNode {
@@ -82,12 +82,6 @@ int stringCompare(char* word1, char* word2);
 @param num2 --> the second word, contextually, it is part of the tree set
 @return --> (Equal: -1); (Num1 > Num2: 0); (Num2 > Num1: 1)*/ 
 int intCompare(int num1, int num2); 
-
-/*Does Not Compare 2 Scores, but it instead compares the hash used to insert them into the tree*/
-int scoreCompare(int hash1, int hash2);
-
-/*Given a hash, looks at a hash struct's hash and sees if they are the same*/
-int scoreHashCompare(unsigned long hash1, unsigned long hash2);
 
 
 /*This goes through and takes 2 pieces of data and compares them

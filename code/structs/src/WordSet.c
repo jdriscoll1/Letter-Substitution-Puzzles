@@ -114,6 +114,8 @@ void free_WordSet(struct WordSet* wordSet){
 }
 
 
+
+
 void long2binary(unsigned long hash){
         unsigned long f = floor(pow(2, sizeof(unsigned long) * 8) / 2);
         int i = 0;

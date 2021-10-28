@@ -17,13 +17,12 @@ Date: 5/1/21
 #include "../../flwp/includes/GameFunctions.h"
 
 #include "../../structs/includes/IntLinkedList.h"
-#include "../../structs/includes/TranspositionTable.h"
+
 
 extern int numLetters; 
 extern int TOTAL_MOVES;
 extern int TRANS_SAVED;
 int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
-	unsigned long hash = 0;
 
 	//So, first choose a start word
 	int word = ChooseStart(IntToWord_HashMap); 
@@ -43,10 +42,9 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 		
 		//Output the current word
 		printf("%s\n", Convert_IntToWord(word, IntToWord_HashMap)); 
-		hash = update_GameStateHash(hash, word);
 		//printf("%ld: ", word % (sizeof(unsigned long) * 8));
 		if(whoseTurn == 0){
-			word = botPly(word, depth, hash, IntToWord_HashMap, wordSet, minimax);	
+			word = botPly(word, depth, IntToWord_HashMap, wordSet, minimax);	
 			
 			
 		
@@ -70,9 +68,7 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 		rounds++; 
 		
 	}
-	//printf("%s Wins!\n%d Rounds\n", (winner == 0) ? "Bot A": "Bot B", rounds); 
-	//return winner
-	reset_TranspositionTable(IntToWord_HashMap, MINIMAX_SCORE);
+
 
 	return winner; 
 	
@@ -86,8 +82,7 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 	int A = 0; 
 	int B = 0; 
-	
-	unsigned long hash = 0;
+
 	//So, first choose a start word
 	int w = 0; 
 	int i = 0;
@@ -118,7 +113,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 			//printf("%s\n", IntToWord_HashMap->array[w]->word); 
 			if(whoseTurn == 0){
 				//w = weakBotPly(w, IntToWord_HashMap);
-				w = botPly(w, depth, hash, IntToWord_HashMap, wordSet, minimax);	
+				w = botPly(w, depth, IntToWord_HashMap, wordSet, minimax);	
 			}
 			else if(whoseTurn == 1){
 				//printf("List: %s\n", toString_IntLL(IntToWord_HashMap->array[w]->connectionHeader, SEPERATED, IntToWord_HashMap)); 
@@ -132,7 +127,6 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 			if(w == -1){
 				winner = whoseTurn; 
 			}
-			reset_TranspositionTable(IntToWord_HashMap, MINIMAX_SCORE);
 			rounds++; 
 			
 			
@@ -205,12 +199,12 @@ int Input_FLWG(int prevWord, struct DummyHeadNode*** WordToInt_HashMap, struct w
 }
 
 
-int botPly(int word, int depth, unsigned long hash, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet, struct minimaxOutput* (*minimax_func)(int, int, int, int, struct minimaxOutput, struct minimaxOutput, struct wordDataArray*, struct WordSet*, unsigned long) ){
+int botPly(int word, int depth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet, struct minimaxOutput* (*minimax_func)(int, int, int, int, struct minimaxOutput, struct minimaxOutput, struct wordDataArray*, struct WordSet*) ){
 
 	struct minimaxOutput* alpha = createOutput(-100, 0, -1, -1); 
 	struct minimaxOutput* beta = createOutput(100, 1, -1, -1); 
 	//Then, the bot takes this word and runs the minimax algorithm
-	struct minimaxOutput* output = (*minimax_func)(word, depth, depth, 1, *alpha, *beta, IntToWord_HashMap, wordSet, hash);
+	struct minimaxOutput* output = (*minimax_func)(word, depth, depth, 1, *alpha, *beta, IntToWord_HashMap, wordSet);
 	 
 	//If it returns NULL -- game over
 	if(output == NULL){

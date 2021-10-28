@@ -24,7 +24,7 @@ int Input_FLWG(int prevWord, struct DummyHeadNode*** WordToInt_HashMap, struct w
 @param IntToWord_HashMap --> This allows the bot to know which nodes connect to which
 @return --> Returns the word that the bot found
 @case --> -1 = the bot has lost*/
-int botPly(int word, int depth, unsigned long hash, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet, struct minimaxOutput* (*minimax_func)(int, int, int, int, struct minimaxOutput, struct minimaxOutput, struct wordDataArray*, struct WordSet *wordSet, unsigned long hash) ); 
+int botPly(int word, int depth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet, struct minimaxOutput* (*minimax_func)(int, int, int, int, struct minimaxOutput, struct minimaxOutput, struct wordDataArray*, struct WordSet*) ); 
 
 int weakBotPly(int word, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 
