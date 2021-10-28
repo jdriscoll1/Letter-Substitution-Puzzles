@@ -6,6 +6,9 @@
 #include "../../structs/includes/IntLinkedList.h"
 #include "../../structs/includes/TranspositionTable.h"
 
+int TOTAL_MOVES = 0;
+int TRANS_SAVED = 0; 
+
 /*This is the C file for the minimax algorithm
 
 Description: The four letter word game involves pathfinding via letter substitution to trap your opponent into a spot at which there are no places to go 
@@ -14,8 +17,20 @@ To Do So, I will make use of the minimax algorithm*/
 #define MAX 100000
 //Uses 50/50 chances for beta variable
 struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet, unsigned long hash){
+	TOTAL_MOVES++;
+	
 	//update the hash 
 	hash = update_GameStateHash(hash, id); 
+	void* savedScore; 
+	//First, check if this has been saved into the Transposition Table
+	/*if ((savedScore = getScore_TranspositionTable(hash, id, IntToWord_HashMap)) != NULL){
+		TRANS_SAVED++;
+		struct minimaxOutput* scoreCopy = malloc(sizeof(struct minimaxOutput));
+		copy_mo(scoreCopy, (struct minimaxOutput*)savedScore);
+		return scoreCopy;
+		
+		
+	}*/
 	//First, let's get the list of nodes that we can go to 
 	struct intList* currConnection = getConnections(id, IntToWord_HashMap); 
 	//Avoid the header
@@ -65,6 +80,7 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 				free(absEval); 
 				markUnused_WordSet(id, wordSet);
 				//It also knocks the id off of the HashMap
+				//Don't save this to the hash
 				return createOutput(0, .5, 0, id);  
 			}
 
@@ -158,6 +174,7 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 	if(numConnections == 0 && isPruned == 0){
 		free(absEval); 
 		//If there are no connections, the algorithm has, albeit sadly, lost. 
+		//No need for transposition table, because the game is over
 		if(depth == maxDepth){
 			return NULL; 
 		}
@@ -179,7 +196,10 @@ struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizi
 	
 	
 	hash = update_GameStateHash(hash, id);
-
+	//It removes the current word, because the hash should only contain the words leading up to the current
+	/*if(absEval->winPercent > 50 || absEval->winPercent < 51){
+		addScore_TranspositionTable(id, hash, (void*)absEval, IntToWord_HashMap, MINIMAX_SCORE);
+	}*/
 	//Return the minimum evaluation
 	return absEval; 
 
@@ -320,7 +340,7 @@ int compareOutput(struct minimaxOutput* curr, struct minimaxOutput* potential, i
 	
 }
 
-int copy_mo(struct minimaxOutput* a, struct minimaxOutput* b){
+void copy_mo(struct minimaxOutput* a, struct minimaxOutput* b){
 	a->id = b->id; 
 	a->score = b->score; 
 	a->winPercent = b->winPercent; 

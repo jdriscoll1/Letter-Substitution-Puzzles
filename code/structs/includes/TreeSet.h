@@ -11,7 +11,7 @@ When calling header, always use header->start because the dummy head node is a d
 */ 
 
 enum dataType{
-	INTEGER, WORD, DUMMY, SET_NODE, GENERIC_NODE, WORDLL, WORD4LL, WORD_STRUCT, WORD_STRUCT_CHECK, SCORE, SCORE_HASH
+	INTEGER, WORD, DUMMY, SET_NODE, GENERIC_NODE, WORDLL, WORD4LL, WORD_STRUCT, WORD_STRUCT_CHECK, SCORE, SCORE_HASH, MAXN_SCORE, MINIMAX_SCORE
 };
 /*The Structure of the Tree Set*/ 
 struct TreeSetNode {
