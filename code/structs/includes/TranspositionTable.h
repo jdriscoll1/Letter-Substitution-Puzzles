@@ -14,6 +14,7 @@ Description: Transposition Tables save scores of game states as they are come ac
 
 struct TranspositionTable{
 	struct DummyHeadNode** treeArray; 
+	int arrLength; 
 };
 
 struct savedScore{
@@ -34,7 +35,7 @@ This adds a score to the transposition table
 @param hash --> The hash that is being added to the table
 @param score --> The score that is being saved into the table 
 @param IntToWord_HashMap --> The array that stores all of the transposition tables*/
-void addScore_TranspositionTable(int currWord, unsigned long hash, void* score, struct wordDataArray* IntToWord_HashMap);
+void addScore_TranspositionTable(int currWord, unsigned long hash, void* score, struct wordDataArray* IntToWord_HashMap, enum dataType scoreType);
 
 /*Given a hash, output the associated score
 @param hash --> The hash used to retrieve the score
@@ -43,10 +44,23 @@ void addScore_TranspositionTable(int currWord, unsigned long hash, void* score, 
 @return --> Returns a void pointer which can be converted to a score, for example minimaxOutput*/
 void* getScore_TranspositionTable(unsigned long hash, int wordID, struct wordDataArray* IntToWord_HashMap);
 
+/*Frees a transposition table
+@param tt --> the table to be freed
+@param scoreType --> Either a MaxN Score Node or a Minimax Score Node*/
+void free_TranspositionTable(struct TranspositionTable* tt, enum dataType scoreType);
+
+/*Goes through and resets the Transposition Table*/
+void reset_TranspositionTable(struct wordDataArray* IntToWord_HashMap, enum dataType scoreType);
+
 /*Initializes the saved score
 @param hash --> How it is accessed and stored by the Tree Set
 @param savedScore --> The score that is saved*/
-struct savedScore* init_savedScore(unsigned long hash, void* savedScore);
+struct savedScore* init_savedScore(unsigned long hash, void* savedScore, enum dataType scoreType);
+
+/*Frees a previously saved score
+@param score --> The score to be freed
+@param scoreType --> The type of the score that is to be freed, minimax or maxn (or other?? FLWC (o )(o ))*/
+void free_SavedScore(struct savedScore* score, enum dataType scoreType);
 #endif
 
 

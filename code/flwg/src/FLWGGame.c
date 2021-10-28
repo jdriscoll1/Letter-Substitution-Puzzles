@@ -20,19 +20,20 @@ Date: 5/1/21
 #include "../../structs/includes/TranspositionTable.h"
 
 extern int numLetters; 
-
+extern int TOTAL_MOVES;
+extern int TRANS_SAVED;
 int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 	unsigned long hash = 0;
 
 	//So, first choose a start word
-	int word = 1; 
+	int word = ChooseStart(IntToWord_HashMap); 
 
 	markUsed_WordSet(word, wordSet); 
 	//Variable that determines winner: 1 - Algorithm, 0 - player
 	int winner = -1;
 
 	//How deep does the bot check? 
-	int depth = 4; 
+	int depth = 10; 
 	int rounds = 0; 
 	char* wordStr;   
 	//Determines if a word is valid
@@ -43,17 +44,16 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 		//Output the current word
 		printf("%s\n", Convert_IntToWord(word, IntToWord_HashMap)); 
 		hash = update_GameStateHash(hash, word);
-		printf("%d: ", word % (sizeof(unsigned long) * 8));
-		long2binary(hash);
+		//printf("%ld: ", word % (sizeof(unsigned long) * 8));
 		if(whoseTurn == 0){
-				
-			word = userPly(word, WordToInt_HashMap, IntToWord_HashMap, wordSet);
+			word = botPly(word, depth, hash, IntToWord_HashMap, wordSet, minimax);	
+			
 			
 		
 		}
 		else if(whoseTurn == 1){			
 	
-			word = botPly(word, depth, hash, IntToWord_HashMap, wordSet, minimax);
+			word = userPly(word, WordToInt_HashMap, IntToWord_HashMap, wordSet);
 			
 			//Check the word
 			//Go to the connections, and ask if there are any more
@@ -70,8 +70,10 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 		rounds++; 
 		
 	}
-	printf("%s Wins!\n%d Rounds\n", (winner == 0) ? "Bot A": "Bot B", rounds); 
+	//printf("%s Wins!\n%d Rounds\n", (winner == 0) ? "Bot A": "Bot B", rounds); 
 	//return winner
+	reset_TranspositionTable(IntToWord_HashMap, MINIMAX_SCORE);
+
 	return winner; 
 	
 	
@@ -90,7 +92,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 	int w = 0; 
 	int i = 0;
 	int start = 0; 
-	int end = 900;  
+	int end = 10;  
 	int totalRounds = 0; 
 	int winner; 
 	for(i = start; i < end; i++){
@@ -130,6 +132,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 			if(w == -1){
 				winner = whoseTurn; 
 			}
+			reset_TranspositionTable(IntToWord_HashMap, MINIMAX_SCORE);
 			rounds++; 
 			
 			
@@ -148,6 +151,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 		reset_WordSet(wordSet);
 	}
 	printf("A: %d, B: %d, avg rounds: %d", A, B, totalRounds / (end - start)); 
+	printf("Total: %d, Saved: %d", TOTAL_MOVES, TRANS_SAVED);
 	
 	
 	

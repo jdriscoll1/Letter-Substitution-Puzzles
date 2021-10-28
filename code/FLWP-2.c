@@ -29,6 +29,7 @@ void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap);
 void runMultiplayerFLWG();
 
 int main(){
+	srand(time(0));
 	
 	//The Hash Map that can take a word and find its ID
 	struct DummyHeadNode** *WordToInt_HashMap;
@@ -41,27 +42,17 @@ int main(){
 	//Allocates the Word to Int HashMap
 	WordToInt_HashMap = Allocate_WordToInt();
 	
+	//Allocates the Int2Word HashMap
 	IntToWord_HashMap = Allocate_IntToWordStruct();  
 	
+	//Initializes both hash maps, filling them out with their paths and words
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
 	struct WordSet *wordSet = init_WordSet(IntToWord_HashMap->numWords);
-
-
-	struct minimaxOutput* mo = createOutput(1, 1, 4, 0);
-	struct minimaxOutput* mo2 = createOutput(-1, .2, 5, 2);
+	//FLWG(WordToInt_HashMap, IntToWord_HashMap, wordSet);
+	//int s  = ChooseStart(IntToWord_HashMap);
+	//printf("%s", Convert_IntToWord(s, IntToWord_HashMap));
+	FLWG(WordToInt_HashMap, IntToWord_HashMap, wordSet);
 	
-	addScore_TranspositionTable(0, 750, (void*)mo, IntToWord_HashMap);
-	addScore_TranspositionTable(0, 22, (void*)mo2, IntToWord_HashMap);
-	int i; 
-	for(i= 0; i < 500; i++){
-		addScore_TranspositionTable(0, i, (void*)mo2, IntToWord_HashMap);
-	}
-	free(mo);
-	void* score = getScore_TranspositionTable(750, 0, IntToWord_HashMap);
-	if(score != NULL){
-	
-		Print_MinimaxOutput(score);
-	}
 	free_WordSet(wordSet); 
 	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
 	return 0;

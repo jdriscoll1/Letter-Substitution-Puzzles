@@ -11,6 +11,7 @@ Desc: The functions for the Transposition Tables
 
 #include "../includes/TranspositionTable.h"
 #include "../includes/WordSet.h"
+#include "../../algs/includes/MaxN.h"
 
 unsigned long update_GameStateHash(unsigned long hash, int id){
 	unsigned long temp = 1;
@@ -28,7 +29,7 @@ void print_TranspositionTable(struct TranspositionTable* tt){
 	}
 	else{
 		int i = 0; 
-		for(i = 0; i < 10; i++){
+		for(i = 0; i < tt->arrLength; i++){
 			printf("%d: ", i);
 			if(tt->treeArray[i] != NULL){
 				Print_TreeSet(tt->treeArray[i]->start, SCORE);
@@ -43,7 +44,7 @@ void print_TranspositionTable(struct TranspositionTable* tt){
 	printf("\n\n");
 }
 
-void addScore_TranspositionTable(int currWord, unsigned long hash, void* score, struct wordDataArray* IntToWord_HashMap){
+void addScore_TranspositionTable(int currWord, unsigned long hash, void* score, struct wordDataArray* IntToWord_HashMap, enum dataType scoreType){
 	
 	/************
 	1) Create the New Transposition Table 
@@ -64,16 +65,18 @@ void addScore_TranspositionTable(int currWord, unsigned long hash, void* score, 
 		//allocate the transposition table
 		tt = malloc(sizeof(struct TranspositionTable));
 		//allocate the array 
-		tt->treeArray = malloc(sizeof(struct DummyHeadNode) * 10);
+		tt->arrLength = 10;
+		tt->treeArray = malloc(sizeof(struct DummyHeadNode) * tt->arrLength);
 		int i = 0;
-		for(i = 0; i < 10; i++){
+		for(i = 0; i < tt->arrLength; i++){
 			tt->treeArray[i] = NULL;
 		}
+		
 	} 
 	
 	/*STEP #2*/
-	struct savedScore* scoreStorage = init_savedScore(hash, score); 
-	int index = hash % 10;
+	struct savedScore* scoreStorage = init_savedScore(hash, score, scoreType); 
+	int index = hash % tt->arrLength;
 
 	//Then go to the array, to get there, mod the long by 10 and go to that index 
 	//if it is null, then it is necessary to allocate the tree set 
@@ -81,9 +84,12 @@ void addScore_TranspositionTable(int currWord, unsigned long hash, void* score, 
 		tt->treeArray[index] = Allocate_TreeSet(scoreStorage);		
 	}
 	else{
+		
 		//Then, look at the AVL Tree, and insert this into it 
-		AddNode_TreeSet(scoreStorage, tt->treeArray[index], tt->treeArray[index]->start, DUMMY, SCORE);
-	
+		if(AddNode_TreeSet(scoreStorage, tt->treeArray[index], tt->treeArray[index]->start, DUMMY, SCORE) == NULL){
+			free_SavedScore(scoreStorage, scoreType);
+		}
+		
 	}
 
 	IntToWord_HashMap->array[currWord]->transpositionTable = tt;
@@ -91,11 +97,23 @@ void addScore_TranspositionTable(int currWord, unsigned long hash, void* score, 
 	
 }
 
-struct savedScore* init_savedScore(unsigned long hash, void* savedScore){
+
+struct savedScore* init_savedScore(unsigned long hash, void* savedScore, enum dataType scoreType){
 	struct savedScore* savedScoreStorage = malloc(sizeof(struct savedScore));
 	savedScoreStorage->hash = hash;
 	//store it in memory just in case the pointer gets freed
-	memcpy(&(savedScoreStorage->savedScore), &savedScore, sizeof(void*)); 
+	switch(scoreType){
+		case(MINIMAX_SCORE):
+			savedScoreStorage->savedScore = malloc(sizeof(struct minimaxOutput));
+			copy_mo((struct minimaxOutput*)savedScoreStorage->savedScore, (struct minimaxOutput*)savedScore); 
+			break;
+	
+		case(MAXN_SCORE):
+			printf("Add MaxN_Score");
+			break;
+		
+	}
+	
 	return savedScoreStorage; 
 }
 
@@ -105,7 +123,14 @@ void* getScore_TranspositionTable(unsigned long hash, int wordID, struct wordDat
 	if(tt == NULL){
 		return NULL;
 	}
-	struct TreeSetNode* node = Search_TreeSet((void*)(&hash), tt->treeArray[hash % 10]->start, SCORE_HASH);
+	if(tt->treeArray == NULL){
+		return NULL;
+	}
+	if(tt->treeArray[hash % tt->arrLength] == NULL){
+		return NULL;
+	}
+
+	struct TreeSetNode* node = Search_TreeSet((void*)(&hash), tt->treeArray[hash % tt->arrLength]->start, SCORE_HASH);
 	if(node == NULL){
 		return NULL;
 	}
@@ -113,6 +138,43 @@ void* getScore_TranspositionTable(unsigned long hash, int wordID, struct wordDat
 	
 }
 
+void free_TranspositionTable(struct TranspositionTable* tt, enum dataType scoreType){
+	int i;
+	if(tt != NULL){
+	
+		if(tt->treeArray != NULL){
+		
+			for(i = 0; i < tt->arrLength; i++){
+				if(tt->treeArray[i] != NULL){
+					Free_TreeSet(tt->treeArray[i]->start, scoreType);
+					//Frees the dummy header node
+					free(tt->treeArray[i]);
+				}
+			}
+		
+			free(tt->treeArray);
+		}
+		free(tt);
+	}
+}
+void reset_TranspositionTable(struct wordDataArray* IntToWord_HashMap, enum dataType scoreType){
+	int i;
+	for(i = 0; i < IntToWord_HashMap->numWords; i++){
+	
+		free_TranspositionTable(IntToWord_HashMap->array[i]->transpositionTable, scoreType);
+		IntToWord_HashMap->array[i]->transpositionTable = NULL;
+	}
+}
+
+void free_SavedScore(struct savedScore* score, enum dataType scoreType){
+	if(scoreType == MAXN_SCORE){
+		//Free_MaxNNodeScore((struct maxnNodeScore*)score->savedScore, 5); 
+	}
+	if(scoreType == MINIMAX_SCORE){
+		free(score->savedScore);
+	}
+	free(score);
+}
 
 
 

@@ -43,7 +43,7 @@ void Print_MinimaxOutput(struct minimaxOutput *mo);
 */
 int compare_mo(struct minimaxOutput* a, struct minimaxOutput* b, int isMaximizingPlayer); 
 //Copies the contents of b onto a 
-int copy_mo(struct minimaxOutput* a, struct minimaxOutput* b); 
+void copy_mo(struct minimaxOutput* a, struct minimaxOutput* b); 
 /*This compares between two outputs -- the current one already considered to be the best. Or the potential, perhaps better than the current
 @param curr --> The one whose life span has been longer (absEval, usually)
 @param potential --> the one whose life span has been shorter, recently found from child nodes

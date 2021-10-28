@@ -53,7 +53,8 @@ struct TreeSetNode* AddNode_TreeSet(void* data, void* pointer, struct TreeSetNod
 	
 	//they are the same
 	if(isSmaller == -1){
-		return curNode; 
+		//If it already exists and we are adding it, then we should return NULL to say it already exists
+		return NULL; 
 		
 	}
 	//if the new node is smaller than what it's compared against
@@ -929,6 +930,10 @@ void Free_TreeSet(struct TreeSetNode *header, enum dataType type){
 		if(type == WORD_STRUCT){
 			Free_WordStruct(header->data); 
 		}
+		if(type == MINIMAX_SCORE || type == MAXN_SCORE){
+			free_SavedScore((struct savedScore*)header->data, type);
+		}
+		
 		free(header); 
 	}
 	
