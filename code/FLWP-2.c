@@ -14,6 +14,7 @@ int numLetters = 4;
 #include "./algs/includes/MinimaxTests.h"
 #include "./algs/includes/BreadthFirstSearch.h"
 #include "./algs/includes/MaxN.h"
+#include "./algs/includes/MontyCarlosTreeSearch.h"
 
 #include "./structs/includes/HashMap.h"
 #include "./structs/includes/TreeSet.h"
@@ -27,34 +28,30 @@ int numLetters = 4;
 
 void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap); 
 void runMultiplayerFLWG();
+void runFLWG();
+
 
 int main(){
-	srand(time(0));
-	
 	//The Hash Map that can take a word and find its ID
 	struct DummyHeadNode** *WordToInt_HashMap;
 	
-	//The Hash Map that can take an integer and find all sorts of information about it, including the word
+	//The Hash Map that can take an integer and find all sorts of information about it, including the word 
 	struct wordDataArray *IntToWord_HashMap; 
 	
-	char* path = "../docs/4.txt"; 
+	
+	char* path = "../docs/t/ab.txt"; 
 	
 	//Allocates the Word to Int HashMap
 	WordToInt_HashMap = Allocate_WordToInt();
 	
-	//Allocates the Int2Word HashMap
 	IntToWord_HashMap = Allocate_IntToWordStruct();  
-	
-	//Initializes both hash maps, filling them out with their paths and words
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
-	struct WordSet *wordSet = init_WordSet(IntToWord_HashMap->numWords);
-	//FLWG(WordToInt_HashMap, IntToWord_HashMap, wordSet);
-	//int s  = ChooseStart(IntToWord_HashMap);
-	//printf("%s", Convert_IntToWord(s, IntToWord_HashMap));
-	FLWG(WordToInt_HashMap, IntToWord_HashMap, wordSet);
+	//Outputs the whole Int to word hash map
+	Print_IntToWord_HashMap(IntToWord_HashMap);
 	
-	free_WordSet(wordSet); 
-	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
+	struct WordSet* wordSet = init_WordSet(IntToWord_HashMap->numWords); 
+	montyCarlosTreeSearch(0, wordSet, 1, IntToWord_HashMap);
+	
 	return 0;
 }
 
@@ -106,3 +103,31 @@ void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap){
 	free_WordSet(wordSet);
 }
 
+void runFLWG(){
+		srand(time(0));
+	
+	//The Hash Map that can take a word and find its ID
+	struct DummyHeadNode** *WordToInt_HashMap;
+	
+	//The Hash Map that can take an integer and find all sorts of information about it, including the word
+	struct wordDataArray *IntToWord_HashMap; 
+	
+	char* path = "../docs/4.txt"; 
+	
+	//Allocates the Word to Int HashMap
+	WordToInt_HashMap = Allocate_WordToInt();
+	
+	//Allocates the Int2Word HashMap
+	IntToWord_HashMap = Allocate_IntToWordStruct();  
+	
+	//Initializes both hash maps, filling them out with their paths and words
+	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
+	struct WordSet *wordSet = init_WordSet(IntToWord_HashMap->numWords);
+	//FLWG(WordToInt_HashMap, IntToWord_HashMap, wordSet);
+	//int s  = ChooseStart(IntToWord_HashMap);
+	//printf("%s", Convert_IntToWord(s, IntToWord_HashMap));
+	FLWG(WordToInt_HashMap, IntToWord_HashMap, wordSet);
+	
+	free_WordSet(wordSet); 
+	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
+}

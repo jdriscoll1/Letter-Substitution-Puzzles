@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000001000000
-UnitCount=47
+UnitCount=49
 
 [VersionInfo]
 Major=1
@@ -514,6 +514,26 @@ BuildCmd=
 FileName=structs\src\TranspositionTable.c
 CompileCpp=0
 Folder=structs/src
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit49]
+FileName=algs\includes\MontyCarlosTreeSearch.h
+CompileCpp=0
+Folder=algs/includes
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit48]
+FileName=algs\src\MontyCarlosTreeSearch.c
+CompileCpp=0
+Folder=algs/src
 Compile=1
 Link=1
 Priority=1000
