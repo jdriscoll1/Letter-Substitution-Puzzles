@@ -32,6 +32,7 @@ void runFLWG();
 
 
 int main(){
+	srand(time(0));
 	//The Hash Map that can take a word and find its ID
 	struct DummyHeadNode** *WordToInt_HashMap;
 	
@@ -46,12 +47,14 @@ int main(){
 	
 	IntToWord_HashMap = Allocate_IntToWordStruct();  
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
-	//Outputs the whole Int to word hash map
-	Print_IntToWord_HashMap(IntToWord_HashMap);
+
+	struct WordSet* wordSet = init_WordSet(IntToWord_HashMap->numWords);
+	int i = 0; 
+	for(i = 0; i < 100; i++){
 	
-	struct WordSet* wordSet = init_WordSet(IntToWord_HashMap->numWords); 
-	montyCarlosTreeSearch(0, wordSet, 1, IntToWord_HashMap);
-	
+		int x = montyCarlosTreeSearch(0, wordSet, 1, IntToWord_HashMap);
+		printf("%s", Convert_IntToWord(x, IntToWord_HashMap));
+	}
 	return 0;
 }
 

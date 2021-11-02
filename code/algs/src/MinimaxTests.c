@@ -471,12 +471,16 @@ int chooseFirst(int id, struct wordDataArray* IntToWord_HashMap, struct WordSet 
 }
 
 int chooseRandom(int id, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
-
+	
 	//The linked list
 	struct intList* listHeader = IntToWord_HashMap->array[id]->connectionHeader;
 	struct intList* curr = listHeader;  
 	//The total number of options
 	int totalOptions = IntToWord_HashMap->array[id]->numConnections; 
+	//if there is nowhere to connect, the game is lost
+	if(totalOptions == 0){
+		return -1; 
+	}
 	//First, choose a random number
 	int randID = rand() % totalOptions + 1; 
 

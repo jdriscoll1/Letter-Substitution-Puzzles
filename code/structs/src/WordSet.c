@@ -16,8 +16,8 @@ Desc: A Hash Set for all words to determine if they are used*/
 /*Allocates the structure and creates all of the necessary longs*/
 struct WordSet* init_WordSet(int totalWords){
 	//the total number of word blocks
-	int arrLength = ceil(totalWords / (sizeof(unsigned long) * NUM_BYTES));
-	
+	int arrLength = ceil((double)totalWords / (double)(sizeof(unsigned long) * NUM_BYTES));
+
 	//the hash set that contains whether all words have been, or have not been used 
 	struct WordSet *wordSet = malloc(sizeof(struct WordSet));
 	wordSet->words = calloc(arrLength, sizeof(unsigned long)); 
