@@ -50,11 +50,13 @@ int main(){
 
 	struct WordSet* wordSet = init_WordSet(IntToWord_HashMap->numWords);
 	int i = 0; 
-	for(i = 0; i < 100; i++){
-	
+	markUsed_WordSet(2, wordSet);
+	markUsed_WordSet(3, wordSet);
+	for(i = 0; i < 10; i++){
 		int x = montyCarlosTreeSearch(0, wordSet, 1, IntToWord_HashMap);
-		printf("%s", Convert_IntToWord(x, IntToWord_HashMap));
+		printf("%s\n", Convert_IntToWord(x, IntToWord_HashMap));
 	}
+	
 	return 0;
 }
 
