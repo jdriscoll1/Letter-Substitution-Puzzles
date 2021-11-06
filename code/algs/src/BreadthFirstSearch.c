@@ -23,7 +23,7 @@ extern int numLetters;
 
 
 
-struct BFSComponents* init_BFSComponents(int start, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){
+struct BFSComponents* init_BFSComponents(int start, struct WordSet* wordSet){
 	struct BFSComponents* bc = malloc(sizeof(struct BFSComponents)); 
  
 
@@ -45,7 +45,7 @@ struct BFSComponents* init_BFSComponents(int start, struct wordDataArray* IntToW
 
 };
 
-void Free_BFSComponents(struct BFSComponents* bc, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+void Free_BFSComponents(struct BFSComponents* bc, struct WordSet *wordSet){
 	//Frees the Tree Storage
 	Free_TreeStorageNode(bc->ReverseTreeHeader); 
 	
@@ -64,7 +64,7 @@ struct intList* BreadthFirstSearch_Goal(int start, int goal, struct wordDataArra
 		exit(0); 
 	}
 	
-	struct BFSComponents* bc = init_BFSComponents(start, IntToWord_HashMap, wordSet);
+	struct BFSComponents* bc = init_BFSComponents(start, wordSet);
 	bool goalFound = false; 
 
 	
@@ -95,7 +95,7 @@ struct intList* BreadthFirstSearch_Goal(int start, int goal, struct wordDataArra
 	path = Convert_TreeStorageNodeToIntLL(path, bc->End);
 	
 	//Frees the structure
-	Free_BFSComponents(bc, IntToWord_HashMap, wordSet); 
+	Free_BFSComponents(bc, wordSet); 
 	
 	return (goalFound == -1)?NULL:path; 
 	
@@ -124,15 +124,13 @@ int* BreadthFirstSearch_Distance(int start, int minConnections, struct wordDataA
 	int arraySize[][2] = {{43, 61},{152, 141}, {351, 183}, {516, 150}, {427, 188}, {277, 239}, {164, 300}, {83, 21}, {39, 332},{18, 361}, {15, 200}, {10, 354}, {8, 143}, {2, 28}, {2, 4}, {2, 4}}; 
 	
 	//Instantiates the necessary BFS Components
-	struct BFSComponents* bc = init_BFSComponents(start, IntToWord_HashMap, wordSet);
+	struct BFSComponents* bc = init_BFSComponents(start, wordSet);
 	bc->End = bc->prevConnection->next; 
 	//This is the array list that stores the words that are options
 	struct arrayList* options = init_ArrayList(arraySize[minConnections - 2][0], arraySize[minConnections - 2][1], TSN); 
 	//Initalize the game Components
 	bool goalFound = false;
 	
-	//Is it possible to connect this far out
-	bool isPossible = false;  
 	
 	while(goalFound == false){
 	
@@ -179,7 +177,7 @@ int* BreadthFirstSearch_Distance(int start, int minConnections, struct wordDataA
 		//Convert the TreeStorageList To Array
 		Convert_TreeStorageNodeToIntArray(path, chosenNode, minConnections);
 	}	
-	Free_BFSComponents(bc, IntToWord_HashMap, wordSet);
+	Free_BFSComponents(bc, wordSet);
 	free_ArrayList(options); 
 	
 	return (goalFound == -1)?NULL:path;
@@ -201,15 +199,12 @@ int BreadthFirstSearch_Distance_Goal(int start, int minConnections, struct wordD
 	int arrListMoveSize = (minConnections < 13) ? arraySize[minConnections - 2][1] : 5; 
 	
 	//Instantiates the necessary BFS Components
-	struct BFSComponents* bc = init_BFSComponents(start, IntToWord_HashMap, wordSet);
+	struct BFSComponents* bc = init_BFSComponents(start, wordSet);
 	bc->End = bc->prevConnection->next; 
 	//This is the array list that stores the words that are options
 	struct arrayList* options = init_ArrayList(arrListInitSize, arrListMoveSize, TSN); 
 	//Initalize the game Components
 	bool goalFound = false;
-	
-	//Is it possible to connect this far out
-	bool isPossible = false;  
 	
 	while(goalFound == false){
 	
@@ -256,7 +251,7 @@ int BreadthFirstSearch_Distance_Goal(int start, int minConnections, struct wordD
 		goal = chosenNode->id; 
 	
 	}	
-	Free_BFSComponents(bc, IntToWord_HashMap, wordSet);
+	Free_BFSComponents(bc, wordSet);
 	free_ArrayList(options); 
 
 	return (goalFound == -1)?-1:goal;
@@ -276,15 +271,13 @@ int BreadthFirstSearch_DistanceOptions(int start, int minConnections, struct wor
 		return 0; 
 	}
 	//Instantiates the necessary BFS Components
-	struct BFSComponents* bc = init_BFSComponents(start, IntToWord_HashMap, wordSet);
+	struct BFSComponents* bc = init_BFSComponents(start, wordSet);
 	bc->End = bc->prevConnection->next; 
 	//This is the array list that stores the words that are options
 	struct arrayList* options = init_ArrayList(20, 5, TSN); 
 	//Initalize the game Components
 	bool goalFound = false;
-	
-	//Is it possible to connect this far out
-	bool isPossible = false;  
+
 	
 	while(goalFound == false){
 		bc->prevConnection = bc->prevConnection->next;
@@ -312,7 +305,7 @@ int BreadthFirstSearch_DistanceOptions(int start, int minConnections, struct wor
 	int output = options->currPrecision; 
 
 	//Frees everything
-	Free_BFSComponents(bc, IntToWord_HashMap, wordSet);
+	Free_BFSComponents(bc, wordSet);
 	free_ArrayList(options); 
 
 	return output; 
@@ -326,7 +319,6 @@ int BreadthFirstSearch_DistanceOptions(int start, int minConnections, struct wor
 struct TreeStorageNode* AddToTreeStorage_Dist_BFS(struct BFSComponents *bc, int goal, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){
 	//The word whose connections we're going to find, and add to the TreeStorageNode
 	int baseWord = bc->prevConnection->id; 
- 	int currDepth = bc->prevConnection->depth + 1; 
 	
 	struct intList* newWords = getConnections(baseWord, IntToWord_HashMap);
 

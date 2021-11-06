@@ -175,21 +175,21 @@ void Print_WordLL(struct word *header, enum output o){
 char* toString_WordLL(struct word *header, enum output o){
 	//Determine how the words will be linked together
 	char* link;
-	int linkLen;  
+
 	if(o == LINES){
 		link = "\n"; 
-		linkLen = 1; 
+
 	}
 	else{
 		link = (o == LINKED)?"->":", ";
-		linkLen = 2; 
+
 	}
 	//Now I'm going to convert it to an array list, still gonna return the string though
 	//I need an array list so that it can be infinitely large
 	struct arrayList* aList = init_ArrayList(5, 10, STR); 
 	 
 	header = header->next; 
-	int start = 0; 
+
 	while(header != NULL){
 		addString_ArrayList((const char*)header->word, numLetters, aList);  
 		if(header->next != NULL){

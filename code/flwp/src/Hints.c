@@ -51,6 +51,7 @@ struct HintComponents* init_HintComponents(){
 	
 	 
 	hc->hint2OutputQuantity = 3; 
+	return hc; 
 }
 //The first hint -- gives them the minimum number of connections
 char* hint1(unsigned long long gcLong){
@@ -110,7 +111,6 @@ char* hint2(unsigned long long gcLong, struct wordDataArray* IntToWord_HashMap){
 			for(i = 0; i < (gc->hc->hint2OutputQuantity - 1) && options->next != NULL; i++){
 				char* hintWord = malloc(wordOutLen); 
 				snprintf(hintWord, wordOutLen, "%s, ", Convert_IntToWord(options->data, IntToWord_HashMap));
-				int prevStart = start; 
 				start = safeStrcat(&output, (const char*) hintWord, SIZE, wordOutLen, start - notFirst);
 				
 				notFirst = 1; 
@@ -295,7 +295,7 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(int start, int goal, 
 		exit(0); 
 	}
 	
-	struct BFSComponents* bc = init_BFSComponents(start, IntToWord_HashMap, wordSet);
+	struct BFSComponents* bc = init_BFSComponents(start, wordSet);
 
 	bool goalFound = false; 
 
@@ -334,7 +334,7 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(int start, int goal, 
 	Convert_TreeStorageNodeArrayList_HintRestrictions(output, HashSet, bc->End, IntToWord_HashMap);
 
 	//Frees the structure
-	Free_BFSComponents(bc, IntToWord_HashMap, wordSet); 
+	Free_BFSComponents(bc, wordSet); 
 	
 	return (goalFound == -1)?NULL:output; 
 	

@@ -100,7 +100,7 @@ long unsigned int checkIfUsed_WordSet(int wordID, struct WordSet *wordSet){
 
 /*Go through all the words and mark them unused*/
 void reset_WordSet(struct WordSet* wordSet){
-	int i = 0; 
+	unsigned int i = 0; 
 	for(i = 0; i < wordSet->totalWords / (sizeof(unsigned long) * NUM_BYTES); i++){
 		wordSet->words[i] = 0;
 	}
@@ -118,7 +118,7 @@ void free_WordSet(struct WordSet* wordSet){
 
 void long2binary(unsigned long hash){
         unsigned long f = floor(pow(2, sizeof(unsigned long) * 8) / 2);
-        int i = 0;
+        unsigned int i = 0;
         for(i = 0; i < sizeof(unsigned long) * 8; i++){
                 printf("%i", hash & f ? 1 : 0);
                 f >>= 1;

@@ -66,7 +66,7 @@ void EnterText();
 @param pc --> These are the variables stored throughout the entire game 
 @return --> It returns the score
 @case -1 = the user quit*/
-int round_FLWP(int minConnections, struct GameComponents* gc, struct PathfinderGame *pc, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
+int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 
 #endif
   

@@ -281,8 +281,7 @@ void Int2ZeroSum_Array(int* scores, int numPlayers){
 	long double mean = 0; 
 	int p; 
 	for(p = 0; p < numPlayers; p++){ mean += scores[p]; }
-	
-	long double tempMean = mean;
+
 	mean /= numPlayers;
 	
 	//Second, subtract all of the scores by the mean
@@ -353,6 +352,7 @@ struct rawScore* init_RawScore(int isWinningPosition, float isWinPercent, int de
 	r->isWinningPosition = isWinningPosition; 
 	r->isWinPercent = isWinPercent;
 	r->depth = depth;
+	return r; 
 	
 }
 

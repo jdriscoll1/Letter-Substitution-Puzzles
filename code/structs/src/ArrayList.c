@@ -38,6 +38,7 @@ struct arrayList* init_ArrayList(size_t initSize, size_t moveSize, enum alistTyp
 	aList->currSize= initSize; 
 	//What is the array list's type
 	aList->type = type;  
+	return aList; 
 	
 }
 
@@ -97,7 +98,7 @@ void remove_ArrayList(void* data, struct arrayList* aList, enum alistType type){
 	//Ngl, probably just copy all of them to a new linked list
 	//Well it depends, if currSize - 1 <= currSize - moveSize, then we want to shrink it by move size
 	//If currSize - 1 > currSize - moveSize, then we want to shrink it by only 1 
-	int i;
+
 	//We need to figure out the new size
 	//We will allocate the array based on that size
 	int newSize = (aList->currSize - 1 <= aList->currSize - aList->moveSize) ? aList->currSize - aList->moveSize : aList->currSize; 
@@ -110,7 +111,7 @@ void remove_ArrayList(void* data, struct arrayList* aList, enum alistType type){
 	}   
 	int newArrIndex = 0;
 	int oldArrIndex;   
-	for(oldArrIndex = 0; oldArrIndex < aList->currPrecision; oldArrIndex++){
+	for(oldArrIndex = 0; (unsigned int)oldArrIndex < aList->currPrecision; oldArrIndex++){
 		//Loop through the list and search for the data
 		//If it has not found it, just add it to the list
 		//If it has found it, don't add it, and subtract i by 1 
@@ -156,7 +157,7 @@ void addString_ArrayList(const char* str, int strLen, struct arrayList* aList){
 		int newSize = aList->currSize + (blocks * aList->moveSize); 
 		//I need to make sure that if it's 10, and the word is 10. There's space for a \0. So, to do this, it is necessary that I 
 		
-		if(aList->currPrecision + strLen == newSize){
+		if(aList->currPrecision + strLen == (unsigned int)newSize){
 			
 			newSize += aList->moveSize; 
 		}
@@ -184,11 +185,11 @@ void addString_ArrayList(const char* str, int strLen, struct arrayList* aList){
 } 
 
 void removeBackStr_ArrayList(int length, struct arrayList* aList){
-	if(length > aList->currPrecision){
+	if((unsigned int)length > aList->currPrecision){
 		printf("Removing Too Much! [removeBackStr_ArrayList]");
 		exit(0);  
 	}
-	int i;  
+	
 	length -= 1; 
 	//The distance between the current size and current precision
 	int diff = aList->currSize - aList->currPrecision; 
@@ -222,7 +223,7 @@ void removeBackStr_ArrayList(int length, struct arrayList* aList){
 }
 
 void print_ArrayList(struct arrayList* aList, enum alistType type){
-	int i; 
+	unsigned int i; 
 	if(type == STR){
 		printf("%s", (char*)aList->list); 
 	}

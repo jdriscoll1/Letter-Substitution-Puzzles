@@ -86,7 +86,6 @@ int goalCheck(char* input, int goal, int isValid, int isCommand, struct DummyHea
 		return 2; 
 	}
 
-	char* inputTrue = input; 
 	//if user decides to quit
 	
 	if(isValid == 1){
@@ -173,7 +172,7 @@ void EnterText(){
 }
 
 
-int round_FLWP(int minConnections, struct GameComponents* gc, struct PathfinderGame *pc, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 
 	gc->hc->hintPoints = pc->hintPoints; 
 	int endCondition;

@@ -948,6 +948,6 @@ struct minimaxOutput* minimax_Unmethodized(int id, int depth, int maxDepth, int 
 		return minEval; 
 	}
 	
-
+	return NULL;
 }
 

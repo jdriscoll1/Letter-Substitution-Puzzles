@@ -30,11 +30,11 @@ struct mctsStruct{
 	
 	
 };
-int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, int isMaximizer, struct wordDataArray* IntToWord_HashMap);
+int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap);
 
 struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap);
 
-void visit_mctsStruct(int wordID, struct mctsStruct* node, struct mctsStruct* parent, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap);
+void visit_mctsStruct(int wordID, struct mctsStruct* node, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap);
 
 //this defines the rollout policy for a node
 int rollout(int id, int isMaximizing, struct WordSet* wordSet, struct wordDataArray *IntToWord_HashMap); 

@@ -27,7 +27,7 @@ char* Take_Input(int size){
 		/*Takes care of the \n*/ 
 		fgets(input, size, stdin);
 		/*Makes the last character on the string the end of the string*/  
-		input[size] == '\0';
+		input[size] = '\0';
 		/*Copies the information from the temp back onto the input*/ 
 		
 		safeStrcpy(&input, (const char*)temp, size, size);
@@ -38,6 +38,7 @@ char* Take_Input(int size){
 	}
 	/*If the user is dumb, they get to try again*/ 
 	Take_Input(size);
+	return input; 
 	 
 }
 
@@ -129,6 +130,7 @@ int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** Word
 	else if(equalLetters == numLetters){ 
 		return 1; 
 	}
+	return 7; 
 	
 }
 
@@ -162,6 +164,7 @@ int ContinueGames(){
 		free(s); 
 		return 4; 
 	}
+	return -1; 
 		
 }
 	

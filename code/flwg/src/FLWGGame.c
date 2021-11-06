@@ -34,9 +34,7 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 	//How deep does the bot check? 
 	int depth = 10; 
 	int rounds = 0; 
-	char* wordStr;   
-	//Determines if a word is valid
-	int isValid = 0; 
+
 	int whoseTurn = 0; 
 	while(word >= 0){
 		
@@ -102,10 +100,6 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 		int depth = 9; 
 	
 		int rounds = 0;
- 
-		char* wordStr;   
-		//Determines if a word is valid
-		int isValid = 0;
 		
 		int whoseTurn = 0; 
 

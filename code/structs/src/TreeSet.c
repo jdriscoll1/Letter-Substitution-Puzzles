@@ -993,7 +993,7 @@ int rr[] = {1, 2, 3};
 	AVLTestQuick(rllr, 12); 
 	
 	int rlll[] = {50, 0, 100, -25, 25, 75, 125, 60, 80, 110, 140, 55};
-		 	 
+	AVLTestQuick(rlll, 12);	 	 
 	
 	int ll[] = {3, 2, 1};
 	AVLTestQuick(ll, 3); 
@@ -1063,7 +1063,7 @@ int rr[] = {1, 2, 3};
 	
 	printf("l: ");
 	int l[] = {1, 0, 4, 2, 5, 3};  
-	AVLTestQuick(k, 6);
+	AVLTestQuick(l, 6);
 	
 	printf("m: ");
 	int m[] = {1, 0, 4, 2, 5, 3};  

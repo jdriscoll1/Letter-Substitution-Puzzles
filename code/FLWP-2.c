@@ -40,7 +40,7 @@ int main(){
 	struct wordDataArray *IntToWord_HashMap; 
 	
 	
-	char* path = "../docs/t/ab.txt"; 
+	char* path = "../docs/4.txt"; 
 	
 	//Allocates the Word to Int HashMap
 	WordToInt_HashMap = Allocate_WordToInt();
@@ -50,11 +50,10 @@ int main(){
 
 	struct WordSet* wordSet = init_WordSet(IntToWord_HashMap->numWords);
 	int i = 0; 
-	markUsed_WordSet(2, wordSet);
-	markUsed_WordSet(3, wordSet);
+
 	for(i = 0; i < 10; i++){
-		int x = montyCarlosTreeSearch(0, wordSet, 1, IntToWord_HashMap);
-		printf("%s\n", Convert_IntToWord(x, IntToWord_HashMap));
+		int x = montyCarlosTreeSearch(0, wordSet, IntToWord_HashMap);
+		printf("%d\n",x);
 	}
 	
 	return 0;
@@ -82,8 +81,6 @@ void runMultiplayerFLWG(){
 
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
 
-	int d = 4; 
-	int n = 2; 
 	
 	Multiplayer_FLWG(WordToInt_HashMap, IntToWord_HashMap, wordSet);
 	//MultiplayerTest(IntToWord_HashMap);

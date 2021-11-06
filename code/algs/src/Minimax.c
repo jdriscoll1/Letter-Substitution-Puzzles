@@ -19,8 +19,6 @@ To Do So, I will make use of the minimax algorithm*/
 struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){
 	TOTAL_MOVES++;
 
-	void* savedScore; 
-
 	//First, let's get the list of nodes that we can go to 
 	struct intList* currConnection = getConnections(id, IntToWord_HashMap); 
 	//Avoid the header

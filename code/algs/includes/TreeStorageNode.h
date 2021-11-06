@@ -82,13 +82,13 @@ void Free_TreeStorageNode(struct TreeStorageNode *header);
 @param word --> The word to be removed
 @param header --> the header point from which the search begins
 @param HashSet --> It is necessary to remove the word from the Hash Set, since it should, no longer be considered as found*/ 
-void Remove_TreeStorageNode(int id, struct TreeStorageNode *header, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
+void Remove_TreeStorageNode(int id, struct TreeStorageNode *header, struct WordSet *wordSet); 
 
 /*The difference between this and free is that it is more thorough in removing it, as it removes all of them past the point, and also gets rid of them from the HashSet
 Goes from the point of the word and removes all the words afterwords, as well as removing them from the TreeSet
 @param header --> the point from which it will start removing the words in the tree storage node
 @param HashSet --> The hash set whose words will soon be removed*/
-void RemoveFromPoint_TreeStorageNode(struct TreeStorageNode *header, struct intList *QueueHeader, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
+void RemoveFromPoint_TreeStorageNode(struct TreeStorageNode *header, struct WordSet *wordSet); 
 
 /*This outputs all of the words that it took to connect to this node from the start
 @param End --> This is the endpoint node*/

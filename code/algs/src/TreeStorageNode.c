@@ -173,7 +173,7 @@ void Free_TreeStorageNode(struct TreeStorageNode *header){
 		
 	}
 } 
-void Remove_TreeStorageNode(int id, struct TreeStorageNode *header, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+void Remove_TreeStorageNode(int id, struct TreeStorageNode *header, struct WordSet *wordSet){
 	struct TreeStorageNode *prev = header;
 	header = header->next; 
 	 
@@ -196,7 +196,7 @@ void Remove_TreeStorageNode(int id, struct TreeStorageNode *header, struct wordD
 	
 }
 
-void RemoveAll_TreeStorageNode(int id, struct TreeStorageNode *header, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+void RemoveAll_TreeStorageNode(int id, struct TreeStorageNode *header, struct WordSet *wordSet){
 	int isFound = 0; 
 	struct TreeStorageNode *prev = header; 
 	header = header->next; 
@@ -224,7 +224,7 @@ void RemoveAll_TreeStorageNode(int id, struct TreeStorageNode *header, struct wo
 		markUnused_WordSet(id, wordSet);  
 	}
 }
-void RemoveFromPoint_TreeStorageNode(struct TreeStorageNode *header, struct intList * QueueHeader, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+void RemoveFromPoint_TreeStorageNode(struct TreeStorageNode *header, struct WordSet *wordSet){
 	while(header != NULL){
 		struct TreeStorageNode temp = *header; 
 		markUnused_WordSet(header->id, wordSet); 

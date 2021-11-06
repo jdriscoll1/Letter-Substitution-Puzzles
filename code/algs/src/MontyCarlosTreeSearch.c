@@ -20,10 +20,10 @@ Description: Applies MCTS to the FLWG
 
 //monty carlos tree search
 //this takes the current word & outputs the best word 
-int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, int isMaximizer, struct wordDataArray* IntToWord_HashMap){
-	time_t initTime = time(0);
-	time_t deltaTime = 1; 
-	time_t endTime = initTime + deltaTime;
+int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
+	//time_t initTime = time(0);
+	//time_t deltaTime = 1; 
+	//time_t endTime = initTime + deltaTime;
 	
 	struct mctsStruct* root = malloc(sizeof(struct mctsStruct)); 
 	root->isMaximizer = 1; 
@@ -34,10 +34,10 @@ int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, int isMaximizer, 
 	root->wordID = wordID; 
 	root->children = NULL;
 	
-	visit_mctsStruct(wordID, root, NULL,  wordSet, IntToWord_HashMap);
+	visit_mctsStruct(wordID, root,  wordSet, IntToWord_HashMap);
 	int s = 0; 
 
-	while(s < 1000000){
+	while(s < 10000){
 		struct mctsStruct* m = traverse(root, s, wordSet, IntToWord_HashMap);
 		int simulationResult = rollout(m->wordID, 1, wordSet, IntToWord_HashMap); 
 		backpropogate(m, simulationResult);
@@ -72,7 +72,6 @@ struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct Wor
 	//while the current node, that will constantly be changing is fully expanded 
 	while(isFullyExplored){
 		int i;
-		printf("%d\n", node->wordID); 
 		//Loop through all of the children of a node
 		//it must break if it sees a child that is not fully explored
 		for(i = 0; i < node->numChildren && isFullyExplored == 1; i++){
@@ -81,7 +80,7 @@ struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct Wor
 				//this node is not fully explored
 				isFullyExplored = 0; 
 			
-				visit_mctsStruct(node->children[i]->wordID, node->children[i], node, wordSet, IntToWord_HashMap);
+				visit_mctsStruct(node->children[i]->wordID, node->children[i], wordSet, IntToWord_HashMap);
 				
 				//sets the output node to the unexplored node
 				outputNode = node->children[i];
@@ -159,7 +158,7 @@ void backpropogate(struct mctsStruct* node, int isWin){
 //bestChild -- this chooses node with the higest number of visits
 
 
-void visit_mctsStruct(int wordID, struct mctsStruct* node, struct mctsStruct* parent, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
+void visit_mctsStruct(int wordID, struct mctsStruct* node, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
 
 	int numChildren = 0; 
 	int isMaximizer = (node->isMaximizer == 1) ? 0 : 1; 
@@ -179,8 +178,13 @@ void visit_mctsStruct(int wordID, struct mctsStruct* node, struct mctsStruct* pa
 		//allocate space for the children
 		node->children = calloc(numChildren, sizeof(struct mctsStruct*));
 		int i = 0;
-		struct intList* options = IntToWord_HashMap->array[wordID]->connectionHeader->next; 
+		options = IntToWord_HashMap->array[wordID]->connectionHeader; 
 		for(i = 0; i < numChildren; i++){
+			do{
+				options = options->next;
+			}while(options->next != NULL && checkIfUsed_WordSet(options->data, wordSet) != 0);
+			
+			
 			node->children[i] = malloc(sizeof(struct mctsStruct));
 			node->children[i]->children = NULL;
 			node->children[i]->isMaximizer = isMaximizer; 
@@ -189,10 +193,7 @@ void visit_mctsStruct(int wordID, struct mctsStruct* node, struct mctsStruct* pa
 			node->children[i]->score = 0;
 			node->children[i]->visits = 0;
 			node->children[i]->wordID = options->data;
-			do{
-				options = options->next;
-			}
-			while(options != NULL && checkIfUsed_WordSet(options->data, wordSet));
+			
 		}
 	}
 	node->numChildren = numChildren;

@@ -239,7 +239,7 @@ struct wordStruct* Create_WordStruct(char* word, int id){
 	wordStruct->word = strdup(word);
 	wordStruct->wordID = id;  
 	
-	
+	return wordStruct;
 }
 
 void Free_WordStruct(struct wordStruct* wordStruct){

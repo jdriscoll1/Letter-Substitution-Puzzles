@@ -59,12 +59,12 @@ int BreadthFirstSearch_DistanceOptions(int start, int minConnections, struct wor
 @param start --> This is the start word
 @param storageType --> This determines whether it uses an AVL Tree or a HashSet
 @return --> Returns a structure of initialized components*/
-struct BFSComponents* init_BFSComponents(int start, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
+struct BFSComponents* init_BFSComponents(int start, struct WordSet *wordSet); 
 
 /*This frees the necessary components of the Breadth First Search Components
 @param bc --> These are the components
 @param storageType --> Is it AVL Tree? HashMap? Etc?*/
-void Free_BFSComponents(struct BFSComponents* bc, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
+void Free_BFSComponents(struct BFSComponents* bc, struct WordSet *wordSet); 
 
 /*This finds all of the connections a word has and puts them on the back of a tree storage node
 @param bc --> The components of a breadth first search
