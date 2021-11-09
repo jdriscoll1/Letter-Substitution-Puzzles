@@ -14,9 +14,9 @@
 
 //This allows the four letter word game to be playable with multiple players
 void Multiplayer_FLWG(struct DummyHeadNode** *WordToInt_HashMap, struct wordDataArray *IntToWord_HashMap, struct WordSet* wordSet){
-	
+
 	int numPlayers = 4;
-	
+
 	int wordID = ChooseStart(IntToWord_HashMap);
 	int depth = 6;
 	
@@ -56,9 +56,6 @@ void Multiplayer_FLWG(struct DummyHeadNode** *WordToInt_HashMap, struct wordData
 	}
 	reset_HashSet(IntToWord_HashMap);
 	printf("Player %c Loses!", (char)(currPlayer + 65));
-
-	
-	
 	
 }
 

@@ -21,10 +21,15 @@ Description: Applies MCTS to the FLWG
 //monty carlos tree search
 //this takes the current word & outputs the best word 
 int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
-	//time_t initTime = time(0);
-	//time_t deltaTime = 1; 
-	//time_t endTime = initTime + deltaTime;
+	/*The time at which the program begins*/
+	time_t initTime = time(0);
+	/*How many seconds hte program is expected to last*/
+	time_t deltaTime = 1; 
+	/*At what time should the program end*/
+	time_t endTime = initTime + deltaTime;
 	
+	
+	/*Initialize the root word node*/
 	struct mctsStruct* root = malloc(sizeof(struct mctsStruct)); 
 	root->isMaximizer = 1; 
 	root->numChildren = 0; 
@@ -34,29 +39,65 @@ int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataAr
 	root->wordID = wordID; 
 	root->children = NULL;
 	
+	/*Explore the root node & obtain its children*/
 	visit_mctsStruct(wordID, root,  wordSet, IntToWord_HashMap);
 	int s = 0; 
 
-	while(s < 10000){
+	/*Run precisely 10,000 times*/
+	while(s < 50000){
+		
+		/*Traverse the root & find an unexplored node*/
 		struct mctsStruct* m = traverse(root, s, wordSet, IntToWord_HashMap);
-		int simulationResult = rollout(m->wordID, 1, wordSet, IntToWord_HashMap); 
+		
+		/*Simulate the result of that node*/
+		int simulationResult = rollout(m->wordID, 200, 1, wordSet, IntToWord_HashMap); 
+		
+		/*Back propogate those results*/
 		backpropogate(m, simulationResult);
+		
+		/*Move to the next simulation*/
 		s++;
 
 	}
 	
+	/*The node that gets outputted. Defaults to the first child*/
 	struct mctsStruct *output = root->children[0];
 	
+	/*The index that goes through each child*/
 	int i = 0; 
+	/*TEMPORARY OUTPUT FOR TESTING*/
+	int o = 0; 
+	
+	/*Looks at Each Child of the root to determine he with the best score*/
 	for(i = 0; i < root->numChildren; i++){
-		if(output->score < root->children[i]->score){
-			output = root->children[i];
+		/*Looks at another child*/
+		struct mctsStruct* c = root->children[i]; 
+		
+		/*If the node to be outputted has a score that is less than the new node being examined*/
+		if(output->score < c->score){
+			/*Change the output*/
+			output = c;
+			/*CHANGE THE TEMPORARY OUTPUT*/
+				o = i; 
 		}
 	}
+	/*If there were no options in the first place, let the user know that*/
 	if(output == NULL){
-		return -1; 
+		return -1;  
 	}
-
+	
+	/*Free the mcts structure data*/
+	free_mctsStruct(root);
+	
+	printf("Results:\n");
+	print_mctsStruct(root->children[0]);
+	print_mctsStruct(root->children[1]);
+	
+	printf("Returning: %d\n\n\n", o);
+	#ifndef STILL_TESTING
+	
+	return root->children[o]->score; 
+	#endif
 	//Returns the best child
 	return output->wordID; 
 
@@ -207,21 +248,24 @@ void visit_mctsStruct(int wordID, struct mctsStruct* node, struct WordSet* wordS
 //It takes a node and explores it using some policy
 //This policy could be a lot of things, however,
 //to keep it simple, it will be randomly assigned
-int rollout(int id, int isMaximizing, struct WordSet* wordSet, struct wordDataArray *IntToWord_HashMap){
+int rollout(int id, int depth, int isMaximizing, struct WordSet* wordSet, struct wordDataArray *IntToWord_HashMap){
 	//While it is not a leaf
 	 
-	
+	if(depth == 0){
+		return 0;
+		
+	}
 
 	id = chooseRandom(id, IntToWord_HashMap, wordSet);
 	if(id == -1){
-		return (isMaximizing == 1) ? 0: 1;
+		return (isMaximizing == 1) ? -1: 1;
 	}
 
 	
 		
 	markUsed_WordSet(id, wordSet);
 	//Once it reaches the original node, that will mean it tried every option, and did not have a choice
-	int isWin = rollout(id, (isMaximizing == 1) ? 0 : 1, wordSet, IntToWord_HashMap); 
+	int isWin = rollout(id, depth - 1, (isMaximizing == 1) ? 0 : 1, wordSet, IntToWord_HashMap); 
 	markUnused_WordSet(id, wordSet);
 	return isWin; 
 }
@@ -273,6 +317,20 @@ void print_mctsStruct(struct mctsStruct* m){
 	
 }
 
+void free_mctsStruct(struct mctsStruct *root){
+	/*It has to first free all of it's children recursively, then free itself*/
+	int c = 0; 
+	for(c = 0; c < root->numChildren; c++){
+		free_mctsStruct(root->children[c]); 
+		
+	}
+	//frees the array
+	free(root->children);
+	free(root);
+	
+	
+	
+}
 
 
 

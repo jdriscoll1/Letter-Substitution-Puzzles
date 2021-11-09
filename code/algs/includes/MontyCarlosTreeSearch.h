@@ -37,7 +37,7 @@ struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct Wor
 void visit_mctsStruct(int wordID, struct mctsStruct* node, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap);
 
 //this defines the rollout policy for a node
-int rollout(int id, int isMaximizing, struct WordSet* wordSet, struct wordDataArray *IntToWord_HashMap); 
+int rollout(int id, int depth, int isMaximizing, struct WordSet* wordSet, struct wordDataArray *IntToWord_HashMap); 
 
 //this backpropogates allowing the results to be returned 
 void backpropogate(struct mctsStruct* node, int isWin); 
@@ -45,6 +45,9 @@ void backpropogate(struct mctsStruct* node, int isWin);
 void print_mctsStruct(struct mctsStruct* m);
 
 double calculate_mctsScore(struct mctsStruct* m, int simulations);
+
+//frees a mcts struct and all of its children nodes
+void free_mctsStruct(struct mctsStruct *root); 
 //monty carlos tree search 
 //this takes the current word & outputs the best word 
 

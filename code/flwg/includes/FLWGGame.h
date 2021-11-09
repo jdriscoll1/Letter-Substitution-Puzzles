@@ -26,6 +26,8 @@ int Input_FLWG(int prevWord, struct DummyHeadNode*** WordToInt_HashMap, struct w
 @case --> -1 = the bot has lost*/
 int botPly(int word, int depth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet, struct minimaxOutput* (*minimax_func)(int, int, int, int, struct minimaxOutput, struct minimaxOutput, struct wordDataArray*, struct WordSet*) ); 
 
+int mctsBotPly(int word, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap);
+
 int weakBotPly(int word, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 
 /*This is the method that allows the user to take a turn

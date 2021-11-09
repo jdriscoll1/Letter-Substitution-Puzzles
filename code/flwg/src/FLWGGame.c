@@ -12,11 +12,13 @@ Date: 5/1/21
 #include "../includes/FLWGGame.h"
 
 #include "../../algs/includes/MinimaxTests.h"
+#include "../../algs/includes/MontyCarlosTreeSearch.h"
 
 #include "../../flwp/includes/UserInput.h"
 #include "../../flwp/includes/GameFunctions.h"
 
 #include "../../structs/includes/IntLinkedList.h"
+#include "../../structs/includes/WordSet.h"
 
 
 extern int numLetters; 
@@ -32,7 +34,7 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 	int winner = -1;
 
 	//How deep does the bot check? 
-	int depth = 10; 
+	int depth = 1; 
 	int rounds = 0; 
 
 	int whoseTurn = 0; 
@@ -42,14 +44,12 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 		printf("%s\n", Convert_IntToWord(word, IntToWord_HashMap)); 
 		//printf("%ld: ", word % (sizeof(unsigned long) * 8));
 		if(whoseTurn == 0){
-			word = botPly(word, depth, IntToWord_HashMap, wordSet, minimax);	
-			
-			
+			word = botPly(word, depth, IntToWord_HashMap, wordSet, minimax);
 		
 		}
 		else if(whoseTurn == 1){			
 	
-			word = userPly(word, WordToInt_HashMap, IntToWord_HashMap, wordSet);
+			word = mctsBotPly(word, wordSet, IntToWord_HashMap);
 			
 			//Check the word
 			//Go to the connections, and ask if there are any more
@@ -63,9 +63,11 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 		if(word == -1){
 			winner = whoseTurn; 
 		}
+		
 		rounds++; 
 		
 	}
+	printf("%c is the Winner!", (winner == 0) ? 'A' : 'B');
 
 
 	return winner; 
@@ -85,7 +87,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 	int w = 0; 
 	int i = 0;
 	int start = 0; 
-	int end = 10;  
+	int end = 1;  
 	int totalRounds = 0; 
 	int winner; 
 	for(i = start; i < end; i++){
@@ -97,7 +99,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 		winner = -1;
 		//How deep does the bot check? 
 
-		int depth = 9; 
+		int depth = 1; 
 	
 		int rounds = 0;
 		
@@ -113,7 +115,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 				//printf("List: %s\n", toString_IntLL(IntToWord_HashMap->array[w]->connectionHeader, SEPERATED, IntToWord_HashMap)); 
 				//w = botPly(w, depth, IntToWord_HashMap, chooseFirst);
 				
-				w = weakBotPly(w, IntToWord_HashMap, wordSet);
+				w = mctsBotPly(w, wordSet, IntToWord_HashMap);
 			 
 			}
 			
@@ -126,7 +128,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 			
 		}
 		totalRounds += rounds; 
-		//printf("%s Wins!\n%d Rounds\nRound %d\n", (winner == 0) ? "Bot A" : "Bot B", rounds, i); 
+		printf("%s Wins!\n%d Rounds\nRound %d\n", (winner == 0) ? "Bot A" : "Bot B", rounds, i); 
 
 		
 		//printf("Rounds: %d\n", rounds); 
@@ -139,7 +141,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 		reset_WordSet(wordSet);
 	}
 	printf("A: %d, B: %d, avg rounds: %d", A, B, totalRounds / (end - start)); 
-	printf("Total: %d, Saved: %d", TOTAL_MOVES, TRANS_SAVED);
+
 	
 	
 	
@@ -192,6 +194,14 @@ int Input_FLWG(int prevWord, struct DummyHeadNode*** WordToInt_HashMap, struct w
 	
 }
 
+int mctsBotPly(int word, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
+	int w = montyCarlosTreeSearch(word, wordSet, IntToWord_HashMap);
+	if(w != -1){
+		markUsed_WordSet(w, wordSet);
+	}
+	return w; 
+	
+}
 
 int botPly(int word, int depth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet, struct minimaxOutput* (*minimax_func)(int, int, int, int, struct minimaxOutput, struct minimaxOutput, struct wordDataArray*, struct WordSet*) ){
 

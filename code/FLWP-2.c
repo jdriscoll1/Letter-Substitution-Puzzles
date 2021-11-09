@@ -8,6 +8,7 @@ int numLetters = 4;
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <time.h>
 
 #include "./algs/includes/Minimax.h"
@@ -29,9 +30,21 @@ int numLetters = 4;
 void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap); 
 void runMultiplayerFLWG();
 void runFLWG();
+void testMCTS();
+void initializeStructures();
+
+
+struct t{int w;int c;};
+
 
 
 int main(){
+	testMCTS();
+	
+	return 0;
+}
+
+void testMCTS(){
 	srand(time(0));
 	//The Hash Map that can take a word and find its ID
 	struct DummyHeadNode** *WordToInt_HashMap;
@@ -47,16 +60,87 @@ int main(){
 	
 	IntToWord_HashMap = Allocate_IntToWordStruct();  
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
-
+	
 	struct WordSet* wordSet = init_WordSet(IntToWord_HashMap->numWords);
-	int i = 0; 
 
-	for(i = 0; i < 10; i++){
-		int x = montyCarlosTreeSearch(0, wordSet, IntToWord_HashMap);
-		printf("%d\n",x);
+
+	/***************INITIALIZATION COMPLETE*******************/
+	
+	int rootID = 2000; 
+	
+	/*The # of connections the root word has*/
+	int n = IntToWord_HashMap->array[rootID]->numConnections; 
+	
+	/*The data structure that stores the mcts results*/
+	struct t chosenCount[n];
+
+	
+	int i;
+	
+	/*All of the nodes connecting to the root */
+	struct intList* o = IntToWord_HashMap->array[rootID]->connectionHeader->next; 
+	
+	//Initializes the results structure
+	for(i = 0; i < n; i++){
+		//gives the chosen word its id 
+		chosenCount[i].w = o->data;
+		//# of times chosen initially = 0 
+		chosenCount[i].c = 0;
+
+		//goes to the next word ID to be inserted 
+		o = o->next; 
+	} 
+	
+
+	int numRuns = 500; 
+	
+	//Runs MCTS numRuns times
+	for(i = 0; i < numRuns; i++){
+		
+		//Updates user on how many games it has played 
+		if(i % ((int)(numRuns / 10)) == 0){
+			printf("%d", i);
+		}
+		//Simulates mcts
+		int x = montyCarlosTreeSearch(rootID, wordSet, IntToWord_HashMap);
+		
+		//updates the chosen word in the data structure
+		chosenCount[x].c++;
+	
 	}
 	
-	return 0;
+	//Once it has finished simulating mcts
+	
+	//Outputs the results
+	printf("\n\nRESULTS: \n");
+	
+	//outputs all of the elements in the output data structure
+	for(i = 0; i < n; i++){
+		printf("MCTS: %d: %d\n", chosenCount[i].w, chosenCount[i].c);
+		
+	
+		
+		
+		
+		
+	}
+
+
+
+	/*Obtain the correct answer to be compared w/ the mcts results*/
+	int y = botPly(rootID, 10, IntToWord_HashMap, wordSet, minimax);
+	
+	//outputs the correct results
+	printf("\nCorrect Result: %d", y);
+	
+
+	/***************FREEING BEGINS*********************/
+	free_WordSet(wordSet); 
+	
+	//Frees the hash maps
+	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
+	
+	
 }
 
 void runMultiplayerFLWG(){
@@ -132,4 +216,33 @@ void runFLWG(){
 	
 	free_WordSet(wordSet); 
 	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
+}
+
+void initializeStructures(){
+	
+	srand(time(0));
+	//The Hash Map that can take a word and find its ID
+	struct DummyHeadNode** *WordToInt_HashMap;
+	
+	//The Hash Map that can take an integer and find all sorts of information about it, including the word 
+	struct wordDataArray *IntToWord_HashMap; 
+	
+	
+	char* path = "../docs/4.txt"; 
+	
+	//Allocates the Word to Int HashMap
+	WordToInt_HashMap = Allocate_WordToInt();
+	
+	IntToWord_HashMap = Allocate_IntToWordStruct();  
+	
+	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
+	
+	struct WordSet *wordSet = init_WordSet(IntToWord_HashMap->numWords);
+	
+	
+	/**********INSERT CODE HERE*********************/
+	
+	free_WordSet(wordSet); 
+	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
+
 }
