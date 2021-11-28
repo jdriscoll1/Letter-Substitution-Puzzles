@@ -11,6 +11,8 @@ Desc: Method Headers for the Monty Carlos Tree Search Function
 #include "../../structs/includes/WordSet.h"
 #include "../../structs/includes/HashMap.h"
 
+struct t{int w;int c;};
+
 struct mctsStruct{
 	//is this node in favor of the algorithm
 	//or opposing the algorithm
@@ -30,7 +32,7 @@ struct mctsStruct{
 	
 	
 };
-int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap);
+struct t* montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap);
 
 struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap);
 

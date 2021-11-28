@@ -1,15 +1,31 @@
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
+import shutil
 
+import glob
+import os
 import time
 
+def renameFile(word, voice):
 
-#good_voices = [0, 1, 2, 5, 6, 7, 8, 10, 11, 12, 13, 21, 22, 23, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 43, 45, 46, 47, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 61]
-good_voices = [0, 31, 12, 9, 8]
+
+    folder_path = r'C:\\Users\\Jordan\\Test-Folder\\FLWG\\flwvr\\subset_samples\\'
+    file_type = '\*.mp3'
+    files = glob.glob(folder_path + file_type)
+    max_file = [99]
+    #while(max_file == [99]):
+    #    wait(1)
+    max_file = max(files, key=os.path.getctime)
+    os.rename(max_file, 'C:\\Users\\Jordan\\Test-Folder\\FLWG\\flwvr\\renamed_voice\\' + str(word) + str('_') + str(voice) + str('.mp3'))
+
+
+good_voices = [0, 1, 2, 5, 6, 7, 8, 10, 11, 12, 13, 21, 22, 23, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 43, 45, 46, 47, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59]
+#test_voices = [0, 1, 2]
 def start_webdriver():
     chrome_options = webdriver.ChromeOptions()
     prefs = {"download.default_directory" : "C:\\Users\\Jordan\\Test-Folder\\FLWG\\flwvr\\subset_samples\\" }
     chrome_options.add_experimental_option("prefs", prefs)
+    chrome_options.add_argument("--incognito")
     driver = webdriver.Chrome(executable_path='C:\\Users\\Jordan\\Test-Folder\\FLWG\\flwvr\\chromedriver', options=chrome_options)
     return driver
 
@@ -24,7 +40,7 @@ accentSelect = Select(driver.find_element_by_xpath('//div/form/select[@id="sprac
 download = driver.find_element_by_xpath('//div/form/input[@id="downloadenbutton"]')
 read_button = driver.find_element_by_xpath('//div/form/input[@id="vorlesenbutton"]')
 
-all_words_path = "C:\\Users\\Jordan\\Test-Folder\\FLWG\\docs\\t\\subset.txt"
+all_words_path = "C:\\Users\\Jordan\\Test-Folder\\FLWG\\docs\\t\\Four_Letters.txt"
 f = open(all_words_path, "r")
 file_text = f.read()
 word_list = file_text.split("\n")
@@ -38,9 +54,9 @@ def download_word(word):
         accentSelect.select_by_index(i)
         driver.execute_script("arguments[0].click();", read_button)
         time.sleep(1)
-        driver.execute_script("arguments[0].click();", read_button)
         driver.execute_script("arguments[0].click();", download)
-        
+        time.sleep(1)
+        renameFile(word, i)
         
     # Erases the word
     for i in range(4):

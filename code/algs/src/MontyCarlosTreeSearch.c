@@ -20,7 +20,7 @@ Description: Applies MCTS to the FLWG
 
 //monty carlos tree search
 //this takes the current word & outputs the best word 
-int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
+struct t* montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
 	/*The time at which the program begins*/
 	time_t initTime = time(0);
 	/*How many seconds hte program is expected to last*/
@@ -50,7 +50,7 @@ int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataAr
 		struct mctsStruct* m = traverse(root, s, wordSet, IntToWord_HashMap);
 		
 		/*Simulate the result of that node*/
-		int simulationResult = rollout(m->wordID, 200, 1, wordSet, IntToWord_HashMap); 
+		int simulationResult = rollout(m->wordID, 800, 1, wordSet, IntToWord_HashMap); 
 		
 		/*Back propogate those results*/
 		backpropogate(m, simulationResult);
@@ -83,23 +83,22 @@ int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataAr
 	}
 	/*If there were no options in the first place, let the user know that*/
 	if(output == NULL){
-		return -1;  
+		//return -1;  
 	}
 	
 	/*Free the mcts structure data*/
-	free_mctsStruct(root);
+	//free_mctsStruct(root);
 	
-	printf("Results:\n");
-	print_mctsStruct(root->children[0]);
-	print_mctsStruct(root->children[1]);
 	
-	printf("Returning: %d\n\n\n", o);
+
 	#ifndef STILL_TESTING
-	
-	return root->children[o]->score; 
+	struct t* owtput = malloc(sizeof(struct t));
+	owtput->c = root->children[o]->score; 
+	owtput->w = o; 
+	return owtput; 
 	#endif
 	//Returns the best child
-	return output->wordID; 
+	//return output->wordID; 
 
 }
 

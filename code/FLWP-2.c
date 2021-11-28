@@ -34,7 +34,7 @@ void testMCTS();
 void initializeStructures();
 
 
-struct t{int w;int c;};
+
 
 
 
@@ -66,7 +66,7 @@ void testMCTS(){
 
 	/***************INITIALIZATION COMPLETE*******************/
 	
-	int rootID = 2000; 
+	int rootID = 1400; 
 	
 	/*The # of connections the root word has*/
 	int n = IntToWord_HashMap->array[rootID]->numConnections; 
@@ -92,7 +92,7 @@ void testMCTS(){
 	} 
 	
 
-	int numRuns = 500; 
+	int numRuns = 50; 
 	
 	//Runs MCTS numRuns times
 	for(i = 0; i < numRuns; i++){
@@ -102,10 +102,10 @@ void testMCTS(){
 			printf("%d", i);
 		}
 		//Simulates mcts
-		int x = montyCarlosTreeSearch(rootID, wordSet, IntToWord_HashMap);
+		struct t* x = montyCarlosTreeSearch(rootID, wordSet, IntToWord_HashMap);
 		
 		//updates the chosen word in the data structure
-		chosenCount[x].c++;
+		chosenCount[x->w].c+=x->c;
 	
 	}
 	
