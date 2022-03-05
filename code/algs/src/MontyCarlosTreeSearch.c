@@ -18,15 +18,21 @@ Description: Applies MCTS to the FLWG
 #include "../../structs/includes/IntLinkedList.h"
 
 
+struct mctsStruct* updateMax(struct mctsStruct* currMax, struct mctsStruct* currChild, int simulations); 
+
 //monty carlos tree search
 //this takes the current word & outputs the best word 
 struct t* montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
+	/************ TIMING THE PROGRAM *******************/ 
 	/*The time at which the program begins*/
 	time_t initTime = time(0);
 	/*How many seconds hte program is expected to last*/
 	time_t deltaTime = 1; 
 	/*At what time should the program end*/
 	time_t endTime = initTime + deltaTime;
+	
+	
+	
 	
 	
 	/*Initialize the root word node*/
@@ -39,27 +45,39 @@ struct t* montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct word
 	root->wordID = wordID; 
 	root->children = NULL;
 	
+	
+	
+	
+	
 	/*Explore the root node & obtain its children*/
 	visit_mctsStruct(wordID, root,  wordSet, IntToWord_HashMap);
+	
+	/* The Current Simulation*/
 	int s = 0; 
+	/*The # of times it should run */
+	int numRuns = 50000;
+	
+	
+	
 
-	/*Run precisely 10,000 times*/
-	while(s < 50000){
+	/*Run the simulation*/
+	while(s < numRuns) {
 		
-		/*Traverse the root & find an unexplored node*/
-		struct mctsStruct* m = traverse(root, s, wordSet, IntToWord_HashMap);
+		/*1) Find an unexplored node starting at the root*/
+		struct mctsStruct* unexploredNode = traverse(root, s, wordSet, IntToWord_HashMap);
 		
-		/*Simulate the result of that node*/
-		int simulationResult = rollout(m->wordID, 800, 1, wordSet, IntToWord_HashMap); 
+		/*2) Go down a whole bunch of nodes until there is a word that has no connections, or it reaches max depth*/
+		int simulationResult = rollout(unexploredNode->wordID, 800, 1, wordSet, IntToWord_HashMap); 
 		
-		/*Back propogate those results*/
-		backpropogate(m, simulationResult);
+		/*3) Send the result up starting at the unexplored node*/
+		backpropogate(unexploredNode, simulationResult);
 		
 		/*Move to the next simulation*/
 		s++;
 
 	}
 	
+	/************ OUTPUT THE NODE THAT IS MOST RELIABLE ***********************/
 	/*The node that gets outputted. Defaults to the first child*/
 	struct mctsStruct *output = root->children[0];
 	
@@ -78,7 +96,7 @@ struct t* montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct word
 			/*Change the output*/
 			output = c;
 			/*CHANGE THE TEMPORARY OUTPUT*/
-				o = i; 
+			o = i; 
 		}
 	}
 	/*If there were no options in the first place, let the user know that*/
@@ -102,65 +120,113 @@ struct t* montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct word
 
 }
 
-//traverse -- this takes a node & traverses it, giving visited nodes scores & returning unvisited nodes
+
+
+struct mctsStruct* updateMax(struct mctsStruct* currMax, struct mctsStruct* currChild, int simulations){
+	
+	//if there is not yet a max, set the max
+	struct mctsStruct* max = (currMax == NULL) ? currChild : currMax;  
+	
+	//If the max is not equal to the current child 
+	if(max != currChild){
+	
+		//Get the score of the maximum node 
+		double maxScore = calculate_mctsScore(max, simulations); 
+		//Get the score of the current child 
+		double currScore = calculate_mctsScore(currChild, simulations);
+		  
+		//If the current child's score is better than the max score. Update the max 
+		if(currScore > maxScore){	
+			max = currChild;
+
+		}
+	}
+	return max; 
+}
+
+
+
+/*
+WHAT DOES TRAVERSE DO?
+Traverse starts at the root node & glances at all of the 1-deep children node 
+There'll be two cases: 
+	1) It finds an unexplored node & has to return it. This node will be rolled out 
+	2) It finds that all of the nodes have been explored & has to choose the best one based on some equation 
+	
+Return: An unexplored node 
+What if? All of the nodes are deadends? What if it reaches a point where just all of the nodes are dead ends? */
 struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
+	
+	
+	//This is probably the maximum output node 
 	struct mctsStruct *max = NULL;
-	//is a node fully explored
-	int isFullyExplored = 1; 
+	
+	//Has it found a child that has not been explored yet? 
+	int unexploredChildFound = 0; 
+	
+	//TODO: FINISH COMMENT
+	//The output node is the node that has not been explored or that has no children left 
 	struct mctsStruct *outputNode = NULL; 
 	
-	//while the current node, that will constantly be changing is fully expanded 
-	while(isFullyExplored){
-		int i;
-		//Loop through all of the children of a node
-		//it must break if it sees a child that is not fully explored
-		for(i = 0; i < node->numChildren && isFullyExplored == 1; i++){
-			//if the child it explores is unfound, break out of the while loop 
-			if(node->children[i]->visits == 0){
-				//this node is not fully explored
-				isFullyExplored = 0; 
-			
-				visit_mctsStruct(node->children[i]->wordID, node->children[i], wordSet, IntToWord_HashMap);
-				
-				//sets the output node to the unexplored node
-				outputNode = node->children[i];
-			}	
-			
-			//if the child is found
-			else{
-				//if there is not yet a max, set the max
-				if(max == NULL){
-					max = node->children[i];
-				
-				}
-				
-				//If there is a max set, check to see if this is greater
-				else{
-					if(calculate_mctsScore(max, simulations) < calculate_mctsScore(node->children[i], simulations)){
-						
-						max = node->children[i];
-					
-
-					}
-				}
-				
-			}	
-		}
-		//After it has explored all of the children
-		//if it has not found unexplored child, then it should set itself to the max child, and set max to null
-		//otherwise there's no need. However, this should not be all that complex
-		//Turn node into child node
+	//Now the parent node is going to be the node whose children are going to be explored
+	struct mctsStruct *parent = node; 
+	
+	
+	
+	//Until it finds a child that has not been explored, it will continue going deeper and deeper through children
+	while(!unexploredChildFound){
 		
-		node->visits++;
-		if(node->numChildren == 0){
-			outputNode = node; 
-			isFullyExplored = 0;
-			//If it has reached a leaf, it returns this node
-			
+		//The parent has been visited again
+		parent->visits++;
+				
+		
+		//If the current node has no children, just return it 
+		if(parent->numChildren == 0){
+			return parent; 
 			 
 		}
 		
-		node = max; 
+		
+		//Loops through all of the children of a node
+		//i represents the id of a child node relative to the parent node
+		int i; 
+		for(i = 0; i < node->numChildren && unexploredChildFound == 0; i++){
+			
+			//The current child being considered
+			struct mctsStruct* currChild =  parent->children[i]; 
+			
+			int childIsExplored = currChild->visits > 0; 
+			
+			
+			
+			//if the current child has not been explored yet 
+			if(!childIsExplored){
+				
+				//Visits the current child, and fills it out 
+				visit_mctsStruct(currChild->wordID, currChild, wordSet, IntToWord_HashMap);
+				
+				//sets the output node to the unexplored node (the current child)
+				outputNode = currChild;
+				
+				//TODO: Can I just return current child? 
+				//this node is not fully explored
+				unexploredChildFound = 1; 
+			}	
+			
+			
+			
+			
+			//if the child is found
+			else{
+				
+				max = updateMax(max, currChild, simulations);
+			}	
+		}	
+		
+		//After it's gone through & all the children have been explored. It chooses to explore the "best" node to explore
+		parent = max; 
+		
+		//It also sets the current max to null because it doesn't exist anymore
 		max = NULL;
 		
 		
@@ -174,6 +240,9 @@ struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct Wor
 	//return either an unvistited node, or the current node, assuming it's a leaf 	
 	return outputNode;
 }	
+
+
+
 
 //rollout -- so this goes through and essentially simulates a node returning however likely it is to win
 //this takes a node that has yet to be explored, and simulates the likelihood of winning based on some policy 

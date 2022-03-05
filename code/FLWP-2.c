@@ -66,6 +66,7 @@ void testMCTS(){
 
 	/***************INITIALIZATION COMPLETE*******************/
 	
+	//This is the starting word
 	int rootID = 1400; 
 	
 	/*The # of connections the root word has*/
