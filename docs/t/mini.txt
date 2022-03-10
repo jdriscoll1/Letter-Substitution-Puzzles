@@ -1,0 +1,27 @@
+26
+pies 3 2 1
+lies 5 4
+ties 7 6
+dies 9 8
+lips 10
+loes 12 11
+tier 13
+tins
+digs 15 14
+dibs 17 16
+hips
+toes 18
+logs
+vier
+dims 19
+dige
+dabs 20
+libs 21
+tops
+vims
+dams 23 22
+lims 24
+hams
+dums 25
+limb
+dumb

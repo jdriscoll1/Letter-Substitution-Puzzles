@@ -106,7 +106,14 @@ void reset_WordSet(struct WordSet* wordSet){
 	}
 		
 }
-
+void print_WordSet(struct WordSet* wordSet){
+	printf("WordSet:\n");
+	unsigned int i; 
+	for(i = 0; i < wordSet->totalWords / (sizeof(unsigned long) * NUM_BYTES); i++){
+		printf("%d\n", wordSet->words[i]);
+	}
+	
+}
 /*frees hash set of all words*/
 void free_WordSet(struct WordSet* wordSet){
 	free(wordSet->words);

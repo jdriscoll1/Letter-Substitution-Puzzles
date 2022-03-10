@@ -39,6 +39,9 @@ void reset_WordSet(struct WordSet* wordSet);
 /*frees hash set of all words*/
 void free_WordSet(struct WordSet* wordSet);
 
+/*Outputs the Word Set*/
+void print_WordSet(struct WordSet* wordSet);
+
 //outputs a long as binary
 void long2binary(unsigned long hash);
 

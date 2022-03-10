@@ -44,7 +44,7 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 		printf("%s\n", Convert_IntToWord(word, IntToWord_HashMap)); 
 		//printf("%ld: ", word % (sizeof(unsigned long) * 8));
 		if(whoseTurn == 0){
-			word = botPly(word, depth, IntToWord_HashMap, wordSet, minimax);
+			word = weakBotPly(word, IntToWord_HashMap, wordSet);
 		
 		}
 		else if(whoseTurn == 1){			
@@ -87,7 +87,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 	int w = 0; 
 	int i = 0;
 	int start = 0; 
-	int end = 1;  
+	int end = 100;  
 	int totalRounds = 0; 
 	int winner; 
 	for(i = start; i < end; i++){
@@ -99,7 +99,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 		winner = -1;
 		//How deep does the bot check? 
 
-		int depth = 1; 
+		int depth = 5; 
 	
 		int rounds = 0;
 		
@@ -124,7 +124,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 				winner = whoseTurn; 
 			}
 			rounds++; 
-			
+			//printf("Round: %d", rounds);
 			
 		}
 		totalRounds += rounds; 

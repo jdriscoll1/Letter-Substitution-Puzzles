@@ -27,12 +27,14 @@ struct mctsStruct{
 	//the parent of this particular node 
 	struct mctsStruct* parent; 
 	
+	int numWins; 
+	
 	struct mctsStruct** children; 
 	
 	
 	
 };
-struct t* montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap);
+int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap);
 
 struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap);
 
@@ -42,7 +44,7 @@ void visit_mctsStruct(int wordID, struct mctsStruct* node, struct WordSet* wordS
 int rollout(int id, int depth, int isMaximizing, struct WordSet* wordSet, struct wordDataArray *IntToWord_HashMap); 
 
 //this backpropogates allowing the results to be returned 
-void backpropogate(struct mctsStruct* node, int isWin); 
+void backpropogate(struct mctsStruct* node, int isWin, struct WordSet* wordSet); 
 
 void print_mctsStruct(struct mctsStruct* m);
 
