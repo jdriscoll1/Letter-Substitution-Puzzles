@@ -1,0 +1,11 @@
+*.o
+*.so
+*.layout
+java/*
+*_wrap.c
+docs/maxn/*
+docs/t/*
+*.win
+*.exe
+/code/objs/*
+/flwgvr/*
