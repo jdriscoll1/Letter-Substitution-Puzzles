@@ -55,6 +55,23 @@ void RemoveData_IntLL(int data, struct intList* header){
 	}
 } 
 
+int RemoveFirst_IntLL(struct intList* header){
+	//curr takes the place as the item that will be removed 
+	struct intList* curr = header->next; 
+
+	//if the item to be removed is null, there's nothing to be removed
+	if(curr == NULL){
+		return -1; 
+	}
+	int output = curr->data; 
+	//The header's next will point to curr's next
+	header->next = curr->next; 
+	
+	//Free the currently lost object 
+	free(curr); 
+	return output; 
+}
+
 
 
 

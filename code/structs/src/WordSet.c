@@ -110,7 +110,7 @@ void print_WordSet(struct WordSet* wordSet){
 	printf("WordSet:\n");
 	unsigned int i; 
 	for(i = 0; i < wordSet->totalWords / (sizeof(unsigned long) * NUM_BYTES); i++){
-		printf("%d\n", wordSet->words[i]);
+		printf("%ld\n", wordSet->words[i]);
 	}
 	
 }

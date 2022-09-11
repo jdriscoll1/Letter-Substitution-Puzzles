@@ -225,7 +225,8 @@ struct wordData* Create_WordData(char* word){
 	wordData->connectionHeader->next = NULL; 
 	wordData->word = strdup(word);  
 	wordData->hintFound = 0;
-	wordData->numConnections = 0;  
+	wordData->numConnections = 0; 
+	wordData->prevID = -1;  
 	return wordData; 
 } 
 

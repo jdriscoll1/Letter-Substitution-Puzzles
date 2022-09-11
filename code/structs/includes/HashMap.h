@@ -22,6 +22,8 @@ struct wordData{
 	int hintFound; 
 	//Finds the number of connections a word has
 	int numConnections; 
+	//Necessary to know which the previous id is in the bfs
+	int prevID; 
 };
 
 struct wordStruct{

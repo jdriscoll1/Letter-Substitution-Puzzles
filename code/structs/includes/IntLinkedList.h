@@ -23,6 +23,9 @@ void AddToBack_IntLL(int data, struct intList* header);
 /*This adds a word to the front of an integer linked list*/
 void AddToFront_IntLL(int data, struct intList* header); 
 
+/*Removes the first index of a ll*/
+int RemoveFirst_IntLL(struct intList* header); 
+
 void RemoveData_IntLL(int data, struct intList* header); 
 
 

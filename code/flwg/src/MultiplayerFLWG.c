@@ -15,7 +15,7 @@
 //This allows the four letter word game to be playable with multiple players
 void Multiplayer_FLWG(struct DummyHeadNode** *WordToInt_HashMap, struct wordDataArray *IntToWord_HashMap, struct WordSet* wordSet){
 
-	int numPlayers = 4;
+	int numPlayers = 3;
 
 	int wordID = ChooseStart(IntToWord_HashMap);
 	int depth = 6;
@@ -35,12 +35,9 @@ void Multiplayer_FLWG(struct DummyHeadNode** *WordToInt_HashMap, struct wordData
 			case 1:
 				wordID = userPly(wordID, WordToInt_HashMap, IntToWord_HashMap, wordSet);
 				break;
-		
-			case 2:
-				wordID = userPly(wordID, WordToInt_HashMap, IntToWord_HashMap, wordSet);
-				break;
+
 			
-			case 3:
+			case 2:
 				wordID = multiBotPly(wordID, currPlayer, numPlayers, depth, IntToWord_HashMap, wordSet);
 				break;
 			

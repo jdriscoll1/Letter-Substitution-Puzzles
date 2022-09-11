@@ -20,6 +20,7 @@ int numLetters = 4;
 #include "./structs/includes/HashMap.h"
 #include "./structs/includes/TreeSet.h"
 #include "./structs/includes/WordSet.h"
+#include "./structs/includes/IntLinkedList.h"
 
 
 #include "./flwp/includes/PathfinderGame.h"
@@ -39,6 +40,7 @@ void initializeStructures();
 
 
 int main(){
+
 	srand(time(0));
 	//The Hash Map that can take a word and find its ID
 	struct DummyHeadNode** *WordToInt_HashMap;
@@ -49,22 +51,33 @@ int main(){
 	
 	//char* path = "../docs/t/mini.txt"; 
 	char* path = "../docs/4.txt";
-
+	
 	//Allocates the Word to Int HashMap
 	WordToInt_HashMap = Allocate_WordToInt();
 	
 	IntToWord_HashMap = Allocate_IntToWordStruct();  
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
 	
-	struct WordSet* wordSet = init_WordSet(IntToWord_HashMap->numWords);
-	
-	FLWG_Test(IntToWord_HashMap, wordSet);
+	struct WordSet* wordSet = init_WordSet(2234);
+	Multiplayer_FLWG(WordToInt_HashMap, IntToWord_HashMap, wordSet);
+	//Play_FLWP(WordToInt_HashMap, IntToWord_HashMap, wordSet);
+	//FLWP("dill", "toss", WordToInt_HashMap, IntToWord_HashMap, wordSet);
 	
 	free_WordSet(wordSet); 
 	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
 	
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
 
 void testMCTS(){
 	srand(time(0));
@@ -89,13 +102,13 @@ void testMCTS(){
 	/***************INITIALIZATION COMPLETE*******************/
 	
 	//This is the starting word
-	int rootID = 2000; 
+	//int rootID = 2000; 
 
 
-	int s = montyCarlosTreeSearch(rootID, wordSet, IntToWord_HashMap);
+	//int s = montyCarlosTreeSearch(rootID, wordSet, IntToWord_HashMap);
 
 	//Simulates mcts
-	int run = 0; 
+
 	/*for(run = 0; run < 1; run++){
 		//Set the root ID to found 
 		markUsed_WordSet(rootID, wordSet);

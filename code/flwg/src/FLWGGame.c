@@ -34,7 +34,7 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 	int winner = -1;
 
 	//How deep does the bot check? 
-	int depth = 1; 
+	int depth = 8; 
 	int rounds = 0; 
 
 	int whoseTurn = 0; 
@@ -44,12 +44,12 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 		printf("%s\n", Convert_IntToWord(word, IntToWord_HashMap)); 
 		//printf("%ld: ", word % (sizeof(unsigned long) * 8));
 		if(whoseTurn == 0){
-			word = weakBotPly(word, IntToWord_HashMap, wordSet);
+			word = userPly(word, WordToInt_HashMap, IntToWord_HashMap, wordSet);
 		
 		}
 		else if(whoseTurn == 1){			
 	
-			word = mctsBotPly(word, wordSet, IntToWord_HashMap);
+			word = userPly(word, WordToInt_HashMap, IntToWord_HashMap, wordSet);
 			
 			//Check the word
 			//Go to the connections, and ask if there are any more
@@ -109,7 +109,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 			//printf("%s\n", IntToWord_HashMap->array[w]->word); 
 			if(whoseTurn == 0){
 				//w = weakBotPly(w, IntToWord_HashMap);
-				w = botPly(w, depth, IntToWord_HashMap, wordSet, minimax);	
+				w = botPly(w, depth, IntToWord_HashMap, wordSet);	
 			}
 			else if(whoseTurn == 1){
 				//printf("List: %s\n", toString_IntLL(IntToWord_HashMap->array[w]->connectionHeader, SEPERATED, IntToWord_HashMap)); 
@@ -203,12 +203,12 @@ int mctsBotPly(int word, struct WordSet* wordSet, struct wordDataArray* IntToWor
 	
 }
 
-int botPly(int word, int depth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet, struct minimaxOutput* (*minimax_func)(int, int, int, int, struct minimaxOutput, struct minimaxOutput, struct wordDataArray*, struct WordSet*) ){
+int botPly(int word, int depth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 
 	struct minimaxOutput* alpha = createOutput(-100, 0, -1, -1); 
 	struct minimaxOutput* beta = createOutput(100, 1, -1, -1); 
 	//Then, the bot takes this word and runs the minimax algorithm
-	struct minimaxOutput* output = (*minimax_func)(word, depth, depth, 1, *alpha, *beta, IntToWord_HashMap, wordSet);
+	struct minimaxOutput* output = minimax(word, depth, depth, 1, *alpha, *beta, IntToWord_HashMap, wordSet);
 	 
 	//If it returns NULL -- game over
 	if(output == NULL){

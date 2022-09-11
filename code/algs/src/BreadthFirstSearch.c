@@ -5,9 +5,11 @@
 
 #include "../includes/BreadthFirstSearch.h"
 
-#include "../../structs/includes/HashFunctions.h"
+
 #include "../../structs/includes/GenericLinkedListNode.h"
 #include "../../structs/includes/ArrayList.h"
+#include "../../structs/includes/IntLinkedList.h"
+#include "../../structs/includes/HashMap.h"
 
 
 #include "../../flwp/includes/Hints.h"
@@ -57,6 +59,120 @@ void Free_BFSComponents(struct BFSComponents* bc, struct WordSet *wordSet){
 	
 } 
 
+
+void FLWP(char* a, char* b, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){
+	struct intList* x = BFS(Convert_WordToInt(a, WordToInt_HashMap), Convert_WordToInt(b, WordToInt_HashMap), IntToWord_HashMap, wordSet); 
+	if(x == NULL){
+		printf("No Connection Between %s and %s", a, b); 
+	}
+	else{
+		PrintStrings_IntLL(x, IntToWord_HashMap); 
+	}
+	Free_IntLL(x); 
+	
+}
+
+
+struct intList* BFS(int start, int goal, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet) {
+	if(start == goal){
+		printf("Same Words"); 
+		return NULL; 
+	}
+	
+	//Create the Queue of possible words it connects to 
+	struct intList* q = malloc(sizeof(struct intList)); 
+	q->data = -1; 
+	q->next = NULL; 
+	
+	
+	
+	//Add the start to the queue
+	AddToFront_IntLL(start, q);  
+	
+	//Clear the visited words 
+	reset_WordSet(wordSet); 
+	
+	//mark the start word as visited  
+	markUsed_WordSet(start, wordSet); 
+
+	bool goalFound = false; 
+	
+	//while the queue is not empty and the word is not found
+	while(!goalFound && q->next != NULL){
+	
+	
+		//Dequeue the queue and set queue to the removed node
+		int curr = RemoveFirst_IntLL(q); 
+		
+		//neighboor's of c 
+		struct intList* conn = getConnections(curr, IntToWord_HashMap);
+		 
+		//Process all of the unvisited neighboors of c
+		//for each neighboor
+		while(conn->next != NULL){
+			conn = conn->next; 
+			int c = conn->data; 
+			
+			//check if curr neighboor has been visited
+			if(!checkIfUsed_WordSet(c, wordSet)){
+			
+				//if not, enqueue the neighboor
+				AddToBack_IntLL(c, q); 
+				
+				//TODO: set that word's prevID to 
+				IntToWord_HashMap->array[c]->prevID = curr; 
+				
+				//TODO:  create a function or something that goes back to the previous words 
+				
+				//mark the neighboor as visited
+				markUsed_WordSet(c, wordSet); 
+				
+				if(c == goal){
+					//I want to take the current variable & track back to the beginning
+					struct intList* output = malloc(sizeof(struct intList));
+					output->data = -1; 
+					output->next = NULL; 
+					int w = c; 
+					while(w != -1){
+						
+
+						
+						AddToFront_IntLL(w, output);  
+						w = IntToWord_HashMap->array[w]->prevID; 
+						
+					}
+					return output; 
+				
+				}
+			}
+		}
+				
+	}
+	return NULL; 
+	
+			
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 struct intList* BreadthFirstSearch_Goal(int start, int goal, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){	 
 	//If the start word and goal word are equal, it returns 0
 	if(start == goal){
@@ -71,7 +187,9 @@ struct intList* BreadthFirstSearch_Goal(int start, int goal, struct wordDataArra
 	//Until the goal word is found it is going to spread out through every connection, and all of those connections until it finds the goal word
 	while(goalFound == false){
  
+ 		
 		bc->prevConnection = bc->prevConnection->next;
+		
 		
 		bc->End = AddToTreeStorage_Dist_BFS(bc, goal, IntToWord_HashMap, wordSet); 
 		if(bc->End->id == goal){
@@ -88,6 +206,8 @@ struct intList* BreadthFirstSearch_Goal(int start, int goal, struct wordDataArra
 		
 		
 	}
+	
+	//Creates the path 
 	struct intList* path; 
 	path = malloc(sizeof(struct intList)); 
 	path->size = 0; 

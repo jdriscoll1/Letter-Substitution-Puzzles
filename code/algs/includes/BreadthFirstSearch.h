@@ -53,6 +53,7 @@ int BreadthFirstSearch_Distance_Goal(int start, int minConnections, struct wordD
 @return --> Returns the number of connections there are a certain distance away*/
 int BreadthFirstSearch_DistanceOptions(int start, int minConnections, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 
+struct intList* BFS(int start, int goal, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet); 
 
 
 /*This initalizes all of the necessary components of the Breadth First Search Method
