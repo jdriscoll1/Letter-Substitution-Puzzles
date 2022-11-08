@@ -2,21 +2,24 @@
 %{
 
 /*The data structures which allow the game to work*/
-#include "./code/structs/includes/HashMap.h"
+#include "../../src/structs/includes/HashMap.h"
 
 /*Allows the word set to be created & manipulated*/
-#include "./code/structs/includes/WordSet.h"
+#include "../../src/structs/includes/WordSet.h"
 
 /*The algorithms which allow the game to be played*/
-#include "./code/flwg/includes/FLWGGame.h"
+#include "../../src/flwg/includes/FLWGGame.h"
+
+/*Specific functions for the four letter word game*/
+#include "../../src/flwp/includes/GameFunctions.h"
+
+#include "php_wrapper.h"
 %}
 
+/*********************WRAPPED FUNCTION*********************/
+void ChooseFirstWord(struct wordDataArray* IntToWord_HashMap);
 
-
-
-
-/*********HASH MAP FUNCTIONS**************/
-
+/*********HASH MAP FUNCTIONS**************/ 
 /*Creates the Int To Word Structure*/
 struct wordDataArray* Allocate_IntToWordStruct(); 
 

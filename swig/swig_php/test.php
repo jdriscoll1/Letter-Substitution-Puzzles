@@ -8,6 +8,7 @@
 	$w_id = botPly($w_id, 5, $IntToWord, $wordSet);
 	echo checkIfUsed_WordSet(4, $wordSet);
 	echo Convert_IntToWord(5, $IntToWord);
+	echo ChooseFirstWord($IntToWord);
 	Free_HashMaps($WordToInt, $IntToWord);
 	free_WordSet($wordSet);
 ?>
