@@ -50,7 +50,7 @@ int main(){
 	
 	
 	//char* path = "../docs/t/mini.txt"; 
-	char* path = "../docs/4.txt";
+	char* path = "../docs/4a.txt";
 	
 	//Allocates the Word to Int HashMap
 	WordToInt_HashMap = Allocate_WordToInt();
@@ -58,8 +58,10 @@ int main(){
 	IntToWord_HashMap = Allocate_IntToWordStruct();  
 	Initialize_HashMaps(WordToInt_HashMap, IntToWord_HashMap, path);
 	
-	struct WordSet* wordSet = init_WordSet(2234);
-	Play_FLWP(WordToInt_HashMap, IntToWord_HashMap, wordSet);
+	struct WordSet* wordSet = init_WordSet(5361);
+	//FLWG(WordToInt_HashMap, IntToWord_HashMap, wordSet); 
+	FLWG_Test(IntToWord_HashMap, wordSet);
+	//Play_FLWP(WordToInt_HashMap, IntToWord_HashMap, wordSet);
 	
 	//nook --> veer
 	/*int i1 = Convert_WordToInt("nook", WordToInt_HashMap);

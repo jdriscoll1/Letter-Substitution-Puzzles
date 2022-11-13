@@ -15,167 +15,182 @@ Description: The four letter word game involves pathfinding via letter substitut
 To Do So, I will make use of the minimax algorithm*/
 
 #define MAX 100000
-//Uses 50/50 chances for beta variable
-struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){
-	TOTAL_MOVES++;
 
-	//First, let's get the list of nodes that we can go to 
-	struct intList* currConnection = getConnections(id, IntToWord_HashMap); 
-	//Avoid the header
+/*  
+* Abstract goal: The game to which the minimax algorithm is applied, abstractly, is a game in which there is a set of nodes. Each node connects to other nodes
+* in a 2D undirected graph. In each ply, depending on whose turn it is, the user or algorithm step from one node to another node. They are bound to each other, wherever
+* one chooses to move, the other must follow. They take turns moving and once a node is visited, it is no longer an option. If, in one of the participant's moves,   
+*  there are no unexplored nodes to travel to, that participant is defeated and their opponent is the victor. Thus, the goal of the game is to trap one's opponent.  
+* 
+* The Minimax Algorithm 
+* The Minimax Algorithm is used, in a 2-player zero-sum game, to look ahead at future moves in a depth-first search pattern and assign potential moves scores. 
+* Each time it steps into a deeper move, it flips its perspective from itself to that of its opponents. When it finds a node that does not have any further 
+* connections, if it is in its own perspective it assigns it a negative score, because it recognizes that it would lose. If it is in the perspective of its opponent
+* it would assign it a very high score because it recognizes that it would win.
+*  
+* Alpha Beta Pruning
+* This algorithm uses a form of pruning-known as Alpha-Beta Pruning which optimizes the search by assuming that, if it finds a node where, if reached
+* its opponent has an oppurtunity to win, it will win. The algorithm terminates exploring future paths from that node because it is already a losing node. 
+*
+* The parameters which the algorithm takes are as follows
+* id --> The current parent node is being scored and whose children are being explored  
+* depth --> How far it has already explroed
+* maxDepth --> How deep is the algorithm willing to explore considering time and computation limits
+* isMaximizingPlayer --> The algorithm's perspective
+* alpha --> The positive perspective for alpha beta pruning
+* beta --> The negative perspective for alpha beta pruning 
+* IntToWord_HashMap --> The Game Board
+* wordSet --> The current set of words
+*/
+
+struct minimaxOutput* minimax(int id, int currDepth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* wordGraph, struct WordSet* wordSet){
+	// Acquires the list of nodes that a node connects to 
+	struct intList* currConnection = getConnections(id, wordGraph); 
+	
+	// Move off of the dummy header node
 	currConnection = currConnection->next; 
-	//Then I would also add it into the transposition hash
-	//We will place this node in the HahsMap 
+
+	// Mark the current word as used
 	markUsed_WordSet(id, wordSet); 
-	//If the depth is equal to 0, or there are no nodes to go to (how to determine that?)
-		//Return the static evaluation of the position
 	
-	return minimaxAlg(id, depth, maxDepth, isMaximizingPlayer, currConnection, alpha, beta, IntToWord_HashMap, wordSet); 
+	// The initial worst score is going to be +/- infinity
+	struct minimaxOutput* maxScore = (isMaximizingPlayer == 1) ? createOutput(-100, 0, -1, -1) : createOutput(100, 1, -1, -1);  
 	
-
-
-	
-	
-	
-}
-
-
-struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
-
-	//The current minimum evaluation is going to be +infinity since we want something lower than that
-	struct minimaxOutput* absEval = (isMaximizingPlayer == 1) ? createOutput(-100, 0, -1, -1) : createOutput(100, 1, -1, -1);  
-	
-	//The current word being checked
-	int currID; 
-	
-	//Integer that keeps track of number of connections
+	// Number of connections a word has 
 	int numConnections = 0; 
 	
-	//This keeps track of the likelyhood of winning in a given round
+	// Likelyhood of winning in a given round
 	double winPercent = 0; 
 	
+	// Boolean that determines if a word is pruned
 	int isPruned = 0; 
-	//Go through each child node
+	
+	// Go through each child node and give it a score
 	while(currConnection != NULL){
-		currID = currConnection->data; 
-		//Make sure that the word has not already been found in the hash set
+		
+		// The current word being checked
+		int currID = currConnection->data; 
+		
+		// Verify that the word has not already been found in the hash set
 		if(checkIfUsed_WordSet(currID, wordSet) == 0){
 			
-			//Make sure the number of connections goes up
+			// Increment the parent's words number of connections
 			numConnections++; 
 
-			//If it's at 0 depth, if there still exists options, it return 50% as score
-			if(depth == 0){
-				free(absEval); 
+			// When its depth reaches 0, it is forced to quit for computation limits and returns a score of uncertainty 
+			if(currDepth == 0){
+				// Frees the score node
+				free(maxScore); 
+				
+				// Marks the current word as unused
 				markUnused_WordSet(id, wordSet);
-				//It also knocks the id off of the HashMap
-				//Don't save this to the hash
+				
+				// Returns a score stating it is uncertain whether it is good or bad 
 				return createOutput(0, .5, 0, id);  
 			}
 
-			//Set the algorithm evaluation to minimax making usre that when setting the params, the depth goes down by 1, that the isMinimaxPlayer is true, and that it is putting in the child's ID
-			struct minimaxOutput* potential = minimax(
-				// the current word id
+			// Rerun the minimax algorithm with the current child as the node being scored
+			struct minimaxOutput* currScore = minimax(
+				// the current node's id
 				currID, 
-				// the depth, new search makes it go down
-				depth - 1, 
+				// It is branching out a node dfs-style, the depth must be decremented
+				currDepth - 1, 
 				// the furthest its able to search, the starting point
 				maxDepth, 
-				// whether its considering in terms of itself or its enemy 
+				// Switch whether it is taking the perspective of itself or its opponent 
 				(isMaximizingPlayer == 1) ? 0 : 1, 
-				//alpha in alpha beta pruning
+				// Alpha in alpha beta pruning
 				alpha, 
-				//beta in alpha beta pruning
+				// Beta in alpha beta pruning
 				beta, 
-				//the "game board" 
-				IntToWord_HashMap, 
-				//the set of used words
+				//the "game board" / The Graph 
+				wordGraph, 
+				// The set tracking which words are used
 				wordSet
 				); 
 
-			//This only matters during the minimizer's turn
-			if(potential->score <= 1 && potential->score >= -1){
-				winPercent += potential->winPercent;
+
+			// It will add the likelihood of this node being good or bad if the child isn't a certain win or loss
+			if(currScore->score >= -1 && currScore->score <= 1){
+				winPercent += currScore->winPercent;
 			}
-			//Print_MinimaxOutput(potential); 
-			
-			/*
-			Maximizer: potential > absEval -- choose abs eval. abs eval > potential -- chose abs Eval
-			compareOutput(a,b) == 1 --> b > a
-			compareOutput(a,b) == 0 --> a > b
-			
-			*/
-		
-			//Compares the absolute value to the potential 
-			//IF it is the maximizer and it outputs 1, it should choose the first one
-			//If it is the minimizer and it outputs 0, it should choose the first one
-			//If it is the maximizer and it outputs 0, it should choose the second one
-			//If it is the minimizer and it outputs 1, it should choose the second one
- 			//if(depth == maxDepth){
-			 	/*printf("Comparing Between:\n");
- 				printf("%s\n", Convert_IntToWord(absEval->id, IntToWord_HashMap));
- 				Print_MinimaxOutput(absEval);
- 				printf("Or:\n%s\n", Convert_IntToWord(potential->id, IntToWord_HashMap));
- 				printOptions(potential->id, IntToWord_HashMap);
- 				Print_MinimaxOutput(potential);
- 				if(potential->id == 419){
- 					printf("\nHere\n");
-				 }
- 				printf("\n");
- 				*/
-		//	}
-			if(compare_mo(absEval, potential, isMaximizingPlayer) == isMaximizingPlayer){
-				free(potential);	
+	
+	
+			// Compares the best score to the word being analyzed, if the maximum is better, than it chooses it
+			if(compare_mo(maxScore, currScore, isMaximizingPlayer) == isMaximizingPlayer){
+				free(currScore);	
 			}
 			
+			// If the current score is better it is replaced with the max
 			else{
-				free(absEval); 
-				absEval = potential; 
+				free(maxScore); 
+				maxScore = currScore; 
 			}
 			
 			
-			
-			//Checks to see if it _really_ needs to check this tree
-			if(AlphaBetaPruning(&alpha, &beta, absEval, isMaximizingPlayer) == 1){isPruned = 1;break;}//return absEval;}
+			/* Alpha-Beta Pruning Algorithm That Prevents Node From Exploring Further in nodes that are guarenteed losses
+			* Does not effect final score 
+			* In 800 games at a depth of 5; 
+			* without alpha-beta pruning: 172.1 seconds 
+			* with alpha-beta pruning: .7686 seconds  
+			*/
+			if(AlphaBetaPruning(&alpha, &beta, maxScore, isMaximizingPlayer) == 1){
+				isPruned = 1;
+				break;
+			}
 			
 			
 			 
 			
 			
 		}
-		//Go to the next node
+		// Explore & score the next node
 		currConnection = currConnection->next; 
 		
 	}
 	
+	// After all of the child nodes have been explored
 
-	//if it found no nodes
+	// If the parent node has no children to explore, it will return this either as a winning or losing node
 	if(numConnections == 0 && isPruned == 0){
-		free(absEval); 
-		//If there are no connections, the algorithm has, albeit sadly, lost. 
-		//No need for transposition table, because the game is over
-		if(depth == maxDepth){
-			return NULL; 
+		//It frees the absolute node
+		free(maxScore); 
+		
+		// If the root node has no connections, the algorithm will return it has lost 
+		if(currDepth == maxDepth){
+			// returns node with word id set to -1 indicating that the game is lost
+			return createOutput(-1, 0, -1, -1); 
 		}
-		absEval = (isMaximizingPlayer == 1) ? createOutput(-1, 0, depth, id) : createOutput(1, 1, depth, id); 
+		
+		// If has no connections from a deeper node, it will return this as either a winning/losing node
+		maxScore = (isMaximizingPlayer == 1) ? createOutput(-1, 0, currDepth, id) : createOutput(1, 1, currDepth, id); 
 	}
 	
+	// If the parent node has unvisited child nodes it will set the likelihood of winning
 	else if(numConnections != 0){
-	
+		// Divide the likelihood of winning by the number of connections 
 		winPercent /= (double)numConnections; 
-		absEval->winPercent = winPercent; 
+		maxScore->winPercent = winPercent; 
 	}
-	if(depth != maxDepth){
-		absEval->id = id; 
+	
+	// If it is not at the root node, it sets the max score to the current id, marks the current word as unused
+	// This is necessary because we don't want the root node to be explorable 
+	if(currDepth != maxDepth){
+		maxScore->id = id; 
 		markUnused_WordSet(id, wordSet); 
-		//I would also remove it from the transposition hash
 		
 	}
 
-	//Return the minimum evaluation
-	return absEval; 
-
+	// Return the best possible option of the parent node's children depending on the perspective
+	return maxScore; 
 	
 }
+
+
+
+
+
+
 
 /* 
 KEEP NOTE:

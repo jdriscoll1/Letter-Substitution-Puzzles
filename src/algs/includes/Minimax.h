@@ -25,10 +25,9 @@ struct minimaxOutput{
 };
 
 
+// Minimax and Minimax Alg Mashed Into 1 Algorithm
+struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet); 
 
-struct minimaxOutput* minimax(int id, int depth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
-
-struct minimaxOutput* minimaxAlg(int id, int depth, int maxDepth, int isMaximizingPlayer, struct intList* currConnection, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 
 void Print_MinimaxOutput(struct minimaxOutput *mo); 
 
