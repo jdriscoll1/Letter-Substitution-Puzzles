@@ -38,7 +38,7 @@ void initializeStructures();
 
 
 
-
+/*
 int main(){
 
 	srand(time(0));
@@ -64,7 +64,7 @@ int main(){
 	//Play_FLWP(WordToInt_HashMap, IntToWord_HashMap, wordSet);
 	
 	//nook --> veer
-	/*int i1 = Convert_WordToInt("nook", WordToInt_HashMap);
+	int i1 = Convert_WordToInt("nook", WordToInt_HashMap);
 	int i2 = Convert_WordToInt("veer", WordToInt_HashMap);
 	struct intList* list = BreadthFirstSearch_Goal(i1, i2, IntToWord_HashMap, wordSet);
 	char* output = toString_IntLL(list, LINKED, IntToWord_HashMap); 
@@ -73,13 +73,13 @@ int main(){
 	//Play_FLWP(WordToInt_HashMap, IntToWord_HashMap, wordSet);
 	//Play_FLWP(WordToInt_HashMap, IntToWord_HashMap, wordSet);
 	//FLWP("dill", "toss", WordToInt_HashMap, IntToWord_HashMap, wordSet);
-	*/
+	
 	free_WordSet(wordSet); 
 	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
 	
 	return 0;
 }
-
+*/
 
 
 

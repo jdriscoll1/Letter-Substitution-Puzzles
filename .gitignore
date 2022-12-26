@@ -1,5 +1,6 @@
 *.o
 *.so
+flwo
 *.layout
 java/*
 *_wrap.c
