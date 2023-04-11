@@ -1,28 +1,31 @@
-## Letter Substitution Puzzles
+# Letter Substitution Puzzles
 
-# Goal
-The purpose of this repository is to capitalize on the power of compter processing and pathfinding and reinforcement learning algorithms to find solutions to letter substituion puzzles  
+This repository contains code for solving letter substitution puzzles using pathfinding and reinforcement learning algorithms. The goal is to find the optimal path between two words by changing one letter at a time.
 
 # Overview
-Letter substitution puzzles follow the concept that when starting with an 'n'-letter word, a participant can change one of the letters making it a new word. For example, starting with the word "pies", changing the 'p' to a 't' converts it to "ties". From there it can be changed to a new word for, for example, "tins". 
+Letter substitution puzzles involve changing one letter in a word to create a new word. For example, starting with the word "pies" and changing the 'p' to a 't' creates the word "ties". The Four Letter Word Path is a variant of the puzzle where a participant is given a starting word and must create a path to a goal word.
 
-# Four Letter Word Path
-The Four Letter Word Path is a variant of the letter substitution puzzles in which a participant is given a starting word
-For example, pies, and must create a path to a goal word, for example, 'tins'.
-In this case, the path would be as follows: pies->ties->tins. It uses Breadth First Search to find both the shortest path
-from the start to the goal word, as well as BFS to verify that the goal word is at minimum n-letters away. 
+This repository contains libraries for solving the Four Letter Word Path using Breadth First Search to find the shortest path between the start and goal words, and to verify that the goal word is at minimum n-letters away.
 
-# Four Letter Word Game
-The Four Letter Word Game is a game in which two or more users take turns substituting letters until a user gets stuck. 
-This repository contains two algorithmic solutions to this puzzle with only two players, and two algorithms for more than two palyers. 
+Additionally, the repository includes the Four Letter Word Game, a two-player puzzle game where players take turns substituting letters until one player gets stuck. The codebase includes algorithms for Minimax with Alpha Beta Pruning and Monte Carlos Tree Search for two players, and both hypermax and max-n for more than two players.
 
-This codebase contains libraries for Minimax with Alpha Beta Pruning and Monte Carlos Tree Search for two players.
-It contains both hypermax and max-n for more than two players.
+# Building from Source
+To build the Four Letter Word Game executable, follow these steps:
 
-# Building from source 
-To build the four letter word game executable
+1. Clone the repository to your local machine.
+```bash
+git clone https://github.com/username/Letter-Substitution-Puzzles.git
+```
+2. Navigate to the project directory and compile the source code using your preferred compiler.
+```bash
+cd Letter-Substitution-Puzzles
+make
+```
+3. Run the executable to start the game.
+```bash 
+./flwo
+```
+To build the Four Letter Word Path executable, repeat the same steps with the FourLetterWordPath directory.
 
-
-
-To build the four letter word path executable
-
+# Contributing
+Contributions to this repository are welcome. Please create a pull request with your changes and ensure they adhere to the overall design and functionality of the project. If you encounter any issues, please open a new issue in the repository.
