@@ -25,7 +25,7 @@ make
 ```bash 
 ./flwo
 ```
-To build the Four Letter Word Path executable, repeat the same steps with the FourLetterWordPath directory.
+To build the Four Letter Word Game for PHP please navigate to the `swig/swig_php` and call the `make` command. That can be extended into by the php.ini file for website purposes
 
 # Contributing
 Contributions to this repository are welcome. Please create a pull request with your changes and ensure they adhere to the overall design and functionality of the project. If you encounter any issues, please open a new issue in the repository.
