@@ -38,10 +38,10 @@ void initializeStructures();
 
 
 
-/*
 int main(){
 
 	srand(time(0));
+
 	//The Hash Map that can take a word and find its ID
 	struct DummyHeadNode** *WordToInt_HashMap;
 	
@@ -68,6 +68,7 @@ int main(){
 	int i2 = Convert_WordToInt("veer", WordToInt_HashMap);
 	struct intList* list = BreadthFirstSearch_Goal(i1, i2, IntToWord_HashMap, wordSet);
 	char* output = toString_IntLL(list, LINKED, IntToWord_HashMap); 
+
 	printf("%s", output);
 
 	//Play_FLWP(WordToInt_HashMap, IntToWord_HashMap, wordSet);
@@ -79,7 +80,6 @@ int main(){
 	
 	return 0;
 }
-*/
 
 
 

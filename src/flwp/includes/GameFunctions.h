@@ -9,7 +9,7 @@
 
 enum Difficulty{
 	EASY, MEDIUM, HARD
-}Difficulty;
+};
 
 /*This takes the difficulty of the game and chooses the minimum number of connections the goal word should be from the start word
 @param difficulty --> This is the games difficulty
