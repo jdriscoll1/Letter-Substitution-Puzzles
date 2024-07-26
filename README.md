@@ -1,6 +1,6 @@
 # Letter Substitution Puzzles
 
-This repository contains code for solving letter substitution puzzles using pathfinding and reinforcement learning algorithms. The goal is to find the optimal path between two words by changing one letter at a time.
+This repository contains code for solving letter substitution puzzles using pathfinding and reinforcement learning algorithms. 
 
 # Overview
 Letter substitution puzzles involve changing one letter in a word to create a new word. For example, starting with the word "pies" and changing the 'p' to a 't' creates the word "ties". The Four Letter Word Path is a variant of the puzzle where a participant is given a starting word and must create a path to a goal word.
