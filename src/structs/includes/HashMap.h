@@ -41,6 +41,8 @@ struct wordDataArray{
 	
 };
 
+void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, int fd);
+
 void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, char* path); 
 
 struct DummyHeadNode** *Allocate_WordToInt(); 

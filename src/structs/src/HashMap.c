@@ -15,28 +15,27 @@ typedef enum {false, true} bool;
 
 extern int numLetters;
 
-void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, char* path){
-
-	 
-
+void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, int fd){
 	//Open up the file 
-	FILE* wordDoc = OpenFile(path); 
-	
-
-	
+	FILE* wordDoc = fdopen(fd, "r"); 
 	//Read the top number from the file
 	int numWords = getNumWords(wordDoc); 
-
-	
 	//Allocate the structure using the number of words int --> word (wordData)
 	Allocate_IntToWord(IntToWord_HashMap, numWords);  
-
 	//Place the data into the two new hash maps
 	Fill_HashMaps(wordDoc, WordToInt_HashMap, IntToWord_HashMap); 
-	
-
 	fclose(wordDoc);
-	
+}
+void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, char* path){
+	//Open up the file 
+	FILE* wordDoc = OpenFile(path); 
+	//Read the top number from the file
+	int numWords = getNumWords(wordDoc); 
+	//Allocate the structure using the number of words int --> word (wordData)
+	Allocate_IntToWord(IntToWord_HashMap, numWords);  
+	//Place the data into the two new hash maps
+	Fill_HashMaps(wordDoc, WordToInt_HashMap, IntToWord_HashMap); 
+	fclose(wordDoc);
 }
 
 struct DummyHeadNode** *Allocate_WordToInt(){

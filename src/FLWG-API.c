@@ -13,13 +13,13 @@ Purpose: A library to encapsulate & organize the code into an API
 #include "FLWG-API.h"
 
 // Creating and destroying data structures
-struct DataStructures* initDataStructures(char* filename){
+struct DataStructures* initDataStructures(int fd){
 	struct DataStructures* data = malloc(sizeof(struct DataStructures));  
 
 	// Initialize the Word to Int Hash Map 
 	data->W2I = Allocate_WordToInt(); 	
 	data->I2W = Allocate_IntToWordStruct(); 	
-	Initialize_HashMaps(data->W2I, data->I2W, filename); 
+	Initialize_HashMaps_fd(data->W2I, data->I2W, fd); 
 	data->wordSet = init_WordSet(data->I2W->numWords); 
 	return data; 
 }

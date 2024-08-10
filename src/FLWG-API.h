@@ -33,7 +33,7 @@ struct DataStructures {
 }; 
 
 // Creating and destroying data structures
-struct DataStructures* initDataStructures(char* filename); 
+struct DataStructures* initDataStructures(int fd); 
 
 void freeDataStructures(struct DataStructures* dataStructures); 
 // Mid Game Moves
