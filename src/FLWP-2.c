@@ -11,6 +11,8 @@ int numLetters = 4;
 #include <math.h>
 #include <time.h>
 
+#include "./FLWG-API.h"
+
 #include "./algs/includes/Minimax.h"
 #include "./algs/includes/MinimaxTests.h"
 #include "./algs/includes/BreadthFirstSearch.h"
@@ -30,15 +32,24 @@ int numLetters = 4;
 
 void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap); 
 void runMultiplayerFLWG();
+void PathfindBetweenTwoWords(char* start, char* end, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray *IntToWord_HashMap, struct WordSet* wordSet);
 void runFLWG();
 void testMCTS();
 void initializeStructures();
-
-
-
-
+void fourletterwordgame_example(); 
 
 int main(){
+	// Initialize the Data Sets 
+	struct DataStructures* data = initDataStructures("./docs/4a.txt"); 
+        printf("%d", convertWordToInt("care", data));
+	freeDataStructures(data); 
+	// Free the Data Sets 	
+	//fourletterwordgame_example(); 
+
+}
+
+
+void fourletterwordgame_example(){
 
 	srand(time(0));
 
@@ -50,7 +61,7 @@ int main(){
 	
 	
 	//char* path = "../docs/t/mini.txt"; 
-	char* path = "../docs/4a.txt";
+	char* path = "./docs/4a.txt";
 	
 	//Allocates the Word to Int HashMap
 	WordToInt_HashMap = Allocate_WordToInt();
@@ -60,16 +71,9 @@ int main(){
 	
 	struct WordSet* wordSet = init_WordSet(5361);
 	//FLWG(WordToInt_HashMap, IntToWord_HashMap, wordSet); 
-	FLWG_Test(IntToWord_HashMap, wordSet);
+	//FLWG_Test(IntToWord_HashMap, wordSet);
 	//Play_FLWP(WordToInt_HashMap, IntToWord_HashMap, wordSet);
 	
-	//nook --> veer
-	int i1 = Convert_WordToInt("nook", WordToInt_HashMap);
-	int i2 = Convert_WordToInt("veer", WordToInt_HashMap);
-	struct intList* list = BreadthFirstSearch_Goal(i1, i2, IntToWord_HashMap, wordSet);
-	char* output = toString_IntLL(list, LINKED, IntToWord_HashMap); 
-
-	printf("%s", output);
 
 	//Play_FLWP(WordToInt_HashMap, IntToWord_HashMap, wordSet);
 	//Play_FLWP(WordToInt_HashMap, IntToWord_HashMap, wordSet);
@@ -77,13 +81,19 @@ int main(){
 	
 	free_WordSet(wordSet); 
 	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
-	
-	return 0;
 }
 
 
 
+void PathfindBetweenTwoWords(char* start, char* end, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray *IntToWord_HashMap, struct WordSet* wordSet){
 
+	int i1 = Convert_WordToInt(start, WordToInt_HashMap);
+	int i2 = Convert_WordToInt(end, WordToInt_HashMap);
+	struct intList* list = BreadthFirstSearch_Goal(i1, i2, IntToWord_HashMap, wordSet);
+	char* output = toString_IntLL(list, LINKED, IntToWord_HashMap); 
+	printf("%s", output);
+
+}
 
 
 
