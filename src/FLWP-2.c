@@ -10,6 +10,8 @@ int numLetters = 4;
 #include <string.h>
 #include <math.h>
 #include <time.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #include "./FLWG-API.h"
 
@@ -40,9 +42,11 @@ void fourletterwordgame_example();
 
 int main(){
 	// Initialize the Data Sets 
-	struct DataStructures* data = initDataStructures("./docs/4a.txt"); 
+	int fd = open("./docs/4a.txt", O_RDONLY); 
+	struct DataStructures* data = initDataStructures(fd); 
         printf("%d", convertWordToInt("care", data));
 	freeDataStructures(data); 
+	close(fd);
 	// Free the Data Sets 	
 	//fourletterwordgame_example(); 
 
