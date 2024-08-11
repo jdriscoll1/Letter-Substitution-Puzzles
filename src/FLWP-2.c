@@ -44,7 +44,7 @@ int main(){
 	// Initialize the Data Sets 
 	int fd = open("./docs/4a.txt", O_RDONLY); 
 	struct DataStructures* data = initDataStructures(fd); 
-        printf("%d", convertWordToInt("care", data));
+        printf("%d", convertWordToInt("pies", data));
 	freeDataStructures(data); 
 	close(fd);
 	// Free the Data Sets 	

@@ -32,11 +32,19 @@ struct DataStructures {
 	int currWordId; 
 }; 
 
+struct GameData {
+	int currWordId; 
+	int numPlayers; 
+	int difficulty; 
+}
+
 // Creating and destroying data structures
 struct DataStructures* initDataStructures(int fd); 
 
 void freeDataStructures(struct DataStructures* dataStructures); 
-// Mid Game Moves
+
+// Game functions 
+struct GameData* initiateGame(struct DataStructures* dataStructures); 
 int botTakesTurn(struct DataStructures* dataStructures); 
 int userTakesTurn(char* userInput, struct DataStructures* dataStructures); 
 int resetWordSet(struct DataStructures* dataStructures); 
