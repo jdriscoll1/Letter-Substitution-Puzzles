@@ -30,7 +30,26 @@ void freeDataStructures(struct DataStructures* data){
 	free(data);
 }
 
- // Mid Game Moves
+ // FLWG functions
+
+// Starts game & returns starting word id 
+struct GameData* initiateGame(struct DataStructures* dataStructures){
+	// reset word set	
+	struct GameData* gameData = malloc(sizeof(struct GameData)); 
+	gameData->currWordId = ChooseStart(dataStructures->I2W);  
+	gameData->difficulty = 0; 
+	gameData->numPlayers = 2; 
+	reset_WordSet(dataStructures->wordSet); 
+	return gameData; 
+	
+	
+}
+
+
+void endGame(struct GameData* gameData){
+	free(gameData); 
+}
+
 int botTakesTurn(struct DataStructures* data){
 	return 0; 
 }
