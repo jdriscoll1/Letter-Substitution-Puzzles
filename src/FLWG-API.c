@@ -45,6 +45,9 @@ struct GameData* initiateGame(struct DataStructures* dataStructures){
 	
 }
 
+int getCurrWord(struct GameData* gameData, struct DataStructures* dataStructures){
+	 return gameData->currWordId; 
+}
 
 void endGame(struct GameData* gameData){
 	free(gameData); 
