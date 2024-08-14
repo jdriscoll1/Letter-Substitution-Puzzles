@@ -36,7 +36,7 @@ struct GameData {
 	int currWordId; 
 	int numPlayers; 
 	int difficulty; 
-}
+};
 
 // Creating and destroying data structures
 struct DataStructures* initDataStructures(int fd); 
