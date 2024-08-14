@@ -11,7 +11,7 @@ Purpose: A library to encapsulate & organize the code into an API
 #include <math.h>
 
 #include "FLWG-API.h"
-#include "flwg/includes/FLWGGame.h"
+#include "flwp/includes/GameFunctions.h"
 // Creating and destroying data structures
 struct DataStructures* initDataStructures(int fd){
 	struct DataStructures* data = malloc(sizeof(struct DataStructures));  
