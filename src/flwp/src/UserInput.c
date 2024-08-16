@@ -79,7 +79,6 @@ int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** Word
 	//First, find prev word 
 	char* prev = Convert_IntToWord(prevWord, IntToWord_HashMap);
 
-	
 	int i = 0;
 	int equalLetters = 0;  
 	//for(i = 0; i < strlen(currWord)+1; i++){
@@ -87,18 +86,18 @@ int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** Word
 	while(terminate == 0){
 		terminate = (*(currWord + i) == '\0') ? 1 : 0;
 		if(i > numLetters){
-			printf("Word is too long\n"); 
-			return 3; 
+			// WORD IS TOO LONG
+			return TOO_LONG; 
 
 		}
 		else if(i < numLetters && *(currWord + i) == '\0'){
 			printf("Word is too short\n");
-			return 2; 
+			return TOO_SHORT; 
 		
 		}
 		else if(equalLetters < numLetters - 1 && *(currWord + i) == '\0'){
 			printf("Not enough letters in common\n");
-			return 4;
+			return NOT_ENOUGH_LETTERS_IN_COMMON;
 		  
 		}
 
@@ -112,7 +111,7 @@ int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** Word
 	
 	if(equalLetters == numLetters + 1){
 		printf("Word is Equal to Prev\n");
-		return 5;
+		return WORD_USED;
 	}
 	//First: Make sure it is a real word
 	//Go into the hash map
@@ -121,16 +120,16 @@ int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** Word
  
 	if(inDictionary(id) == 0){
 		printf("Word does not exist\n"); 
-		return 6; 
+		return WORD_DOES_NOT_EXIST; 
 	}
 	
 	//Originally, I was going to check if the word has already been used, but now I am making the concious decision to say that
 	//reusing the word is a valid move, because it can show them that they made need to remove words
 
 	else if(equalLetters == numLetters){ 
-		return 1; 
+		return VALID; 
 	}
-	return 7; 
+	return UNKNOWN_ERROR; 
 	
 }
 
