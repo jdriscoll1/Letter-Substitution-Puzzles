@@ -72,6 +72,7 @@ int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructu
 	} 
 	// Add word to word set 
 	markUsed_WordSet(wordId, data->wordSet); 
+        gameData->currWordId = wordId;
 	return 0; 
 }
 int resetWordSet(struct DataStructures* data){
