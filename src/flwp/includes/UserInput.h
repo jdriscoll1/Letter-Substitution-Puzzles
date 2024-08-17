@@ -28,7 +28,7 @@ enum ERROR_CODE{
                 WORD_DOES_NOT_EXIST = 6,
                 UNKNOWN_ERROR = 7
 };
-/*This method checks the input to make sure that it is valid
+/*This method checks gitthe input to make sure that it is valid
 @param prevWord --> The previous word, the word it is checking the current characters against
 @param currWord --> The word who is being judged
 @return --> 

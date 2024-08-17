@@ -13,6 +13,7 @@ Purpose: A library to encapsulate & organize the code into an API
 #include "FLWG-API.h"
 #include "flwp/includes/GameFunctions.h"
 #include "flwp/includes/UserInput.h"
+#include "flwg/includes/FLWGGame.h"
 // Creating and destroying data structures
 struct DataStructures* initDataStructures(int fd){
 	struct DataStructures* data = malloc(sizeof(struct DataStructures));  
@@ -35,11 +36,12 @@ void freeDataStructures(struct DataStructures* data){
 struct GameData* initiateGame(struct DataStructures* dataStructures){
 	// reset word set	
 	struct GameData* gameData = malloc(sizeof(struct GameData)); 
-	gameData->currWordId = ChooseStart(dataStructures->I2W);  
-	gameData->difficulty = 0; 
+	gameData->currWordId = ChooseStart(dataStructures->I2W);
+	gameData->difficulty = 0;
 	gameData->numPlayers = 2; 
-	reset_WordSet(dataStructures->wordSet); 
-	return gameData; 
+	reset_WordSet(dataStructures->wordSet);
+    markUsed_WordSet(gameData->currWordId, dataStructures->wordSet);
+    return gameData;
 	
 	
 }
@@ -54,9 +56,14 @@ void endGame(struct GameData* gameData){
 	free(gameData); 
 }
 
-int botTakesTurn(struct DataStructures* data){
-	return 0; 
+int botTakesTurn(struct GameData* gameData, struct DataStructures* data){
+	int result = botPly(gameData->currWordId, 1, data->I2W, data->wordSet);
+    if (result >= 0) {
+        gameData->currWordId = result;
+    }
+    return result;
 }
+
 int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructures* data){
 	
 	// Check if the word is valid
@@ -67,7 +74,7 @@ int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructu
 
 	int wordId = convertWordToInt(userInput, data); 
 	// Check word is not in word set 
-	if(checkIfUsed_WordSet(gameData->currWordId, data->wordSet)){
+	if(checkIfUsed_WordSet(wordId, data->wordSet)){
 		return WORD_USED; 
 	} 
 	// Add word to word set 
