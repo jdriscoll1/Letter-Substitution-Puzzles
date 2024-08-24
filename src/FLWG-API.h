@@ -49,7 +49,7 @@ char* getCurrWord(struct GameData* gameData, struct DataStructures* dataStructur
 void endGame(struct GameData* gameData); 
 int botTakesTurn(struct GameData* gameData, struct DataStructures* data);
 int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructures* dataStructures); 
-int resetWordSet(struct DataStructures* dataStructures); 
+void resetWordSet(struct DataStructures* dataStructures);
 int startGameReturnFirstWord(struct DataStructures *dataStructures);
 
 // Test Functionality  

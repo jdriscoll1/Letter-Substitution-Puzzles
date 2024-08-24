@@ -82,8 +82,8 @@ int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructu
         gameData->currWordId = wordId;
 	return 0; 
 }
-int resetWordSet(struct DataStructures* data){
-	return 0; 
+void resetWordSet(struct DataStructures* data){
+	reset_WordSet(data->wordSet);
 }
 int startGameReturnFirstWord(struct DataStructures *data){
 
