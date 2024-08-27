@@ -1,8 +1,8 @@
 main:
 	make flwo
 
-flwo: ./src/FLWP-2.c ./src/algs/src/*.c ./src/flwp/src/*.c ./src/flwg/src/*.c ./src/structs/src/*.c ./src/structs/includes/*.h ./src/flwg/includes/*.h ./src/flwg/includes/*.h ./src/algs/includes/*.h ./src/*.h
-	gcc -g -o flwo ./src/*.c ./src/algs/src/*.c ./src/flwp/src/*.c ./src/flwg/src/*.c ./src/structs/src/*.c -lm
+flwo: ./src/*.c ./src/*.h ./src/*/src/*.c ./src/*/includes/*.h ./src/flwg/src/*.c
+	gcc -g -o flwo ./src/*.c ./src/*/src/*.c -lm
 
 
 clean:

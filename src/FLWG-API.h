@@ -28,8 +28,6 @@ struct DataStructures {
 	struct wordDataArray* I2W; 
 	// The Word Set
 	struct WordSet* wordSet; 
-	// Current word
-	int currWordId; 
 }; 
 
 struct GameData {
