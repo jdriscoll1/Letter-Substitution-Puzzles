@@ -4,6 +4,7 @@ extern int numLetters;
 #define seenFLWC
 
 #include "../../FLWG-API.h"
+#include "../../flwp/includes/GameFuncions.h"
 // Choose the goal word
 // struct map* IntToWord_HashMap
 // int distance
@@ -25,12 +26,16 @@ int botPly_FLWC(int word, int depth, struct DataStructures* data){
 
 // A method that initalizes the game  
 void FLWC_Test(){
+	int fd = open("../../docs/4a.txt", "r"); 
 	// First Generate the data structures
+	struct DataStructures* data = initDataStructures(fd); 
 	// While the game has not ended
+	int currWord = ChooseStartWord(data->I2W); 
 		// Allow user to go 
+		userTakesTurn(); 
 		// Allow bot to go 
 	// Free the data structures
-
+	close(fd)
 }
 
 #endif
