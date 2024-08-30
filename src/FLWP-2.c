@@ -15,7 +15,7 @@ int numLetters = 4;
 
 #include "./FLWG-API.h"
 
-#include "./algs/includes/Minimax.h"
+#include "./algs/includes/Minimax-2.h"
 #include "./algs/includes/MinimaxTests.h"
 #include "./algs/includes/BreadthFirstSearch.h"
 #include "./algs/includes/MaxN.h"
@@ -44,15 +44,19 @@ int main(){
 	// Initialize the Data Sets 
 	int fd = open("./docs/4a.txt", O_RDONLY); 
 	struct DataStructures* data = initDataStructures(fd); 
-        printf("%d", convertWordToInt("pies", data));
-	freeDataStructures(data); 
-	close(fd);
+	// Choose the start word	
+	//int w  = ChooseStart(data->I2W);
+	// run minimax
+	//struct score* s = minimax(s, 7, 7, 1, ); 	
+	//printScore(s); 
+	//freeDataStructures(data); 
+	//close(fd);
 	// Free the Data Sets 	
 	//fourletterwordgame_example(); 
 
 }
 
-
+/*
 void fourletterwordgame_example(){
 
 	srand(time(0));
@@ -125,7 +129,7 @@ void testMCTS(){
 	struct WordSet* wordSet = init_WordSet(IntToWord_HashMap->numWords);
 	
 	Play_FLWP(WordToInt_HashMap, IntToWord_HashMap, wordSet);
-	/***************INITIALIZATION COMPLETE*******************/
+	**************INITIALIZATION COMPLETE******************
 	
 	//This is the starting word
 	//int rootID = 2000; 
@@ -135,7 +139,7 @@ void testMCTS(){
 
 	//Simulates mcts
 
-	/*for(run = 0; run < 1; run++){
+	for(run = 0; run < 1; run++){
 		//Set the root ID to found 
 		markUsed_WordSet(rootID, wordSet);
 
@@ -151,7 +155,7 @@ void testMCTS(){
 			printf("\n");
         }
 		//printf("\nCorrect Result: %d", y);
-	}*/
+	}
 		
 		
 		
@@ -160,14 +164,14 @@ void testMCTS(){
 
 	//reset_WordSet(wordSet);
 
-	/*Obtain the correct answer to be compared w/ the mcts results*/
+	//Obtain the correct answer to be compared w/ the mcts results
 	//int y = botPly(rootID, 15, IntToWord_HashMap, wordSet, minimax);
 	
 	//outputs the correct results
 	//printf("\nCorrect Result: %d", y);
 	
 
-	/***************FREEING BEGINS*********************/
+	//FREEING BEGINS
 	free_WordSet(wordSet); 
 	
 	//Frees the hash maps
@@ -275,9 +279,10 @@ void initializeStructures(){
 	struct WordSet *wordSet = init_WordSet(IntToWord_HashMap->numWords);
 	
 	
-	/**********INSERT CODE HERE*********************/
+	*********INSERT CODE HERE*******************
 	
 	free_WordSet(wordSet); 
 	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
 
 }
+*/
