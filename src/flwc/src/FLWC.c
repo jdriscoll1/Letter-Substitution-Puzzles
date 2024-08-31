@@ -28,7 +28,7 @@ int botPly_FLWC(int word, int depth, struct DataStructures* data){
 } 
 
 // A method that initalizes the game  
-void FLWC_Test(){
+void FLWC(){
 	int fd = open("../../docs/maxn/a.txt", 'r'); 
 	// First Generate the data structures
 	struct DataStructures* data = initDataStructures(fd); 
@@ -38,7 +38,8 @@ void FLWC_Test(){
 	struct score b = createScore(-1, 100, 1, 100); 
 	int d = 1; 
 	struct score s = minimax2(0, d, d, 1, a, b, data); 
-		// Allow user to go 
+	printScore(s); 
+	// Allow user to go 
 	freeDataStructures(data); 
 	// Allow bot to go 
 	// Free the data structures

@@ -30,6 +30,7 @@ int numLetters = 4;
 #include "./flwp/includes/PathfinderGame.h"
 
 #include "./flwg/includes/FLWGGame.h"
+#include "./flwc/includes/FLWC.h"
 #include "./flwg/includes/MultiplayerFLWG.h"
 
 void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap); 
@@ -41,19 +42,7 @@ void initializeStructures();
 void fourletterwordgame_example(); 
 
 int main(){
-	// Initialize the Data Sets 
-	int fd = open("./docs/4a.txt", O_RDONLY); 
-	struct DataStructures* data = initDataStructures(fd); 
-	// Choose the start word	
-	//int w  = ChooseStart(data->I2W);
-	// run minimax
-	//struct score* s = minimax(s, 7, 7, 1, ); 	
-	//printScore(s); 
-	//freeDataStructures(data); 
-	//close(fd);
-	// Free the Data Sets 	
-	//fourletterwordgame_example(); 
-
+	FLWC(); 
 }
 
 /*
