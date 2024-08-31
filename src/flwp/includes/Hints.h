@@ -13,7 +13,7 @@
 #include "../../structs/includes/HashMap.h"
 #include "../../structs/includes/WordSet.h"
 
-
+#include <stdint.h>
 typedef int bool; 
 #define true 1
 #define false 0 
@@ -52,16 +52,16 @@ struct HintComponents* init_HintComponents();
 /*Hint 1: Reveals the minimum number of connections
 @param gc --> The Game Components
 @return --> Returns what it describes to the user*/
-char* hint1(unsigned long long gcLong);
+char* hint1(uintptr_t gcLong);
 /*Hint 2: Offers the user a word options from their current locations
 @param gc --> The number of game components
 @param HashMap --> How the game finds the connections
 @return --> Returns what it describes to the user*/ 
-char* hint2(unsigned long long gcLong, struct wordDataArray* IntToWord_HashMap); 
+char* hint2(uintptr_t gcLong, struct wordDataArray* IntToWord_HashMap); 
 /*Hint 3: Offers the user a letter that is used be from the first word to the last word
 @param gc --> The current game componenents
 @param HashMap --> How the user figures out a letter*/
-char* hint3(unsigned long long gcLong,  struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
+char* hint3(uintptr_t gcLong,  struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 
 /*This initializes a new Hint 3 Structure
 @param hc --> The hint components
@@ -89,7 +89,7 @@ void Convert_TreeStorageNodeArrayList_HintRestrictions(struct arrayList* aList, 
 @return --> Returns the connections as an array as well as the size*/
 struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(int start, int goal, struct wordDataArray* IntToWord_HashMap, struct hint3Struct *hc, bool* HashSet, struct WordSet *wordSet); 
 
-void free_HintComponents(unsigned long long hcLong, struct wordDataArray* IntToWord_HashMap);
+void free_HintComponents(uintptr_t hcLong, struct wordDataArray* IntToWord_HashMap);
 
 /*Gets the number of digits
 @param num --> The number whose digits are being put in question

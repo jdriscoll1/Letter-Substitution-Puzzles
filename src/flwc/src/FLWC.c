@@ -7,6 +7,7 @@ extern int numLetters;
 #include <unistd.h>
 #include "../../FLWG-API.h"
 #include "../../flwp/includes/GameFunctions.h"
+#include "../../algs/includes/Minimax-2.h"
 // Choose the goal word
 // struct map* IntToWord_HashMap
 // int distance
@@ -28,14 +29,18 @@ int botPly_FLWC(int word, int depth, struct DataStructures* data){
 
 // A method that initalizes the game  
 void FLWC_Test(){
-	int fd = open("../../docs/4a.txt", 'r'); 
+	int fd = open("../../docs/maxn/a.txt", 'r'); 
 	// First Generate the data structures
 	struct DataStructures* data = initDataStructures(fd); 
 	// While the game has not ended
-	int currWord = ChooseStart(data->I2W); 
+	int w = 0; //ChooseStart(data->I2W); 
+	struct score a = createScore(-1, -100, 0, 100); 
+	struct score b = createScore(-1, 100, 1, 100); 
+	int d = 1; 
+	struct score s = minimax2(0, d, d, 1, a, b, data); 
 		// Allow user to go 
-		//userTakesTurn(); 
-		// Allow bot to go 
+	freeDataStructures(data); 
+	// Allow bot to go 
 	// Free the data structures
 	close(fd); 
 }

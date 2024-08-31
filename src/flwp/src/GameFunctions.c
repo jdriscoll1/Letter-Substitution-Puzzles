@@ -14,7 +14,7 @@
 #include "../../structs/includes/HashFunctions.h"
 
 
-
+#include <stdint.h>
 
 extern int numLetters; 
 
@@ -252,18 +252,18 @@ int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct Dumm
 				Help(Convert_IntToWord(gc->goal, IntToWord_HashMap)); 
 			}
 			else if(strcmp(input, "1") == 0){
-				char* output = hint1((unsigned long long)gc); 
+				char* output = hint1((uintptr_t)gc); 
 				printf("%s\n", output);
 				free(output);  
 				
 			}
 			else if(strcmp(input, "2") == 0){
-				char* output = hint2((unsigned long long)gc, IntToWord_HashMap); 
+				char* output = hint2((uintptr_t)gc, IntToWord_HashMap); 
 				printf("%s\n", output);
 				free(output);  
 			}
 			else if(strcmp(input, "3") == 0){
-				char* output = hint3((unsigned long long)gc, IntToWord_HashMap, wordSet); 
+				char* output = hint3((uintptr_t)gc, IntToWord_HashMap, wordSet); 
 				printf("%s\n", output);
 				free(output);  
 			}
