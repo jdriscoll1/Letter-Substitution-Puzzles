@@ -14,6 +14,6 @@ int getGoalWord(int word, int distance, struct DataStructures* data);
 int botPly_FLWC(int word, int depth, struct DataStructures* data);  
 
 // A method that initalizes the game  
-void FLWC(); 
+void FLWC(struct DataStructures* data); 
 
 #endif

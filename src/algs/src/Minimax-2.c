@@ -42,18 +42,18 @@ To Do So, I will make use of the minimax algorithm*/
 
 // it needs the current word
 struct score flwg_score(int id, int remainingDepth, int isMaximizingPlayer, struct DataStructures* data){
+	printf("Start FLWG Score"); 
 	// Check to see if there are any connections, if there are return null, otherwise return a score 		
 	struct intList* conn = getConnections(id, data->I2W); 
 	conn = conn->next; 
 	while(conn != NULL){
 		// if there is a single word that is not used 
-		if(checkIfUsed_WordSet(conn->data, data->wordSet) != 0){
+		if(checkIfUsed_WordSet(conn->data, data->wordSet) == 0){
 			return createScore(-1, 0, 0, 0); 	
 		}
 		conn = conn->next; 	
 	}
 	return (isMaximizingPlayer) ? createScore(id, 0, 0, remainingDepth) : createScore(id, 1, 1, remainingDepth);  
-
 
 }
 
@@ -67,12 +67,13 @@ struct score flwc_score(int id, int goalId, int currDepth, struct DataStructures
 	struct intList* conn = getConnections(id, data->I2W); 
 	conn = conn->next; 
 	while(conn != NULL){
-		// if there is a single word that is not used 
-		if(checkIfUsed_WordSet(conn->data, data->wordSet) != 0){
+		// if there is a single connection that has not been explored, return -1
+		if(!checkIfUsed_WordSet(conn->data, data->wordSet)){
 			return createScore(-1, 0, 0, 0); 	
 		}
 		conn = conn->next; 	
 	}
+	// if it is a leaf node, return the id 
 	return createScore(id, 0, 0, currDepth);  
 
 
@@ -117,19 +118,24 @@ int compareScores(struct score a, struct score b, int isMaximizingPlayer){
 }
 
 struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizingPlayer, struct score alpha, struct score beta, struct DataStructures* data){
+	printf("Starting Minimax 2\n"); 
+ 
+	
+	// Run Score Function 
+	struct score leafScore = flwg_score(id, remainingDepth, isMaximizingPlayer, data); 
+	printScore(leafScore); 
 
+	// if there are no connections left
+	if(leafScore.wordId != -1){
+		return leafScore; 
+	}
 	// if it's reached its depth limit, it should return a score
 	if(remainingDepth == 0){
 		// Returns a score stating it is uncertain whether it is good or bad 
 		return createScore(id, .5, .5, 0);  
 	}
-
-	// Run Score Function 
-	struct score leafScore = flwg_score(id, remainingDepth, isMaximizingPlayer, data); 
-
-	if(leafScore.wordId != -1){
-		return leafScore; 
-	}
+printf("Word Id: %d\n", id); 
+	printScore(leafScore); 	
 	// Acquires the front of the list of adjacencies
 	struct intList* conn = getConnections(id, data->I2W); 
 	
@@ -150,9 +156,10 @@ struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizi
 	while(conn->next != NULL){
 
 		conn = conn->next; 
+		printf("Next Connection: %d\n", conn->data); 
 		
 		// Verify that the word has not already been found in the hash set
-		if(checkIfUsed_WordSet(conn->data, data->wordSet) == 0){
+		if(checkIfUsed_WordSet(conn->data, data->wordSet) != 0){
 			continue; 	
 		} 			
 
@@ -160,7 +167,11 @@ struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizi
 		// Rerun the minimax algorithm with the current child as the node being scored
 		struct score candidate = minimax2(conn->data, remainingDepth - 1, startDepth, (isMaximizingPlayer == 1) ? 0 : 1, alpha, beta, data); 
 		// Compares the best score to the word being analyzed, if the maximum is better, than it chooses it
+		printf("Comparing the following Scores: \n"); 
+		printScore(candidate); 
+		printScore(maxScore); 
 		int winnerId = compareScores(candidate, maxScore, isMaximizingPlayer); 
+		printf("Winner: %d\n\n", winnerId); 
 		if(winnerId == candidate.wordId){
 			maxScore = candidate; 
 		}

@@ -42,7 +42,9 @@ void initializeStructures();
 void fourletterwordgame_example(); 
 
 int main(){
-	FLWC(); 
+	int fd = open("docs/maxn/a.txt", O_RDONLY);
+	struct DataStructures* data = initDataStructures(fd); 
+	FLWC(data); 
 }
 
 /*
