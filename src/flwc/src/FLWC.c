@@ -26,10 +26,11 @@ int botPly_FLWC(int word, int depth, struct DataStructures* data){
 	// Create alpha & beta
 	struct score a = createScore(-1, -100, 0, 100); 
 	struct score b = createScore(-1, 100, 1, 100); 
-	struct score score = minimax2(0, depth, depth, 1, a, b, data); 
-	if(score.wordId != -1){
-		markUsed_WordSet(score.wordId, data->wordSet); 
-	}
+	struct score score = minimax2(0, depth, depth, 1, a, b, data);
+
+	//if(score.wordId != -1){
+        //		markUsed_WordSet(score.wordId, data->wordSet); 
+	//}
 	// Then run minimax using that score 
 	return score.wordId; 
 } 
@@ -37,28 +38,31 @@ int botPly_FLWC(int word, int depth, struct DataStructures* data){
 // A method that initalizes the game  
 void FLWC(struct DataStructures* data){
 	// Choose the word that starts the game	
-	int word = ChooseStart(data->I2W); 
+	int word = 0;//ChooseStart(data->I2W); 
+	printf("Starting Word: aaaa"); 
 	markUsed_WordSet(word, data->wordSet); 
 	int winner = -1; 
 	int depth = 8; 
 	int rounds = 0; 
 	int whoseTurn = 0; 
-	while (word >= 0){
+	while (winner == -1){
 		if(whoseTurn){
 			word = botPly_FLWC(word, depth, data); 
 		}
 		else{
-			word = botPly(word, depth, data->I2W, data->wordSet); 
+			word = userPly(word, data->W2I, data->I2W, data->wordSet); 
 		}
 		whoseTurn = (whoseTurn + 1) % 2; 
 		if(word == -1){
 			winner = whoseTurn; 
 		}
+		printf("Chosen Word: %s\n", Convert_IntToWord(word, data->I2W)); 
 		rounds++; 
 	}
 	if(winner == 0){
 		printf("New Minimax Wins");
 	}	
+	
 	else{
 		printf("Old Minimax Wins");
 	}

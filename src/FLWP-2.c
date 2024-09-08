@@ -42,9 +42,45 @@ void initializeStructures();
 void fourletterwordgame_example(); 
 
 int main(){
-	int fd = open("docs/maxn/a.txt", O_RDONLY);
+	int fd = open("docs/maxn/b.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd); 
-	FLWC(data); 
+	printf("Everything is initialized!"); 
+	int word = 0;//ChooseStart(data->I2W); 
+	printf("Starting Word: aaaa"); 
+	markUsed_WordSet(word, data->wordSet); 
+	int winner = -1; 
+	int depth = 8; 
+	int rounds = 0; 
+	int whoseTurn = 0; 
+	while (winner == -1){
+		
+		if(whoseTurn){
+			word = botPly_FLWC(word, depth, data); 
+			printf("The bot has chosen %d", word);
+		}
+		else{
+			word = userPly(word, data->W2I, data->I2W, data->wordSet); 
+			printf("You have chosen %d", word);
+		}
+		whoseTurn = (whoseTurn + 1) % 2; 
+		if(word == -1){
+			winner = whoseTurn; 
+		}
+		rounds++; 
+	}
+	printf("The game is over now!");
+	if(winner == 0){
+		printf("New Minimax Wins");
+		
+	}	
+	else{
+		printf("Old Minimax Wins");
+	}
+	printf("%c is the winner", (winner == 0)  ? 'A': 'B'); 
+	// Allow user to go 
+	// Allow bot to go 
+	// Free the data structures
+	
 }
 
 /*

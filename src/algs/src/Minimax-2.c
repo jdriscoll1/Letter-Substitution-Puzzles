@@ -41,15 +41,17 @@ To Do So, I will make use of the minimax algorithm*/
 */
 
 // it needs the current word
-struct score flwg_score(int id, int remainingDepth, int isMaximizingPlayer, struct DataStructures* data){
+struct score* flwg_score(int id, int remainingDepth, int isMaximizingPlayer, struct DataStructures* data){
 	printf("Start FLWG Score"); 
 	// Check to see if there are any connections, if there are return null, otherwise return a score 		
+
 	struct intList* conn = getConnections(id, data->I2W); 
 	conn = conn->next; 
 	while(conn != NULL){
+
 		// if there is a single word that is not used 
-		if(checkIfUsed_WordSet(conn->data, data->wordSet) == 0){
-			return createScore(-1, 0, 0, 0); 	
+		if(! checkIfUsed_WordSet(conn->data, data->wordSet)){
+			return createScore(-1, 0, 0, 0); 
 		}
 		conn = conn->next; 	
 	}
