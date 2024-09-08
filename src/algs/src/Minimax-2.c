@@ -41,7 +41,7 @@ To Do So, I will make use of the minimax algorithm*/
 */
 
 // it needs the current word
-struct score* flwg_score(int id, int remainingDepth, int isMaximizingPlayer, struct DataStructures* data){
+struct score flwg_score(int id, int remainingDepth, int isMaximizingPlayer, struct DataStructures* data){
 	printf("Start FLWG Score"); 
 	// Check to see if there are any connections, if there are return null, otherwise return a score 		
 
