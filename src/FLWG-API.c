@@ -78,9 +78,21 @@ int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructu
 int resetWordSet(struct DataStructures* data){
 	return 0; 
 }
-int startGameReturnFirstWord(struct DataStructures *data){
 
+
+struct GameComponents* initiateFLWP(int minConnections, struct DataStructures* dataStructures){
+
+	return InitializeGameComponents(dataStructures->I2W, minConnections, dataStructures->wordSet); 
 }
+
+void ResetFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures){
+
+	ResetGameComponents(gameComponents, dataStructures->I2W);
+}
+int userEntersWord_FLWP(char* userInput, struct GameComponents *gameComponents, struct DataStructures* dataStructures){
+	return 0; 	
+}
+
 
 // Test Functionality  
 

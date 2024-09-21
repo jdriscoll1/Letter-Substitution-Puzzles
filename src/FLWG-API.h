@@ -37,12 +37,12 @@ struct GameData {
 	int goalWord; 
 };
 
-// Creating and destroying data structures
+
+// Shared behavior
 struct DataStructures* initDataStructures(int fd); 
 
+// flwg behavior
 void freeDataStructures(struct DataStructures* dataStructures); 
-
-// Game functions 
 struct GameData* initiateGame(struct DataStructures* dataStructures); 
 char* getCurrWord(struct GameData* gameData, struct DataStructures* dataStructures); 
 void endGame(struct GameData* gameData); 
@@ -51,10 +51,13 @@ int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructu
 int resetWordSet(struct DataStructures* dataStructures); 
 int startGameReturnFirstWord(struct DataStructures *dataStructures);
 
+// flwp behavior
+struct GameComponents* initiateFLWP(int minConnections, struct DataStructures* dataStructures); 
+void ResetFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures); 
+int userEntersWord_FLWP(char* userInput, struct GameComponents *gameComponents, struct DataStructures* dataStructures); 
+
 // Test Functionality  
-
 char* convertIntToWord(int wordId, struct DataStructures* dataStructures); 
-
 int convertWordToInt(char* word, struct DataStructures* dataStructures); 
 
 #endif 
