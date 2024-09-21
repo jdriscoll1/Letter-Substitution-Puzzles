@@ -12,6 +12,7 @@ int numLetters = 4;
 #include <time.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <assert.h>
 
 #include "./FLWG-API.h"
 
@@ -28,6 +29,7 @@ int numLetters = 4;
 
 
 #include "./flwp/includes/PathfinderGame.h"
+#include "./flwp/includes/GameFunctions.h"
 
 #include "./flwg/includes/FLWGGame.h"
 #include "./flwc/includes/FLWC.h"
@@ -42,44 +44,53 @@ void initializeStructures();
 void fourletterwordgame_example(); 
 
 int main(){
-	int fd = open("docs/maxn/b.txt", O_RDONLY);
+	srand(time(0)); 
+	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd); 
-	printf("Everything is initialized!"); 
-	int word = 0;//ChooseStart(data->I2W); 
-	printf("Starting Word: aaaa"); 
-	markUsed_WordSet(word, data->wordSet); 
-	int winner = -1; 
-	int depth = 8; 
-	int rounds = 0; 
-	int whoseTurn = 0; 
-	while (winner == -1){
+        int num_games = 800;
+        int bot_wins = 0;
+        int random_wins = 0;
+	for (int i = 0; i < num_games; i++){
+                if (i % 100 == 0) {
+                  printf("%d/%d games complete\n", i, num_games);
+                }
+		int word = ChooseStart(data->I2W); 
+                //int word = 0;
+		markUsed_WordSet(word, data->wordSet); 
+		int winner = -1; 
+		int depth = 8; 
+		int rounds = 0; 
+		int whoseTurn = 1; 
+		//printf("[START GAME: %s]\n\n", Convert_IntToWord(word, data->I2W));
 		
-		if(whoseTurn){
-			word = botPly_FLWC(word, depth, data); 
-			printf("The bot has chosen %d", word);
+		//printf("\n-----GAME BEGINS: %s-----\n\n", Convert_IntToWord(word, data->I2W));
+		while (winner == -1){
+                        assert(word != -1);
+			
+			if(whoseTurn){
+				word = botPly_FLWC(word, depth, data); 
+				//printf("Minimax Chooses: %s\n", (word == -1) ? "LOSE CONDITION" : Convert_IntToWord(word, data->I2W));
+			}
+			else{
+				word = botPly_Random(word, data); 
+				//printf("Random Chooses: %s\n", (word == -1) ? "LOSE CONDITION" : Convert_IntToWord(word, data->I2W));
+			}
+			whoseTurn = (whoseTurn + 1) % 2; 
+			if(word == -1){
+				winner = whoseTurn; 
+			}
+			rounds++; 
 		}
-		else{
-			word = userPly(word, data->W2I, data->I2W, data->wordSet); 
-			printf("You have chosen %d", word);
-		}
-		whoseTurn = (whoseTurn + 1) % 2; 
-		if(word == -1){
-			winner = whoseTurn; 
-		}
-		rounds++; 
+                if (winner == 0) {
+                  random_wins++;
+                } else {
+                  bot_wins++;
+                }
+		reset_WordSet(data->wordSet); 
 	}
-	printf("The game is over now!");
-	if(winner == 0){
-		printf("New Minimax Wins");
-		
-	}	
-	else{
-		printf("Old Minimax Wins");
-	}
-	printf("%c is the winner", (winner == 0)  ? 'A': 'B'); 
-	// Allow user to go 
-	// Allow bot to go 
-	// Free the data structures
+
+	//printf("%s Wins\n\n", (winner != 0) ? "Minimax": "Random");
+        printf("Bot wins: %d Random wins: %d\n", bot_wins, random_wins);
 	
 }
 

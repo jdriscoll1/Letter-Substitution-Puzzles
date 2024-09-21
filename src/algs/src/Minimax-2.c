@@ -42,7 +42,6 @@ To Do So, I will make use of the minimax algorithm*/
 
 // it needs the current word
 struct score flwg_score(int id, int remainingDepth, int isMaximizingPlayer, struct DataStructures* data){
-	printf("Start FLWG Score"); 
 	// Check to see if there are any connections, if there are return null, otherwise return a score 		
 
 	struct intList* conn = getConnections(id, data->I2W); 
@@ -55,8 +54,43 @@ struct score flwg_score(int id, int remainingDepth, int isMaximizingPlayer, stru
 		}
 		conn = conn->next; 	
 	}
+	// if all the words are used, the game is over
 	return (isMaximizingPlayer) ? createScore(id, 0, 0, remainingDepth) : createScore(id, 1, 1, remainingDepth);  
 
+}
+
+struct score random_score(int id, struct DataStructures* data){
+	// first figure out the number of words to which can be connected 	
+	int n = 0; 
+	struct intList* conn = getConnections(id, data->I2W); 
+	conn = conn->next; 
+
+	while(conn != NULL){
+
+		// if there is a single word that is not used 
+		if(! checkIfUsed_WordSet(conn->data, data->wordSet)){
+			n++; 
+		}
+		conn = conn->next; 	
+	}
+	if(n == 0){
+		return createScore(-1, 0, 0, 0); 
+	}
+	// choose randomly between [0, numConnectiosn]
+	// Allow it to be inclusive of N 
+	int c = rand() % n; 	
+	int i = 0; 
+	conn = getConnections(id, data->I2W); 
+
+	while (i < c){
+		if(! checkIfUsed_WordSet(conn->data, data->wordSet)){
+			i++; 
+		}
+
+		conn = conn->next; 
+	}
+	
+	return createScore(conn->data, 0, 0, 0);  
 }
 
 // it needs the current word
@@ -77,11 +111,10 @@ struct score flwc_score(int id, int goalId, int currDepth, struct DataStructures
 	}
 	// if it is a leaf node, return the id 
 	return createScore(id, 0, 0, currDepth);  
-
-
 }
 
 int compareScores(struct score a, struct score b, int isMaximizingPlayer){
+
 	// We flip the scores to positive and negative based on whose pepersepective it is 
 	if(!isMaximizingPlayer){
 		a.score = 1-a.score; 
@@ -100,35 +133,39 @@ int compareScores(struct score a, struct score b, int isMaximizingPlayer){
 		// if it is a good score for whosever perspective it is 
 		if(a.score > .5){
 			// then we want to return whichever has the higher depth
-			return (a.depth < b.depth) ? a.wordId : b.wordId; 
+			return (a.depth > b.depth) ? a.wordId : b.wordId; 
 			
 		}
 	
 		return (a.depth > b.depth) ? b.wordId : a.wordId; 	
 	}
 	return a.wordId; 
-	/* potential optimization
-	if(gameData->gameType == FLWG){
-		return a->wordId; 
-	}
-	else{
-		return b->wordId; 
-	}*/
-
 
 
 }
 
-struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizingPlayer, struct score alpha, struct score beta, struct DataStructures* data){
-	printf("Starting Minimax 2\n"); 
- 
+struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizingPlayer, struct score alpha, struct score beta, struct DataStructures* data, enum ScoreFunction scoreFn){
+
+	int isRoot = (remainingDepth == startDepth); 
 	
 	// Run Score Function 
-	struct score leafScore = flwg_score(id, remainingDepth, isMaximizingPlayer, data); 
-	printScore(leafScore); 
+	struct score leafScore; 
+	switch(scoreFn){
+		case(FLWC_SCORE):
+			leafScore = flwg_score(id, remainingDepth, isMaximizingPlayer, data); 
+			break; 
+		
+		case(RANDOM_SCORE):
+			return random_score(id, data); 
+			break; 
+	}
 
 	// if there are no connections left
 	if(leafScore.wordId != -1){
+		if(isRoot){
+			return createScore(-1, 0, 0, 0); 
+			
+		}
 		return leafScore; 
 	}
 	// if it's reached its depth limit, it should return a score
@@ -136,8 +173,6 @@ struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizi
 		// Returns a score stating it is uncertain whether it is good or bad 
 		return createScore(id, .5, .5, 0);  
 	}
-printf("Word Id: %d\n", id); 
-	printScore(leafScore); 	
 	// Acquires the front of the list of adjacencies
 	struct intList* conn = getConnections(id, data->I2W); 
 	
@@ -146,7 +181,7 @@ printf("Word Id: %d\n", id);
 	markUsed_WordSet(id, data->wordSet); 
 	
 	// The initial worst score is going to be +/- infinity
-	struct score maxScore = (isMaximizingPlayer == 1) ? createScore(-1, -100, 1, 100) : createScore(-1, 100, 1, 100);  
+	struct score maxScore = (isMaximizingPlayer) ? createScore(-1, -100, 1, 100) : createScore(-1, 100, 1, 100);  
 	
 	// Number of connections a word has 
 	int numConnections = 0; 
@@ -156,9 +191,11 @@ printf("Word Id: %d\n", id);
 	
 	// Go through each child node and give it a score
 	while(conn->next != NULL){
+		
+		char* currWord = Convert_IntToWord(id, data->I2W); 
+		//printf("%s: maxScore = %f alpha = %f beta = %f maximizingPlayer = %d\n", currWord, maxScore.score, alpha.score, beta.score, isMaximizingPlayer);
 
 		conn = conn->next; 
-		printf("Next Connection: %d\n", conn->data); 
 		
 		// Verify that the word has not already been found in the hash set
 		if(checkIfUsed_WordSet(conn->data, data->wordSet) != 0){
@@ -167,13 +204,9 @@ printf("Word Id: %d\n", id);
 
 		numConnections++; 
 		// Rerun the minimax algorithm with the current child as the node being scored
-		struct score candidate = minimax2(conn->data, remainingDepth - 1, startDepth, (isMaximizingPlayer == 1) ? 0 : 1, alpha, beta, data); 
+		struct score candidate = minimax2(conn->data, remainingDepth - 1, startDepth, (isMaximizingPlayer) ? 0 : 1, alpha, beta, data, scoreFn); 
 		// Compares the best score to the word being analyzed, if the maximum is better, than it chooses it
-		printf("Comparing the following Scores: \n"); 
-		printScore(candidate); 
-		printScore(maxScore); 
 		int winnerId = compareScores(candidate, maxScore, isMaximizingPlayer); 
-		printf("Winner: %d\n\n", winnerId); 
 		if(winnerId == candidate.wordId){
 			maxScore = candidate; 
 		}
@@ -181,7 +214,8 @@ printf("Word Id: %d\n", id);
 		
 		
 		// Alpha-Beta Pruning Algorithm That Prevents Node From Exploring Further in nodes that are guarenteed losses
-		if(AlphaBetaPrune(&alpha, &beta, maxScore, isMaximizingPlayer) == 1){
+		if(AlphaBetaPrune(&alpha, &beta, maxScore, isMaximizingPlayer)){
+                        //printf("Prune!\n");
 			break;
 		}
 		
@@ -191,7 +225,7 @@ printf("Word Id: %d\n", id);
 	// Probably do something here regarding the chance variable right? 
 
 	// the root node acts mildly differently 	
-	if(remainingDepth != startDepth){
+	if(!isRoot){
 		maxScore.wordId = id; 
 		markUnused_WordSet(id, data->wordSet); 
 	}
@@ -215,15 +249,15 @@ int AlphaBetaPrune(struct score *a, struct score *b, struct score x, int isMaxim
 	// If we are the maximizing player
 	if(isMaximizingPlayer){
 		// Alpha = Max of Alpha & Score
-		*a = (compareScores(x, *a, isMaximizingPlayer) == x.wordId) ? x : *a; 
+		*a = (compareScores(x, *a, 1) == x.wordId) ? x : *a; 
 		// return x >= beta
-		return compareScores(x, *b, isMaximizingPlayer) == x.wordId; 
+		return compareScores(x, *b, 1) == x.wordId; 
 	}
 	
 	// beta gets set to minimum of beta and score
-	*b = (compareScores(x, *b, isMaximizingPlayer) == x.wordId) ? *b : x; 
+	*b = (compareScores(x, *b, 1) == x.wordId) ? *b : x; 
 	// return x <= alpha
-	return compareScores(x, *a, isMaximizingPlayer) == a->wordId; 	
+	return compareScores(x, *a, 1) == a->wordId; 	
 
 
 

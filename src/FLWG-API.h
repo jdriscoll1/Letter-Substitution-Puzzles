@@ -34,6 +34,7 @@ struct GameData {
 	int currWordId; 
 	int numPlayers; 
 	int difficulty; 
+	int goalWord; 
 };
 
 // Creating and destroying data structures
