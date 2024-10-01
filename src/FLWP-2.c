@@ -12,10 +12,11 @@ int numLetters = 4;
 #include <time.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <assert.h>
 
 #include "./FLWG-API.h"
 
-#include "./algs/includes/Minimax.h"
+#include "./algs/includes/Minimax-2.h"
 #include "./algs/includes/MinimaxTests.h"
 #include "./algs/includes/BreadthFirstSearch.h"
 #include "./algs/includes/MaxN.h"
@@ -28,8 +29,10 @@ int numLetters = 4;
 
 
 #include "./flwp/includes/PathfinderGame.h"
+#include "./flwp/includes/GameFunctions.h"
 
 #include "./flwg/includes/FLWGGame.h"
+#include "./flwc/includes/FLWC.h"
 #include "./flwg/includes/MultiplayerFLWG.h"
 
 void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap); 
@@ -41,18 +44,57 @@ void initializeStructures();
 void fourletterwordgame_example(); 
 
 int main(){
-	// Initialize the Data Sets 
-	int fd = open("./docs/4a.txt", O_RDONLY); 
+	srand(time(0)); 
+	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd); 
-        printf("%d", convertWordToInt("pies", data));
-	freeDataStructures(data); 
-	close(fd);
-	// Free the Data Sets 	
-	//fourletterwordgame_example(); 
+        int num_games = 800;
+        int bot_wins = 0;
+        int random_wins = 0;
+	for (int i = 0; i < num_games; i++){
+                if (i % 100 == 0) {
+                  printf("%d/%d games complete\n", i, num_games);
+                }
+		int word = ChooseStart(data->I2W); 
+                //int word = 0;
+		markUsed_WordSet(word, data->wordSet); 
+		int winner = -1; 
+		int depth = 8; 
+		int rounds = 0; 
+		int whoseTurn = 1; 
+		//printf("[START GAME: %s]\n\n", Convert_IntToWord(word, data->I2W));
+		
+		//printf("\n-----GAME BEGINS: %s-----\n\n", Convert_IntToWord(word, data->I2W));
+		while (winner == -1){
+                        assert(word != -1);
+			
+			if(whoseTurn){
+				word = botPly_FLWC(word, depth, data); 
+				//printf("Minimax Chooses: %s\n", (word == -1) ? "LOSE CONDITION" : Convert_IntToWord(word, data->I2W));
+			}
+			else{
+				word = botPly_Random(word, data); 
+				//printf("Random Chooses: %s\n", (word == -1) ? "LOSE CONDITION" : Convert_IntToWord(word, data->I2W));
+			}
+			whoseTurn = (whoseTurn + 1) % 2; 
+			if(word == -1){
+				winner = whoseTurn; 
+			}
+			rounds++; 
+		}
+                if (winner == 0) {
+                  random_wins++;
+                } else {
+                  bot_wins++;
+                }
+		reset_WordSet(data->wordSet); 
+	}
 
+	//printf("%s Wins\n\n", (winner != 0) ? "Minimax": "Random");
+        printf("Bot wins: %d Random wins: %d\n", bot_wins, random_wins);
+	
 }
 
-
+/*
 void fourletterwordgame_example(){
 
 	srand(time(0));
@@ -125,7 +167,7 @@ void testMCTS(){
 	struct WordSet* wordSet = init_WordSet(IntToWord_HashMap->numWords);
 	
 	Play_FLWP(WordToInt_HashMap, IntToWord_HashMap, wordSet);
-	/***************INITIALIZATION COMPLETE*******************/
+	**************INITIALIZATION COMPLETE******************
 	
 	//This is the starting word
 	//int rootID = 2000; 
@@ -135,7 +177,7 @@ void testMCTS(){
 
 	//Simulates mcts
 
-	/*for(run = 0; run < 1; run++){
+	for(run = 0; run < 1; run++){
 		//Set the root ID to found 
 		markUsed_WordSet(rootID, wordSet);
 
@@ -151,7 +193,7 @@ void testMCTS(){
 			printf("\n");
         }
 		//printf("\nCorrect Result: %d", y);
-	}*/
+	}
 		
 		
 		
@@ -160,14 +202,14 @@ void testMCTS(){
 
 	//reset_WordSet(wordSet);
 
-	/*Obtain the correct answer to be compared w/ the mcts results*/
+	//Obtain the correct answer to be compared w/ the mcts results
 	//int y = botPly(rootID, 15, IntToWord_HashMap, wordSet, minimax);
 	
 	//outputs the correct results
 	//printf("\nCorrect Result: %d", y);
 	
 
-	/***************FREEING BEGINS*********************/
+	//FREEING BEGINS
 	free_WordSet(wordSet); 
 	
 	//Frees the hash maps
@@ -275,9 +317,10 @@ void initializeStructures(){
 	struct WordSet *wordSet = init_WordSet(IntToWord_HashMap->numWords);
 	
 	
-	/**********INSERT CODE HERE*********************/
+	*********INSERT CODE HERE*******************
 	
 	free_WordSet(wordSet); 
 	Free_HashMaps(WordToInt_HashMap, IntToWord_HashMap);
 
 }
+*/

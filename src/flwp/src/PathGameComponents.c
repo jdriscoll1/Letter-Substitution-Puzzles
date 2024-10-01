@@ -229,7 +229,7 @@ int AddWord_Struct(struct GameComponents* gc, char* input, struct DummyHeadNode*
 void FreeGameComponents(struct GameComponents *gc, struct wordDataArray* IntToWord_HashMap){
 	Free_IntLL(gc->userConnections); 
 	
-	free_HintComponents((unsigned long long)gc->hc, IntToWord_HashMap); 
+	free_HintComponents((uintptr_t)gc->hc, IntToWord_HashMap); 
  	//Only want to free the goal, because the start is in the array of all the words
 	Free_GenericLinkedList(gc->storageHeader); 
 	free_ArrayList(gc->aList); 

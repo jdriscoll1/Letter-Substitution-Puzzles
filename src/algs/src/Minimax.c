@@ -44,10 +44,11 @@ To Do So, I will make use of the minimax algorithm*/
 */
 
 struct minimaxOutput* minimax(int id, int currDepth, int maxDepth, int isMaximizingPlayer, struct minimaxOutput alpha, struct minimaxOutput beta, struct wordDataArray* wordGraph, struct WordSet* wordSet){
-	// Acquires the list of nodes that a node connects to 
+
+	// Acquires the front of the list of adjacencies
 	struct intList* currConnection = getConnections(id, wordGraph); 
 	
-	// Move off of the dummy header node
+	// Moves off of the dummy header node
 	currConnection = currConnection->next; 
 
 	// Mark the current word as used
@@ -128,12 +129,7 @@ struct minimaxOutput* minimax(int id, int currDepth, int maxDepth, int isMaximiz
 			}
 			
 			
-			/* Alpha-Beta Pruning Algorithm That Prevents Node From Exploring Further in nodes that are guarenteed losses
-			* Does not effect final score 
-			* In 800 games at a depth of 5; 
-			* without alpha-beta pruning: 172.1 seconds 
-			* with alpha-beta pruning: .7686 seconds  
-			*/
+			// Alpha-Beta Pruning Algorithm That Prevents Node From Exploring Further in nodes that are guarenteed losses
 			if(AlphaBetaPruning(&alpha, &beta, maxScore, isMaximizingPlayer) == 1){
 				isPruned = 1;
 				break;
@@ -153,6 +149,7 @@ struct minimaxOutput* minimax(int id, int currDepth, int maxDepth, int isMaximiz
 
 	// If the parent node has no children to explore, it will return this either as a winning or losing node
 	if(numConnections == 0 && isPruned == 0){
+
 		//It frees the absolute node
 		free(maxScore); 
 		

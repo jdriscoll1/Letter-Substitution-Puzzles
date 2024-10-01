@@ -10,10 +10,6 @@
 
 #include "../../structs/includes/IntLinkedList.h"
 
-
-
-
-
 #define SIZE 255
 #define NUM_LETTERS 26
 
@@ -54,7 +50,7 @@ struct HintComponents* init_HintComponents(){
 	return hc; 
 }
 //The first hint -- gives them the minimum number of connections
-char* hint1(unsigned long long gcLong){
+char* hint1(uintptr_t gcLong){
 	char* output = malloc(SIZE); 
 	struct GameComponents *gc = (struct GameComponents*)gcLong; 
 	if(gc->hc->hintPoints < gc->hc->hint1Weight){
@@ -76,7 +72,7 @@ char* hint1(unsigned long long gcLong){
 @param gc --> The number of game components
 @param HashMap --> How the game finds the connections
 @return --> Returns what it describes to the user*/ 
-char* hint2(unsigned long long gcLong, struct wordDataArray* IntToWord_HashMap){
+char* hint2(uintptr_t gcLong, struct wordDataArray* IntToWord_HashMap){
 	char* output = malloc(SIZE); 
 	struct GameComponents *gc = (struct GameComponents*)gcLong; 
 	if(gc->hc->hintPoints < gc->hc->hint2Weight){
@@ -139,7 +135,7 @@ char* hint2(unsigned long long gcLong, struct wordDataArray* IntToWord_HashMap){
 /*Hint 3: Offers the user a letter that is used be from the first word to the last word
 @param gc --> The current game componenents
 @param HashMap --> How the user figures out a letter*/
-char* hint3(unsigned long long gcLong, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+char* hint3(uintptr_t gcLong, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 	//This is the output 
 	char* output = malloc(SIZE); 
 	//Converts the long into a structure
@@ -276,7 +272,7 @@ void Convert_TreeStorageNodeArrayList_HintRestrictions(struct arrayList* aList, 
 }
 
 
-void free_HintComponents(unsigned long long hcLong, struct wordDataArray* IntToWord_HashMap){
+void free_HintComponents(uintptr_t hcLong, struct wordDataArray* IntToWord_HashMap){
 	struct HintComponents *hc = (struct HintComponents*)hcLong; 
 	reset_HashSet(IntToWord_HashMap); 
 	Free_GenericLinkedList(hc->letterOptionsHeader); 

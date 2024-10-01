@@ -98,10 +98,14 @@ long unsigned int checkIfUsed_WordSet(int wordID, struct WordSet *wordSet){
 	
 }
 
+int ceil_div(int x, int y) {
+  return (x + y - 1) / y;
+}
+
 /*Go through all the words and mark them unused*/
 void reset_WordSet(struct WordSet* wordSet){
 	unsigned int i = 0; 
-	for(i = 0; i < wordSet->totalWords / (sizeof(unsigned long) * NUM_BYTES); i++){
+	for(i = 0; i < ceil_div(wordSet->totalWords, (sizeof(unsigned long) * NUM_BYTES)); i++){
 		wordSet->words[i] = 0;
 	}
 		
