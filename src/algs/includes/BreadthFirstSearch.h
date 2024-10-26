@@ -51,7 +51,6 @@ int BreadthFirstSearch_Distance_Goal(int start, int minConnections, struct wordD
 @param HashMap --> The ability to find the connections
 @param storageType --> The type of storage, HashSet? TreeSet?
 @return --> Returns the number of connections there are a certain distance away*/
-int BreadthFirstSearch_DistanceOptions(int start, int minConnections, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 
 struct intList* BFS(int start, int goal, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet); 
 
