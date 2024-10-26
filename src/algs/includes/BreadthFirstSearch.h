@@ -25,14 +25,6 @@ struct BFSComponents {
 
 
 
-/*This is the Breadth First Search Who Searches Given A Goal Word
-@param start --> The word at which the search begins
-@param goal --> The word at which the search ends
-@param HashMap --> The HashMap that contains all the words and their connections
-@param storageType --> Are you using the Tree Set or the Hash Set to store found words
-@return --> Returns the connections as a linked list*/
-struct intList* BreadthFirstSearch_Goal(int start, int goal, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet);
-
 /*This is the Breadth First Search Who Searches Given a Distance
 @param start --> This is where the search begins
 @param minConnections --> This is the absolute minimum number of connections that must be betwen the start, and the found word
@@ -44,15 +36,6 @@ int* BreadthFirstSearch_Distance(int start, int minConnections, struct wordDataA
 
 /*This is the breadth first search, the only difference is that it returns a single word as opposed to the whole array*/
 int BreadthFirstSearch_Distance_Goal(int start, int minConnections, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet); 
-
-/*This outputs the number of options that a Breadth First Search has from a certain distance away
-@param start --> The wrod to be started on
-@param minConnections --> How far away should the number of connections be
-@param HashMap --> The ability to find the connections
-@param storageType --> The type of storage, HashSet? TreeSet?
-@return --> Returns the number of connections there are a certain distance away*/
-
-struct intList* BFS(int start, int goal, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet); 
 
 
 /*This initalizes all of the necessary components of the Breadth First Search Method

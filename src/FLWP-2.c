@@ -53,11 +53,11 @@ int main(){
 	struct DataStructures* data = initDataStructures(fd); 
 
 	// Initialize the starting word
-	int word = ChooseStart(data->I2W); 
+	int startId = 0; 
 
-	// Initialize the goal word for the bot 
-
-	// Initialize the goal word for the player 
+	int distanceFromGoalWord = 2; 
+	// Initialize the goal words
+	int* goalWordSet = getGoalWordSet(startId, distanceFromGoalWord, data); 
 
 	// While game is not over
 

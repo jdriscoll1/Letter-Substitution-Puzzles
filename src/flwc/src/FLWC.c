@@ -14,13 +14,20 @@ extern int numLetters;
 // int distance
 // int startWord
 // Returns the goal word 
-int* getGoalWordList(int word, int distance, struct DataStructures* data){
+int* getGoalWordSet(int startId, int distance, struct DataStructures* data){
 
 	// find a list of all words that are equidistant from the start given start word and distance
 	//int* equidistantWords = getAllEquidistantWords(int word, int distance, struct DataStructures*); 
+	int* eligibleWords = BreadthFirstSearch_Distance(startId, distance, data->I2W, data->wordSet); 
 
-	// sort words by number of neighbors, then determine which words have a close enough number of neighbros to be valid
+	int i = 0; 
+	while(eligibleWords != NULL){
+		printf("%s\n", Convert_IntToWord(eligibleWords[i], data->I2W)); 
+		i++; 	
+	}
+	// sort words by number of neighbors, then determine which words have a close enough number of neighbors to be valid
 	// if number of valid groups of words is 0, return error
+	
 
 	// if number of valid groups of words is > 0, choose random, the harder the difficulty the less neighbors (ie, further along list)
 	//int* validIndices = getAllAdjacencyGro(); 
