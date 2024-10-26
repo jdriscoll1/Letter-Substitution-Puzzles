@@ -56,8 +56,15 @@ struct GameComponents* initiateFLWP(int minConnections, struct DataStructures* d
 void ResetFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures); 
 int userEntersWord_FLWP(char* userInput, struct GameComponents *gameComponents, struct DataStructures* dataStructures); 
 
+char* getStartWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
+char* getGoalWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
+int isGameWonFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
+void undoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
+struct arrayList *getCurrentWordsFLWP(struct GameComponents *gameComponents);
+
 // Test Functionality  
 char* convertIntToWord(int wordId, struct DataStructures* dataStructures); 
-int convertWordToInt(char* word, struct DataStructures* dataStructures); 
+int convertWordToInt(char* word, struct DataStructures* dataStructures);
+
 
 #endif 

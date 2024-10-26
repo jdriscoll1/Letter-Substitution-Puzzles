@@ -20,7 +20,7 @@ char* Take_Input_NoSize();
 /*This asks the user what they'd like the difficulty to be*/ 
 enum Difficulty ChooseDifficulty(); 
 enum ERROR_CODE{
-                VALID = 1,
+                VALID = 0,
                 TOO_SHORT = 2,
                 TOO_LONG = 3,
                 NOT_ENOUGH_LETTERS_IN_COMMON = 4,

@@ -80,7 +80,7 @@ int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructu
 	// Add word to word set 
 	markUsed_WordSet(wordId, data->wordSet); 
         gameData->currWordId = wordId;
-	return 0; 
+	return VALID;
 }
 void resetWordSet(struct DataStructures* data){
 	reset_WordSet(data->wordSet);
@@ -97,7 +97,7 @@ void ResetFLWP(struct GameComponents *gameComponents, struct DataStructures* dat
 	ResetGameComponents(gameComponents, dataStructures->I2W);
 }
 int userEntersWord_FLWP(char* userInput, struct GameComponents *gameComponents, struct DataStructures* dataStructures){
-	return 0; 	
+    return AddWord_Struct(gameComponents, userInput, dataStructures->W2I, dataStructures->I2W);
 }
 
 
@@ -111,4 +111,21 @@ int convertWordToInt(char* word, struct DataStructures* data){
 	return Convert_WordToInt(word, data->W2I); 
 }
 
+char* getStartWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+    return convertIntToWord(gameComponents->start, dataStructures);
+}
+char* getGoalWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+    return convertIntToWord(gameComponents->goal, dataStructures);
+}
 
+void undoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+    Undo_Struct(gameComponents, dataStructures->I2W);
+}
+
+struct arrayList *getCurrentWordsFLWP(struct GameComponents *gameComponents) {
+    return gameComponents->aList;
+}
+
+int isGameWonFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+    return gameComponents->goal == gameComponents->prevInput;
+}
