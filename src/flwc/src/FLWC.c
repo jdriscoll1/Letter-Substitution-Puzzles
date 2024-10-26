@@ -14,10 +14,19 @@ extern int numLetters;
 // int distance
 // int startWord
 // Returns the goal word 
-int getGoalWord(int word, int distance, struct DataStructures* data){
-	// Call BFS Function that returns a list of word
-	// Choose from that list 
-	return 0; 
+int* getGoalWordList(int word, int distance, struct DataStructures* data){
+
+	// find a list of all words that are equidistant from the start given start word and distance
+	//int* equidistantWords = getAllEquidistantWords(int word, int distance, struct DataStructures*); 
+
+	// sort words by number of neighbors, then determine which words have a close enough number of neighbros to be valid
+	// if number of valid groups of words is 0, return error
+
+	// if number of valid groups of words is > 0, choose random, the harder the difficulty the less neighbors (ie, further along list)
+	//int* validIndices = getAllAdjacencyGro(); 
+	
+
+	return NULL;  
 }
 
 // BotPly method -- bot needs to determine the best way to go
@@ -26,7 +35,7 @@ int botPly_FLWC(int word, int depth, struct DataStructures* data){
 	// Create alpha & beta
 	struct score a = createScore(-1, -100, 0, 100); 
 	struct score b = createScore(-1, 100, 1, 100); 
-	struct score score = minimax2(word, depth, depth, 1, a, b, data, FLWC_SCORE);
+	struct score score = minimax2(word, depth, depth, 1, a, b, data);
 
 	if(score.wordId != -1){
         		markUsed_WordSet(score.wordId, data->wordSet); 
@@ -39,7 +48,7 @@ int botPly_Random(int word, struct DataStructures* data){
 	// Create alpha & beta
 	struct score a = createScore(-1, -100, 0, 100); 
 	struct score b = createScore(-1, 100, 1, 100); 
-	struct score score = minimax2(word, 1, 1, 1, a, b, data, RANDOM_SCORE);
+	struct score score = minimax2(word, 1, 1, 1, a, b, data);
 
 	if(score.wordId != -1){
         		markUsed_WordSet(score.wordId, data->wordSet); 

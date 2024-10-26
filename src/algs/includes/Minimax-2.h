@@ -10,11 +10,6 @@
 @param depth --> How far is it from the original word?
 @param isMaximizingPlayer --> Is it the maximizing player (looking for the max move) or the minimzing player (looking for the min move)
 @return --> Returns the evaluation of all of the connected nodes, or the current node if it is the leaf*/
-enum ScoreFunction{
-	RANDOM_SCORE, 
-	FLWC_SCORE, 
-	FLWG_SCORE
-}; 
 struct score{
 	// the id of the word whose score is being considered
 	int wordId; 
@@ -26,11 +21,21 @@ struct score{
 	int depth; 
 };
 
+struct ScoreConstraints{
+
+	// goal word
+	int goalWord; 
+	
+	// the current overarching game mode the score is being considered	
+	//enum ScoreFunction scoreFunction; 
+
+}; 
+
 struct score flwg_score(int id, int remainingDepth, int isMaximizingPlayer, struct DataStructures* data); 
-struct score flwc_score(int id, int goalId, int remainingDepth, struct DataStructures* data); 
+struct score flwc_score(int id, int goalId, struct DataStructures* data); 
 
 // Minimax 
-struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizingPlayer, struct score alpha, struct score beta, struct DataStructures* data, enum ScoreFunction scoreFn); 
+struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizingPlayer, struct score alpha, struct score beta, struct DataStructures* data); 
 
 // output a score
 void printScore(struct score s);

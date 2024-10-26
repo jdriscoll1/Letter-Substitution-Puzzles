@@ -94,10 +94,10 @@ struct score random_score(int id, struct DataStructures* data){
 }
 
 // it needs the current word
-struct score flwc_score(int id, int goalId, int currDepth, struct DataStructures* data){
+struct score flwc_score(int id, int goalId, struct DataStructures* data){
 	// Check to see if the current word is the goal word
 	if (id == goalId){
-		return createScore(id, 1, 1, currDepth); 
+		return createScore(id, 1, 1, 0); 
 	}
 	// Check to see if there are any connections, if there are return null, otherwise return a score 		
 	struct intList* conn = getConnections(id, data->I2W); 
@@ -110,7 +110,7 @@ struct score flwc_score(int id, int goalId, int currDepth, struct DataStructures
 		conn = conn->next; 	
 	}
 	// if it is a leaf node, return the id 
-	return createScore(id, 0, 0, currDepth);  
+	return createScore(id, 0, 0, 0);  
 }
 
 int compareScores(struct score a, struct score b, int isMaximizingPlayer){
@@ -144,21 +144,12 @@ int compareScores(struct score a, struct score b, int isMaximizingPlayer){
 
 }
 
-struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizingPlayer, struct score alpha, struct score beta, struct DataStructures* data, enum ScoreFunction scoreFn){
+struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizingPlayer, struct score alpha, struct score beta, struct DataStructures* data){
 
 	int isRoot = (remainingDepth == startDepth); 
 	
 	// Run Score Function 
-	struct score leafScore; 
-	switch(scoreFn){
-		case(FLWC_SCORE):
-			leafScore = flwg_score(id, remainingDepth, isMaximizingPlayer, data); 
-			break; 
-		
-		case(RANDOM_SCORE):
-			return random_score(id, data); 
-			break; 
-	}
+	struct score leafScore = flwg_score(id, remainingDepth, isMaximizingPlayer, data);
 
 	// if there are no connections left
 	if(leafScore.wordId != -1){
@@ -204,7 +195,7 @@ struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizi
 
 		numConnections++; 
 		// Rerun the minimax algorithm with the current child as the node being scored
-		struct score candidate = minimax2(conn->data, remainingDepth - 1, startDepth, (isMaximizingPlayer) ? 0 : 1, alpha, beta, data, scoreFn); 
+		struct score candidate = minimax2(conn->data, remainingDepth - 1, startDepth, (isMaximizingPlayer) ? 0 : 1, alpha, beta, data); 
 		// Compares the best score to the word being analyzed, if the maximum is better, than it chooses it
 		int winnerId = compareScores(candidate, maxScore, isMaximizingPlayer); 
 		if(winnerId == candidate.wordId){

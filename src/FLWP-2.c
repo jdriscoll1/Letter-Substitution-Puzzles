@@ -42,8 +42,33 @@ void runFLWG();
 void testMCTS();
 void initializeStructures();
 void fourletterwordgame_example(); 
+int test_new_flwg(); 
 
 int main(){
+
+
+	// Initialize the Data Structures
+	srand(time(0)); 
+	int fd = open("docs/4.txt", O_RDONLY);
+	struct DataStructures* data = initDataStructures(fd); 
+
+	// Initialize the starting word
+	int word = ChooseStart(data->I2W); 
+
+	// Initialize the goal word for the bot 
+
+	// Initialize the goal word for the player 
+
+	// While game is not over
+
+		// Allow the bot to take a turn 
+
+		// Allow the user to take a turn 
+	
+	// Declare the winner 
+}
+
+int test_new_flwg(){
 	srand(time(0)); 
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd); 
@@ -61,9 +86,7 @@ int main(){
 		int depth = 8; 
 		int rounds = 0; 
 		int whoseTurn = 1; 
-		//printf("[START GAME: %s]\n\n", Convert_IntToWord(word, data->I2W));
 		
-		//printf("\n-----GAME BEGINS: %s-----\n\n", Convert_IntToWord(word, data->I2W));
 		while (winner == -1){
                         assert(word != -1);
 			
