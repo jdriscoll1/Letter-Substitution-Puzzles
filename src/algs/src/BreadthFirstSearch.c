@@ -376,62 +376,6 @@ int BreadthFirstSearch_Distance_Goal(int start, int minConnections, struct wordD
 
 
 
-
-
-
-
-int BreadthFirstSearch_DistanceOptions(int start, int minConnections, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
-	//If the number of connections is less than 2, it is pointless. 1? pies->ties. 0. pies->pies -1->???
-	if(minConnections < 2){
-		printf("MinConnections < 2 [BFS_Distance]"); 
-		return 0; 
-	}
-	//Instantiates the necessary BFS Components
-	struct BFSComponents* bc = init_BFSComponents(start, wordSet);
-	bc->End = bc->prevConnection->next; 
-	//This is the array list that stores the words that are options
-	struct arrayList* options = init_ArrayList(20, 5, TSN); 
-	//Initalize the game Components
-	bool goalFound = false;
-
-	
-	while(goalFound == false){
-		bc->prevConnection = bc->prevConnection->next;
-
-
-		bc->End = AddToTreeStorage_BFS(bc, minConnections, options, IntToWord_HashMap, wordSet); 
-		
-		//If it sees that the current depth is > minConnections it'll return NULL
-		//With this in mind, this means that it has acheived the current depth 
-		if(bc->End == NULL){
-			goalFound = true; 
-		}
-		
-		//If it cannot connect as far out as intended
-		if(bc->prevConnection->next == NULL){			  
-			//It cannot return yet or else there will be memory leaks 
-			goalFound = -1;
-		}
-		
-	
-		
-		
-		
-	}
-	int output = options->currPrecision; 
-
-	//Frees everything
-	Free_BFSComponents(bc, wordSet);
-	free_ArrayList(options); 
-
-	return output; 
-
-}
-
-
-
-
-
 struct TreeStorageNode* AddToTreeStorage_Dist_BFS(struct BFSComponents *bc, int goal, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){
 	//The word whose connections we're going to find, and add to the TreeStorageNode
 	int baseWord = bc->prevConnection->id; 
