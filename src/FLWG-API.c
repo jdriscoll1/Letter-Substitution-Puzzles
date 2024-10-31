@@ -122,10 +122,26 @@ void undoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* 
     Undo_Struct(gameComponents, dataStructures->I2W);
 }
 
+void redoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+    Redo_Struct(gameComponents, dataStructures->I2W);
+}
+
 struct arrayList *getCurrentWordsFLWP(struct GameComponents *gameComponents) {
     return gameComponents->aList;
 }
 
 int isGameWonFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
     return gameComponents->goal == gameComponents->prevInput;
+}
+
+void removeWord_FLWP(char* word, struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+
+    char tempStr[numLetters + 2];
+    tempStr[0] = '-';
+    tempStr[numLetters + 1] = '\0';
+
+    strncpy(&tempStr[1], word, numLetters);
+
+    RemoveWord_Struct(gameComponents, tempStr, 0, dataStructures->W2I, dataStructures->I2W);
+
 }
