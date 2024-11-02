@@ -14,7 +14,8 @@
 #include "../../structs/includes/WordSet.h"
 
 #include <stdint.h>
-typedef int bool; 
+#include <stdbool.h>
+//typedef int bool; 
 #define true 1
 #define false 0 
 

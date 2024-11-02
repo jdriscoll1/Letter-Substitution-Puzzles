@@ -1,5 +1,3 @@
-extern int numLetters; 
-
 #ifndef seenFLWC
 #define seenFLWC
 
@@ -7,11 +5,16 @@ extern int numLetters;
 #include <unistd.h>
 #include <stdlib.h>
 
+#include <algorithm>
+
+extern "C" {
+extern int numLetters; 
 #include "../../FLWG-API.h"
 #include "../../flwp/includes/GameFunctions.h"
 #include "../../algs/includes/Minimax-2.h"
 #include "../../flwg/includes/FLWGGame.h"
 #include "../../structs/includes/ArrayList.h"
+#include "../../flwc/includes/FLWC.h"
 // Choose the goal word
 // struct map* IntToWord_HashMap
 // int distance
@@ -46,19 +49,17 @@ int* getGoalWordSet(int startId, int distance, struct DataStructures* data){
 	// list of neighbors within deltaConnections
 	struct arrayList* validPairings = init_ArrayList(10, 10, NUM); 
 
-        auto compareByNumConnectionsFunction = [&](void *node0, void* node1) {
+        auto compareByNumConnectionsFunction = [&data](struct TreeStorageNode* node0, struct TreeStorageNode* node1) {
 	  // Convert the Integer to a Word for confirmation
-	  return getNumConnectionsFromTSN((struct TreeStorageNode*)node0, data) - getNumConnectionsFromTSN((struct TreeStorageNode*)node1, data);
+	  return getNumConnectionsFromTSN(node0, data) < getNumConnectionsFromTSN(node1, data);
         };
 
 	// Sort the list of words by number of connections
-	std::qsort(
+	std::sort(
 		// The first value in the list 
-		options->list,
+		(struct TreeStorageNode**)options->list,
 		// the length of the list 
-		options->currPrecision, 
-		// size of each element in the array  
-		sizeof(struct TreeStorageNode*),
+		((struct TreeStorageNode**)options->list) + options->currPrecision, 
 		// the comparator function
 		compareByNumConnectionsFunction
 	); 	
@@ -159,6 +160,7 @@ void FLWC(struct DataStructures* data){
 	// Allow user to go 
 	// Allow bot to go 
 	// Free the data structures
+}
 }
 
 #endif
