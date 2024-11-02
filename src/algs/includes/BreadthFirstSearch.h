@@ -31,7 +31,7 @@ struct BFSComponents {
 @param HashMap --> This is the HashMap that contains all the words and their connections
 @param storageType --> This is the word that is stored
 @return --> Returns an array which is the connections (Advantage, easy access of the furthest connection*/
-int* BreadthFirstSearch_Distance(int start, int minConnections, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
+struct arrayList* BreadthFirstSearch_Distance(int start, int minConnections, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 
 
 /*This is the breadth first search, the only difference is that it returns a single word as opposed to the whole array*/
