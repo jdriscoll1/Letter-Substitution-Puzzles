@@ -9,6 +9,7 @@ Purpose: A library to encapsulate & organize the code into an API
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #include "FLWG-API.h"
 #include "flwp/includes/GameFunctions.h"
@@ -16,7 +17,10 @@ Purpose: A library to encapsulate & organize the code into an API
 #include "flwg/includes/FLWGGame.h"
 // Creating and destroying data structures
 struct DataStructures* initDataStructures(int fd){
-	struct DataStructures* data = malloc(sizeof(struct DataStructures));  
+
+    srand(time(NULL));
+
+	struct DataStructures* data = malloc(sizeof(struct DataStructures));
 
 	// Initialize the Word to Int Hash Map 
 	data->W2I = Allocate_WordToInt(); 	
