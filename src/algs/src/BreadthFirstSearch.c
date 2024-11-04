@@ -208,18 +208,8 @@ struct TreeStorageNode* AddToTreeStorage_Dist_BFS(struct BFSComponents *bc, int 
 		}
 	} 
 	
-		
-		
-
-
-		
-	
 	//So we want to be returned the very last node every single time, 
 	return bc->End; 
-
-
-	
-	
 }
 
 

@@ -24,31 +24,14 @@ int getNumConnectionsFromTSN(struct TreeStorageNode* node, struct DataStructures
 	return data->I2W->array[node->id]->numConnections; 
 }
 
-//int compareByNumConnectionsFunction(void* node0, void* node1, void* data){
-//
-//	// Convert the Integer to a Word for confirmation
-//	return getNumConnectionsFromTSN((struct TreeStorageNode*)node0, (struct DataStructures*) data) - getNumConnectionsFromTSN((struct TreeStorageNode*)node1, (struct DataStructures*)data);
-//
-//
-//}
 
 int* getGoalWordSet(int startId, int distance, struct DataStructures* data){
 
+	
 	// Get list of all words 2 words away from care
 	struct arrayList* options = BreadthFirstSearch_Distance(0, 2, data->I2W, data->wordSet); 
 	
 	
-	int i = 0; 
-
-	// # of choices 
-	int n =  options->currPrecision; 	
-
-	// to be a valid pairing, the number of connections a word and its neighbor must differ by, shall be no more than deltaConnections
-	int maxDeltaConnections = 3; 
-	
-	// list of neighbors within deltaConnections
-	struct arrayList* validPairings = init_ArrayList(10, 10, NUM); 
-
         auto compareByNumConnectionsFunction = [&data](struct TreeStorageNode* node0, struct TreeStorageNode* node1) {
 	  // Convert the Integer to a Word for confirmation
 	  return getNumConnectionsFromTSN(node0, data) < getNumConnectionsFromTSN(node1, data);
@@ -64,36 +47,43 @@ int* getGoalWordSet(int startId, int distance, struct DataStructures* data){
 		compareByNumConnectionsFunction
 	); 	
 
-	// if number of valid groups of words is 0, return error
-	while(i < n-1){
 
-		// Choose the next node in the list 
-		struct TreeStorageNode* node0 = ((struct TreeStorageNode**) options->list)[i];
-		struct TreeStorageNode* node1 = ((struct TreeStorageNode**) options->list)[i+1];
-		
-		int wordId0 = node0->id;  
-		int wordId1 = node1->id; 
-
-		// Convert the Integer to a Word for confirmation
-		// number of connections on first word
-		int numConnections0 = data->I2W->array[wordId0]->numConnections; 
-		int numConnections1 = data->I2W->array[wordId1]->numConnections; 
-		
-		printf("Word: %s, NC: %d\n", Convert_IntToWord(wordId0 , data->I2W), numConnections0); 
-		printf("Word: %s, NC: %d\n", Convert_IntToWord(wordId1 , data->I2W), numConnections1); 
-		int deltaConnections = numConnections1 - numConnections0; 
-		printf("DeltaConnections: %d\n", deltaConnections); 
-
-		// number of connections on second word
-
-		i++; 
+	// First choose a random word
+	int baseWordIndex = rand() % options->currPrecision; 
+	struct TreeStorageNode* baseWordNode = ((struct TreeStorageNode**)options->list)[baseWordIndex];
+	int baseWordId = baseWordNode->id; 
+	printf("Reference Word: %s", Convert_IntToWord(baseWordId, data->I2W));
+	int numConnections = data->I2W->array[baseWordId]->numConnections; 
+	
+	struct arrayList* wordsWithSameNumConnections = init_ArrayList(10, 10, NUM); 
+	// Create a list of words that are within delta Connections
+	for (int i = 0; i < options->currPrecision; i++){
+		struct TreeStorageNode* currNode = ((struct TreeStorageNode**)options->list)[i];
+		int wordId = currNode->id; 
+		printf("Checking %s: ", Convert_IntToWord(wordId, data->I2W)); 	
+		int potentialWordNumConnections = getNumConnectionsFromTSN(currNode, data);
+		if(potentialWordNumConnections == numConnections){
+			printf("Added!\n"); 
+			add_ArrayList((void*)&wordId, wordsWithSameNumConnections, NUM); 
+		}
+		else{
+			printf("Invalid\n");
+		}
+	}
+	print_ArrayList(wordsWithSameNumConnections, NUM); 
+	// Now we ought to choose a partner word
+	int numWordsWithEqualNumberOfConnectionsAsBaseWord = wordsWithSameNumConnections->currPrecision; 
+	if(numWordsWithEqualNumberOfConnectionsAsBaseWord == 0){
+		return NULL;  
 	}
 
-	// if number of valid groups of words is > 0, choose random, the harder the difficulty the less neighbors (ie, further along list)
-	//int* validIndices = getAllAdjacencyGro(); 
-	
+	int chosenWordId = rand() % numWordsWithEqualNumberOfConnectionsAsBaseWord; 
+	int* chosenWords = (int*)calloc(2, sizeof(int)); 
+	chosenWords[0] = baseWordId; 
+	chosenWords[1] = ((struct TreeStorageNode**)options->list)[chosenWordId]->id;
+	return chosenWords; 
 
-	return NULL;  
+	
 }
 
 // BotPly method -- bot needs to determine the best way to go
