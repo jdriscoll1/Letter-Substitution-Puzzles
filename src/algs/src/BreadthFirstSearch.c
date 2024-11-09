@@ -22,10 +22,8 @@ extern int numLetters;
 
 
 struct BFSComponents* init_BFSComponents(int start, struct WordSet* wordSet){
-	struct BFSComponents* bc = malloc(sizeof(struct BFSComponents)); 
- 
 
-	
+	struct BFSComponents* bc = malloc(sizeof(struct BFSComponents)); 
 
 	//Add the word to the hash set
 
@@ -65,21 +63,26 @@ void Free_BFSComponents(struct BFSComponents* bc, struct WordSet *wordSet){
 - If it's null and its isValid == 0, then it has to stop
 - If it's null and its isValid == 1, then it from there has to choose (meaning that 8 connections was it's max point)
 */ 
-struct arrayList* BreadthFirstSearch_Distance(int start, int minConnections, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+struct BFSResults BreadthFirstSearch_Distance(int start, int minConnections, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+
 	//If the number of connections is less than 2, it is pointless. 1? pies->ties. 0. pies->pies -1->???
 	if(minConnections < 2){
 		printf("MinConnections < 2 [BFS_Distance]"); 
 		exit(0); 
 	}
+
 	//This array determines how much an array list should start and grow. [minConnections - 2][0] = initSize [minConnections - 2][1] = move size
 	//These numbers were found by taking the mean, and the avg of the mean and the max
 	int arraySize[][2] = {{43, 61},{152, 141}, {351, 183}, {516, 150}, {427, 188}, {277, 239}, {164, 300}, {83, 21}, {39, 332},{18, 361}, {15, 200}, {10, 354}, {8, 143}, {2, 28}, {2, 4}, {2, 4}}; 
+
 	int arrListInitSize = (minConnections < 13) ? arraySize[minConnections - 2][0] : 5; 
+
 	int arrListMoveSize = (minConnections < 13) ? arraySize[minConnections - 2][1] : 5; 
 	
-	//Instantiates the necessary BFS Components
+	// Instantiates the necessary BFS Components
 	struct BFSComponents* bc = init_BFSComponents(start, wordSet);
 	bc->End = bc->prevConnection->next; 
+
 	//This is the array list that stores the words that are options
 	struct arrayList* options = init_ArrayList(50, 50, TSN); 
 	//Initalize the game Components
@@ -94,8 +97,6 @@ struct arrayList* BreadthFirstSearch_Distance(int start, int minConnections, str
 		
 		//If it cannot connect as far out as intended
 		if(bc->prevConnection->next == NULL){			  
-			//No need to let the user know this lol
-		
 			//It cannot return or else there will be memory leaks 
 			goalFound = -1;
 		}
@@ -107,11 +108,16 @@ struct arrayList* BreadthFirstSearch_Distance(int start, int minConnections, str
 		if(bc->End == NULL){
 			goalFound = true; 
 		}
+
 	}
+
 	//This is the path from start to end 
 	int goal; 
-	
-	return (goalFound == -1)?NULL:options;
+
+	struct BFSResults results; 
+	results.list = (goalFound == -1) ? NULL :  options; 
+	results.dataStorage  = (goalFound == -1) ? NULL :bc; 
+	return results; 
 
 }
 
@@ -193,10 +199,6 @@ struct TreeStorageNode* AddToTreeStorage_Dist_BFS(struct BFSComponents *bc, int 
 		//We want to move off of the header of the 2Dconnection 
 		newWords = newWords->next; 
 		int currWord = newWords->data; 
-		
-		
-		
-		
 	
 		if(checkIfUsed_WordSet(currWord, wordSet) == 0){
 			bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, 0); 

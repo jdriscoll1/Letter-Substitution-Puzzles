@@ -44,7 +44,43 @@ void initializeStructures();
 void fourletterwordgame_example(); 
 int test_new_flwg(); 
 
+void flwcChooseGoals_Example(); 
+
+
 int main(){
+
+	// Initialize the Data Structures
+	srand(time(0)); 
+	int fd = open("docs/4.txt", O_RDONLY);
+	struct DataStructures* data = initDataStructures(fd); 
+
+	// Initialize the starting word
+	int startId = 0; 
+
+	int distanceFromGoalWord = 2; 
+	// Initialize the goal words
+	int* goalWordSet = NULL;   
+
+	while(goalWordSet == NULL){
+		goalWordSet = getGoalWordSet(startId, distanceFromGoalWord, data); 
+	}
+	
+	printf("\nStarting Word: %s\n", Convert_IntToWord(startId, data->I2W)); 
+	char* w0 = Convert_IntToWord(goalWordSet[0], data->I2W); 
+	char* w1 = Convert_IntToWord(goalWordSet[1], data->I2W); 
+	printf("Opponent A: %s\n", w0);  
+	printf("Opponent B: %s\n", w1);  
+	free(goalWordSet); 
+	// While game is not over
+
+		// Allow the bot to take a turn 
+
+		// Allow the user to take a turn 
+	
+	// Declare the winner 
+	freeDataStructures(data); 
+}
+void flwcChooseGoals_Example(){
 
 
 	// Initialize the Data Structures
@@ -68,6 +104,7 @@ int main(){
 	char* w1 = Convert_IntToWord(goalWordSet[1], data->I2W); 
 	printf("Opponent A: %s\n", w0);  
 	printf("Opponent B: %s\n", w1);  
+	free(goalWordSet); 
 	// While game is not over
 
 		// Allow the bot to take a turn 
@@ -75,6 +112,7 @@ int main(){
 		// Allow the user to take a turn 
 	
 	// Declare the winner 
+	freeDataStructures(data); 
 }
 
 int test_new_flwg(){
