@@ -70,12 +70,19 @@ int* getGoalWordSet(int startId, int distance, struct DataStructures* data){
 	}
 
 	int chosenWordId = rand() % numWordsWithEqualNumberOfConnectionsAsBaseWord; 
+
 	int* chosenWords = (int*)calloc(2, sizeof(int)); 
+
 	chosenWords[0] = baseWordId; 
+
 	chosenWords[1] = ((struct TreeStorageNode**)options->list)[chosenWordId]->id;
+
 	free_ArrayList(equidistantWordsResult.list); 
+
 	Free_BFSComponents(equidistantWordsResult.dataStorage, data->wordSet); 
+
 	free_ArrayList(wordsWithSameNumConnections); 
+
 	return chosenWords; 
 
 	
@@ -143,7 +150,7 @@ void FLWC(struct DataStructures* data){
 	printf("Your Goal Is To Navigate to %s\n", Convert_IntToWord(goals[0], data->I2W)); 
 	printf("Your Opponent's Goal Is To Navigate to %s\n", Convert_IntToWord(goals[1], data->I2W)); 
 	printf("Good Luck!\n\n\n");
-	printf("Starting Word: %s", Convert_IntToWord(word, data->I2W));
+	printf("Starting Word: %s\n", Convert_IntToWord(word, data->I2W));
 
 
 	while (winner == -2){
@@ -177,13 +184,16 @@ void FLWC(struct DataStructures* data){
 	}
 	switch (winner){
 		case -1: 
+			printf("Tie"); 
 			break ;
 		case 0: 
+			printf("A Wins"); 
 			break ;
 		case 1: 
+			printf("B Wins"); 
 			break ;
 	}
-	printf("%c is the winner", (winner == 0)  ? 'A': 'B'); 
+	free(goals); 
 	// Allow user to go 
 	// Allow bot to go 
 	// Free the data structures
