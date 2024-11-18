@@ -40,10 +40,10 @@ To Do So, I will make use of the minimax algorithm*/
 * wordSet --> The current set of words
 */
 
-// it needs the current word
-struct score flwg_score(int id, int remainingDepth, int isMaximizingPlayer, struct DataStructures* data){
-	// Check to see if there are any connections, if there are return null, otherwise return a score 		
 
+struct score flwg_score(int id, struct DataStructures* data, struct score_parameters parameters){
+
+	// Create a set of parameters called score parameters 
 	struct intList* conn = getConnections(id, data->I2W); 
 	conn = conn->next; 
 	while(conn != NULL){
@@ -55,50 +55,76 @@ struct score flwg_score(int id, int remainingDepth, int isMaximizingPlayer, stru
 		conn = conn->next; 	
 	}
 	// if all the words are used, the game is over
-	return (isMaximizingPlayer) ? createScore(id, 0, 0, remainingDepth) : createScore(id, 1, 1, remainingDepth);  
+	return (parameters.isMaximizingPlayer) ? createScore(id, 0, 0, parameters.remainingDepth) : createScore(id, 1, 1, parameters.remainingDepth);  
 
 }
 
-struct score random_score(int id, struct DataStructures* data){
-	// first figure out the number of words to which can be connected 	
-	int n = 0; 
+
+int choose_random_word(int id, struct DataStructures* data){
+
+	// The number of words that can be connected to & have not already been used 	
+	int numOptions = 0; 
+
+	// This is the list of words that are options, used and unused
 	struct intList* conn = getConnections(id, data->I2W); 
+
+	//Get off the dummy head node
 	conn = conn->next; 
 
+	// Loop through the words and derive the number of words that have not been used
 	while(conn != NULL){
 
 		// if there is a single word that is not used 
 		if(! checkIfUsed_WordSet(conn->data, data->wordSet)){
-			n++; 
+			numOptions++; 
 		}
 		conn = conn->next; 	
 	}
-	if(n == 0){
-		return createScore(-1, 0, 0, 0); 
+	if(numOptions == 0){
+		return -1; 
 	}
 	// choose randomly between [0, numConnectiosn]
 	// Allow it to be inclusive of N 
-	int c = rand() % n; 	
-	int i = 0; 
+	//printf("Num Options: %d\n", numOptions); 
+	int choiceIdRelativeToUnusedWords = rand() % numOptions; 	
+	int choiceId = -1;
+	int currId = 0; 
+	
+	// Reset the connections
 	conn = getConnections(id, data->I2W); 
+	conn = conn->next; 
 
-	while (i < c){
-		if(! checkIfUsed_WordSet(conn->data, data->wordSet)){
-			i++; 
+	// While the word has not been chosen 
+	while(choiceId == -1){
+		
+		// Check if the current word is used
+		while(checkIfUsed_WordSet(conn->data, data->wordSet)){
+			
+			//printf("Curr Word: %d, is Used: %d", conn->data, checkIfUsed_WordSet(conn->data, data->wordSet)); 
+			// If it is go to the next word
+			conn = conn->next; 
 		}
-
-		conn = conn->next; 
+		//printf("Broke From the Loop");
+		// Otherwise, check if the the current id is equal to the choice id relative to unused words 
+		if(currId == choiceIdRelativeToUnusedWords){
+			choiceId = conn->data; 		
+		}
+		currId++; 	
+		conn = conn->next; 	
+		
 	}
 	
-	return createScore(conn->data, 0, 0, 0);  
+	return choiceId; 
 }
 
 // it needs the current word
-struct score flwc_score(int id, int goalId, struct DataStructures* data){
+struct score flwc_score(int id, struct DataStructures* data, struct score_parameters parameters){
+
 	// Check to see if the current word is the goal word
-	if (id == goalId){
+	if (id == parameters.goalId){
 		return createScore(id, 1, 1, 0); 
 	}
+
 	// Check to see if there are any connections, if there are return null, otherwise return a score 		
 	struct intList* conn = getConnections(id, data->I2W); 
 	conn = conn->next; 
@@ -144,26 +170,34 @@ int compareScores(struct score a, struct score b, int isMaximizingPlayer){
 
 }
 
-struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizingPlayer, struct score alpha, struct score beta, struct DataStructures* data){
+struct score minimax2(int id, int goalId, int remainingDepth, int startDepth, int isMaximizingPlayer, struct score alpha, struct score beta, struct DataStructures* data, struct score (*scoreFunction)(int,struct DataStructures*, struct score_parameters)){
 
+	// Are we at the root word? 
 	int isRoot = (remainingDepth == startDepth); 
 	
-	// Run Score Function 
-	struct score leafScore = flwg_score(id, remainingDepth, isMaximizingPlayer, data);
+	struct score_parameters parameters = {
+		.remainingDepth=remainingDepth,
+		.isMaximizingPlayer=isMaximizingPlayer, 
+		.goalId=goalId
+		
+	}; 
+	struct score leafScore = scoreFunction(id, data, parameters);
 
+	
 	// if there are no connections left
 	if(leafScore.wordId != -1){
 		if(isRoot){
 			return createScore(-1, 0, 0, 0); 
-			
 		}
 		return leafScore; 
 	}
+
 	// if it's reached its depth limit, it should return a score
 	if(remainingDepth == 0){
 		// Returns a score stating it is uncertain whether it is good or bad 
 		return createScore(id, .5, .5, 0);  
 	}
+
 	// Acquires the front of the list of adjacencies
 	struct intList* conn = getConnections(id, data->I2W); 
 	
@@ -195,9 +229,11 @@ struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizi
 
 		numConnections++; 
 		// Rerun the minimax algorithm with the current child as the node being scored
-		struct score candidate = minimax2(conn->data, remainingDepth - 1, startDepth, (isMaximizingPlayer) ? 0 : 1, alpha, beta, data); 
+		struct score candidate = minimax2(conn->data, goalId, remainingDepth - 1, startDepth, (isMaximizingPlayer) ? 0 : 1, alpha, beta, data, scoreFunction); 
+
 		// Compares the best score to the word being analyzed, if the maximum is better, than it chooses it
 		int winnerId = compareScores(candidate, maxScore, isMaximizingPlayer); 
+
 		if(winnerId == candidate.wordId){
 			maxScore = candidate; 
 		}
@@ -212,8 +248,8 @@ struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizi
 		
 	}
 	
-	maxScore.winPercentage = winPercentage / numConnections; 
 	// Probably do something here regarding the chance variable right? 
+	maxScore.winPercentage = winPercentage / numConnections; 
 
 	// the root node acts mildly differently 	
 	if(!isRoot){

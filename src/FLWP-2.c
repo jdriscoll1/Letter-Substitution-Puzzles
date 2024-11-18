@@ -53,8 +53,20 @@ int main(){
 	srand(time(0)); 
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd); 
+	int startId = 0; 
+	int distance = 2; 
 
-	FLWC(data); 
+	int* goals = getGoalWordSet(distance, data); 
+	char* g0 = Convert_IntToWord(goals[0], data->I2W); 
+	char* g1 = Convert_IntToWord(goals[1], data->I2W); 
+	int g1NC = data->I2W->array[goals[1]]->numConnections; 
+	char* g2 = Convert_IntToWord(goals[2], data->I2W); 
+	int g2NC = data->I2W->array[goals[2]]->numConnections; 
+	printf("Start: %s", g0); 
+	printf("%s, %d", g1, g1NC); 
+	printf("%s, %d", g2, g2NC); 
+	free(goals); 
+	//FLWC_Test(data); 
 	freeDataStructures(data); 
 }
 void flwcChooseGoals_Example(){
@@ -73,7 +85,7 @@ void flwcChooseGoals_Example(){
 	int* goalWordSet = NULL;   
 
 	while(goalWordSet == NULL){
-		goalWordSet = getGoalWordSet(startId, distanceFromGoalWord, data); 
+	//	goalWordSet = getGoalWordSet(startId, distanceFromGoalWord, data); 
 	}
 	
 	printf("\nStarting Word: %s\n", Convert_IntToWord(startId, data->I2W)); 

@@ -21,21 +21,18 @@ struct score{
 	int depth; 
 };
 
-struct ScoreConstraints{
-
-	// goal word
-	int goalWord; 
-	
-	// the current overarching game mode the score is being considered	
-	//enum ScoreFunction scoreFunction; 
-
+struct score_parameters{
+	int remainingDepth; 
+	int isMaximizingPlayer; 
+	int goalId; 
 }; 
 
-struct score flwg_score(int id, int remainingDepth, int isMaximizingPlayer, struct DataStructures* data); 
-struct score flwc_score(int id, int goalId, struct DataStructures* data); 
+struct score flwg_score(int id, struct DataStructures* data, struct score_parameters parameters); 
+struct score flwc_score(int id, struct DataStructures* data, struct score_parameters parameters); 
+int choose_random_word(int id, struct DataStructures* data); 
 
 // Minimax 
-struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizingPlayer, struct score alpha, struct score beta, struct DataStructures* data); 
+struct score minimax2(int id, int goalId, int remainingDepth, int startDepth, int isMaximizingPlayer, struct score alpha, struct score beta, struct DataStructures* data, struct score (*scoreFunction)(int,struct DataStructures*, struct score_parameters)); 
 
 // output a score
 void printScore(struct score s);
@@ -43,7 +40,6 @@ void printScore(struct score s);
 /*Compares two scores and output the word id of the better score*/
 int compareScore(struct score a, struct score b, int isMaximizingPlayer); 
 
-struct score randomScore(int id, struct DataStructures* data); 
 
 struct score createScore(int wordId, double score, double winPercentage, int depth);
 /*This does the alpha-beta pruning
