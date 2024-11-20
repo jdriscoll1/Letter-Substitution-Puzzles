@@ -56,17 +56,7 @@ int main(){
 	int startId = 0; 
 	int distance = 2; 
 
-	int* goals = getGoalWordSet(distance, data); 
-	char* g0 = Convert_IntToWord(goals[0], data->I2W); 
-	char* g1 = Convert_IntToWord(goals[1], data->I2W); 
-	int g1NC = data->I2W->array[goals[1]]->numConnections; 
-	char* g2 = Convert_IntToWord(goals[2], data->I2W); 
-	int g2NC = data->I2W->array[goals[2]]->numConnections; 
-	printf("Start: %s", g0); 
-	printf("%s, %d", g1, g1NC); 
-	printf("%s, %d", g2, g2NC); 
-	free(goals); 
-	//FLWC_Test(data); 
+	FLWC_Test(data); 
 	freeDataStructures(data); 
 }
 void flwcChooseGoals_Example(){

@@ -53,6 +53,15 @@ int* getGoalWordSet(int distance, struct DataStructures* data){
 		}*/
 
 
+		// if there aren't any words n away
+		if(options->currPrecision == 0){
+
+			free_ArrayList(equidistantWordsResult.list); 
+
+			Free_BFSComponents(equidistantWordsResult.dataStorage, data->wordSet); 
+
+			continue; 	
+		}
 
 		// First choose a random word out of the words n distance away
 		int baseWordIndex = rand() % options->currPrecision; 
@@ -149,20 +158,18 @@ int botPly_Random(int word, struct DataStructures* data){
 // A method that initalizes the game  
 int FLWC(struct DataStructures* data){
 
-	/*
-	// Choose the word that starts the game	(temporarily care)
-	int word = 0; //ChooseStart(data->I2W); 
 	
 	//  The distance the goal words should be from the start 
-	int difficulty = 2; 
+	int minDistance = 4; 
 
 	// Obtain the goal words from the start -- this needs to be ran before the words are marked as used
-	int* goals = getGoalWordSet(word, difficulty, data); 
+	int* goals = getGoalWordSet(minDistance, data); 
+
+	// Choose the word that starts the game	(temporarily care)
+	int word = goals[0]; //ChooseStart(data->I2W); 
 
 	// The start word is now marked as used and cannot be used again
 	markUsed_WordSet(word, data->wordSet); 
-
-	
 	
 	// The winner will start as -2, as a const to say, game not over yet
 	int winner = -2; 
@@ -176,12 +183,11 @@ int FLWC(struct DataStructures* data){
 	// Determines whose turn it is currently 
 	int whoseTurn = 0; 
 	
-	
-	//printf("Welcome To The Four Letter Word Challenge!\n"); 
-	//printf("Random's Goal: %s\n", Convert_IntToWord(goals[0], data->I2W)); 
-	//printf("FLWC's Goal: %s\n\n\n", Convert_IntToWord(goals[1], data->I2W)); 
-	//printf("Good Luck!\n\n\n");
-	//printf("Starting Word: %s\n", Convert_IntToWord(word, data->I2W));
+	printf("Welcome To The Four Letter Word Challenge!\n"); 
+	printf("Your Goal: %s\n", Convert_IntToWord(goals[1], data->I2W)); 
+	//printf("FLWC's Goal: %s\n\n\n", Convert_IntToWord(goals[2], data->I2W)); 
+	printf("Good Luck!\n\n\n");
+	printf("Starting Word: %s\n", Convert_IntToWord(word, data->I2W));
 
 
 
@@ -189,13 +195,14 @@ int FLWC(struct DataStructures* data){
 	while (winner == -2){
 		if(whoseTurn){
 			// Temporarily do not let the bot have a turn  word = botPly_FLWC(word, depth, data); 
-			word = botPly_Random(word, data); 
+			word = userPly(word, data->W2I, data->I2W, data->wordSet); 
+			//word = botPly_Random(word, data); 
 			//printf("Random Chooses: %s\n", Convert_IntToWord(word, data->I2W)); 
 		}
 		else{
-			//word = botPly_FLWC(word, goals[1], depth, data); 
-			word = botPly_Random(word, data); 
-			//printf("FLWC Chooses: %s\n", Convert_IntToWord(word, data->I2W)); 
+			word = botPly_FLWC(word, goals[2], depth, data); 
+			//word = botPly_Random(word, data); 
+			printf("FLWC Chooses: %s\n", Convert_IntToWord(word, data->I2W)); 
 		}
 
 		whoseTurn = (whoseTurn + 1) % 2; 
@@ -206,18 +213,12 @@ int FLWC(struct DataStructures* data){
 		}
 
 		// If the word is equal to player 0's goal word, player 0 wins 
-		if (word == goals[0]){
+		if (word == goals[1]){
 			winner = 0; 
-			printf("Bot A Wins"); 
-			printf("Bot A's Goal: %s [Num Connections: %d]\n", Convert_IntToWord(goals[0], data->I2W), data->I2W->array[goals[0]]->numConnections); 
-			printf("Bot B's Goal: %s [Num Connections: %d]\n\n\n", Convert_IntToWord(goals[1], data->I2W), data->I2W->array[goals[1]]->numConnections); 
 		}
 
 		// If the word is equal to player 1's goal word, player 1 wins 
-		if (word == goals[1]){
-			printf("Bot B Wins\n"); 
-			printf("Bot A's Goal: %s\n", Convert_IntToWord(goals[1], data->I2W)); 
-			printf("Bot B's Goal: %s\n\n\n", Convert_IntToWord(goals[0], data->I2W)); 
+		if (word == goals[2]){
 			winner = 1; 
 		}
 
@@ -225,19 +226,21 @@ int FLWC(struct DataStructures* data){
 	}
 	switch (winner){
 		case -1: 
-			//printf("Tie"); 
+			printf("Tie\n"); 
 			break ;
 		case 0: 
-			//printf("Random A Wins"); 
+			printf("You Win\n"); 
 			break ;
 		case 1: 
-			//printf("Random B Wins"); 
+			printf("Bot Wins\n"); 
 			break ;
 	}
+	
 	free(goals); 
+
 	reset_WordSet(data->wordSet); 
+
 	return winner; 
-	*/
 }
 
 void FLWC_Test(struct DataStructures* data){
