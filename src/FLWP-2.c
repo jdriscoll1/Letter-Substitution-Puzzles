@@ -46,8 +46,14 @@ int test_new_flwg();
 
 void flwcChooseGoals_Example(); 
 
+int FLWC_Example(); 
 
 int main(){
+	return 0; 
+
+}
+
+int FLWC_Example(){
 
 	// Initialize the Data Structures
 	srand(time(0)); 

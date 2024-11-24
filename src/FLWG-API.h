@@ -37,7 +37,6 @@ struct GameData {
 	int goalWord; 
 };
 
-
 // Shared behavior
 struct DataStructures* initDataStructures(int fd); 
 
