@@ -49,7 +49,7 @@ void flwcChooseGoals_Example();
 int FLWC_Example(); 
 
 int main(){
-	return 0; 
+	FLWC_Example(); 
 
 }
 

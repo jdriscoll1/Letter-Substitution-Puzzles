@@ -6,20 +6,21 @@
 
 
 // This creates the first word and returns a set of game components for the flwt
-struct GameComponentsFLWT* initFLWT(int minNumConnections, int maxNumConnections, int minAdjacencies, struct DataStructures* data){
+struct GameComponentsFLWT* initFLWT(int minAdjacencies, struct DataStructures* data){
 
 	struct GameComponentsFLWT* flwtComponents = malloc(sizeof(struct GameComponentsFLWT)); 
 	flwtComponents->numAdjacenciesFound = 0; 
 	flwtComponents->minAdjacencies = minAdjacencies; 
 	flwtComponents->prevWords = init_ArrayList(minAdjacencies, 5, STR); 
-	flwtComponents->startWord = getStartWordFLWT(minNumConnections, maxNumConnections, data); 
+	flwtComponents->startWord = getStartWordFLWT(minAdjacencies, data); 
 	return flwtComponents; 
 
 }
 
 // Choose a word
-int getStartWordFLWT(int d1, int d2, struct DataStructures *data){
+int getStartWordFLWT(int minAdjacencies, struct DataStructures *data){
 	int chosenWord = 0; 
+	// Find all words that have n-connections & choose randomly among them 
 	markUsed_WordSet(chosenWord, data->wordSet); 
 	return chosenWord; 	
 

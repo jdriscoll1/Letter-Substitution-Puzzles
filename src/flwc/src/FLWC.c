@@ -182,26 +182,26 @@ int FLWC(struct DataStructures* data){
 	// Determines whose turn it is currently 
 	int whoseTurn = 0; 
 	
-	printf("Welcome To The Four Letter Word Challenge!\n"); 
+	/*printf("Welcome To The Four Letter Word Challenge!\n"); 
 	printf("Your Goal: %s\n", Convert_IntToWord(goals[1], data->I2W)); 
-	//printf("FLWC's Goal: %s\n\n\n", Convert_IntToWord(goals[2], data->I2W)); 
+	printf("FLWC's Goal: %s\n\n\n", Convert_IntToWord(goals[2], data->I2W)); 
 	printf("Good Luck!\n\n\n");
 	printf("Starting Word: %s\n", Convert_IntToWord(word, data->I2W));
-
+	*/
 
 
 	// if winner is -1 it is a tie so therefore -2 is gg
 	while (winner == -2){
 		if(whoseTurn){
 			// Temporarily do not let the bot have a turn  word = botPly_FLWC(word, depth, data); 
-			word = userPly(word, data->W2I, data->I2W, data->wordSet); 
-			//word = botPly_Random(word, data); 
+			//word = userPly(word, data->W2I, data->I2W, data->wordSet); 
+			word = botPly_Random(word, data); 
 			//printf("Random Chooses: %s\n", Convert_IntToWord(word, data->I2W)); 
 		}
 		else{
 			word = botPly_FLWC(word, goals[2], depth, data); 
 			//word = botPly_Random(word, data); 
-			printf("FLWC Chooses: %s\n", Convert_IntToWord(word, data->I2W)); 
+			//printf("FLWC Chooses: %s\n", Convert_IntToWord(word, data->I2W)); 
 		}
 
 		whoseTurn = (whoseTurn + 1) % 2; 

@@ -309,7 +309,7 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(int start, int goal, 
 		
 		if(bc->prevConnection == NULL){			  
 			printf("\n%s cannot connect with %s\n", Convert_IntToWord(start, IntToWord_HashMap), Convert_IntToWord(goal, IntToWord_HashMap));
-			goalFound = -1;
+			goalFound = false;
 		}
 		
 		//The previous connection moves forward one, going to the next word whose connections should be searched
@@ -332,7 +332,7 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(int start, int goal, 
 	//Frees the structure
 	Free_BFSComponents(bc, wordSet); 
 	
-	return (goalFound == -1)?NULL:output; 
+	return (goalFound == false)?NULL:output; 
 	
 	 //Things to keep in mind
 	 //When I add words, I don't want to add letters that are in the hash set meaning that I will have to: 

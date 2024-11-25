@@ -20,10 +20,10 @@ struct GameComponentsFLWT{
 
 
 // This creates the first word and returns a set of game components for the flwt
-struct GameComponentsFLWT* initFLWT(int minNumConnections, int maxNumConnections, int minAdjacencies, struct DataStructures* data);
+struct GameComponentsFLWT* initFLWT(int minAdjacencies, struct DataStructures* data);
 
 // Choose a word
-int getStartWordFLWT(int d1, int d2, struct DataStructures *data); 
+int getStartWordFLWT(int minAdjacencies, struct DataStructures *data); 
 
 // Allow the user to insert a word 
 int userEntersWordFLWT(char* userInput, struct GameComponentsFLWT* flwtComponents,  struct DataStructures* data); 

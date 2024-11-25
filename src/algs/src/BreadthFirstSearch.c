@@ -98,7 +98,7 @@ struct BFSResults BreadthFirstSearch_Distance(int start, int minConnections, str
 		//If it cannot connect as far out as intended
 		if(bc->prevConnection->next == NULL){			  
 			//It cannot return or else there will be memory leaks 
-			goalFound = -1;
+			goalFound = false;
 		}
 		
 		 
@@ -115,8 +115,8 @@ struct BFSResults BreadthFirstSearch_Distance(int start, int minConnections, str
 	int goal; 
 
 	struct BFSResults results; 
-	results.list = (goalFound == -1) ? NULL :  options; 
-	results.dataStorage  = (goalFound == -1) ? NULL :bc; 
+	results.list = (goalFound == false) ? NULL :  options; 
+	results.dataStorage  = (goalFound == false) ? NULL :bc; 
 	return results; 
 
 }
@@ -153,7 +153,7 @@ int BreadthFirstSearch_Distance_Goal(int start, int minConnections, struct wordD
 			//No need to let the user know this lol
 		
 			//It cannot return or else there will be memory leaks 
-			goalFound = -1;
+			goalFound = false;
 		}
 		
 		 
@@ -168,7 +168,7 @@ int BreadthFirstSearch_Distance_Goal(int start, int minConnections, struct wordD
 	int goal; 
 	
 	//If the goal isn't found, there will be no options to choose from 
-	if(goalFound != -1){
+	if(goalFound == true){
 		 //This is the total number of options
 		int numOptions = options->currPrecision; 
 		
@@ -182,7 +182,7 @@ int BreadthFirstSearch_Distance_Goal(int start, int minConnections, struct wordD
 	Free_BFSComponents(bc, wordSet);
 	free_ArrayList(options); 
 
-	return (goalFound == -1)?-1:goal;
+	return (goalFound == false)?-1:goal;
 
 }
 
