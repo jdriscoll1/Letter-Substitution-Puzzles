@@ -12,6 +12,7 @@ int numLetters = 4;
 #include <time.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <assert.h>
 
 #include "./FLWG-API.h"
 
@@ -28,6 +29,7 @@ int numLetters = 4;
 
 
 #include "./flwp/includes/PathfinderGame.h"
+#include "./flwp/includes/GameFunctions.h"
 
 #include "./flwg/includes/FLWGGame.h"
 #include "./flwc/includes/FLWC.h"
@@ -42,7 +44,54 @@ void initializeStructures();
 void fourletterwordgame_example(); 
 
 int main(){
-	FLWC(); 
+	srand(time(0)); 
+	int fd = open("docs/4.txt", O_RDONLY);
+	struct DataStructures* data = initDataStructures(fd); 
+        int num_games = 800;
+        int bot_wins = 0;
+        int random_wins = 0;
+	for (int i = 0; i < num_games; i++){
+                if (i % 100 == 0) {
+                  printf("%d/%d games complete\n", i, num_games);
+                }
+		int word = ChooseStart(data->I2W); 
+                //int word = 0;
+		markUsed_WordSet(word, data->wordSet); 
+		int winner = -1; 
+		int depth = 8; 
+		int rounds = 0; 
+		int whoseTurn = 1; 
+		//printf("[START GAME: %s]\n\n", Convert_IntToWord(word, data->I2W));
+		
+		//printf("\n-----GAME BEGINS: %s-----\n\n", Convert_IntToWord(word, data->I2W));
+		while (winner == -1){
+                        assert(word != -1);
+			
+			if(whoseTurn){
+				word = botPly_FLWC(word, depth, data); 
+				//printf("Minimax Chooses: %s\n", (word == -1) ? "LOSE CONDITION" : Convert_IntToWord(word, data->I2W));
+			}
+			else{
+				word = botPly_Random(word, data); 
+				//printf("Random Chooses: %s\n", (word == -1) ? "LOSE CONDITION" : Convert_IntToWord(word, data->I2W));
+			}
+			whoseTurn = (whoseTurn + 1) % 2; 
+			if(word == -1){
+				winner = whoseTurn; 
+			}
+			rounds++; 
+		}
+                if (winner == 0) {
+                  random_wins++;
+                } else {
+                  bot_wins++;
+                }
+		reset_WordSet(data->wordSet); 
+	}
+
+	//printf("%s Wins\n\n", (winner != 0) ? "Minimax": "Random");
+        printf("Bot wins: %d Random wins: %d\n", bot_wins, random_wins);
+	
 }
 
 /*

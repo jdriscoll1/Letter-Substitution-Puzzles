@@ -34,26 +34,39 @@ struct GameData {
 	int currWordId; 
 	int numPlayers; 
 	int difficulty; 
+	int goalWord; 
 };
 
-// Creating and destroying data structures
+
+// Shared behavior
 struct DataStructures* initDataStructures(int fd); 
 
+// flwg behavior
 void freeDataStructures(struct DataStructures* dataStructures); 
-
-// Game functions 
 struct GameData* initiateGame(struct DataStructures* dataStructures); 
 char* getCurrWord(struct GameData* gameData, struct DataStructures* dataStructures); 
 void endGame(struct GameData* gameData); 
-int botTakesTurn(struct DataStructures* dataStructures); 
+int botTakesTurn(struct GameData* gameData, struct DataStructures* data);
 int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructures* dataStructures); 
-int resetWordSet(struct DataStructures* dataStructures); 
+void resetWordSet(struct DataStructures* dataStructures);
 int startGameReturnFirstWord(struct DataStructures *dataStructures);
 
+// flwp behavior
+struct GameComponents* initiateFLWP(int minConnections, struct DataStructures* dataStructures); 
+void ResetFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures); 
+int userEntersWord_FLWP(char* userInput, struct GameComponents *gameComponents, struct DataStructures* dataStructures); 
+void removeWord_FLWP(char* word, struct GameComponents *gameComponents, struct DataStructures* dataStructures);
+
+char* getStartWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
+char* getGoalWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
+int isGameWonFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
+void undoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
+void redoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
+struct arrayList *getCurrentWordsFLWP(struct GameComponents *gameComponents);
+
 // Test Functionality  
-
 char* convertIntToWord(int wordId, struct DataStructures* dataStructures); 
+int convertWordToInt(char* word, struct DataStructures* dataStructures);
 
-int convertWordToInt(char* word, struct DataStructures* dataStructures); 
 
 #endif 

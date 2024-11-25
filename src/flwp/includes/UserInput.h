@@ -20,7 +20,7 @@ char* Take_Input_NoSize();
 /*This asks the user what they'd like the difficulty to be*/ 
 enum Difficulty ChooseDifficulty(); 
 enum ERROR_CODE{
-                VALID = 1,
+                VALID = 0,
                 TOO_SHORT = 2,
                 TOO_LONG = 3,
                 NOT_ENOUGH_LETTERS_IN_COMMON = 4,
@@ -28,7 +28,7 @@ enum ERROR_CODE{
                 WORD_DOES_NOT_EXIST = 6,
                 UNKNOWN_ERROR = 7
 };
-/*This method checks the input to make sure that it is valid
+/*This method checks gitthe input to make sure that it is valid
 @param prevWord --> The previous word, the word it is checking the current characters against
 @param currWord --> The word who is being judged
 @return --> 

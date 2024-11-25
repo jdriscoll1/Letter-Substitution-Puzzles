@@ -10,7 +10,11 @@
 @param depth --> How far is it from the original word?
 @param isMaximizingPlayer --> Is it the maximizing player (looking for the max move) or the minimzing player (looking for the min move)
 @return --> Returns the evaluation of all of the connected nodes, or the current node if it is the leaf*/
-//int minimax(int wordID, int depth, int isMaximizingPlayer, struct HashMapNode** HashMap); 
+enum ScoreFunction{
+	RANDOM_SCORE, 
+	FLWC_SCORE, 
+	FLWG_SCORE
+}; 
 struct score{
 	// the id of the word whose score is being considered
 	int wordId; 
@@ -26,13 +30,15 @@ struct score flwg_score(int id, int remainingDepth, int isMaximizingPlayer, stru
 struct score flwc_score(int id, int goalId, int remainingDepth, struct DataStructures* data); 
 
 // Minimax 
-struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizingPlayer, struct score alpha, struct score beta, struct DataStructures* data); 
+struct score minimax2(int id, int remainingDepth, int startDepth, int isMaximizingPlayer, struct score alpha, struct score beta, struct DataStructures* data, enum ScoreFunction scoreFn); 
 
 // output a score
 void printScore(struct score s);
 
 /*Compares two scores and output the word id of the better score*/
 int compareScore(struct score a, struct score b, int isMaximizingPlayer); 
+
+struct score randomScore(int id, struct DataStructures* data); 
 
 struct score createScore(int wordId, double score, double winPercentage, int depth);
 /*This does the alpha-beta pruning

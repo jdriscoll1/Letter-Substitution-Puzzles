@@ -9,13 +9,18 @@ Purpose: A library to encapsulate & organize the code into an API
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #include "FLWG-API.h"
 #include "flwp/includes/GameFunctions.h"
 #include "flwp/includes/UserInput.h"
+#include "flwg/includes/FLWGGame.h"
 // Creating and destroying data structures
 struct DataStructures* initDataStructures(int fd){
-	struct DataStructures* data = malloc(sizeof(struct DataStructures));  
+
+    srand(time(NULL));
+
+	struct DataStructures* data = malloc(sizeof(struct DataStructures));
 
 	// Initialize the Word to Int Hash Map 
 	data->W2I = Allocate_WordToInt(); 	
@@ -35,11 +40,12 @@ void freeDataStructures(struct DataStructures* data){
 struct GameData* initiateGame(struct DataStructures* dataStructures){
 	// reset word set	
 	struct GameData* gameData = malloc(sizeof(struct GameData)); 
-	gameData->currWordId = ChooseStart(dataStructures->I2W);  
-	gameData->difficulty = 0; 
+	gameData->currWordId = ChooseStart(dataStructures->I2W);
+	gameData->difficulty = 0;
 	gameData->numPlayers = 2; 
-	reset_WordSet(dataStructures->wordSet); 
-	return gameData; 
+	reset_WordSet(dataStructures->wordSet);
+    markUsed_WordSet(gameData->currWordId, dataStructures->wordSet);
+    return gameData;
 	
 	
 }
@@ -54,9 +60,14 @@ void endGame(struct GameData* gameData){
 	free(gameData); 
 }
 
-int botTakesTurn(struct DataStructures* data){
-	return 0; 
+int botTakesTurn(struct GameData* gameData, struct DataStructures* data){
+	int result = botPly(gameData->currWordId, 1, data->I2W, data->wordSet);
+    if (result >= 0) {
+        gameData->currWordId = result;
+    }
+    return result;
 }
+
 int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructures* data){
 	
 	// Check if the word is valid
@@ -67,20 +78,32 @@ int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructu
 
 	int wordId = convertWordToInt(userInput, data); 
 	// Check word is not in word set 
-	if(checkIfUsed_WordSet(gameData->currWordId, data->wordSet)){
+	if(checkIfUsed_WordSet(wordId, data->wordSet)){
 		return WORD_USED; 
 	} 
 	// Add word to word set 
 	markUsed_WordSet(wordId, data->wordSet); 
         gameData->currWordId = wordId;
-	return 0; 
+	return VALID;
 }
-int resetWordSet(struct DataStructures* data){
-	return 0; 
+void resetWordSet(struct DataStructures* data){
+	reset_WordSet(data->wordSet);
 }
-int startGameReturnFirstWord(struct DataStructures *data){
 
+
+struct GameComponents* initiateFLWP(int minConnections, struct DataStructures* dataStructures){
+
+	return InitializeGameComponents(dataStructures->I2W, minConnections, dataStructures->wordSet); 
 }
+
+void ResetFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures){
+
+	ResetGameComponents(gameComponents, dataStructures->I2W);
+}
+int userEntersWord_FLWP(char* userInput, struct GameComponents *gameComponents, struct DataStructures* dataStructures){
+    return AddWord_Struct(gameComponents, userInput, dataStructures->W2I, dataStructures->I2W);
+}
+
 
 // Test Functionality  
 
@@ -92,4 +115,37 @@ int convertWordToInt(char* word, struct DataStructures* data){
 	return Convert_WordToInt(word, data->W2I); 
 }
 
+char* getStartWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+    return convertIntToWord(gameComponents->start, dataStructures);
+}
+char* getGoalWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+    return convertIntToWord(gameComponents->goal, dataStructures);
+}
 
+void undoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+    Undo_Struct(gameComponents, dataStructures->I2W);
+}
+
+void redoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+    Redo_Struct(gameComponents, dataStructures->I2W);
+}
+
+struct arrayList *getCurrentWordsFLWP(struct GameComponents *gameComponents) {
+    return gameComponents->aList;
+}
+
+int isGameWonFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+    return gameComponents->goal == gameComponents->prevInput;
+}
+
+void removeWord_FLWP(char* word, struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+
+    char tempStr[numLetters + 2];
+    tempStr[0] = '-';
+    tempStr[numLetters + 1] = '\0';
+
+    strncpy(&tempStr[1], word, numLetters);
+
+    RemoveWord_Struct(gameComponents, tempStr, 0, dataStructures->W2I, dataStructures->I2W);
+
+}

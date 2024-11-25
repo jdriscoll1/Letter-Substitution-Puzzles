@@ -155,7 +155,7 @@ int inDictionary(int word){
 void Undo_Struct(struct GameComponents* gc, struct wordDataArray* IntToWord_HashMap){
 	
 	if(gc->numMoves == 0){
-		printf("No move to return to.\n"); 
+		//printf("No move to return to.\n");
 	}
 	else{
 		//There has been an undo
@@ -193,7 +193,7 @@ int AddWord_Struct(struct GameComponents* gc, char* input, struct DummyHeadNode*
 	//Checks if the word is valid based on the previous input 
 	int isValid = Check_Input(gc->prevInput, (const char*)input, WordToInt_HashMap, IntToWord_HashMap); 
 	
-	if(isValid == 1){
+	if(isValid == VALID){
 			//Once it is valid, we can convert it into an integer
 			int newWord = Convert_WordToInt(input, WordToInt_HashMap); 
 			//If I have previously undone a move, I need to free that move		

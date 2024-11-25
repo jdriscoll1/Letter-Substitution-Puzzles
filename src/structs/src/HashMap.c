@@ -19,11 +19,11 @@ void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wo
 	//Open up the file 
 	FILE* wordDoc = fdopen(fd, "r"); 
 	//Read the top number from the file
-	int numWords = getNumWords(wordDoc); 
+	int numWords = getNumWords(wordDoc);
 	//Allocate the structure using the number of words int --> word (wordData)
-	Allocate_IntToWord(IntToWord_HashMap, numWords);  
+	Allocate_IntToWord(IntToWord_HashMap, numWords);
 	//Place the data into the two new hash maps
-	Fill_HashMaps(wordDoc, WordToInt_HashMap, IntToWord_HashMap); 
+	Fill_HashMaps(wordDoc, WordToInt_HashMap, IntToWord_HashMap);
 	fclose(wordDoc);
 }
 void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, char* path){
@@ -77,10 +77,10 @@ struct wordDataArray *Allocate_IntToWordStruct(){
 
 void Fill_HashMaps(FILE* wordDoc, struct DummyHeadNode** *WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
 	char line[BUFSIZ]; 
-	int id = 0; 
-	while(fgets(line, BUFSIZ, wordDoc) != NULL){
-		//So, now we need to make 2 nodes, 1 wordData node, and one wordStruct node 
-
+	int id = 0;
+    for(int x = 0; x < IntToWord_HashMap->numWords; x++){
+        fgets(line, BUFSIZ, wordDoc);
+		//So, now we need to make 2 nodes, 1 wordData node, and one wordStruct node
 		//The word of the line
 		char* currValue = strtok(line, " ");  
 		currValue[numLetters] = '\0'; 
