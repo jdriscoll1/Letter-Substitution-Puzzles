@@ -64,9 +64,9 @@ void undoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* 
 void redoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
 struct arrayList *getCurrentWordsFLWP(struct GameComponents *gameComponents);
 
+
 // Test Functionality  
 char* convertIntToWord(int wordId, struct DataStructures* dataStructures); 
-int convertWordToInt(char* word, struct DataStructures* dataStructures);
-
+int convertWordToInt(char* word, struct DataStructures* dataStructures); 
 
 #endif 

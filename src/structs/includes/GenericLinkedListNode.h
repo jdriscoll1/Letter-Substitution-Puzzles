@@ -4,12 +4,13 @@
 /*The Generic Linked List Node Header File
 Purpose: Now when I make 2D Linked Lists, I will use this (aka what I should have done last year)*/ 
 
+typedef enum listType{
+	WORD_LL, TREE_SET_LL, HINT3, INT_LL
+}listType;
 /*The Structure that links to any linked list*/ 
 struct GenericLinkedListNode{
-    enum listType{
-		WORD_LL, TREE_SET_LL, HINT3, INT_LL
-	}listType;
-	/*This is generic, therefore as long as you do ( (struct name*)(header->listHeader) )->var it'll be ok'*/ 
+	listType listType; 
+    	/*This is generic, therefore as long as you do ( (struct name*)(header->listHeader) )->var it'll be ok'*/ 
 	void* listHeader; 
 	/*The next position in the set*/ 
 	struct GenericLinkedListNode *next; 
