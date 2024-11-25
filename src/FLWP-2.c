@@ -42,18 +42,18 @@ void runFLWG();
 void testMCTS();
 void initializeStructures();
 void fourletterwordgame_example(); 
-int test_new_flwg(); 
+void test_new_flwg(); 
 
 void flwcChooseGoals_Example(); 
 
-int FLWC_Example(); 
+void FLWC_Example(); 
 
 int main(){
 	FLWC_Example(); 
 
 }
 
-int FLWC_Example(){
+void FLWC_Example(){
 
 	// Initialize the Data Structures
 	srand(time(0)); 
@@ -100,7 +100,7 @@ void flwcChooseGoals_Example(){
 	freeDataStructures(data); 
 }
 
-int test_new_flwg(){
+void test_new_flwg(){
 	srand(time(0)); 
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd); 
