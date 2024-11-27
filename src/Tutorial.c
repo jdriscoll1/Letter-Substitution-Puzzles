@@ -30,7 +30,8 @@ char* getStartWordFLWT(struct GameComponentsFLWT* flwtComponents, struct DataStr
 int userEntersWordFLWT(char* userInput, struct GameComponentsFLWT* flwtComponents,  struct DataStructures* data){
 	
 	int isValid = Check_Input(flwtComponents->startWordId,(const char*)userInput, data->W2I, data->I2W); 
-	if(isValid == 1){
+	printf("Is Valid: %d\n", isValid);
+	if(isValid == VALID){
 			//Once it is valid, we can convert it into an integer
 			int id = Convert_WordToInt(userInput, data->W2I); 
 
@@ -60,5 +61,12 @@ void freeGameComponentsFLWT(struct GameComponentsFLWT* flwtComponents){
 	free_ArrayList(flwtComponents->prevWords); 	
 	free(flwtComponents); 
 
+}
+
+void printFLWTComponents(struct GameComponentsFLWT* flwtComponents){
+	struct arrayList *words = getCurrentWordsFLWT(flwtComponents);
+	printf("%d", words->currPrecision);
+	int length = (words->currPrecision) / (numLetters);
+	printf("Length: %d", length);  
 }
 

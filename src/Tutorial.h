@@ -36,4 +36,5 @@ struct arrayList* getCurrentWordsFLWT(struct GameComponentsFLWT* flwtComponents)
 
 int isGameWonFLWT(struct GameComponentsFLWT* flwtComponents); 
 
+void printFLWTComponents(struct GameComponentsFLWT* flwtComponents); 
 #endif
