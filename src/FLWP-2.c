@@ -66,7 +66,7 @@ int flwt_example(){
 	result = userEntersWordFLWT("fare", flwtComponents, data); 
 	printf("Result: %d", result);
 	
-
+	return 0; 
 
 }
 void FLWC_Example(){
