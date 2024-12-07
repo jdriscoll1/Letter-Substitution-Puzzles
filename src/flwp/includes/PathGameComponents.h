@@ -66,7 +66,7 @@ void ResetUndo_Struct(struct GameComponents* gc);
 @param newWord --> The new word that the user entered
 @param HashMap --> The Hash Map who is checked to see if the word is valid
 @return --> Returns a 0 if it failed, and a 1 if it worked TO-DO: More specific fail messages (2 = Too Short?)*/
-int AddWord_Struct(struct GameComponents* gc, char* input, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap);
+int AddWord_Struct(struct GameComponents* gc, char* input, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet);
 
 //This goes through the game components and frees them
 void FreeGameComponents(struct GameComponents *gc, struct wordDataArray* IntToWord_HashMap);

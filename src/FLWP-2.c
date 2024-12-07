@@ -61,6 +61,10 @@ int flwt_example(){
 	
 	struct GameComponentsFLWT* flwtComponents =  initFLWT(5, 5, data);
 	printf("%s", getStartWordFLWT(flwtComponents, data));
+	int result = userEntersWordFLWT("fare", flwtComponents, data); 
+	printf("Result: %d", result);
+	result = userEntersWordFLWT("fare", flwtComponents, data); 
+	printf("Result: %d", result);
 	
 
 

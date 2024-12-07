@@ -5,6 +5,7 @@
 #include "../../structs/includes/TreeSet.h"
 #include "../../structs/includes/ArrayList.h"
 #include "../../structs/includes/HashMap.h"
+#include "../../structs/includes/WordSet.h"
 /*Necessary commands: 
 \n Start Game
 \n*/ 
@@ -38,7 +39,7 @@ enum ERROR_CODE{
 4 - not enough letters in common
 5 - word = to prev
 6 - word does not exist*/ 
-int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap); 
+int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet); 
 
 
 /*This Converts a word to lowercase*/ 

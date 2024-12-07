@@ -14,7 +14,7 @@ struct GameComponentsFLWT* initFLWT(int minAdjacencies, int maxAdjacencies, stru
 	flwtComponents->minAdjacenciesUserNeedsToFind = minAdjacencies; 
 	flwtComponents->maxAdjacenciesThatCanBeFound = maxAdjacencies; 
 	flwtComponents->prevWords = init_ArrayList(minAdjacencies, 5, STR); 
-	flwtComponents->startWordId = getWordWithNumberOfConnections(maxAdjacencies, data->I2W);
+	flwtComponents->startWordId = 0;//getWordWithNumberOfConnections(maxAdjacencies, data->I2W);
 	markUsed_WordSet(flwtComponents->startWordId, data->wordSet); 
 	return flwtComponents; 
 
@@ -30,8 +30,8 @@ char* getStartWordFLWT(struct GameComponentsFLWT* flwtComponents, struct DataStr
 // Allow the user to insert a word 
 int userEntersWordFLWT(char* userInput, struct GameComponentsFLWT* flwtComponents,  struct DataStructures* data){
 	
-	int isValid = Check_Input(flwtComponents->startWordId,(const char*)userInput, data->W2I, data->I2W); 
-	printf("Is Valid: %d\n", isValid);
+	int isValid = Check_Input(flwtComponents->startWordId,(const char*)userInput, data->W2I, data->I2W, data->wordSet); 
+
 	if(isValid == VALID){
 			//Once it is valid, we can convert it into an integer
 			int id = Convert_WordToInt(userInput, data->W2I); 

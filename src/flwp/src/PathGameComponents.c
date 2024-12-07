@@ -189,9 +189,9 @@ void Redo_Struct(struct GameComponents* gc, struct wordDataArray* IntToWord_Hash
 		CopyWordLLOntoArrayList(gc, IntToWord_HashMap); 
 	}
 }
-int AddWord_Struct(struct GameComponents* gc, char* input, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
+int AddWord_Struct(struct GameComponents* gc, char* input, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){
 	//Checks if the word is valid based on the previous input 
-	int isValid = Check_Input(gc->prevInput, (const char*)input, WordToInt_HashMap, IntToWord_HashMap); 
+	int isValid = Check_Input(gc->prevInput, (const char*)input, WordToInt_HashMap, IntToWord_HashMap, wordSet); 
 	
 	if(isValid == VALID){
 			//Once it is valid, we can convert it into an integer

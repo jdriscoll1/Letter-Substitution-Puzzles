@@ -168,7 +168,7 @@ int Input_FLWG(int prevWord, struct DummyHeadNode*** WordToInt_HashMap, struct w
 		//if the word is end -- game over 
 		
 		//It checks if the word is valid
-		isValid = Check_Input(prevWord, wordStr, WordToInt_HashMap, IntToWord_HashMap); 
+		isValid = Check_Input(prevWord, wordStr, WordToInt_HashMap, IntToWord_HashMap, wordSet); 
 		if(isValid == 1){
 			wordID = Convert_WordToInt(wordStr, WordToInt_HashMap);
 			//if the word has been used

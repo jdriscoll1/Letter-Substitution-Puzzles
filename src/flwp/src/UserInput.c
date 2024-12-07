@@ -73,7 +73,7 @@ enum Difficulty ChooseDifficulty(){
 }
 
 
-int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
+int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){
 	//Has to make sure that word is numLetters letters
 	//Has to make sure that word has numLetters - 1 letters in commond
 	//First, find prev word 
@@ -109,14 +109,14 @@ int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** Word
 	}
 
 	
-	if(equalLetters == numLetters + 1){
-		//printf("Word is Equal to Prev\n");
-		return WORD_USED;
-	}
 	//First: Make sure it is a real word
 	//Go into the hash map
 	//Find it in the hash map
 	int id = Convert_WordToInt((char*)currWord, WordToInt_HashMap); 
+	// Check if the word is used
+	if(equalLetters == numLetters + 1 || checkIfUsed_WordSet(id, wordSet)){
+		return WORD_USED;
+	}
  
 	if(inDictionary(id) == 0){
 		//printf("Word does not exist\n");

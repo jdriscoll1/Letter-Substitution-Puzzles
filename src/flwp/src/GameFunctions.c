@@ -302,7 +302,7 @@ int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct Dumm
 				isCommand = 2; 
 			}
 			else{
-				isValid = AddWord_Struct(gc, input, WordToInt_HashMap, IntToWord_HashMap); 
+				isValid = AddWord_Struct(gc, input, WordToInt_HashMap, IntToWord_HashMap, wordSet); 
 				isCommand = 0; 
 			}
 			

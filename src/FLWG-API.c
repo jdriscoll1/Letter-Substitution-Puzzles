@@ -72,7 +72,7 @@ int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructu
 	
 	// Check if the word is valid
 	enum ERROR_CODE result; 
-	if((result = Check_Input(gameData->currWordId, (const char*)userInput, data->W2I, data->I2W)) != VALID){
+	if((result = Check_Input(gameData->currWordId, (const char*)userInput, data->W2I, data->I2W, data->wordSet)) != VALID){
 		return result; 
 	}
 
@@ -101,7 +101,7 @@ void ResetFLWP(struct GameComponents *gameComponents, struct DataStructures* dat
 	ResetGameComponents(gameComponents, dataStructures->I2W);
 }
 int userEntersWord_FLWP(char* userInput, struct GameComponents *gameComponents, struct DataStructures* dataStructures){
-    return AddWord_Struct(gameComponents, userInput, dataStructures->W2I, dataStructures->I2W);
+    return AddWord_Struct(gameComponents, userInput, dataStructures->W2I, dataStructures->I2W, dataStructures->wordSet);
 }
 
 
