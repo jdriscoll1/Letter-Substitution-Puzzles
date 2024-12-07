@@ -71,14 +71,7 @@ struct BFSResults BreadthFirstSearch_Distance(int start, int minConnections, str
 		exit(0); 
 	}
 
-	//This array determines how much an array list should start and grow. [minConnections - 2][0] = initSize [minConnections - 2][1] = move size
-	//These numbers were found by taking the mean, and the avg of the mean and the max
-	int arraySize[][2] = {{43, 61},{152, 141}, {351, 183}, {516, 150}, {427, 188}, {277, 239}, {164, 300}, {83, 21}, {39, 332},{18, 361}, {15, 200}, {10, 354}, {8, 143}, {2, 28}, {2, 4}, {2, 4}}; 
 
-	int arrListInitSize = (minConnections < 13) ? arraySize[minConnections - 2][0] : 5; 
-
-	int arrListMoveSize = (minConnections < 13) ? arraySize[minConnections - 2][1] : 5; 
-	
 	// Instantiates the necessary BFS Components
 	struct BFSComponents* bc = init_BFSComponents(start, wordSet);
 	bc->End = bc->prevConnection->next; 
@@ -112,7 +105,6 @@ struct BFSResults BreadthFirstSearch_Distance(int start, int minConnections, str
 	}
 
 	//This is the path from start to end 
-	int goal; 
 
 	struct BFSResults results; 
 	results.list = (goalFound == false) ? NULL :  options; 

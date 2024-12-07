@@ -75,8 +75,6 @@ void FLWC_Example(){
 	srand(time(0)); 
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd); 
-	int startId = 0; 
-	int distance = 2; 
 
 	FLWC_Test(data); 
 	freeDataStructures(data); 
@@ -92,7 +90,6 @@ void flwcChooseGoals_Example(){
 	// Initialize the starting word
 	int startId = 0; 
 
-	int distanceFromGoalWord = 2; 
 	// Initialize the goal words
 	int* goalWordSet = NULL;   
 

@@ -41,7 +41,6 @@ int GetMinConnections(enum Difficulty difficulty){
 int getWordWithNumberOfConnections(int numConnections, struct wordDataArray* IntToWord_HashMap){
 	int minId = -1; 
 	int maxId = -1; 
-	int i = 0; 
 	for(int i = 0; i < IntToWord_HashMap->numWords; i++){
 		int currNumConnections = IntToWord_HashMap->array[i]->numConnections; 
 	

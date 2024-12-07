@@ -104,8 +104,7 @@ int ceil_div(int x, int y) {
 
 /*Go through all the words and mark them unused*/
 void reset_WordSet(struct WordSet* wordSet){
-	unsigned int i = 0; 
-	for(i = 0; i < ceil_div(wordSet->totalWords, (sizeof(unsigned long) * NUM_BYTES)); i++){
+	for(unsigned int i = 0; i < (unsigned int)ceil_div(wordSet->totalWords, (sizeof(unsigned long) * NUM_BYTES)); i++){
 		wordSet->words[i] = 0;
 	}
 		

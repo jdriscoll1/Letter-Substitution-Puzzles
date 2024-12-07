@@ -73,7 +73,7 @@ int* getGoalWordSet(int distance, struct DataStructures* data){
 		
 		wordsWithSameNumConnectionsAsBaseWord = init_ArrayList(10, 10, NUM); 
 		// Loop through all of the options determining which words have the same number of connections as the base word 
-		for (int i = 0; i < options->currPrecision; i++){
+		for (unsigned int i = 0; i < options->currPrecision; i++){
 			struct TreeStorageNode* currNode = ((struct TreeStorageNode**)options->list)[i];
 			int wordId = currNode->id; 
 			if(wordId == baseWordId){
@@ -244,7 +244,6 @@ int FLWC(struct DataStructures* data){
 
 void FLWC_Test(struct DataStructures* data){
 	int numGames = 800; 
-	int currGame = 0; 
 	int botAWins = 0; 
 	int botBWins = 0; 
 	int ties = 0; 

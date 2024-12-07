@@ -217,7 +217,6 @@ struct score minimax2(int id, int goalId, int remainingDepth, int startDepth, in
 	// Go through each child node and give it a score
 	while(conn->next != NULL){
 		
-		char* currWord = Convert_IntToWord(id, data->I2W); 
 		//printf("%s: maxScore = %f alpha = %f beta = %f maximizingPlayer = %d\n", currWord, maxScore.score, alpha.score, beta.score, isMaximizingPlayer);
 
 		conn = conn->next; 

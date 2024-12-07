@@ -134,7 +134,7 @@ struct arrayList *getCurrentWordsFLWP(struct GameComponents *gameComponents) {
     return gameComponents->aList;
 }
 
-int isGameWonFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+int isGameWonFLWP(struct GameComponents *gameComponents) {
     return gameComponents->goal == gameComponents->prevInput;
 }
 
