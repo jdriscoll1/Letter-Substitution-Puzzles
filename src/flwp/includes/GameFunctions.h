@@ -26,6 +26,7 @@ void AfterGameOutput(int gameEndCondition, struct GameComponents* gc);
 @return --> Returns a word that will be considered the start word*/ 
 int ChooseStart(struct wordDataArray* IntToWord_HashMap); 
 
+int getWordWithNumberOfConnections(int numConnections, struct wordDataArray* IntToWord_HashMap);
 
 /*Method that determines when the game will be stopped
 @param input --> the current word who may be the end

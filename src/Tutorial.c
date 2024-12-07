@@ -1,5 +1,6 @@
 #include "Tutorial.h"
 #include "./flwp/includes/UserInput.h"
+#include "./flwp/includes/GameFunctions.h"
 #include "./structs/includes/WordSet.h"
 
 #include <stdlib.h>
@@ -13,7 +14,7 @@ struct GameComponentsFLWT* initFLWT(int minAdjacencies, int maxAdjacencies, stru
 	flwtComponents->minAdjacenciesUserNeedsToFind = minAdjacencies; 
 	flwtComponents->maxAdjacenciesThatCanBeFound = maxAdjacencies; 
 	flwtComponents->prevWords = init_ArrayList(minAdjacencies, 5, STR); 
-	flwtComponents->startWordId = 0; 
+	flwtComponents->startWordId = getWordWithNumberOfConnections(maxAdjacencies, data->I2W);
 	markUsed_WordSet(flwtComponents->startWordId, data->wordSet); 
 	return flwtComponents; 
 
@@ -65,8 +66,17 @@ void freeGameComponentsFLWT(struct GameComponentsFLWT* flwtComponents){
 
 void printFLWTComponents(struct GameComponentsFLWT* flwtComponents){
 	struct arrayList *words = getCurrentWordsFLWT(flwtComponents);
-	printf("%d", words->currPrecision);
 	int length = (words->currPrecision) / (numLetters);
-	printf("Length: %d", length);  
+	char *rawStr = (char*)words->list;
+	char tempStr[numLetters + 1];
+	tempStr[numLetters] = '\0';
+	printf("Raw String: %s\n", rawStr);
+	for (int i = 0; i < length; i ++) {
+		char *currStr = &rawStr[i*numLetters];
+		strncpy(tempStr, currStr, numLetters);
+		printf("String:  %s\n", tempStr);
+	}
+	printf("\n\n"); 
+
 }
 

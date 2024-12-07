@@ -38,6 +38,32 @@ int GetMinConnections(enum Difficulty difficulty){
 	
 }
 
+int getWordWithNumberOfConnections(int numConnections, struct wordDataArray* IntToWord_HashMap){
+	int minId = -1; 
+	int maxId = -1; 
+	int i = 0; 
+	for(int i = 0; i < IntToWord_HashMap->numWords; i++){
+		int currNumConnections = IntToWord_HashMap->array[i]->numConnections; 
+	
+		// if the number of  is equal to the numConnections that are desired 		
+		if(currNumConnections == numConnections){
+			if (minId == -1){
+				minId = i; 	
+			}
+		}
+		if(currNumConnections < numConnections){
+			if (maxId == -1){
+				maxId = i; 
+			}
+
+		}
+	}	
+
+	return (rand() % (maxId - minId)) + minId; 
+
+
+}
+
 
 
 /*Randomly chooses a word based on an index*/ 

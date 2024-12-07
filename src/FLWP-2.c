@@ -47,9 +47,12 @@ void test_new_flwg();
 
 void flwcChooseGoals_Example(); 
 
+int flwt_example();
 void FLWC_Example(); 
-
 int main(){
+	flwt_example(); 
+}
+int flwt_example(){
 
 	srand(time(0)); 
 	int fd = open("docs/4.txt", O_RDONLY);
@@ -58,11 +61,6 @@ int main(){
 	
 	struct GameComponentsFLWT* flwtComponents =  initFLWT(5, 5, data);
 	printf("%s", getStartWordFLWT(flwtComponents, data));
-	printf("%d", userEntersWordFLWT("bare", flwtComponents, data)); 
-	isGameWonFLWT(flwtComponents); 
-	printf("%d", userEntersWordFLWT("dare", flwtComponents, data)); 
-	isGameWonFLWT(flwtComponents); 
-	printFLWTComponents(flwtComponents); 
 	
 
 
