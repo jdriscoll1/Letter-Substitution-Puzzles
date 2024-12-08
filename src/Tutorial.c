@@ -15,6 +15,7 @@ struct GameComponentsFLWT* initFLWT(int minAdjacencies, int maxAdjacencies, stru
 	flwtComponents->maxAdjacenciesThatCanBeFound = maxAdjacencies; 
 	flwtComponents->prevWords = init_ArrayList(minAdjacencies, 5, STR); 
 	flwtComponents->startWordId = getWordWithNumberOfConnections(maxAdjacencies, data->I2W);
+	reset_WordSet(data->wordSet); 
 	markUsed_WordSet(flwtComponents->startWordId, data->wordSet); 
 	return flwtComponents; 
 
