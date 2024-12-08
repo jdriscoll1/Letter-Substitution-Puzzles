@@ -1,7 +1,7 @@
-#include "Tutorial.h"
-#include "./flwp/includes/UserInput.h"
-#include "./flwp/includes/GameFunctions.h"
-#include "./structs/includes/WordSet.h"
+#include "../includes/FLWT-API.h"
+#include "../../flwp/includes/UserInput.h"
+#include "../../flwp/includes/GameFunctions.h"
+#include "../../structs/includes/WordSet.h"
 
 #include <stdlib.h>
 

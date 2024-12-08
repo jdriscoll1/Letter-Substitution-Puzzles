@@ -7,7 +7,7 @@
 
 extern int numLetters; 
 
-#include "../../FLWG-API.h"
+#include "../../api/includes/FLWG-API.h"
 #include "../../flwp/includes/GameFunctions.h"
 #include "../../algs/includes/Minimax-2.h"
 #include "../../flwg/includes/FLWGGame.h"

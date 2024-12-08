@@ -14,8 +14,8 @@ int numLetters = 4;
 #include <unistd.h>
 #include <assert.h>
 
-#include "./FLWG-API.h"
-#include "./Tutorial.h"
+#include "./api/includes/FLWG-API.h"
+#include "./api/includes/FLWT-API.h"
 
 #include "./algs/includes/Minimax-2.h"
 #include "./algs/includes/MinimaxTests.h"

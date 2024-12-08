@@ -11,9 +11,9 @@ extern int numLetters;
 #include <string.h>
 #include <math.h>
 
-#include "./structs/includes/HashMap.h"
-#include "./structs/includes/TreeSet.h"
-#include "./structs/includes/WordSet.h"
+#include "../../structs/includes/HashMap.h"
+#include "../../structs/includes/TreeSet.h"
+#include "../../structs/includes/WordSet.h"
 
 #ifndef seenFLWGAPI
 #define seenFLWGAPI

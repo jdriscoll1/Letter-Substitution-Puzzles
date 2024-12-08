@@ -2,7 +2,7 @@
 #define seenFLWCTutorial
 
 #include "FLWG-API.h"
-#include "./structs/includes/ArrayList.h"
+#include "../../structs/includes/ArrayList.h"
 
 struct GameComponentsFLWT{
 	// The word that the user needs to connect from 

@@ -3,7 +3,7 @@ extern int numLetters;
 #ifndef seenFLWC
 #define seenFLWC
 
-#include "../../FLWG-API.h"
+#include "../../api/includes/FLWG-API.h"
 // Choose the goal word
 // struct map* IntToWord_HashMap
 // int distance

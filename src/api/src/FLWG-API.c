@@ -11,10 +11,11 @@ Purpose: A library to encapsulate & organize the code into an API
 #include <math.h>
 #include <time.h>
 
-#include "FLWG-API.h"
-#include "flwp/includes/GameFunctions.h"
-#include "flwp/includes/UserInput.h"
-#include "flwg/includes/FLWGGame.h"
+#include "../includes/FLWG-API.h"
+#include "../../flwp/includes/GameFunctions.h"
+#include "../../flwp/includes/UserInput.h"
+#include "../../flwg/includes/FLWGGame.h"
+
 // Creating and destroying data structures
 struct DataStructures* initDataStructures(int fd){
 

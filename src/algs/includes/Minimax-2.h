@@ -2,7 +2,7 @@
 #define seenMinimax
 
 #include "../../structs/includes/HashMap.h"
-#include "../../FLWG-API.h"
+#include "../../api/includes/FLWG-API.h"
 #include "../../structs/includes/WordSet.h"
 
 /*The purpose of this algorithm is to search depth first down a tree and find the most likely path to trap your opponent

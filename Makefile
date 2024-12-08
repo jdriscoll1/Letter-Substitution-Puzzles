@@ -1,5 +1,5 @@
 main:
 	make flwo
 
-flwo: ./src/*.c ./src/api/*.h ./src/api/*.c ./src/*/src/*.c ./src/*/includes/*.h ./src/flwg/src/*.c ./src/flwc/src/FLWC.c
-	gcc -Wall -Wextra -g -o flwo ./src/*.c ./src/api/*.c ./src/*/src/*.c -lm
+flwo: ./src/*.c ./src/*/src/*.c ./src/*/includes/*.h 
+	gcc -Wall -Wextra -g -o flwo ./src/*.c  ./src/*/src/*.c -lm
