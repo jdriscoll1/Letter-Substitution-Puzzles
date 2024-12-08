@@ -108,7 +108,6 @@ void test_new_flwg(){
                 //int word = 0;
 		markUsed_WordSet(word, data->wordSet); 
 		int winner = -1; 
-		int depth = 8; 
 		int rounds = 0; 
 		int whoseTurn = 1; 
 
