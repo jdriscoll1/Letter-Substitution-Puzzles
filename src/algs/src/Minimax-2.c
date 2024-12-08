@@ -43,6 +43,10 @@ To Do So, I will make use of the minimax algorithm*/
 
 struct score flwg_score(int id, struct DataStructures* data, struct score_parameters parameters){
 
+	if(parameters.remainingDepth == 0){
+		// Returns a score stating it is uncertain whether it is good or bad 
+		return createScore(id, .5, .5, 0);  
+	}
 	// Create a set of parameters called score parameters 
 	struct intList* conn = getConnections(id, data->I2W); 
 	conn = conn->next; 
@@ -60,72 +64,36 @@ struct score flwg_score(int id, struct DataStructures* data, struct score_parame
 }
 
 
-int choose_random_word(int id, struct DataStructures* data){
-
-	// The number of words that can be connected to & have not already been used 	
-	int numOptions = 0; 
-
-	// This is the list of words that are options, used and unused
-	struct intList* conn = getConnections(id, data->I2W); 
-
-	//Get off the dummy head node
-	conn = conn->next; 
-
-	// Loop through the words and derive the number of words that have not been used
-	while(conn != NULL){
-
-		// if there is a single word that is not used 
-		if(! checkIfUsed_WordSet(conn->data, data->wordSet)){
-			numOptions++; 
-		}
-		conn = conn->next; 	
-	}
-	if(numOptions == 0){
-		return -1; 
-	}
-	// choose randomly between [0, numConnectiosn]
-	// Allow it to be inclusive of N 
-	//printf("Num Options: %d\n", numOptions); 
-	int choiceIdRelativeToUnusedWords = rand() % numOptions; 	
-	int choiceId = -1;
-	int currId = 0; 
-	
-	// Reset the connections
-	conn = getConnections(id, data->I2W); 
-	conn = conn->next; 
-
-	// While the word has not been chosen 
-	while(choiceId == -1){
-		
-		// Check if the current word is used
-		while(checkIfUsed_WordSet(conn->data, data->wordSet)){
-			
-			//printf("Curr Word: %d, is Used: %d", conn->data, checkIfUsed_WordSet(conn->data, data->wordSet)); 
-			// If it is go to the next word
-			conn = conn->next; 
-		}
-		//printf("Broke From the Loop");
-		// Otherwise, check if the the current id is equal to the choice id relative to unused words 
-		if(currId == choiceIdRelativeToUnusedWords){
-			choiceId = conn->data; 		
-		}
-		currId++; 	
-		conn = conn->next; 	
-		
-	}
-	
-	return choiceId; 
-}
-
-// it needs the current word
+// This is the score function for FLWC -- 
+// It returns a score struct: 
+// wordId: The Word ID Determines whether minimax will return this as the score, or keep searching
+	// If the wordId is id, return the word in minimax
+	// if the word id is -1, keep searching 
+// score: It only fills out hte score if it intends to return the score
+	// if it finds a word it needs to avoid, it gives  it a very low score and returns it 
+	// If it finds a word it needs as a goal, it increments hte number of goal words found 
+	// If it reaches the maximum depth
+// winPercentage:
+// depth: 
 struct score flwc_score(int id, struct DataStructures* data, struct score_parameters parameters){
 
-	// Check to see if the current word is the goal word
-	if (id == parameters.goalId){
-		return createScore(id, 1, 1, 0); 
+	// 1) Check to see if word is goal/avoid
+	if(parameters.remainingDepth != parameters.startDepth){
+		if (checkIfUsed_WordSet(id, parameters.goalWords)){
+			parameters.goalWordsFound++; 
+		}
+
+		if (checkIfUsed_WordSet(id, parameters.avoidWords)){
+			return createScore(id, -1, 0, parameters.remainingDepth); 	
+		}	
+
+	}
+	// 2) if max-depth reached, return number of goal words that were found
+	if(parameters.remainingDepth == 0){
+		return createScore(id, parameters.goalWordsFound, parameters.goalWordsFound, 0);  
 	}
 
-	// Check to see if there are any connections, if there are return null, otherwise return a score 		
+	// 3) Check to make sure this is not a word without connections, if it is, return a low score 
 	struct intList* conn = getConnections(id, data->I2W); 
 	conn = conn->next; 
 	while(conn != NULL){
@@ -170,33 +138,29 @@ int compareScores(struct score a, struct score b, int isMaximizingPlayer){
 
 }
 
-struct score minimax2(int id, int goalId, int remainingDepth, int startDepth, int isMaximizingPlayer, struct score alpha, struct score beta, struct DataStructures* data, struct score (*scoreFunction)(int,struct DataStructures*, struct score_parameters)){
-
-	// Are we at the root word? 
-	int isRoot = (remainingDepth == startDepth); 
+struct score minimax2(int id, int remainingDepth, int isMaximizingPlayer, struct score_parameters parameters, struct score alpha, struct score beta, struct DataStructures* data){
 	
-	struct score_parameters parameters = {
-		.remainingDepth=remainingDepth,
-		.isMaximizingPlayer=isMaximizingPlayer, 
-		.goalId=goalId
-		
-	}; 
-	struct score leafScore = scoreFunction(id, data, parameters);
+	parameters.isMaximizingPlayer = isMaximizingPlayer; 
+	parameters.remainingDepth = remainingDepth; 
+	/*
+	if(remainingDepth == 1){
+		printf("\n");
+	}
+	*/
+	//printf("Word Being Searched: %s\n", Convert_IntToWord(id, data->I2W));
+	// is root node in search
+	int isRoot = (parameters.remainingDepth == parameters.startDepth); 
+	
+	struct score leafScore = parameters.scoreFunction(id, data, parameters);
 
 	
-	// if there are no connections left
+	// if current word has no direct, unused connections
 	if(leafScore.wordId != -1){
-		if(isRoot){
-			return createScore(-1, 0, 0, 0); 
-		}
-		return leafScore; 
+		// if root has no connections, the bot loses
+		return (isRoot) ? createScore(id, 0, 0, 0) : leafScore; 
 	}
 
-	// if it's reached its depth limit, it should return a score
-	if(remainingDepth == 0){
-		// Returns a score stating it is uncertain whether it is good or bad 
-		return createScore(id, .5, .5, 0);  
-	}
+	// TO-DO: MOVE THIS FUNCTIONALITY INTO THE SCORE SYSTEM
 
 	// Acquires the front of the list of adjacencies
 	struct intList* conn = getConnections(id, data->I2W); 
@@ -206,7 +170,7 @@ struct score minimax2(int id, int goalId, int remainingDepth, int startDepth, in
 	markUsed_WordSet(id, data->wordSet); 
 	
 	// The initial worst score is going to be +/- infinity
-	struct score maxScore = (isMaximizingPlayer) ? createScore(-1, -100, 1, 100) : createScore(-1, 100, 1, 100);  
+	struct score maxScore = (parameters.isMaximizingPlayer) ? createScore(-1, -100, 1, 100) : createScore(-1, 100, 1, 100);  
 	
 	// Number of connections a word has 
 	int numConnections = 0; 
@@ -217,21 +181,21 @@ struct score minimax2(int id, int goalId, int remainingDepth, int startDepth, in
 	// Go through each child node and give it a score
 	while(conn->next != NULL){
 		
-		//printf("%s: maxScore = %f alpha = %f beta = %f maximizingPlayer = %d\n", currWord, maxScore.score, alpha.score, beta.score, isMaximizingPlayer);
-
 		conn = conn->next; 
 		
+		//printf("Conn: %s\n", Convert_IntToWord(conn->data, data->I2W));
 		// Verify that the word has not already been found in the hash set
 		if(checkIfUsed_WordSet(conn->data, data->wordSet) != 0){
 			continue; 	
 		} 			
 
 		numConnections++; 
+
 		// Rerun the minimax algorithm with the current child as the node being scored
-		struct score candidate = minimax2(conn->data, goalId, remainingDepth - 1, startDepth, (isMaximizingPlayer) ? 0 : 1, alpha, beta, data, scoreFunction); 
+		struct score candidate = minimax2(conn->data, remainingDepth - 1, isMaximizingPlayer - 1, parameters, alpha, beta, data); 
 
 		// Compares the best score to the word being analyzed, if the maximum is better, than it chooses it
-		int winnerId = compareScores(candidate, maxScore, isMaximizingPlayer); 
+		int winnerId = compareScores(candidate, maxScore, parameters.isMaximizingPlayer); 
 
 		if(winnerId == candidate.wordId){
 			maxScore = candidate; 
@@ -240,8 +204,7 @@ struct score minimax2(int id, int goalId, int remainingDepth, int startDepth, in
 		
 		
 		// Alpha-Beta Pruning Algorithm That Prevents Node From Exploring Further in nodes that are guarenteed losses
-		if(AlphaBetaPrune(&alpha, &beta, maxScore, isMaximizingPlayer)){
-                        //printf("Prune!\n");
+		if(AlphaBetaPrune(&alpha, &beta, maxScore, parameters.isMaximizingPlayer)){
 			break;
 		}
 		
@@ -289,3 +252,59 @@ int AlphaBetaPrune(struct score *a, struct score *b, struct score x, int isMaxim
 
 
 }
+
+int choose_random_word(int id, struct DataStructures* data){
+
+	// The number of words that can be connected to & have not already been used 	
+	int numOptions = 0; 
+
+	// This is the list of words that are options, used and unused
+	struct intList* conn = getConnections(id, data->I2W); 
+
+	//Get off the dummy head node
+	conn = conn->next; 
+
+	// Loop through the words and derive the number of words that have not been used
+	while(conn != NULL){
+
+		// if there is a single word that is not used 
+		if(! checkIfUsed_WordSet(conn->data, data->wordSet)){
+			numOptions++; 
+		}
+		conn = conn->next; 	
+	}
+	if(numOptions == 0){
+		return -1; 
+	}
+	// choose randomly between [0, numConnectiosn]
+	// Allow it to be inclusive of N 
+	int choiceIdRelativeToUnusedWords = rand() % numOptions; 	
+	int choiceId = -1;
+	int currId = 0; 
+	
+	// Reset the connections
+	conn = getConnections(id, data->I2W); 
+	conn = conn->next; 
+
+	// While the word has not been chosen 
+	while(choiceId == -1){
+		
+		// Check if the current word is used
+		while(checkIfUsed_WordSet(conn->data, data->wordSet)){
+			
+			// If it is go to the next word
+			conn = conn->next; 
+		}
+		// Otherwise, check if the the current id is equal to the choice id relative to unused words 
+		if(currId == choiceIdRelativeToUnusedWords){
+			choiceId = conn->data; 		
+		}
+		currId++; 	
+		conn = conn->next; 	
+		
+	}
+	
+	return choiceId; 
+}
+
+

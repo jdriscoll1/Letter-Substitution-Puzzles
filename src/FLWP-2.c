@@ -47,38 +47,18 @@ void test_new_flwg();
 
 void flwcChooseGoals_Example(); 
 
-int flwt_example();
-void FLWC_Example(); 
 int main(){
-	flwt_example(); 
-}
-int flwt_example(){
 
 	srand(time(0)); 
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd); 
 
-	
-	struct GameComponentsFLWT* flwtComponents =  initFLWT(5, 5, data);
-	printf("%s", getStartWordFLWT(flwtComponents, data));
-	int result = userEntersWordFLWT("fare", flwtComponents, data); 
-	printf("Result: %d", result);
-	result = userEntersWordFLWT("fare", flwtComponents, data); 
-	printf("Result: %d", result);
-	
+	generalizedFLWCGame(data);
+	freeDataStructures(data);	
 	return 0; 
 
 }
-void FLWC_Example(){
 
-	// Initialize the Data Structures
-	srand(time(0)); 
-	int fd = open("docs/4.txt", O_RDONLY);
-	struct DataStructures* data = initDataStructures(fd); 
-
-	FLWC_Test(data); 
-	freeDataStructures(data); 
-}
 void flwcChooseGoals_Example(){
 
 
@@ -136,7 +116,7 @@ void test_new_flwg(){
                         assert(word != -1);
 			
 			if(whoseTurn){
-				word = botPly_FLWC(word, depth, data); 
+				//word = botPly_FLWC(word, depth, data); 
 				//printf("Minimax Chooses: %s\n", (word == -1) ? "LOSE CONDITION" : Convert_IntToWord(word, data->I2W));
 			}
 			else{

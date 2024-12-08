@@ -21,10 +21,22 @@ struct score{
 	int depth; 
 };
 
+// These are considerations the algorithm ought make when choosing a word's score
 struct score_parameters{
+	// The remaining depth in the game 
 	int remainingDepth; 
+	// How deep did the node start out
+	int startDepth; 
+	// The perspective of the bot 
 	int isMaximizingPlayer; 
-	int goalId; 
+	// The words the algorithm is trying to get to 
+	struct WordSet* goalWords; 	
+	// The words the algorithm ought avoid 
+	struct WordSet* avoidWords; 	
+	// The score function to be used (FLWC or FLWG)
+	struct score (*scoreFunction)(int,struct DataStructures*, struct score_parameters); 
+	// The number of goal words that have been found -- always initialized to 0
+	int goalWordsFound; 
 }; 
 
 struct score flwg_score(int id, struct DataStructures* data, struct score_parameters parameters); 
@@ -32,7 +44,7 @@ struct score flwc_score(int id, struct DataStructures* data, struct score_parame
 int choose_random_word(int id, struct DataStructures* data); 
 
 // Minimax 
-struct score minimax2(int id, int goalId, int remainingDepth, int startDepth, int isMaximizingPlayer, struct score alpha, struct score beta, struct DataStructures* data, struct score (*scoreFunction)(int,struct DataStructures*, struct score_parameters)); 
+struct score minimax2(int id, int remainingDepth, int isMaximizingPlayer, struct score_parameters parameters, struct score alpha, struct score beta, struct DataStructures* data); 
 
 // output a score
 void printScore(struct score s);
@@ -40,16 +52,10 @@ void printScore(struct score s);
 /*Compares two scores and output the word id of the better score*/
 int compareScore(struct score a, struct score b, int isMaximizingPlayer); 
 
-
+// Initializes a score object
 struct score createScore(int wordId, double score, double winPercentage, int depth);
-/*This does the alpha-beta pruning
-@param alpha --> The score that determines if the maximizer can prune 
-@param beta --> The score that determines if the minimizer can prune
-@absEval --> The score whose being tested against
-@param isMaximizingPlayer --> is it the maximizer or minimizer?
-@return --> 1 or 0
-@case 1 --> We pruned
-@case 0 --> We did not prune*/
+
+// Function for alpha beta pruning optimizations
 int AlphaBetaPrune(struct score *a, struct score* b, struct score x, int isMaximizingPlayer); 
 
 

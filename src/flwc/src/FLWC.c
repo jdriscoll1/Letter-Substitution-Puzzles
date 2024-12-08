@@ -44,15 +44,6 @@ int* getGoalWordSet(int distance, struct DataStructures* data){
 		equidistantWordsResult = BreadthFirstSearch_Distance(startId, distance, data->I2W, data->wordSet); 
 		struct arrayList* options = equidistantWordsResult.list; 
 			
-		/*for(int o = 0; o < options->currPrecision; o++){
-			int curr_id = ((struct TreeStorageNode**)options->list)[o]->id;
-			char* curr_str = Convert_IntToWord(curr_id, data->I2W); 
-			int curr_conns = data->I2W->array[curr_id]->numConnections; 
-
-			printf("%d: %s [%d]\n", o, curr_str, curr_conns); 
-		}*/
-
-
 		// if there aren't any words n away
 		if(options->currPrecision == 0){
 
@@ -127,12 +118,24 @@ int* getGoalWordSet(int distance, struct DataStructures* data){
 
 // BotPly method -- bot needs to determine the best way to go
 // Returns the word the bot has chosen
-int botPly_FLWC(int word, int goalId, int depth, struct DataStructures* data){
+int botPly_FLWC(int word, int depth, struct WordSet* goalWords, struct WordSet* avoidWords, struct DataStructures* data){
 
 	// Create alpha & beta
 	struct score a = createScore(-1, -100, 0, 100); 
 	struct score b = createScore(-1, 100, 1, 100); 
-	struct score score = minimax2(word, goalId, depth, depth, 1, a, b, data, flwc_score);
+	struct score_parameters parameters = {
+		.remainingDepth=depth,
+		.startDepth=depth,
+		.isMaximizingPlayer=1,
+		.goalWords=goalWords,
+		.avoidWords=avoidWords,
+		.scoreFunction=flwc_score,
+		.goalWordsFound=0			
+
+	}; 
+		
+
+	struct score score = minimax2(word, depth, parameters.isMaximizingPlayer, parameters, a, b, data);
 
 	if(score.wordId != -1){
 		markUsed_WordSet(score.wordId, data->wordSet); 
@@ -154,6 +157,7 @@ int botPly_Random(int word, struct DataStructures* data){
 	return resultId; 
 } 
 
+/*
 
 int FLWC(struct DataStructures* data){
 
@@ -182,12 +186,12 @@ int FLWC(struct DataStructures* data){
 	// Determines whose turn it is currently 
 	int whoseTurn = 0; 
 	
-	/*printf("Welcome To The Four Letter Word Challenge!\n"); 
+	printf("Welcome To The Four Letter Word Challenge!\n"); 
 	printf("Your Goal: %s\n", Convert_IntToWord(goals[1], data->I2W)); 
 	printf("FLWC's Goal: %s\n\n\n", Convert_IntToWord(goals[2], data->I2W)); 
 	printf("Good Luck!\n\n\n");
 	printf("Starting Word: %s\n", Convert_IntToWord(word, data->I2W));
-	*/
+	
 
 
 	// if winner is -1 it is a tie so therefore -2 is gg
@@ -268,5 +272,49 @@ void FLWC_Test(struct DataStructures* data){
 	printf("\nA Wins: %d\n", botAWins); 
 	printf("B Wins: %d\n", botBWins); 
 	printf("Ties: %d\n", ties); 
+}
+*/
+// This is a game that will  play FLWC where the algorithm is:
+// trying to get to any word that has a o in it 
+// trying to avoid words that have an e in it  
+void generalizedFLWCGame(struct DataStructures* data){
+
+	// I. create the word set of words to be avoided 	
+	struct WordSet* goalWords = init_WordSet(data->I2W->numWords); 
+	struct WordSet* avoidWords = init_WordSet(data->I2W->numWords); 
+	for(int i = 0; i < data->I2W->numWords; i++){
+		char* currWord = Convert_IntToWord(i, data->I2W);
+		// Words to be avoided
+		if(strchr(currWord, 'e') != NULL){
+			markUsed_WordSet(i, avoidWords); 
+		}
+		// Words to be achieved
+		else if(strchr(currWord, 'o') != NULL){
+			//markUsed_WordSet(i, goalWords); 
+		}
+		
+	}
+	
+
+	// II. Run the Game	
+	int startWord = 0; 
+	int depth = 2;   
+	markUsed_WordSet(startWord, data->wordSet); 
+	printf("Start Word: %s", Convert_IntToWord(startWord, data->I2W));
+	int word = startWord;  
+	// Let teh bot take a turn 
+	for(int i = 0; i < 5; i++){
+		
+		word = botPly_FLWC(word, depth, goalWords, avoidWords, data);
+		printf("Bots Word: %s\n", Convert_IntToWord(word, data->I2W));
+		word = botPly_Random(word, data); 
+		printf("Random Word: %s\n", Convert_IntToWord(word, data->I2W));
+	}
+
+	// III. Free the Components 
+	free_WordSet(goalWords); 
+	free_WordSet(avoidWords); 
+	
+
 }
 #endif
