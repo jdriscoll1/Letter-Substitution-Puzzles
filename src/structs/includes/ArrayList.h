@@ -4,6 +4,7 @@
 
 #include <stddef.h>
 
+#include "../../api/includes/FLWC-API.h"
 //String, Character, Int, Double, TreeStorageNode
 enum alistType{
 		STR, CHARACTER, NUM, DOUBLE, TSN, STR_ARR
@@ -57,6 +58,10 @@ void* searchIndex_ArrayList(int index, struct arrayList* aList);
 
 //Search for a piece of information
 int searchData_ArrayList(void* data, struct arrayList* aList); 
+
+
+char* idArrayListToString(struct arrayList* aList, struct DataStructures* data);
+
 #endif
 
 

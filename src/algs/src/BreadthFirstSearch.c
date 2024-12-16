@@ -10,6 +10,7 @@
 #include "../../structs/includes/ArrayList.h"
 #include "../../structs/includes/IntLinkedList.h"
 #include "../../structs/includes/HashMap.h"
+#include "../../structs/includes/Queue.h"
 
 
 #include "../../flwp/includes/Hints.h"
@@ -26,13 +27,13 @@ struct BFSComponents* init_BFSComponents(int start, struct WordSet* wordSet){
 	struct BFSComponents* bc = malloc(sizeof(struct BFSComponents)); 
 
 	//Add the word to the hash set
-
 	markUsed_WordSet(start, wordSet);
 
 	
 	
 	/*Creates the Tree Storage Node Header -- This makes it so it can track through the connections */
 	bc->ReverseTreeHeader = Allocate_TreeStorageNode(start, 0); 
+
 	//This method keeps track of where the previous connection is. Example, pies pins pier --> pies (Keeps this at O(1) time
 	bc->prevConnection = bc->ReverseTreeHeader; 
 	bc->End = bc->ReverseTreeHeader; 
@@ -65,50 +66,67 @@ void Free_BFSComponents(struct BFSComponents* bc, struct WordSet *wordSet){
 */ 
 struct BFSResults BreadthFirstSearch_Distance(int start, int minConnections, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 
-	//If the number of connections is less than 2, it is pointless. 1? pies->ties. 0. pies->pies -1->???
-	if(minConnections < 2){
-		printf("MinConnections < 2 [BFS_Distance]"); 
-		exit(0); 
-	}
-
-
-	// Instantiates the necessary BFS Components
+	// Instantiates the necessary BFS Components: Previous Connection, The Reverse Tree Header & The End Of the List
 	struct BFSComponents* bc = init_BFSComponents(start, wordSet);
 	bc->End = bc->prevConnection->next; 
 
-	//This is the array list that stores the words that are options
+	// Stores all words that are minConnections away from start
 	struct arrayList* options = init_ArrayList(50, 50, TSN); 
-	//Initalize the game Components
+
 	bool goalFound = false;
 	
-	while(goalFound == false){
-	
+	while(bc->End != NULL){
+		
+		// aka curr	
 		bc->prevConnection = bc->prevConnection->next;
+		
 
-		bc->End = AddToTreeStorage_BFS(bc, minConnections, options, IntToWord_HashMap, wordSet); 
+		//The word who is currently being searched
+		int baseWord = bc->prevConnection->id; 
+
+		//Variable prev depth + 1 = currDepth -- How far out we immediately are
+		int currDepth = bc->prevConnection->depth + 1;
 		
+		// If curr depth is greater than min connections
+		if(currDepth > minConnections){
+			break; 
+		} 
 		
+		struct intList* newWords = getConnections(baseWord, IntToWord_HashMap);
+		//Then, while the link output still words in the list,
+		while(newWords->next != NULL){
+
+			newWords = newWords->next; 
+
+			int currWord = newWords->data; 
+			
+			if(checkIfUsed_WordSet(currWord, wordSet) != 0){
+				continue; 
+			} 
+			bc->End = Add_TreeStorageNode(currWord, bc->prevConnection, bc->End, 0); 
+
+			markUsed_WordSet(currWord, wordSet); 
+
+			if(currDepth == minConnections){
+				add_ArrayList(bc->End, options, TSN); 			
+			}
+		}
+
+			
 		//If it cannot connect as far out as intended
 		if(bc->prevConnection->next == NULL){			  
+			
 			//It cannot return or else there will be memory leaks 
-			goalFound = false;
+			break; 
 		}
 		
-		 
-		//If it sees that the current depth is > minConnections it'll return NULL
-		//With this in mind, this means that it has acheived the current depth 
-		
-		if(bc->End == NULL){
-			goalFound = true; 
-		}
-
 	}
 
 	//This is the path from start to end 
 
 	struct BFSResults results; 
-	results.list = (goalFound == false) ? NULL :  options; 
-	results.dataStorage  = (goalFound == false) ? NULL :bc; 
+	results.list = options; 
+	results.dataStorage = bc; 
 	return results; 
 
 }
@@ -178,6 +196,77 @@ int BreadthFirstSearch_Distance_Goal(int start, int minConnections, struct wordD
 
 }
 
+
+
+struct arrayList* getPathToNearestWordInWordSet(int id, int maxDistance, struct WordSet* goalWords, struct WordSet* avoidWords, struct DataStructures* data){
+
+	// initalize the Queue 
+	struct Queue* q = init_Queue(); 		
+
+	// The lists that have been explored in the BFS 
+	struct WordSet* exploredNodes = init_WordSet(data->I2W->numWords);
+
+	// distance words activeley being traversed are from the root 
+	int currDistance = 0; 
+
+	// distance immediate parent is from root 
+	int prevDistance = 0; 
+	
+	struct arrayList* pathToNearestWord = init_ArrayList(0, 1, NUM); 
+
+	// if the current word is in the not set of avoid words, it is to be enqueued
+	if(checkIfUsed_WordSet(id, avoidWords) == 0){
+		enqueue(id, currDistance, NULL,  q); 	
+	}
+
+	int minNumConnectionsFromGoal = -1; 
+
+	while(!isEmpty_Queue(q)){
+		
+		// pop current from queue 
+		struct QueueNode* parent = dequeue(q); 
+
+		// the parent's distance 
+		prevDistance = parent->data->distance; 
+
+		// if distance is equal to current distance, add one to it 
+		if(prevDistance == currDistance){
+			currDistance += 1; 
+		}
+		int currId = parent->data->id; 
+
+
+		// Check if the current word is one of the goal words, or if the max distance has been reached
+		if(checkIfUsed_WordSet(currId, goalWords) || currDistance == maxDistance){
+			free_ArrayList(pathToNearestWord); 
+			pathToNearestWord = getPathToHeader_Queue(parent); 	
+			break; 
+		}
+		// This words that directly connect to this word
+		struct intList* conn = getConnections(currId, data->I2W); 
+
+		//Then, while the link output still words in the list,
+		while(conn->next != NULL){
+
+			//We want to move off of the header of the 2Dconnection 
+			conn = conn->next; 
+			
+			int currConnId = conn->data; 
+		
+			// if it's not already explored and it is not in the list of avoid words, it is permitted
+			if(checkIfUsed_WordSet(currConnId, exploredNodes) == 0 && checkIfUsed_WordSet(currConnId, avoidWords) == 0){
+				enqueue(currConnId, currDistance, parent, q); 	
+			}
+		}	
+
+	}
+	// free Queue
+	free_Queue(q); 
+	// freeWordSet
+	free_WordSet(exploredNodes); 
+	
+	return pathToNearestWord; 
+}
 
 
 struct TreeStorageNode* AddToTreeStorage_Dist_BFS(struct BFSComponents *bc, int goal, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){
@@ -253,3 +342,7 @@ struct TreeStorageNode* AddToTreeStorage_BFS(struct BFSComponents *bc, int minCo
 
 
 
+void Free_BFSResults(struct BFSResults results, struct WordSet* wordSet){
+	free_ArrayList(results.list); 
+	Free_BFSComponents(results.dataStorage, wordSet); 
+}

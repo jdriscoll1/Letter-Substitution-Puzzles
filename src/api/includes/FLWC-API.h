@@ -1,18 +1,24 @@
-#ifndef seenFLWCTutorial
-#define seenFLWCTutorial
+#ifndef seenFLWCAPI
+#define seenFLWCAPI
 
 #include "FLWG-API.h"
 #include "../../structs/includes/ArrayList.h"
 
 struct GameComponentsFLWC{
 	// The word that the user needs to connect from 
-	int startWordId; 
-	
+	int wordId; 
+	// The set of words the user wants to get to 
+	struct WordSet* goalWords; 
+	// The set of words the user wants to avoid
+	struct WordSet* avoidWords; 
+	// The solution of the game 
+	char* solution; 
 };
 
 
 // This creates the first word and returns a set of game components for the flwt
-struct GameComponentsFLWC* initFLWC(int challengeId, int distance, struct DataStructures* data);
+
+struct GameComponentsFLWC* initFLWC(struct DataStructures *data);
 
 // Choose a word
 char* getStartWordFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures *data); 
@@ -21,5 +27,9 @@ char* getStartWordFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStr
 int userEntersWordFLWC(char* userInput, struct GameComponentsFLWC* flwcComponents,  struct DataStructures* data); 
 
 int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents); 
+
+void freeFLWC(struct GameComponentsFLWC* flwcComponents); 
+
+char* getSolutionFLWC(struct GameComponentsFLWC* flwcComponents);
 
 #endif

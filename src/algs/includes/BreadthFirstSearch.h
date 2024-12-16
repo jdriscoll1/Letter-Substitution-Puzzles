@@ -7,6 +7,7 @@
 #include "../../structs/includes/IntLinkedList.h"
 #include "../../structs/includes/HashMap.h"
 #include "../../structs/includes/WordSet.h"
+#include "../../api/includes/FLWG-API.h"
 
 
 /*PATHFINDING METHODS*/
@@ -52,6 +53,7 @@ struct BFSComponents* init_BFSComponents(int start, struct WordSet *wordSet);
 @param bc --> These are the components
 @param storageType --> Is it AVL Tree? HashMap? Etc?*/
 void Free_BFSComponents(struct BFSComponents* bc, struct WordSet *wordSet); 
+void Free_BFSResults(struct BFSResults results, struct WordSet *wordSet); 
 
 /*This finds all of the connections a word has and puts them on the back of a tree storage node
 @param bc --> The components of a breadth first search
@@ -70,5 +72,6 @@ struct TreeStorageNode* AddToTreeStorage_Dist_BFS(struct BFSComponents *bc, int 
 @return --> Returns the current last node in the tree storage node linked list */
 struct TreeStorageNode* AddToTreeStorage_BFS(struct BFSComponents *bc, int minConnections, struct arrayList *options, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 
+struct arrayList* getPathToNearestWordInWordSet(int id, int maxDistance, struct WordSet* goalWords, struct WordSet* avoidWords, struct DataStructures* data);
 
 #endif

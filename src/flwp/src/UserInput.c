@@ -87,16 +87,17 @@ int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** Word
 		terminate = (*(currWord + i) == '\0') ? 1 : 0;
 		if(i > numLetters){
 			// WORD IS TOO LONG
+			printf("Word is Too Long\n");
 			return TOO_LONG; 
 
 		}
 		else if(i < numLetters && *(currWord + i) == '\0'){
-			//printf("Word is too short\n");
+			printf("Word is too short\n");
 			return TOO_SHORT; 
 		
 		}
 		else if(equalLetters < numLetters - 1 && *(currWord + i) == '\0'){
-			//printf("Not enough letters in common\n");
+			printf("Not enough letters in common\n");
 			return NOT_ENOUGH_LETTERS_IN_COMMON;
 		  
 		}
@@ -115,11 +116,12 @@ int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** Word
 	int id = Convert_WordToInt((char*)currWord, WordToInt_HashMap); 
 	// Check if the word is used
 	if(equalLetters == numLetters + 1 || checkIfUsed_WordSet(id, wordSet)){
+		printf("Word Already Used\n");
 		return WORD_USED;
 	}
  
 	if(inDictionary(id) == 0){
-		//printf("Word does not exist\n");
+		printf("Word not in dictionary\n");
 		return WORD_DOES_NOT_EXIST; 
 	}
 	
