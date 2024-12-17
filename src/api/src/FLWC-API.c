@@ -4,6 +4,7 @@
 #include "../includes/FLWG-API.h"
 #include "../../structs/includes/ArrayList.h"
 #include "../../flwc/includes/Challenges.h"
+#include "../../flwc/includes/FLWC.h"
 #include "../../flwp/includes/UserInput.h"
 
 struct EndWordParametersFLWC getChallengeGoalParameters(int challengeId);
@@ -70,6 +71,17 @@ int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents){
 
 }
 
+int botTakesTurnFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	
+	int depth = 2; 
+	int result = botPly_FLWC(flwcComponents->wordId, depth, flwcComponents->avoidWords, flwcComponents->goalWords, data);
+	if(result >= 0){
+		flwcComponents->wordId = result;  
+	}
+	return result; 
+
+}
+
 char* getSolutionFLWC(struct GameComponentsFLWC* flwcComponents){
 	return flwcComponents->solution; 		
 
@@ -90,7 +102,7 @@ struct EndWordParametersFLWC getChallengeGoalParameters(int challengeId){
 		case 0: 
 			struct EndWordParametersFLWC params = {
 				.comparatorId=0,
-				.letter='j',
+				.letter='g',
 			}; 
 			return params; 
 	}
@@ -105,7 +117,7 @@ struct EndWordParametersFLWC getChallengeAvoidParameters(int challengeId){
 		case 0: 
 			struct EndWordParametersFLWC params = {
 				.comparatorId=0,
-				.letter='e',
+				.letter='s',
 			}; 
 			return params; 
 	}

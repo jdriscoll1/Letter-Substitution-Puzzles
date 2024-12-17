@@ -26,10 +26,13 @@ char* getStartWordFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStr
 // Allow the user to insert a word 
 int userEntersWordFLWC(char* userInput, struct GameComponentsFLWC* flwcComponents,  struct DataStructures* data); 
 
+int botTakesTurnFLWC(struct GameComponentsFLWC* flwcComopnents, struct DataStructures* data); 
+
 int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents); 
 
 void freeFLWC(struct GameComponentsFLWC* flwcComponents); 
 
 char* getSolutionFLWC(struct GameComponentsFLWC* flwcComponents);
 
+int botTakesTurnFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data);
 #endif

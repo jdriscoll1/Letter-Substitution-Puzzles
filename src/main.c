@@ -55,16 +55,23 @@ int main(){
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* dataStructures = initDataStructures(fd); 
 	struct GameComponentsFLWC* flwcComponents = initFLWC(0, dataStructures);	
-	printf("Get to a word with 'j' in it\n");
-	printf("Do not touch any words with 'e' in it\n"); 
+	printf("Get to a word with 'g' in it\n");
+	printf("Do not touch any words with 's' in it\n"); 
 	printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
+	int turn  = 0; 
+	char userInput[256];	
 	while(isGameWonFLWC(flwcComponents) == 0){
-		char userInput[256];
-		if (fgets(userInput, sizeof(userInput), stdin) != NULL) {
-			userInput[strcspn(userInput, "\n")] = '\0'; // Remove trailing newline
-		    	userEntersWordFLWC(userInput, flwcComponents, dataStructures);
+		if(turn % 2 == 0){
+			if (fgets(userInput, sizeof(userInput), stdin) != NULL) {
+				userInput[strcspn(userInput, "\n")] = '\0'; // Remove trailing newline
+				userEntersWordFLWC(userInput, flwcComponents, dataStructures);
+			}
+		}
+		else{
+			botTakesTurnFLWC(flwcComponents, dataStructures);
 		}
 		printf("Curr Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
+		turn++; 
 	}
 	printf("Best  Solution:\n%s\n", getSolutionFLWC(flwcComponents));
 
