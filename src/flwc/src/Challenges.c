@@ -35,7 +35,6 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 
 		// if it has between the minimum and maximum number of connections 
 		if(numConnections >= p.minAdjacencies && numConnections <= p.maxAdjacencies){
-				
 			// It is within the minimum and maximum distance from any goal words
 			struct arrayList* pathToNearestWord = getPathToNearestWordInWordSet(i, p.maxGoalDistance,  p.goalWords, p.avoidWords, data);  
 			int distanceFromGoal = pathToNearestWord->currPrecision; 

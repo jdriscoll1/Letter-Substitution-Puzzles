@@ -54,9 +54,9 @@ int main(){
 	srand(time(0)); 
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* dataStructures = initDataStructures(fd); 
-	struct GameComponentsFLWC* flwcComponents = initFLWC(dataStructures);	
-	printf("Get to a word with 'c' in it\n");
-	printf("Do not touch any words with 'z' in it\n"); 
+	struct GameComponentsFLWC* flwcComponents = initFLWC(0, dataStructures);	
+	printf("Get to a word with 'j' in it\n");
+	printf("Do not touch any words with 'e' in it\n"); 
 	printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
 	while(isGameWonFLWC(flwcComponents) == 0){
 		char userInput[256];

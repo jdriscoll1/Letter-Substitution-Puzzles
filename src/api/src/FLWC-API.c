@@ -6,19 +6,15 @@
 #include "../../flwc/includes/Challenges.h"
 #include "../../flwp/includes/UserInput.h"
 
+struct EndWordParametersFLWC getChallengeGoalParameters(int challengeId);
+struct EndWordParametersFLWC getChallengeAvoidParameters(int challengeId);
+
 // This creates the first word and returns a set of game components for the flwt
-struct GameComponentsFLWC* initFLWC(struct DataStructures* data){
+struct GameComponentsFLWC* initFLWC(int challengeId, struct DataStructures* data){
 	struct GameComponentsFLWC* flwcComponents = malloc(sizeof(struct GameComponentsFLWC)); 
 
-	struct EndWordParametersFLWC goalParams = {
-		.comparatorId=0,
-		.letter='c',
-	}; 
-	struct EndWordParametersFLWC avoidParams = {
-		.comparatorId=0, 
-		.letter='z',
-	}; 
-
+	struct EndWordParametersFLWC goalParams = getChallengeGoalParameters(challengeId); 
+	struct EndWordParametersFLWC avoidParams = getChallengeAvoidParameters(challengeId); 
 	
 	flwcComponents->goalWords = createWordSetGivenCondition(goalParams, data); 
 	flwcComponents->avoidWords = createWordSetGivenCondition(avoidParams, data); 
@@ -84,6 +80,36 @@ void freeFLWC(struct GameComponentsFLWC* flwcComponents){
 	free_WordSet(flwcComponents->goalWords); 
 	free(flwcComponents->solution); 
 	free(flwcComponents); 
+
+
+}
+
+struct EndWordParametersFLWC getChallengeGoalParameters(int challengeId){
+	struct EndWordParametersFLWC params; 
+	switch(challengeId){
+		case 0: 
+			struct EndWordParametersFLWC params = {
+				.comparatorId=0,
+				.letter='j',
+			}; 
+			return params; 
+	}
+	return params; 
+
+}
+
+
+struct EndWordParametersFLWC getChallengeAvoidParameters(int challengeId){
+	struct EndWordParametersFLWC params; 
+	switch(challengeId){
+		case 0: 
+			struct EndWordParametersFLWC params = {
+				.comparatorId=0,
+				.letter='e',
+			}; 
+			return params; 
+	}
+	return params; 
 
 
 }
