@@ -49,7 +49,15 @@ void test_new_flwg();
 
 void flwcChooseGoals_Example(); 
 
+void flwc_gen_example();
+
+
 int main(){
+	flwc_gen_example(); 
+
+}
+
+void flwc_gen_example(){
 
 	srand(time(0)); 
 	int fd = open("docs/4.txt", O_RDONLY);
@@ -58,28 +66,41 @@ int main(){
 	printf("Get to a word with 'g' in it\n");
 	printf("Do not touch any words with 's' in it\n"); 
 	printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
-	int turn  = 0; 
-	char userInput[256];	
-	while(isGameWonFLWC(flwcComponents) == 0){
+	int turn = 0; 
+	while(isGameWonFLWC(flwcComponents) == -1){
+		 	
 		if(turn % 2 == 0){
-			if (fgets(userInput, sizeof(userInput), stdin) != NULL) {
-				userInput[strcspn(userInput, "\n")] = '\0'; // Remove trailing newline
-				userEntersWordFLWC(userInput, flwcComponents, dataStructures);
-			}
+			flwcComponents->wordId = botPly_Random(flwcComponents->wordId, dataStructures); 
+		
 		}
+	
 		else{
 			botTakesTurnFLWC(flwcComponents, dataStructures);
 		}
-		printf("Curr Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
-		turn++; 
-	}
-	printf("Best  Solution:\n%s\n", getSolutionFLWC(flwcComponents));
+		printf("%s: %s\n", (turn % 2 == 0) ? "Johnny (dumber):" : "Jimmy (smarter):", (flwcComponents->wordId != -1) ?  Convert_IntToWord(flwcComponents->wordId, dataStructures->I2W) : "I lose :(");
 
+		turn++; 
+	}	
+	printf("\n\nBest  Solution:\n%s\n", getSolutionFLWC(flwcComponents));
+	int result = isGameWonFLWC(flwcComponents); 
+	printf("Result: %d\n", result);
+	switch(result){
+		case -1: 
+			printf("Error Status");
+			break; 
+		case 0: 
+			printf("Game is tied");
+			break; 
+		case 1:
+			printf("Word in goal set reached");
+			break; 
+		case 2: 
+			printf("Word in avoid set reached");
+			break; 
+	}
 	freeFLWC(flwcComponents); 
-	
 	close(fd); 
 	freeDataStructures(dataStructures);	
-	return 0; 
 
 }
 

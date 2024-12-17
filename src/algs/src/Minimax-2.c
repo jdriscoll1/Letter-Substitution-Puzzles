@@ -157,7 +157,7 @@ struct score minimax2(int id, int remainingDepth, int isMaximizingPlayer, struct
 	// if current word has no direct, unused connections
 	if(leafScore.wordId != -1){
 		// if root has no connections, the bot loses
-		return (isRoot) ? createScore(id, 0, 0, 0) : leafScore; 
+		return (isRoot) ? createScore(-1, 0, 0, 0) : leafScore; 
 	}
 
 	// TO-DO: MOVE THIS FUNCTIONALITY INTO THE SCORE SYSTEM

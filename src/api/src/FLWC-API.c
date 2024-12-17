@@ -12,11 +12,20 @@ struct EndWordParametersFLWC getChallengeAvoidParameters(int challengeId);
 
 // This creates the first word and returns a set of game components for the flwt
 struct GameComponentsFLWC* initFLWC(int challengeId, struct DataStructures* data){
+
+
+	// Create the FLWC Components
 	struct GameComponentsFLWC* flwcComponents = malloc(sizeof(struct GameComponentsFLWC)); 
 
+	
+	// Create the parameters for the goal word 
 	struct EndWordParametersFLWC goalParams = getChallengeGoalParameters(challengeId); 
+
+	// Create teh parameters for the avoid words 
 	struct EndWordParametersFLWC avoidParams = getChallengeAvoidParameters(challengeId); 
 	
+	
+	// Create the list of goal words 
 	flwcComponents->goalWords = createWordSetGivenCondition(goalParams, data); 
 	flwcComponents->avoidWords = createWordSetGivenCondition(avoidParams, data); 
 
@@ -31,7 +40,7 @@ struct GameComponentsFLWC* initFLWC(int challengeId, struct DataStructures* data
 	    .maxAdjacencies = 100,
 	};
 
-	flwcComponents->wordId = chooseStartWord_FLWCGeneral(params, flwcComponents, data); 
+	flwcComponents->wordId = chooseStartWord_FLWCGeneral(params, flwcComponents, data);
 	return flwcComponents; 
 
 }
@@ -58,14 +67,24 @@ int userEntersWordFLWC(char* userInput, struct GameComponentsFLWC* flwcComponent
 
 }
 
+// while the result is != +1, the game should continue
 int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents){
+	// if the game is tied, it gets set to 0
+	if(flwcComponents->wordId == -1){
+		// tie 
+		return 0; 
+	}
+	// if a goal word is put, the game is won 
 	if(checkIfUsed_WordSet(flwcComponents->wordId, flwcComponents->goalWords)){
+		// win 
 		return 1; 
 	}
+	// if an avoid word gets added, the game is lost
 	if(checkIfUsed_WordSet(flwcComponents->wordId, flwcComponents->avoidWords)){
-		return -1; 
+		// lose
+		return 2; 
 	}
-	return 0; 
+	return -1; 
 
 
 
@@ -73,11 +92,9 @@ int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents){
 
 int botTakesTurnFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
 	
-	int depth = 2; 
+	int depth = 6; 
 	int result = botPly_FLWC(flwcComponents->wordId, depth, flwcComponents->avoidWords, flwcComponents->goalWords, data);
-	if(result >= 0){
-		flwcComponents->wordId = result;  
-	}
+	flwcComponents->wordId = result;  
 	return result; 
 
 }
@@ -117,7 +134,7 @@ struct EndWordParametersFLWC getChallengeAvoidParameters(int challengeId){
 		case 0: 
 			struct EndWordParametersFLWC params = {
 				.comparatorId=0,
-				.letter='s',
+				.letter='e',
 			}; 
 			return params; 
 	}
