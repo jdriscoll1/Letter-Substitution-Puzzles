@@ -82,6 +82,7 @@ int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents){
 	// if an avoid word gets added, the game is lost
 	if(checkIfUsed_WordSet(flwcComponents->wordId, flwcComponents->avoidWords)){
 		// lose
+		printf("Avoid word reached");
 		return 2; 
 	}
 	return -1; 
@@ -131,7 +132,7 @@ struct EndWordParametersFLWC getChallengeAvoidParameters(int challengeId){
 	switch(challengeId){
 		case 0: 
 			params.comparatorId=0;
-			params.letter='e';
+			params.letter='q';
 			break; 
 	}
 	return params; 

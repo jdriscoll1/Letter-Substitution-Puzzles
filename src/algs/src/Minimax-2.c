@@ -77,10 +77,12 @@ struct score flwg_score(int id, struct DataStructures* data, struct score_parame
 // depth: 
 struct score flwc_score(int id, struct DataStructures* data, struct score_parameters parameters){
 
+	char* foundWord = Convert_IntToWord(id, data->I2W); 
 	// 1) Check to see if word is goal/avoid
 	if(parameters.remainingDepth != parameters.startDepth){
 		if (checkIfUsed_WordSet(id, parameters.goalWords)){
-			parameters.goalWordsFound++; 
+			//parameters.goalWordsFound += (double)(1.0 + parameters.remainingDepth) / (double)(1+ parameters.startDepth); 
+			return createScore(id, 1, 0, parameters.remainingDepth); 	
 		}
 
 		if (checkIfUsed_WordSet(id, parameters.avoidWords)){
@@ -142,18 +144,10 @@ struct score minimax2(int id, int remainingDepth, int isMaximizingPlayer, struct
 	
 	parameters.isMaximizingPlayer = isMaximizingPlayer; 
 	parameters.remainingDepth = remainingDepth; 
-	/*
-	if(remainingDepth == 1){
-		printf("\n");
-	}
-	*/
-	//printf("Word Being Searched: %s\n", Convert_IntToWord(id, data->I2W));
-	// is root node in search
 	int isRoot = (parameters.remainingDepth == parameters.startDepth); 
 	
 	struct score leafScore = parameters.scoreFunction(id, data, parameters);
 
-	
 	// if current word has no direct, unused connections
 	if(leafScore.wordId != -1){
 		// if root has no connections, the bot loses
@@ -183,7 +177,6 @@ struct score minimax2(int id, int remainingDepth, int isMaximizingPlayer, struct
 		
 		conn = conn->next; 
 		
-		//printf("Conn: %s\n", Convert_IntToWord(conn->data, data->I2W));
 		// Verify that the word has not already been found in the hash set
 		if(checkIfUsed_WordSet(conn->data, data->wordSet) != 0){
 			continue; 	

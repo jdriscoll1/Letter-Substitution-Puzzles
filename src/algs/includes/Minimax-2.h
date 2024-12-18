@@ -36,7 +36,7 @@ struct score_parameters{
 	// The score function to be used (FLWC or FLWG)
 	struct score (*scoreFunction)(int,struct DataStructures*, struct score_parameters); 
 	// The number of goal words that have been found -- always initialized to 0
-	int goalWordsFound; 
+	double goalWordsFound; 
 }; 
 
 struct score flwg_score(int id, struct DataStructures* data, struct score_parameters parameters); 
