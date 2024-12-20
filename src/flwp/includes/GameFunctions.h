@@ -4,6 +4,8 @@
 #include "PathGameComponents.h"
 #include "PathfinderGame.h"
 
+#include "../../api/includes/FLWG-API.h"
+
 #include "../../structs/includes/GenericLinkedListNode.h"
 #include "../../structs/includes/HashMap.h"
 
@@ -32,7 +34,7 @@ int getWordWithNumberOfConnections(int numConnections, struct wordDataArray* Int
 @param input --> the current word who may be the end
 @param isValid --> Is it valid?
 @return --> 1) The goal has been met. 0) The goal has not been met 2) User quit*/ 
-int goalCheck(char* input, int goal, int isValid, int isCommand, struct DummyHeadNode*** WordToInt_HashMap); 
+int goalCheck(char* input, int goal, int isValid, int isCommand, struct DataStructures* data); 
 
 
 /*Returns a string that is the difficulty*/ 
@@ -67,7 +69,7 @@ void EnterText();
 @param pc --> These are the variables stored throughout the entire game 
 @return --> It returns the score
 @case -1 = the user quit*/
-int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
+int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct DataStructures* data); 
 
 #endif
   

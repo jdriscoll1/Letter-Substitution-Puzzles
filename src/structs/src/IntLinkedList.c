@@ -6,8 +6,6 @@
 
 #include "../../flwp/includes/UserInput.h"
 
-extern int numLetters;
-
 /*This adds a word to the back of an integer linked list*/
 void AddToBack_IntLL(int data, struct intList* header){
 	header->size++; 
@@ -173,7 +171,7 @@ char* toString_IntLL(struct intList *header, enum output o, struct wordDataArray
 	header = header->next; 
 
 	while(header != NULL){
-		addString_ArrayList((const char*)Convert_IntToWord(header->data, IntToWord_HashMap), numLetters, aList);  
+		addString_ArrayList((const char*)Convert_IntToWord(header->data, IntToWord_HashMap), IntToWord_HashMap->numLetters, aList);  
 		if(header->next != NULL){
 			addString_ArrayList((const char*)link, 2, aList);  
 			

@@ -21,15 +21,14 @@ Date: 5/1/21
 #include "../../structs/includes/WordSet.h"
 
 
-extern int numLetters; 
 extern int TOTAL_MOVES;
 extern int TRANS_SAVED;
-int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+int FLWG(struct DataStructures* data){
 
 	//So, first choose a start word
-	int word = ChooseStart(IntToWord_HashMap); 
+	int word = ChooseStart(data->I2W); 
 
-	markUsed_WordSet(word, wordSet); 
+	markUsed_WordSet(word, data->wordSet); 
 	//Variable that determines winner: 1 - Algorithm, 0 - player
 	int winner = -1;
 
@@ -41,22 +40,15 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 	while(word >= 0){
 		
 		//Output the current word
-		printf("%s\n", Convert_IntToWord(word, IntToWord_HashMap)); 
+		printf("%s\n", Convert_IntToWord(word, data->I2W)); 
 		//printf("%ld: ", word % (sizeof(unsigned long) * 8));
 		if(whoseTurn == 0){
-			word = userPly(word, WordToInt_HashMap, IntToWord_HashMap, wordSet);
+			word = userPly(word, data);
 		
 		}
 		else if(whoseTurn == 1){			
 	
-			word = botPly(word, depth, IntToWord_HashMap, wordSet);
-			
-			//Check the word
-			//Go to the connections, and ask if there are any more
-		
-				
-			
-		 
+			word = botPly(word, depth, data->I2W, data->wordSet);
 		}
 		
 		whoseTurn = (whoseTurn + 1) % 2;  
@@ -71,11 +63,6 @@ int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToW
 
 
 	return winner; 
-	
-	
-	
-	
-	
 	
 }
 
@@ -147,7 +134,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 	
 }
 
-int Input_FLWG(int prevWord, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+int Input_FLWG(int prevWord,struct DataStructures* data){ 
 	int isValid = 0; 
 	int wordID; 
 	char* wordStr; 
@@ -164,15 +151,15 @@ int Input_FLWG(int prevWord, struct DummyHeadNode*** WordToInt_HashMap, struct w
 			free(wordStr); 
 			return -1; 
 		}
-		wordStr[numLetters] = '\0'; 
+		wordStr[data->I2W->numLetters] = '\0'; 
 		//if the word is end -- game over 
 		
 		//It checks if the word is valid
-		isValid = Check_Input(prevWord, wordStr, WordToInt_HashMap, IntToWord_HashMap, wordSet); 
+		isValid = Check_Input(prevWord, wordStr, data); 
 		if(isValid == 1){
-			wordID = Convert_WordToInt(wordStr, WordToInt_HashMap);
+			wordID = Convert_WordToInt(wordStr, data);
 			//if the word has been used
-			if(checkIfUsed_WordSet(wordID, wordSet) != 0){
+			if(checkIfUsed_WordSet(wordID, data->wordSet) != 0){
 				printf("Word Already Used.\n"); 
 				free(wordStr); 
 				isValid = 0; 
@@ -186,7 +173,7 @@ int Input_FLWG(int prevWord, struct DummyHeadNode*** WordToInt_HashMap, struct w
 	}
 
 	//Add the word to the hash map
-	markUsed_WordSet(wordID, wordSet);
+	markUsed_WordSet(wordID, data->wordSet);
 
 	free(wordStr); 
 	return wordID; 
@@ -227,12 +214,9 @@ int botPly(int word, int depth, struct wordDataArray* IntToWord_HashMap, struct 
 	
 }
 
-int userPly(int word, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+int userPly(int word, struct DataStructures *data){
 	//Take the user's input
-	return Input_FLWG(word, WordToInt_HashMap, IntToWord_HashMap, wordSet); 
-	
-	
-	
+	return Input_FLWG(word, data); 
 }
 
 int weakBotPly(int word, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){

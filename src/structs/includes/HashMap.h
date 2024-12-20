@@ -5,6 +5,7 @@
 
 #include "../includes/TreeSet.h"
 #include "../includes/WordSet.h"
+#include "../../api/includes/FLWG-API.h"
 
 /*This is the Map that will take a word and convert it to an integer*/
 
@@ -37,17 +38,18 @@ struct wordStruct{
 
 struct wordDataArray{
 	int numWords; 
+	int numLetters; 
 	struct wordData** array; 
 	
 };
 
-void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, int fd);
+void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, int fd, int numLetters);
 
-void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, char* path); 
+void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, char* path, int numLetters); 
 
 struct DummyHeadNode** *Allocate_WordToInt(); 
 
-void Allocate_IntToWord(struct wordDataArray* IntToWord_HashMap, int numWords); 
+void Allocate_IntToWord(struct wordDataArray* IntToWord_HashMap, int numWords, int numLetters); 
 
 //The malloc statement for allocating an int to word struct
 struct wordDataArray *Allocate_IntToWordStruct(); 
@@ -95,7 +97,7 @@ int getNumWords(FILE* wordDoc);
 @param word --> The word to be converted
 @param WordToInt_HashMap --> The Hash Map that takes a word and converts it to an integer
 @return --> Returns the ID of the word*/
-int Convert_WordToInt(char* word, struct DummyHeadNode*** WordToInt_HashMap); 
+int Convert_WordToInt(char* word, struct DataStructures* data); 
 
 /*Takes an ID, and outputs the associated word*/
 char* Convert_IntToWord(int wordID, struct wordDataArray* IntToWord_HashMap); 

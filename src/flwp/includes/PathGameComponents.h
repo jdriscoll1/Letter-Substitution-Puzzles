@@ -7,6 +7,7 @@
 #include "../../structs/includes/IntLinkedList.h"
 #include "../../structs/includes/HashMap.h"
 #include "../../structs/includes/WordSet.h"
+#include "../../api/includes/FLWG-API.h"
 
 struct  GameComponents{
 	//This is where it starts
@@ -56,7 +57,7 @@ int inDictionary(int word);
 @param gc --> All of the initalized game components
 @param input --> The word to be removed, with a - at input[0]
 @param freeInput --> Do you want to free the word, and have it replaced? Or is it freed outside of the remove word structure?*/
-char* RemoveWord_Struct(struct GameComponents* gc, char* input, int freeInput, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap);
+char* RemoveWord_Struct(struct GameComponents* gc, char* input, int freeInput, struct DataStructures *data);  
 void Undo_Struct(struct GameComponents* gc, struct wordDataArray* IntToWord_HashMap);
 void Redo_Struct(struct GameComponents* gc, struct wordDataArray* IntToWord_HashMap);
 void ResetUndo_Struct(struct GameComponents* gc); 
@@ -66,7 +67,7 @@ void ResetUndo_Struct(struct GameComponents* gc);
 @param newWord --> The new word that the user entered
 @param HashMap --> The Hash Map who is checked to see if the word is valid
 @return --> Returns a 0 if it failed, and a 1 if it worked TO-DO: More specific fail messages (2 = Too Short?)*/
-int AddWord_Struct(struct GameComponents* gc, char* input, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet);
+int AddWord_Struct(struct GameComponents* gc, char* input, struct DataStructures *data); 
 
 //This goes through the game components and frees them
 void FreeGameComponents(struct GameComponents *gc, struct wordDataArray* IntToWord_HashMap);

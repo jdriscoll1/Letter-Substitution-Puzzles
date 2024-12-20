@@ -31,14 +31,14 @@ char* getStartWordFLWT(struct GameComponentsFLWT* flwtComponents, struct DataStr
 // Allow the user to insert a word 
 int userEntersWordFLWT(char* userInput, struct GameComponentsFLWT* flwtComponents,  struct DataStructures* data){
 	
-	int isValid = Check_Input(flwtComponents->startWordId,(const char*)userInput, data->W2I, data->I2W, data->wordSet); 
+	int isValid = Check_Input(flwtComponents->startWordId,(const char*)userInput, data); 
 
 	if(isValid == VALID){
 			//Once it is valid, we can convert it into an integer
-			int id = Convert_WordToInt(userInput, data->W2I); 
+			int id = Convert_WordToInt(userInput, data); 
 
 			//Copies the new word into the string arraylist
-			addString_ArrayList(userInput, numLetters, flwtComponents->prevWords); 
+			addString_ArrayList(userInput, data->I2W->numLetters, flwtComponents->prevWords); 
 
 			// The game component increments the number of moves
 			flwtComponents->numAdjacenciesFound++;
@@ -62,22 +62,6 @@ int isGameWonFLWT(struct GameComponentsFLWT* flwtComponents){
 void freeGameComponentsFLWT(struct GameComponentsFLWT* flwtComponents){
 	free_ArrayList(flwtComponents->prevWords); 	
 	free(flwtComponents); 
-
-}
-
-void printFLWTComponents(struct GameComponentsFLWT* flwtComponents){
-	struct arrayList *words = getCurrentWordsFLWT(flwtComponents);
-	int length = (words->currPrecision) / (numLetters);
-	char *rawStr = (char*)words->list;
-	char tempStr[numLetters + 1];
-	tempStr[numLetters] = '\0';
-	printf("Raw String: %s\n", rawStr);
-	for (int i = 0; i < length; i ++) {
-		char *currStr = &rawStr[i*numLetters];
-		strncpy(tempStr, currStr, numLetters);
-		printf("String:  %s\n", tempStr);
-	}
-	printf("\n\n"); 
 
 }
 

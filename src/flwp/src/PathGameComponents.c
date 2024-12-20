@@ -10,8 +10,6 @@
 #include "../../structs/includes/GenericLinkedListNode.h"
 
 
-extern int numLetters;
-
 struct GameComponents *InitializeGameComponents(struct wordDataArray* IntToWord_HashMap, int minConnections, struct WordSet *wordSet){
 		//Instantiate the Structure
 	struct GameComponents* gameComponents = malloc(sizeof(struct GameComponents)); 
@@ -35,7 +33,7 @@ struct GameComponents *InitializeGameComponents(struct wordDataArray* IntToWord_
 	gameComponents->prevInput = gameComponents->start; 
 	
 	//Initialize the arrayList 
-	gameComponents->aList = init_ArrayList(numLetters * (minConnections * 1.5), numLetters * (minConnections), STR); 
+	gameComponents->aList = init_ArrayList(IntToWord_HashMap->numLetters * (minConnections * 1.5), IntToWord_HashMap->numLetters * (minConnections), STR); 
 	
 	//Instantiate the input storage 
 	gameComponents->storage = malloc(sizeof(struct GenericLinkedListNode)); 
@@ -53,7 +51,7 @@ struct GameComponents *InitializeGameComponents(struct wordDataArray* IntToWord_
 	//Insert the word into the back of the word linked list
 	AddToBack_IntLL(gameComponents->start, gameComponents->userConnections); 
  
- 	addString_ArrayList(Convert_IntToWord(gameComponents->start, IntToWord_HashMap), numLetters, gameComponents->aList); 
+ 	addString_ArrayList(Convert_IntToWord(gameComponents->start, IntToWord_HashMap), IntToWord_HashMap->numLetters, gameComponents->aList); 
  	 
 	//Allocates space at the beginning of the generic linked list node
 	AddToFront_GenericLinkedListNode(gameComponents->storage, INT_LL); 
@@ -77,7 +75,7 @@ void ResetGameComponents(struct GameComponents *gc, struct wordDataArray* IntToW
  	//Frees, then initializes the array list
 	free_ArrayList(gc->aList); 
 	//Initialize the arrayList 
-	gc->aList = init_ArrayList(numLetters * (gc->minConnections * 1.5), numLetters * (gc->minConnections), STR); 
+	gc->aList = init_ArrayList(IntToWord_HashMap->numLetters * (gc->minConnections * 1.5), IntToWord_HashMap->numLetters * (gc->minConnections), STR); 
 	
 	Free_GenericLinkedList(gc->storageHeader); 
 	
@@ -100,7 +98,7 @@ void ResetGameComponents(struct GameComponents *gc, struct wordDataArray* IntToW
 	//Insert the word into the back of the word linked list
 	AddToBack_IntLL(gc->start, gc->userConnections); 
  
- 	addString_ArrayList(Convert_IntToWord(gc->start, IntToWord_HashMap), numLetters, gc->aList); 
+ 	addString_ArrayList(Convert_IntToWord(gc->start, IntToWord_HashMap), IntToWord_HashMap->numLetters, gc->aList); 
  	 
 	//Allocates space at the beginning of the generic linked list node
 	AddToFront_GenericLinkedListNode(gc->storage, INT_LL); 
@@ -112,23 +110,23 @@ void ResetGameComponents(struct GameComponents *gc, struct wordDataArray* IntToW
 }
 
 
-char* RemoveWord_Struct(struct GameComponents* gc, char* input, int freeInput, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap){
+char* RemoveWord_Struct(struct GameComponents* gc, char* input, int freeInput, struct DataStructures* data){
 	//If I have previously undone a move, I need to free that move
 	if(gc->undoCalls != 0){
 		ResetUndo(gc->storageHeader, &(gc->storage), gc->userConnections, &(gc->undoCalls)); 
 	
 	}
 	//First we have to remove the -
-	char* word = substr(input, 1, numLetters + 1, freeInput);
-	if(safeStrLen(word) > numLetters){
+	char* word = substr(input, 1, data->I2W->numLetters + 1, freeInput);
+	if(safeStrLen(word) > data->I2W->numLetters){
 		printf("Word is too long\n"); 
 		return word; 
 	}
-	else if(safeStrLen(word) < numLetters){
+	else if(safeStrLen(word) < data->I2W->numLetters){
 		printf("Word is too short\n"); 
 		return word; 
 	}
-	int wordID = Convert_WordToInt(word, WordToInt_HashMap); 
+	int wordID = Convert_WordToInt(word, data); 
 	//Then we have to Remove it from the list, and all the words after it 
 	RemoveFrom_IntLL(wordID, gc->userConnections->next);
 
@@ -140,7 +138,7 @@ char* RemoveWord_Struct(struct GameComponents* gc, char* input, int freeInput, s
 	
 	//You've gotta remove the current array list and replace it 
 	//First, empty the current array list string
-	CopyWordLLOntoArrayList(gc, IntToWord_HashMap); 
+	CopyWordLLOntoArrayList(gc, data->I2W); 
 	++gc->numMoves; 
 	//Frees the word
 	return word; 	
@@ -189,13 +187,13 @@ void Redo_Struct(struct GameComponents* gc, struct wordDataArray* IntToWord_Hash
 		CopyWordLLOntoArrayList(gc, IntToWord_HashMap); 
 	}
 }
-int AddWord_Struct(struct GameComponents* gc, char* input, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){
+int AddWord_Struct(struct GameComponents* gc, char* input, struct DataStructures* data){ 
 	//Checks if the word is valid based on the previous input 
-	int isValid = Check_Input(gc->prevInput, (const char*)input, WordToInt_HashMap, IntToWord_HashMap, wordSet); 
+	int isValid = Check_Input(gc->prevInput, (const char*)input, data); 
 	
 	if(isValid == VALID){
 			//Once it is valid, we can convert it into an integer
-			int newWord = Convert_WordToInt(input, WordToInt_HashMap); 
+			int newWord = Convert_WordToInt(input, data); 
 			//If I have previously undone a move, I need to free that move		
 			if(gc->undoCalls != 0){
 				ResetUndo(gc->storageHeader, &(gc->storage), gc->userConnections, &(gc->undoCalls));
@@ -207,7 +205,7 @@ int AddWord_Struct(struct GameComponents* gc, char* input, struct DummyHeadNode*
 			addString_ArrayList("->", 2, gc->aList); 
 		
 			//Copies the new word into the string arraylist
-			addString_ArrayList((const char*)Convert_IntToWord(newWord, IntToWord_HashMap), numLetters, gc->aList); 
+			addString_ArrayList((const char*)Convert_IntToWord(newWord, data->I2W), data->I2W->numLetters, gc->aList); 
 			
 			//Copies the new word into the prev input
 			gc->prevInput = newWord; 
@@ -216,7 +214,7 @@ int AddWord_Struct(struct GameComponents* gc, char* input, struct DummyHeadNode*
 			//Copies userConnections list to the front of the Generic Linked List Node
 			CopyInto_GenericLinkedListNode(gc->userConnections, gc->storage, 1, INT_LL); 
 			//Put the new word into the Hash Set
-			setHintFound(newWord, IntToWord_HashMap);  
+			setHintFound(newWord, data->I2W);  
 			//Another move added
 			gc->numMoves++;
 	}
@@ -247,7 +245,7 @@ void CopyWordLLOntoArrayList(struct GameComponents *gc, struct wordDataArray* In
 	char* output = toString_IntLL(gc->storage->next->listHeader, LINKED, IntToWord_HashMap); 
 
 	int listSize = ((struct intList*)(gc->storage->next->listHeader))->size; 
-	int length = (numLetters * (listSize)) + (2 * (listSize - 1)); 
+	int length = (IntToWord_HashMap->numLetters * (listSize)) + (2 * (listSize - 1)); 
 	addString_ArrayList(output, length, gc->aList); 
 
 	free(output); 

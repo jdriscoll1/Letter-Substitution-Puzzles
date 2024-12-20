@@ -3,8 +3,6 @@ Name: Jordan D.
 Date: Feb 2, 2020
 Purpose: The four letter pathfinder, this time better 
 **********************************/
-int numLetters = 4; 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -60,8 +58,9 @@ int main(){
 void flwc_gen_example(){
 
 	srand(time(0)); 
+	int numLetters = 4; 
 	int fd = open("docs/4.txt", O_RDONLY);
-	struct DataStructures* dataStructures = initDataStructures(fd); 
+	struct DataStructures* dataStructures = initDataStructures(fd, 4); 
 	struct GameComponentsFLWC* flwcComponents = initFLWC(0, dataStructures);	
 	printf("Get to a word with 'g' in it\n");
 	printf("Do not touch any words with 's' in it\n"); 
@@ -110,7 +109,7 @@ void flwcChooseGoals_Example(){
 	// Initialize the Data Structures
 	srand(time(0)); 
 	int fd = open("docs/4.txt", O_RDONLY);
-	struct DataStructures* data = initDataStructures(fd); 
+	struct DataStructures* data = initDataStructures(fd, 4); 
 
 	// Initialize the starting word
 	int startId = 0; 
@@ -140,7 +139,7 @@ void flwcChooseGoals_Example(){
 void test_new_flwg(){
 	srand(time(0)); 
 	int fd = open("docs/4.txt", O_RDONLY);
-	struct DataStructures* data = initDataStructures(fd); 
+	struct DataStructures* data = initDataStructures(fd, 4); 
         int num_games = 800;
         int bot_wins = 0;
         int random_wins = 0;

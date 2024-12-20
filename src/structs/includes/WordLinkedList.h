@@ -83,7 +83,7 @@ char** ConvertWordLLToArray(struct word *header);
 @param header -->The header of the word linked list
 @param output o --> This is the way that it is necessary to output it
 #Note: You must free the string that you are given*/
-char* toString_WordLL(struct word* header, enum output o); 
+char* toString_WordLL(struct word* header, enum output o, int numLetters); 
 
 /*Frees the linked list
 @param header --> the DHN's location

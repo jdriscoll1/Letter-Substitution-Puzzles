@@ -16,9 +16,6 @@
 
 #include <stdint.h>
 
-extern int numLetters; 
-
-
 int GetMinConnections(enum Difficulty difficulty){
 	int easyMin = 2; 
 	int easyMax = 4;
@@ -93,7 +90,7 @@ char* enumToString(enum Difficulty difficulty){
 }
 
 /*Method that determines when the game will be stopped*/ 
-int goalCheck(char* input, int goal, int isValid, int isCommand, struct DummyHeadNode*** WordToInt_HashMap){
+int goalCheck(char* input, int goal, int isValid, int isCommand, struct DataStructures* data){
 	//This is the boolean that determines if the game is won
 	int gameWon = 0; 
 
@@ -116,7 +113,7 @@ int goalCheck(char* input, int goal, int isValid, int isCommand, struct DummyHea
 	if(isValid == 1){
 	
 
-		int inputNum = Convert_WordToInt(input, WordToInt_HashMap); 
+		int inputNum = Convert_WordToInt(input, data); 
 		//Is the inputted word equal to the goal word
 		gameWon = (inputNum == goal) ? 1 : 0; 
 	}
@@ -197,12 +194,12 @@ void EnterText(){
 }
 
 
-int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct DataStructures* data){
 
 	gc->hc->hintPoints = pc->hintPoints; 
 	int endCondition;
 	char* input;  
-	printf("Your goal is to start at %s, and arrive at %s\nYou have %d hint points.\n", Convert_IntToWord(gc->start, IntToWord_HashMap), Convert_IntToWord(gc->goal, IntToWord_HashMap), gc->hc->hintPoints); 
+	printf("Your goal is to start at %s, and arrive at %s\nYou have %d hint points.\n", Convert_IntToWord(gc->start, data->I2W), Convert_IntToWord(gc->goal, data->I2W), gc->hc->hintPoints); 
 	//If the user asks to remove a word
 	int isCommand; 
 	int isValid; 
@@ -222,21 +219,21 @@ int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct Dumm
 	
 	
 			if(input[0] == '-'){
-				input = RemoveWord_Struct(gc, input, 1, WordToInt_HashMap, IntToWord_HashMap); 
+				input = RemoveWord_Struct(gc, input, 1, data); 
 		
 			}
 			else if(input[0] == '?'){
-				input = substr(input, 1, numLetters + 1, 1);
+				input = substr(input, 1, data->I2W->numLetters + 1, 1);
 				//Check the length
 				int i = 0; 
 				char c; 
 				while((c = input[i]) != '\0'){
 					i++; 
 				}
-				if(i == numLetters){
+				if(i == data->I2W->numLetters){
 				
-					int id = Convert_WordToInt(input, WordToInt_HashMap); 
-					if(id > pow(26, numLetters) || id <= 0){
+					int id = Convert_WordToInt(input, data); 
+					if(id > pow(26, data->I2W->numLetters) || id <= 0){
 						
 					}
 					int inDic = inDictionary(id); 
@@ -248,7 +245,7 @@ int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct Dumm
 					}
 				}
 				else{
-					if(i < numLetters){
+					if(i < data->I2W->numLetters){
 						printf("That word is too short\n"); 
 					}
 					else{
@@ -261,20 +258,20 @@ int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct Dumm
 		
 			//if they want to undo their previous move
 			else if(strcmp(input, "u") == 0){
-				Undo_Struct(gc, IntToWord_HashMap);
+				Undo_Struct(gc, data->I2W);
 			}
 			// if cmd equals r -- it will be time to redo the previous move*/
 		
 			else if(strcmp(input, "r") == 0){
-				Redo_Struct(gc, IntToWord_HashMap);
+				Redo_Struct(gc, data->I2W);
 				
 			}
 			else if(strcmp(input, "g") == 0){
-				printf("Your goal word is %s\n", Convert_IntToWord(gc->goal, IntToWord_HashMap)); 
+				printf("Your goal word is %s\n", Convert_IntToWord(gc->goal, data->I2W)); 
 			}
 			//Help command
 			else if(strcmp(input, "h") == 0){
-				Help(Convert_IntToWord(gc->goal, IntToWord_HashMap)); 
+				Help(Convert_IntToWord(gc->goal, data->I2W)); 
 			}
 			else if(strcmp(input, "1") == 0){
 				char* output = hint1((uintptr_t)gc); 
@@ -283,12 +280,12 @@ int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct Dumm
 				
 			}
 			else if(strcmp(input, "2") == 0){
-				char* output = hint2((uintptr_t)gc, IntToWord_HashMap); 
+				char* output = hint2((uintptr_t)gc, data->I2W); 
 				printf("%s\n", output);
 				free(output);  
 			}
 			else if(strcmp(input, "3") == 0){
-				char* output = hint3((uintptr_t)gc, IntToWord_HashMap, wordSet); 
+				char* output = hint3((uintptr_t)gc, data->I2W, data->wordSet); 
 				printf("%s\n", output);
 				free(output);  
 			}
@@ -301,7 +298,7 @@ int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct Dumm
 				isCommand = 2; 
 			}
 			else{
-				isValid = AddWord_Struct(gc, input, WordToInt_HashMap, IntToWord_HashMap, wordSet); 
+				isValid = AddWord_Struct(gc, input, data); 
 				isCommand = 0; 
 			}
 			
@@ -317,7 +314,7 @@ int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct Dumm
 		//0 - The user hasn't finished
 		//1 - The user won
 		//2 - The user quit
-	}while( (endCondition = goalCheck(input, gc->goal, isValid, isCommand, WordToInt_HashMap)) == 0)  ; 
+	}while( (endCondition = goalCheck(input, gc->goal, isValid, isCommand, data)) == 0)  ; 
 	int score = (endCondition == 2)? -1 : getScore(gc); 
 	AfterGameOutput(endCondition, gc); 
 	return score; 

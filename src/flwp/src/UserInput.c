@@ -11,7 +11,6 @@
 
 #define MAX_SIZE 256
 
-extern int numLetters;
 //This takes the input, and returns a pointer -- this is with a known size
 char* Take_Input(int size){
 	printf("\nGivith me thine fine input: "); 
@@ -73,11 +72,9 @@ enum Difficulty ChooseDifficulty(){
 }
 
 
-int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){
-	//Has to make sure that word is numLetters letters
-	//Has to make sure that word has numLetters - 1 letters in commond
+int Check_Input(int prevWord, const char* currWord, struct DataStructures *data){
 	//First, find prev word 
-	char* prev = Convert_IntToWord(prevWord, IntToWord_HashMap);
+	char* prev = Convert_IntToWord(prevWord, data->I2W);
 
 	int i = 0;
 	int equalLetters = 0;  
@@ -85,18 +82,18 @@ int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** Word
 	int terminate = 0; 
 	while(terminate == 0){
 		terminate = (*(currWord + i) == '\0') ? 1 : 0;
-		if(i > numLetters){
+		if(i > data->I2W->numLetters){
 			// WORD IS TOO LONG
 			printf("Word is Too Long\n");
 			return TOO_LONG; 
 
 		}
-		else if(i < numLetters && *(currWord + i) == '\0'){
+		else if(i < data->I2W->numLetters && *(currWord + i) == '\0'){
 			printf("Word is too short\n");
 			return TOO_SHORT; 
 		
 		}
-		else if(equalLetters < numLetters - 1 && *(currWord + i) == '\0'){
+		else if(equalLetters < data->I2W->numLetters - 1 && *(currWord + i) == '\0'){
 			printf("Not enough letters in common\n");
 			return NOT_ENOUGH_LETTERS_IN_COMMON;
 		  
@@ -113,9 +110,9 @@ int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** Word
 	//First: Make sure it is a real word
 	//Go into the hash map
 	//Find it in the hash map
-	int id = Convert_WordToInt((char*)currWord, WordToInt_HashMap); 
+	int id = Convert_WordToInt((char*)currWord, data); 
 	// Check if the word is used
-	if(equalLetters == numLetters + 1 || checkIfUsed_WordSet(id, wordSet)){
+	if(equalLetters == data->I2W->numLetters + 1 || checkIfUsed_WordSet(id, data->wordSet)){
 		printf("Word Already Used\n");
 		return WORD_USED;
 	}
@@ -128,7 +125,7 @@ int Check_Input(int prevWord, const char* currWord, struct DummyHeadNode*** Word
 	//Originally, I was going to check if the word has already been used, but now I am making the concious decision to say that
 	//reusing the word is a valid move, because it can show them that they made need to remove words
 
-	else if(equalLetters == numLetters){ 
+	else if(equalLetters == data->I2W->numLetters){ 
 		return VALID; 
 	}
 	return UNKNOWN_ERROR; 

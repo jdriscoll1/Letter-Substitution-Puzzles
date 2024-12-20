@@ -1,11 +1,9 @@
 /*************************
-Name: Jordan D. Andrew B.  
+Name: Jordan D. Andrew B.
 Date: Aug 8, 2024
 Purpose: A library to encapsulate & organize the code into an API
 
 ************************/
-extern int numLetters; 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,7 +37,7 @@ struct GameData {
 
 
 // Shared behavior
-struct DataStructures* initDataStructures(int fd); 
+struct DataStructures* initDataStructures(int fd, int numLetters); 
 
 // flwg behavior
 void freeDataStructures(struct DataStructures* dataStructures); 

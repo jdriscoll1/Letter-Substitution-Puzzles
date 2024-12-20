@@ -17,7 +17,7 @@ Purpose: A library to encapsulate & organize the code into an API
 #include "../../flwg/includes/FLWGGame.h"
 
 // Creating and destroying data structures
-struct DataStructures* initDataStructures(int fd){
+struct DataStructures* initDataStructures(int fd, int numLetters){
 
     srand(time(NULL));
 
@@ -26,7 +26,7 @@ struct DataStructures* initDataStructures(int fd){
 	// Initialize the Word to Int Hash Map 
 	data->W2I = Allocate_WordToInt(); 	
 	data->I2W = Allocate_IntToWordStruct(); 	
-	Initialize_HashMaps_fd(data->W2I, data->I2W, fd); 
+	Initialize_HashMaps_fd(data->W2I, data->I2W, fd, numLetters); 
 	data->wordSet = init_WordSet(data->I2W->numWords); 
 	return data; 
 }
@@ -73,7 +73,7 @@ int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructu
 	
 	// Check if the word is valid
 	enum ERROR_CODE result; 
-	if((result = Check_Input(gameData->currWordId, (const char*)userInput, data->W2I, data->I2W, data->wordSet)) != VALID){
+	if((result = Check_Input(gameData->currWordId, (const char*)userInput, data)) != VALID){
 		return result; 
 	}
 
@@ -102,18 +102,14 @@ void ResetFLWP(struct GameComponents *gameComponents, struct DataStructures* dat
 	ResetGameComponents(gameComponents, dataStructures->I2W);
 }
 int userEntersWord_FLWP(char* userInput, struct GameComponents *gameComponents, struct DataStructures* dataStructures){
-    return AddWord_Struct(gameComponents, userInput, dataStructures->W2I, dataStructures->I2W, dataStructures->wordSet);
+    return AddWord_Struct(gameComponents, userInput, dataStructures); 
 }
-
-
-// Test Functionality  
-
 char* convertIntToWord(int wordId, struct DataStructures* data){
 	return Convert_IntToWord(wordId, data->I2W); 
 }
 
 int convertWordToInt(char* word, struct DataStructures* data){
-	return Convert_WordToInt(word, data->W2I); 
+	return Convert_WordToInt(word, data); 
 }
 
 char* getStartWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
@@ -141,12 +137,12 @@ int isGameWonFLWP(struct GameComponents *gameComponents) {
 
 void removeWord_FLWP(char* word, struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
 
-    char tempStr[numLetters + 2];
+    char tempStr[dataStructures->I2W->numLetters + 2];
     tempStr[0] = '-';
-    tempStr[numLetters + 1] = '\0';
+    tempStr[dataStructures->I2W->numLetters + 1] = '\0';
 
-    strncpy(&tempStr[1], word, numLetters);
+    strncpy(&tempStr[1], word, dataStructures->I2W->numLetters);
 
-    RemoveWord_Struct(gameComponents, tempStr, 0, dataStructures->W2I, dataStructures->I2W);
+    RemoveWord_Struct(gameComponents, tempStr, 0, dataStructures); 
 
 }

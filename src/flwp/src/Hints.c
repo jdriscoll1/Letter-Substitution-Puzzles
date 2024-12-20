@@ -13,8 +13,6 @@
 #define SIZE 255
 #define NUM_LETTERS 26
 
-extern int numLetters;
-
 struct HintComponents* init_HintComponents(){
 	struct HintComponents* hc = malloc(sizeof(struct HintComponents)); 
 	
@@ -101,7 +99,7 @@ char* hint2(uintptr_t gcLong, struct wordDataArray* IntToWord_HashMap){
 			safeStrcpy(&output, (const char*) h, 26, SIZE); 
 			
 			start = 26; 
-			int wordOutLen = numLetters + 3; 
+			int wordOutLen = IntToWord_HashMap->numLetters + 3; 
 			int i; 
 			//It loops through the outputs until the next one after the next one is null
 			for(i = 0; i < (gc->hc->hint2OutputQuantity - 1) && options->next != NULL; i++){
@@ -252,7 +250,7 @@ void Convert_TreeStorageNodeArrayList_HintRestrictions(struct arrayList* aList, 
 		while(currNode->prev != NULL){ 
 			char* currWord= Convert_IntToWord(currNode->id, IntToWord_HashMap); 
 			int i; 
-			for(i = 0; i < numLetters; i++){
+			for(i = 0; i < IntToWord_HashMap->numLetters; i++){
 				//This index in the array of booleans
 				int key = currWord[i] - 97; 
 				//Make sure it's not in the Hash Set
@@ -325,7 +323,7 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(int start, int goal, 
 	@component --> (length - 2) --> The length, not including the first one, nor the last one
 	@param length -2 * numLetters --> This is the official size of the array list
 	@return output --> This is the array list that'll store the letters that will be given to the user*/
-	struct arrayList* output = init_ArrayList((length - 1) * numLetters, numLetters, STR);
+	struct arrayList* output = init_ArrayList((length - 1) * IntToWord_HashMap->numLetters, IntToWord_HashMap->numLetters, STR);
 
 	Convert_TreeStorageNodeArrayList_HintRestrictions(output, HashSet, bc->End, IntToWord_HashMap);
 

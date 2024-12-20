@@ -19,8 +19,6 @@
 #define false 0  
 typedef int bool;
 
-extern int numLetters;
-
 int getSize(struct word *header){
 	int size = 0; 
 	while(header->next != NULL){
@@ -172,7 +170,7 @@ void Print_WordLL(struct word *header, enum output o){
 	
 }
 
-char* toString_WordLL(struct word *header, enum output o){
+char* toString_WordLL(struct word *header, enum output o, int numLetters){
 	//Determine how the words will be linked together
 	char* link;
 

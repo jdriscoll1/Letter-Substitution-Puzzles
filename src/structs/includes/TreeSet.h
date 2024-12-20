@@ -46,7 +46,7 @@ struct DummyHeadNode *Allocate_TreeSet(void* data);
 @param valueType --> the type of data, Word? Int? Char?
 @param pointerType --> The type of pointer that points to the current node
 @return --> Returns the added node*/ 
-struct TreeSetNode*  AddNode_TreeSet(void* data, void* pointer, struct TreeSetNode *curNode, enum dataType pointerType, enum dataType valueType); 
+struct TreeSetNode*  AddNode_TreeSet(void* data, void* pointer, struct TreeSetNode *curNode, enum dataType pointerType, enum dataType valueType, int numLetters); 
 
 /*This determines the depth of a node when a node has just been added
 @param curNode --> the nodes whose depth will be determined*/ 
@@ -56,7 +56,7 @@ void DetermineDepth(struct TreeSetNode *curNode);
 @param word --> the word it searches for 
 @param header --> the first word in the Tree Set (the top) always use DummyHeaderNode->start
 @return 1 if the word is found, 0 if it isn't*/ 
-struct TreeSetNode* Search_TreeSet(void* data, struct TreeSetNode *header, enum dataType type);  
+struct TreeSetNode* Search_TreeSet(void* data, struct TreeSetNode *header, enum dataType type, int numLetters);  
 
 /*Checks if the next location is null
 @param isSmaller --> 1: Checks the smaller node 0: checks the bigger node
@@ -70,12 +70,12 @@ void Print_TreeSet(struct TreeSetNode *header, enum dataType type);
 /*Compares a word to a header of a link list
 @param word --> The word being compared
 @param header --> The header of the word linked list whose nodes will be compared*/
-int wordLLCompare(struct word* newHeader, struct word* oldHeader); 
+int wordLLCompare(struct word* newHeader, struct word* oldHeader, int numLetters); 
 /*Compares two words to see which is larger
 @param word1 --> the first word, contextually it is not part of the tree set
 @param word2 --> the second word, contextuallly it is part of the tree set
 @return -1: if they are equal; 0: if the word1 is greater than word2; 1: if word1 is smaller than word2*/ 
-int stringCompare(char* word1, char* word2); 
+int stringCompare(char* word1, char* word2, int numLetters); 
 
 /*Compares Two Integers to See Which is Larger
 @param num1 --> the first word, contextually it is not part of the tree set
@@ -88,7 +88,7 @@ int intCompare(int num1, int num2);
 @param data1 --> the first piece of data
 @param data2 --> the second piece of data
 @return (look above)*/ 
-int compare(void* data1, void* data2, enum dataType type); 
+int compare(void* data1, void* data2, enum dataType type, int numLetters); 
 
 
 /*This goes through and balances the tree set node, checking each node along the way.
@@ -96,7 +96,7 @@ int compare(void* data1, void* data2, enum dataType type);
 @param header --> the header that the pointer points to
 @param nodeType --> the type of the header, is it a dummy node? or does it lie within the tree set?
 @param type --> the data type*/
-void balance(void* pointer, struct TreeSetNode* header, enum dataType nodeType, enum dataType valueType); 
+void balance(void* pointer, struct TreeSetNode* header, enum dataType nodeType, enum dataType valueType, int numLetters); 
 
 /*Checks if a Tree Set is balanced on both sides
 @param header --> the header, will not be included in the counting. Is void in case it needs to be a dummy head node
@@ -119,20 +119,20 @@ int isDeeperLeft(struct TreeSetNode *header, int pointedLeft);
 @param header --> The header who may be offset on the left
 @param valueType --> The dataType that may be offset
 @param nodeType --> Is the header a DummyHeader Node, or instead a Tree Set Node*/
-void leftOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType); 
+void leftOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType, int numLetters); 
 
 /*If it is offset on the right
 @param pointer --> The header being pointing at the list
 @param header --> The header who will get rotated
 @param valueType --> The dataType (Integer)
 @param nodeType --> Is the header a DummyHeader Node, or instead  */
-void rightOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType); 
+void rightOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType, int numLetters); 
 
 
 
 /*Rotates a set of nodes rightwards
 @param pointer --> the pointer that will soon be appointed to a new node*/
-void rotateRight(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType type); 
+void rotateRight(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType type, int numLetters); 
 
 /*
      c
@@ -141,7 +141,7 @@ void rotateRight(void *pointer, struct TreeSetNode *header, enum dataType nodeTy
   /
  a 
 */
-void rotateRightCase1(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType); 
+void rotateRightCase1(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType, int numLetters); 
 
 /*
      c
@@ -150,7 +150,7 @@ void rotateRightCase1(void *pointer, struct TreeSetNode *header, enum dataType n
    \
     b 
 */
-void rotateRightCase2(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType); 
+void rotateRightCase2(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType, int numLetters); 
 
 /*
      b
@@ -162,7 +162,7 @@ void rotateRightCase3(void *pointer, struct TreeSetNode *header, enum dataType n
 
 /*Rotates a set of nodes leftwards
 @param pointer --> the pointer that will soon be appointed to a new node*/
-void rotateLeft(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType type); 
+void rotateLeft(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType type, int numLetters); 
 
 
 /*
@@ -172,7 +172,7 @@ void rotateLeft(void *pointer, struct TreeSetNode *header, enum dataType nodeTyp
        /
       b
 */
-void rotateLeftCase1(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType); 
+void rotateLeftCase1(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType, int numLetters); 
 
 /*  a
      \ 
@@ -180,7 +180,7 @@ void rotateLeftCase1(void *pointer, struct TreeSetNode *header, enum dataType no
        \
         c
 */
-void rotateLeftCase2(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType); 
+void rotateLeftCase2(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType, int numLetters); 
 /*
 	b
    / \
@@ -194,7 +194,7 @@ void rotateLeftCase3(void *pointer, struct TreeSetNode *header, enum dataType no
 @param node --> The node at which the pointer will point
 @param nodeType --> What is the node?
 @param valueType --> The is the type of value?*/
-void reappoint(void* pointer, struct TreeSetNode* node, enum dataType nodeType, enum dataType valueType); 
+void reappoint(void* pointer, struct TreeSetNode* node, enum dataType nodeType, enum dataType valueType, int numLetters); 
 
 /*Finds the word that is to be removed from the tree set, and removes it
 @param data --> the data to be removed
@@ -202,7 +202,7 @@ void reappoint(void* pointer, struct TreeSetNode* node, enum dataType nodeType, 
 @param header --> the top of the tree set from which the search will begin
 @param type --> the type of data that is about to be removed
 @return --> returns an integer that declares if it has or has not yet been found, so that it will stop*/
-int Remove_TreeSet(void* data, void* pointer, struct TreeSetNode* header, enum dataType pointerType, enum dataType valueType); 
+int Remove_TreeSet(void* data, void* pointer, struct TreeSetNode* header, enum dataType pointerType, enum dataType valueType, int numLetters); 
  
 /*This actually does the removing
 @param pointer --> The pointer that connects to the node
@@ -210,7 +210,7 @@ int Remove_TreeSet(void* data, void* pointer, struct TreeSetNode* header, enum d
 @param pointerType --> is the pointer a dummy head node, or a tree set node
 @param valueType --> the type of the data, string? char? int?
 @return --> needs to return depending on where it */ 
-void Removal(void* pointer, struct TreeSetNode* header, enum dataType pointerType, enum dataType valueType); 
+void Removal(void* pointer, struct TreeSetNode* header, enum dataType pointerType, enum dataType valueType, int numLetters); 
 
 /*This is the remove method just in case the node only connects to 1 node
 @param isGreater --> is the node greater than or less than the pointer. 1 == the node is greater than the pointer. 0 the node is less than the pointer
@@ -225,7 +225,7 @@ void Remove_OneNodeAttatchment(void* pointer, struct TreeSetNode *connection, in
 @param isGreater --> This asks the question is the node greater than, or less than its pointer?
 @param pointerType --> Is the original pointer a dummy head node, or set_node? something else?
 @param valueType --> This is the data type of the data. For example, an integer or a string*/
-void* Remove_TwoNodeAttatchment(void* pointer, struct TreeSetNode *curNode, int isGreater, enum dataType pointerType, enum dataType valueType); 
+void* Remove_TwoNodeAttatchment(void* pointer, struct TreeSetNode *curNode, int isGreater, enum dataType pointerType, enum dataType valueType, int numLetters); 
 /*Recursively frees the tree set, afterwards, free the dummy head node
 @param header --> the head of the tree node
 Don't forget to free the tree head
@@ -241,19 +241,19 @@ void postorder_TreeSet(struct TreeSetNode *header);
 @param arr --> The array being inserted
 @time --> O(n)
 @return --> Returns a tree set with nothing but the values in the array*/
-struct DummyHeadNode* ConvertArrayToTree(int dim1Size, void** arr, enum dataType data);  
+struct DummyHeadNode* ConvertArrayToTree(int dim1Size, void** arr, enum dataType data, int numLetters);  
 
 /*This is a huge AVL Tree Test*/	
-void BigAVLTest(); 
+void BigAVLTest(int numLetters); 
 
 /*This takes an array, converts it into an AVL tree, and outputs the preorder for testing purposes
 @param a --> The array to be converted
 @param length --> The length of that array */
-void AVLTestQuick(int* a, int length); 	
+void AVLTestQuick(int* a, int length, int numLetters); 	
 	
 	
-void arrayPermutations_Lobby(); 
-void permute(int *arr, int l, int r); 
+void arrayPermutations_Lobby(int numLetters); 
+void permute(int *arr, int l, int r, int numLetters); 
 void swap(int* arr, int i, int j);  	
 
 #endif

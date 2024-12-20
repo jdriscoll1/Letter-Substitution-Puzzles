@@ -5,8 +5,6 @@
 
 #include "../includes/HashFunctions.h"
 
-extern int numLetters; 
-
 /*returns First Letter of a word*/
 int FirstHashFunction(const char firstLetter){
 	int output = firstLetter - 97; 
@@ -19,14 +17,14 @@ int FirstHashFunction(const char firstLetter){
 	
 }
 /*returns the fist vowel in the word*/
-int SecondHashFunction(const char* word){
+int SecondHashFunction(const char* word, struct wordDataArray* IntToWord_HashMap){
 	
 	char vowels[] = {'a', 'e', 'i', 'o', 'u', 'y'}; 
 	/*The parser that goes through each letter in the word*/
 	int wordParse = 0; 
 	int vowelCheck; 
 	/*Loops through until it finds a vowel*/
-	for(wordParse = 1; wordParse < numLetters; wordParse++){
+	for(wordParse = 1; wordParse < IntToWord_HashMap->numLetters; wordParse++){
 		 vowelCheck = VowelSearch(word[wordParse], vowels);
 		 if(vowelCheck != -1){
 			 return vowelCheck; 

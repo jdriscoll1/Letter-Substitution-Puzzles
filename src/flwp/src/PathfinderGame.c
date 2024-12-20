@@ -6,8 +6,6 @@
 #include "../includes/GameFunctions.h"
 #include "../includes/UserInput.h"
 
-extern int numLetters; 
-
 //This will initialize the pathfinder game
 struct PathfinderGame* init_PathfinderGame(){
 	struct PathfinderGame* pc = malloc(sizeof(struct PathfinderGame)); 
@@ -34,20 +32,20 @@ struct PathfinderGame* init_PathfinderGame(){
 //Nothing should update 
 
 
-void Play_FLWP(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+void Play_FLWP(struct DataStructures *data){
 	struct PathfinderGame* pc = init_PathfinderGame(); 
 	int score = 0; 
 	int endGame = 0; 
 
 	//This initialises the game components
- 	struct GameComponents* gc = InitializeGameComponents(IntToWord_HashMap, pc->currRound, wordSet); 
+ 	struct GameComponents* gc = InitializeGameComponents(data->I2W, pc->currRound, data->wordSet); 
  	
 	//This goes through and plays multiple rounds
 	while(endGame == 0 && pc->currRound < pc->numRounds){
 		
 		//This starts a round
 		//quit is based on whether the user chooses to quit
-		score = round_FLWP(gc, pc, WordToInt_HashMap, IntToWord_HashMap, wordSet); 
+		score = round_FLWP(gc, pc, data); 
 			//Sets the hint points left 
 		pc->hintPoints = gc->hc->hintPoints; 
 		pc->scores[pc->currRound - 2] = score; 
@@ -88,11 +86,11 @@ void Play_FLWP(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* 
 			//Initialize the Game Componenents again
 			if(quit != 4){
 		
-				FreeGameComponents(gc, IntToWord_HashMap); 
-				gc = InitializeGameComponents(IntToWord_HashMap, pc->currRound, wordSet); 	
+				FreeGameComponents(gc, data->I2W); 
+				gc = InitializeGameComponents(data->I2W, pc->currRound, data->wordSet); 	
 			}
 			else{
-				ResetGameComponents(gc, IntToWord_HashMap); 
+				ResetGameComponents(gc, data->I2W); 
 				
 			}
 		
@@ -112,7 +110,7 @@ void Play_FLWP(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* 
 		
 	}
 	
-	FreeGameComponents(gc, IntToWord_HashMap); 
+	FreeGameComponents(gc, data->I2W); 
 	printf("Final Score: %d%%", finalScore(pc)); 	
 
 	free(pc); 

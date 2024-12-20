@@ -13,26 +13,24 @@
 
 typedef enum {false, true} bool;
 
-extern int numLetters;
-
-void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, int fd){
+void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, int fd, int numLetters){
 	//Open up the file 
 	FILE* wordDoc = fdopen(fd, "r"); 
 	//Read the top number from the file
 	int numWords = getNumWords(wordDoc);
 	//Allocate the structure using the number of words int --> word (wordData)
-	Allocate_IntToWord(IntToWord_HashMap, numWords);
+	Allocate_IntToWord(IntToWord_HashMap, numWords, numLetters);
 	//Place the data into the two new hash maps
 	Fill_HashMaps(wordDoc, WordToInt_HashMap, IntToWord_HashMap);
 	fclose(wordDoc);
 }
-void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, char* path){
+void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, char* path, int numLetters){
 	//Open up the file 
 	FILE* wordDoc = OpenFile(path); 
 	//Read the top number from the file
 	int numWords = getNumWords(wordDoc); 
 	//Allocate the structure using the number of words int --> word (wordData)
-	Allocate_IntToWord(IntToWord_HashMap, numWords);  
+	Allocate_IntToWord(IntToWord_HashMap, numWords, numLetters);  
 	//Place the data into the two new hash maps
 	Fill_HashMaps(wordDoc, WordToInt_HashMap, IntToWord_HashMap); 
 	fclose(wordDoc);
@@ -61,10 +59,11 @@ struct DummyHeadNode** *Allocate_WordToInt(){
 	
 }
 
-void Allocate_IntToWord(struct wordDataArray* IntToWord_HashMap, int numWords){
+void Allocate_IntToWord(struct wordDataArray* IntToWord_HashMap, int numWords, int numLetters){
 	struct wordData** array = calloc(numWords, sizeof(struct wordData*)); 
 	IntToWord_HashMap->array = array; 
 	IntToWord_HashMap->numWords = numWords; 
+	IntToWord_HashMap->numLetters = numLetters; 
 
 
 
@@ -83,7 +82,7 @@ void Fill_HashMaps(FILE* wordDoc, struct DummyHeadNode** *WordToInt_HashMap, str
 		//So, now we need to make 2 nodes, 1 wordData node, and one wordStruct node
 		//The word of the line
 		char* currValue = strtok(line, " ");  
-		currValue[numLetters] = '\0'; 
+		currValue[IntToWord_HashMap->numLetters] = '\0'; 
 		//Put the word into word --> int structure
 		struct wordData* wordData = Create_WordData(currValue); 
 		struct wordStruct* wordStruct = Create_WordStruct(currValue, id); 
@@ -118,9 +117,9 @@ void Fill_HashMaps(FILE* wordDoc, struct DummyHeadNode** *WordToInt_HashMap, str
 		
 		//Then, put it in its spot in the data list
 		int letterIndex = FirstHashFunction(wordData->word[0]);
-		int vowelIndex = SecondHashFunction(wordData->word); 
+		int vowelIndex = SecondHashFunction(wordData->word, IntToWord_HashMap); 
 		struct DummyHeadNode *treeHeader = WordToInt_HashMap[letterIndex][vowelIndex]; 
-		AddNode_TreeSet(wordStruct, treeHeader, treeHeader->start, DUMMY, WORD_STRUCT);
+		AddNode_TreeSet(wordStruct, treeHeader, treeHeader->start, DUMMY, WORD_STRUCT, IntToWord_HashMap->numLetters);
   	
 		id++; 
 		
@@ -248,21 +247,21 @@ void Free_WordStruct(struct wordStruct* wordStruct){
 	
 }
 
-int Convert_WordToInt(char* word, struct DummyHeadNode*** WordToInt_HashMap){
+int Convert_WordToInt(char* word, struct DataStructures* data){
 	if(word == NULL){
 		return -1; 
 	}
 	
 	int index1 = FirstHashFunction(word[0]); 
-	int index2 = SecondHashFunction(word);
-	struct DummyHeadNode *treeHead = WordToInt_HashMap[index1][index2]; 
+	int index2 = SecondHashFunction(word, data->I2W);
+	struct DummyHeadNode *treeHead = data->W2I[index1][index2]; 
 	
 	//Check the length of the word
 	int i = 0; 
 	while(word[i] != '\0'){
 		i++; 
 	}
-	if(i != numLetters){
+	if(i != data->I2W->numLetters){
 		return -1; 
 	}
 	
@@ -270,7 +269,7 @@ int Convert_WordToInt(char* word, struct DummyHeadNode*** WordToInt_HashMap){
 	if(treeHead->start == NULL){
 		return -1; 
 	}
-	struct TreeSetNode* dataPointer = Search_TreeSet(word, treeHead->start, WORD_STRUCT_CHECK); 
+	struct TreeSetNode* dataPointer = Search_TreeSet(word, treeHead->start, WORD_STRUCT_CHECK, data->I2W->numLetters); 
 	if(dataPointer == NULL){
 
 		return -1; 

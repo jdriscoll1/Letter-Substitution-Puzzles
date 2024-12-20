@@ -17,11 +17,6 @@
 #include "../../flwp/includes/UserInput.h"
 #include "../../flwp/includes/GameFunctions.h"
 
-extern int numLetters; 
-
-
-
-
 struct BFSComponents* init_BFSComponents(int start, struct WordSet* wordSet){
 
 	struct BFSComponents* bc = malloc(sizeof(struct BFSComponents)); 

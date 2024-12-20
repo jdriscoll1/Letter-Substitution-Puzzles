@@ -9,8 +9,6 @@
 
 #include "../../flwp/includes/UserInput.h"
 
-
-extern int numLetters; 
 /*This is the array list class*/
 //Initialize it
 struct arrayList* init_ArrayList(size_t initSize, size_t moveSize, enum alistType type){
@@ -255,16 +253,16 @@ void free_ArrayList(struct arrayList* aList){
 char* idArrayListToString(struct arrayList* aList, struct DataStructures* data){
 
 	// the size of the list * number of letters + 1
-	unsigned long resultSize = (aList->currPrecision * (sizeof(char) * (numLetters + 1))) + sizeof(char); 
+	unsigned long resultSize = (aList->currPrecision * (sizeof(char) * (data->I2W->numLetters + 1))) + sizeof(char); 
 
 	char* result = malloc(resultSize); 	
 
 	for(int i = 0; i < aList->currPrecision; i++){
 		// Get the word 	
-		for(int j = 0; j < numLetters; j++){
-			result[i * (numLetters + 1) + j] = Convert_IntToWord(((int*)(aList->list))[i], data->I2W)[j]; 
+		for(int j = 0; j < data->I2W->numLetters; j++){
+			result[i * (data->I2W->numLetters + 1) + j] = Convert_IntToWord(((int*)(aList->list))[i], data->I2W)[j]; 
 		}
-		result[i * (numLetters + 1) + 4] = '\n';
+		result[i * (data->I2W->numLetters + 1) + 4] = '\n';
 	}	
 	result[resultSize - 1] = '\0'; 
 	return result; 	

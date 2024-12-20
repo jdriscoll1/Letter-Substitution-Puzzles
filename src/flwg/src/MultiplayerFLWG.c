@@ -13,45 +13,45 @@
 
 
 //This allows the four letter word game to be playable with multiple players
-void Multiplayer_FLWG(struct DummyHeadNode** *WordToInt_HashMap, struct wordDataArray *IntToWord_HashMap, struct WordSet* wordSet){
+void Multiplayer_FLWG(struct DataStructures *data){
 
 	int numPlayers = 3;
 
-	int wordID = ChooseStart(IntToWord_HashMap);
+	int wordID = ChooseStart(data->I2W);
 	int depth = 6;
 	
-	markUsed_WordSet(wordID, wordSet);
+	markUsed_WordSet(wordID, data->wordSet);
 	
 	int currPlayer = 0;
-	printf("Start: %s\n", Convert_IntToWord(wordID, IntToWord_HashMap));
+	printf("Start: %s\n", Convert_IntToWord(wordID, data->I2W));
 	while(wordID != -1){
 		
 		switch(currPlayer){
 		
 			case 0:
-				wordID = userPly(wordID, WordToInt_HashMap, IntToWord_HashMap, wordSet);
+				wordID = userPly(wordID, data); 
 				break;
 
 			case 1:
-				wordID = userPly(wordID, WordToInt_HashMap, IntToWord_HashMap, wordSet);
+				wordID = userPly(wordID, data); 
 				break;
 
 			
 			case 2:
-				wordID = multiBotPly(wordID, currPlayer, numPlayers, depth, IntToWord_HashMap, wordSet);
+				wordID = multiBotPly(wordID, currPlayer, numPlayers, depth, data->I2W, data->wordSet);
 				break;
 			
 
 		}
 		//if the player quit, let the algorithm know
 		if(wordID != -1){
-			printf("%c) %s\n", (char)((currPlayer) % numPlayers + 65), Convert_IntToWord(wordID, IntToWord_HashMap));
+			printf("%c) %s\n", (char)((currPlayer) % numPlayers + 65), Convert_IntToWord(wordID, data->I2W));
 			//move to next player
 			currPlayer = (currPlayer + 1) % numPlayers;
 		}
 		
 	}
-	reset_HashSet(IntToWord_HashMap);
+	reset_HashSet(data->I2W);
 	printf("Player %c Loses!", (char)(currPlayer + 65));
 	
 }

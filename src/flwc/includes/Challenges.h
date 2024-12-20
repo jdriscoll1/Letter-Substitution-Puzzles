@@ -1,5 +1,3 @@
-extern int numLetters; 
-
 #ifndef seenFLWCChallenges
 #define seenFLWCChallenges
 

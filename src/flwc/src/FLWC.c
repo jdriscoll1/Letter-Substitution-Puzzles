@@ -5,8 +5,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-extern int numLetters; 
-
 #include "../../api/includes/FLWG-API.h"
 #include "../../flwp/includes/GameFunctions.h"
 #include "../../algs/includes/Minimax-2.h"

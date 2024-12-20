@@ -53,11 +53,11 @@ char* getStartWordFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStr
 
 // Allow the user to insert a word 
 int userEntersWordFLWC(char* userInput, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
-	int isValid = Check_Input(flwcComponents->wordId,(const char*)userInput, data->W2I, data->I2W, data->wordSet); 
+	int isValid = Check_Input(flwcComponents->wordId,(const char*)userInput, data); 
 
 	if(isValid == VALID){
 		// if the word is valid, mark it as such
-		int id = Convert_WordToInt(userInput, data->W2I); 
+		int id = Convert_WordToInt(userInput, data); 
 		markUsed_WordSet(id, data->wordSet); 
 		flwcComponents->wordId = id; 
 	}

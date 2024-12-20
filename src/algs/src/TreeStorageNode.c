@@ -10,9 +10,6 @@
 #include "../../structs/includes/WordLinkedList.h"
 #include "../../structs/includes/HashFunctions.h"
 
-
-extern int numLetters; 
-
 /*Private Method, For The Tree Storage Node, Checks if the word has been found or the limit has been reached for finding a word
 @param goal --> The goal word to be found, if null it should check the connection count
 @param isEnough --> Checks if the connection count is enough

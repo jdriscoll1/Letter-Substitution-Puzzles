@@ -3,6 +3,7 @@
 
 #include "PathGameComponents.h"
 
+#include "../../api/includes/FLWG-API.h"
 #include "../../structs/includes/TreeSet.h"
 #include "../../structs/includes/HashMap.h"
 
@@ -24,7 +25,7 @@ struct PathfinderGame{
 struct PathfinderGame* init_PathfinderGame();
 
 
-void Play_FLWP(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
+void Play_FLWP(struct DataStructures* data); 
 
 /*This gives the final score of the game*/
 int finalScore(struct PathfinderGame* pc); 

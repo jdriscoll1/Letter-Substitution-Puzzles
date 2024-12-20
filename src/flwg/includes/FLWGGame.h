@@ -9,14 +9,15 @@ Descirption: Contains the necessary structures and methods for the Four Letter W
 #include "../../structs/includes/HashMap.h"
 #include "../../structs/includes/TreeSet.h"
 #include "../../structs/includes/WordSet.h"
+#include "../../api/includes/FLWG-API.h"
 
 
 
 
-int FLWG(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
+int FLWG(struct DataStructures* data); 
 
 /*Takes user input*/
-int Input_FLWG(int prevWord, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet);
+int Input_FLWG(int prevWord, struct DataStructures* data); 
 
 /*This is the method that allows the bot to take a turn
 @param word --> The current word
@@ -36,7 +37,7 @@ int weakBotPly(int word, struct wordDataArray* IntToWord_HashMap, struct WordSet
 @param IntToWord_HashMap --> This is the hash map that takes an int and converts it to an integer
 @return --> Returns a chosen word
 @case --> -1 = the user gave up :(*/
-int userPly(int word, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
+int userPly(int word, struct DataStructures* data); 
  
 void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 

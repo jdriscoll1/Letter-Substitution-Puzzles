@@ -1,5 +1,7 @@
 #ifndef seenHashFunc
 #define seenHashFunc
+
+#include "HashMap.h"
 /*
 All of the Hash Functions for the Hash Map
 
@@ -17,7 +19,7 @@ Loops through the word till it sees the vowel
 @param word --> The word that it searches through to find the first vowel 
 @return --> a number that represents the vowel such that it can be used in an array 
 */
-int SecondHashFunction(const char* word);
+int SecondHashFunction(const char* word, struct wordDataArray* IntToWord_HashMap);
 /*Checks which vowel a letter is
 @param letter --> the letter it's checking to see what vowel it is
 @param vowels[] --> the array of vowels that is used to check what vowel the letter is

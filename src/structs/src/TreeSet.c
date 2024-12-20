@@ -8,8 +8,6 @@
 
 #include "../../algs/includes/Minimax.h"
 
-extern int numLetters; 
-
 /*This actually adds the node into the tree set
 @param data --> The data that is to be added
 @param pointer --> The Node That Points to the New Node
@@ -30,7 +28,7 @@ struct DummyHeadNode *Allocate_TreeSet(void* data){
 } 
 
 
-struct TreeSetNode* AddNode_TreeSet(void* data, void* pointer, struct TreeSetNode *curNode, enum dataType pointerType, enum dataType valueType){
+struct TreeSetNode* AddNode_TreeSet(void* data, void* pointer, struct TreeSetNode *curNode, enum dataType pointerType, enum dataType valueType, int numLetters){
 	//if this is the first node to be added
 	if(curNode == NULL){
 		/*Create the new node*/ 
@@ -39,13 +37,13 @@ struct TreeSetNode* AddNode_TreeSet(void* data, void* pointer, struct TreeSetNod
 		newNode->depth = 0; 
 		newNode->greater = NULL; 
 		newNode->smaller = NULL;
-		reappoint(pointer, newNode, pointerType, valueType); 
+		reappoint(pointer, newNode, pointerType, valueType, numLetters); 
 	
 	
 		return newNode; 
 	}
 	//we have to compare if the node is smaller or greater
-	int isSmaller = compare(data, curNode->data, valueType);  
+	int isSmaller = compare(data, curNode->data, valueType, numLetters);  
 	
 	//The node to be outputted
 	struct TreeSetNode* outputNode = NULL; 
@@ -61,7 +59,7 @@ struct TreeSetNode* AddNode_TreeSet(void* data, void* pointer, struct TreeSetNod
 		//if the smaller is already there
 		if(curNode->smaller != NULL){
 			//go into the smaller
-			outputNode = AddNode_TreeSet(data, curNode, curNode->smaller, SET_NODE, valueType); 
+			outputNode = AddNode_TreeSet(data, curNode, curNode->smaller, SET_NODE, valueType,  numLetters); 
 			
 		}
 		else{
@@ -76,7 +74,7 @@ struct TreeSetNode* AddNode_TreeSet(void* data, void* pointer, struct TreeSetNod
 		//if greater exists
 		if(curNode->greater != NULL){
 			//go to the greater and check it
-			outputNode = AddNode_TreeSet(data, curNode, curNode->greater, SET_NODE, valueType); 
+			outputNode = AddNode_TreeSet(data, curNode, curNode->greater, SET_NODE, valueType, numLetters); 
 		}
 		else{
 			//add the new node
@@ -89,7 +87,7 @@ struct TreeSetNode* AddNode_TreeSet(void* data, void* pointer, struct TreeSetNod
 		
 	}
   
-	balance(pointer, curNode, pointerType, valueType);   
+	balance(pointer, curNode, pointerType, valueType, numLetters);   
 	DetermineDepth(curNode);  
 	return outputNode;
 }
@@ -161,10 +159,10 @@ struct TreeSetNode*  AddNode(void* data, struct TreeSetNode *pointer, int isSmal
 }
 
 
-struct TreeSetNode* Search_TreeSet(void* data, struct TreeSetNode *header, enum dataType type){
+struct TreeSetNode* Search_TreeSet(void* data, struct TreeSetNode *header, enum dataType type, int numLetters){
 
 	//if the word is smaller then the word it is on, and the smaller/greater position is not null. Then it traverses to that word
-	int isEqual = compare(data, header->data, type);  
+	int isEqual = compare(data, header->data, type, numLetters);  
 	struct TreeSetNode* nodeOutput = NULL;
 	
 	//Can't be found
@@ -182,7 +180,7 @@ struct TreeSetNode* Search_TreeSet(void* data, struct TreeSetNode *header, enum 
 			header = header->smaller; 
 		}
 	
-		isEqual = compare(data, header->data, type);
+		isEqual = compare(data, header->data, type, numLetters);
 		
 		
 	} 
@@ -207,12 +205,12 @@ int nextIsNull(int isSmaller, struct TreeSetNode *check){
 	
 }
 
-int wordLLCompare(struct word* newHeader, struct word* oldHeader){
-	return stringCompare(newHeader->word, oldHeader->word); 
+int wordLLCompare(struct word* newHeader, struct word* oldHeader, int numLetters){
+	return stringCompare(newHeader->word, oldHeader->word, numLetters); 
 }
 
 //Compares two strings
-int stringCompare(char* word1, char* word2){
+int stringCompare(char* word1, char* word2, int numLetters){
 	int i; 
  	
 	//Goes through the letters of both words
@@ -274,30 +272,30 @@ void Print_TreeSet(struct TreeSetNode *header, enum dataType type){
 }
 
 /*This is the default compare, depending on if it is an integer or a string will determine whether it should be compared as such*/ 
-int compare(void* data1, void* data2, enum dataType type){ 
+int compare(void* data1, void* data2, enum dataType type, int numLetters){ 
 	if(type == INTEGER){
 		/*If it's an integer, do the integer compare
 		#Note *(int*)(data) --> (int) just a plain ol' integer, (int*) an integer pointer *(int*) a pointer to an integer pointer'*/ 
 		return intCompare(*(int*)(data1), *(int*)(data2));
 	}
 	else if(type == WORD){
-		return stringCompare((char*)data1, (char*)data2);  
+		return stringCompare((char*)data1, (char*)data2, numLetters);  
 	}
 	else if(type == WORDLL){
-		return wordLLCompare((struct word*)data1, (struct word*)data2);
+		return wordLLCompare((struct word*)data1, (struct word*)data2, numLetters);
 	}
 	else if(type == WORD4LL){
-		return stringCompare((char*)data1, (char*)(((struct word*)(data2))->word)); 
+		return stringCompare((char*)data1, (char*)(((struct word*)(data2))->word), numLetters); 
 	}
 	else if(type == WORD_STRUCT){
 		//Either, it is taking a word, and throwing it in, or it is taking a node
-		return stringCompare(((struct wordStruct*)(data1))->word, ((struct wordStruct*)(data2))->word); 
+		return stringCompare(((struct wordStruct*)(data1))->word, ((struct wordStruct*)(data2))->word, numLetters); 
 	}
 
 	else if(type == WORD_STRUCT_CHECK){
 
 		//Either, it is taking a word, and throwing it in, or it is taking a node
-		return stringCompare((char*)data1, ((struct wordStruct*)(data2))->word); 
+		return stringCompare((char*)data1, ((struct wordStruct*)(data2))->word, numLetters); 
 	}
 	printf("Incorrect Enum [compare]");
 	exit(0); 
@@ -306,7 +304,7 @@ int compare(void* data1, void* data2, enum dataType type){
 
 
 /*This goes through and balances the tree set node, checking each node along the way.*/
-void balance(void* pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType){
+void balance(void* pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType, int numLetters){
 	DetermineDepth(header); 
 	//maybe a do while, probably will be
 	//1) Checks the balance
@@ -319,16 +317,16 @@ void balance(void* pointer, struct TreeSetNode *header, enum dataType nodeType, 
 		int offset = checkBalance(header);
 		//offset on the left
 		if(offset == 1){
-			leftOffset(pointer, header, nodeType, valueType); 	
+			leftOffset(pointer, header, nodeType, valueType, numLetters); 	
 		}
 		//offset on the right
 		if(offset == 2){
-			rightOffset(pointer, header, nodeType, valueType); 
+			rightOffset(pointer, header, nodeType, valueType, numLetters); 
 		}	
 	
 }
 
-void leftOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType){
+void leftOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType, int numLetters){
 	//When we get into left offset, there are a few things we must check 
 	//I don't think we even need case III anymore... Don't think we ever did 
 	
@@ -346,13 +344,13 @@ void leftOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeTyp
 	//Case 1, see if the smaller greater is not equal to null. 
 	if(balanceLeft == 0){
 		//If it isn't null, then we want to call the new case I rotate right calculation
-		rotateRightCase1(pointer, header, nodeType, valueType); 
+		rotateRightCase1(pointer, header, nodeType, valueType, numLetters); 
 		
 	}
 	else{
 	//Case 2, see if the smaller smaller is not equal to null
 	//else if(header->smaller->smaller != NULL){
-		rotateRightCase2(pointer, header, nodeType, valueType); 
+		rotateRightCase2(pointer, header, nodeType, valueType, numLetters); 
 	}
 	//}
 	
@@ -363,7 +361,7 @@ void leftOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeTyp
 	
 }
 
-void rightOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType){
+void rightOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType, int numLetters){
 	//So here it is necessary to determine which rotate will be used
 	if(header->greater == NULL){
 		printf("Incorrect Offset Calculation [rightOffset]");
@@ -376,10 +374,10 @@ void rightOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeTy
 	 
 	 //If it is deeper on the left then we have to do case 1
 	 if(balanceLeft == 1){
-	 	rotateLeftCase1(pointer, header, nodeType, valueType); 
+	 	rotateLeftCase1(pointer, header, nodeType, valueType, numLetters); 
 	 }
 	 else{
-	 	rotateLeftCase2(pointer, header, nodeType, valueType); 
+	 	rotateLeftCase2(pointer, header, nodeType, valueType, numLetters); 
 	 }
 	 DetermineDepth(header); 
 
@@ -417,7 +415,7 @@ int isDeeperLeft(struct TreeSetNode *header, int pointedLeft){
 
 
 
-void reappoint(void* pointer, struct TreeSetNode* node, enum dataType nodeType, enum dataType valueType){
+void reappoint(void* pointer, struct TreeSetNode* node, enum dataType nodeType, enum dataType valueType, int numLetters){
 
 	//First, 2 conditions, 
 	//1: It is a Dummy Head Node
@@ -435,7 +433,7 @@ void reappoint(void* pointer, struct TreeSetNode* node, enum dataType nodeType, 
 		//Use isSmaller method, if it's 1, it's smaller
 		void* pointerValue = pointerNode->data; 
 		void* nodeValue = node->data;
-		int isSmaller = compare(pointerValue, nodeValue, valueType); 
+		int isSmaller = compare(pointerValue, nodeValue, valueType, numLetters); 
 		
 		switch(isSmaller){ 
 			//Case -1: They are equal, program failed along the way, crash. 
@@ -474,7 +472,7 @@ void reappoint(void* pointer, struct TreeSetNode* node, enum dataType nodeType, 
 	 
 	 
 */
-void rotateRightCase1(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType){
+void rotateRightCase1(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType, int numLetters){
 	//First let's set our variables
 	//These are the variables we are certain we have
 	struct TreeSetNode* A  = header; 
@@ -519,7 +517,7 @@ void rotateRightCase1(void *pointer, struct TreeSetNode *header, enum dataType n
 	//C no longer has any direct affiliation with conditional nodes
 	
 	//Now I'm going to create a sub method that figures out our pointer
-	reappoint(pointer, C, nodeType, valueType); 
+	reappoint(pointer, C, nodeType, valueType, numLetters); 
 }
 
 
@@ -532,7 +530,7 @@ void rotateRightCase1(void *pointer, struct TreeSetNode *header, enum dataType n
 	 /  \
    N1    N2
 */
-void rotateRightCase2(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType){
+void rotateRightCase2(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType, int numLetters){
 	
 	//These are all the certain nodes
 	struct TreeSetNode* A  = header; 
@@ -569,7 +567,7 @@ void rotateRightCase2(void *pointer, struct TreeSetNode *header, enum dataType n
 	
 	DetermineDepth(B); 
 	
-	reappoint(pointer, B, nodeType, valueType); 
+	reappoint(pointer, B, nodeType, valueType, numLetters); 
 		
 }
 
@@ -583,7 +581,7 @@ void rotateRightCase2(void *pointer, struct TreeSetNode *header, enum dataType n
       /  \
     N2   N3
 */
-void rotateLeftCase1(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType){
+void rotateLeftCase1(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType, int numLetters){
 	//First, Define the Certain Variables
 	struct TreeSetNode* A  = header;
 	struct TreeSetNode* B  = header->greater;
@@ -625,7 +623,7 @@ void rotateLeftCase1(void *pointer, struct TreeSetNode *header, enum dataType no
 	DetermineDepth(C); 	
 	
 	//Change the pointer such that now it points at C
-	reappoint(pointer, C, nodeType, valueType); 
+	reappoint(pointer, C, nodeType, valueType, numLetters); 
 }
 
 
@@ -642,7 +640,7 @@ void rotateLeftCase1(void *pointer, struct TreeSetNode *header, enum dataType no
 
 
 */
-void rotateLeftCase2(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType){
+void rotateLeftCase2(void *pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType, int numLetters){
 	//First, set the certain nodes
 	struct TreeSetNode* A  = header; 
 	struct TreeSetNode* B  = header->greater;
@@ -682,7 +680,7 @@ void rotateLeftCase2(void *pointer, struct TreeSetNode *header, enum dataType no
 	DetermineDepth(B); 
 	
 	//Makes the pointer point at B 
-	reappoint(pointer, B, nodeType, valueType); 
+	reappoint(pointer, B, nodeType, valueType, numLetters); 
 	
 }
 
@@ -718,15 +716,15 @@ int checkBalance(struct TreeSetNode *header){
 }
 
 
-int Remove_TreeSet(void* data, void* pointer, struct TreeSetNode* curNode, enum dataType pointerType, enum dataType valueType){
+int Remove_TreeSet(void* data, void* pointer, struct TreeSetNode* curNode, enum dataType pointerType, enum dataType valueType, int numLetters){
 	int found = 0;
 	if(curNode == NULL){
 		return -1; 
 	}
-	int isSmaller = compare(data, curNode->data, valueType); 
+	int isSmaller = compare(data, curNode->data, valueType, numLetters); 
 	//Compares to see if they're the same, only cares if they're the same
 	if(isSmaller == -1){
-		Removal(pointer, curNode, pointerType, valueType); 
+		Removal(pointer, curNode, pointerType, valueType, numLetters); 
 		//Alright, we've removed the node
 
 		return 1; 
@@ -735,13 +733,13 @@ int Remove_TreeSet(void* data, void* pointer, struct TreeSetNode* curNode, enum 
 	else{
 		//if the node to be removed is smaller than the previous one, it'll go into the smaller value
 		if(isSmaller){
-			found = Remove_TreeSet(data, curNode, curNode->smaller, SET_NODE, valueType);
+			found = Remove_TreeSet(data, curNode, curNode->smaller, SET_NODE, valueType, numLetters);
 		
 		}
 
 		//if the node to be removed is greater than the previous one, it'll go into the greater value
 		else{
-			found = Remove_TreeSet(data, curNode, curNode->greater, SET_NODE, valueType); 
+			found = Remove_TreeSet(data, curNode, curNode->greater, SET_NODE, valueType, numLetters); 
 			
 		
 		}
@@ -753,7 +751,7 @@ int Remove_TreeSet(void* data, void* pointer, struct TreeSetNode* curNode, enum 
 
 	if(found == 1){
 	
-		balance(pointer, curNode, pointerType, valueType); 
+		balance(pointer, curNode, pointerType, valueType, numLetters); 
 		DetermineDepth(curNode); 
 	}
 	
@@ -763,7 +761,7 @@ int Remove_TreeSet(void* data, void* pointer, struct TreeSetNode* curNode, enum 
 
 
 /*This actually goes ahead and removes it once it has been found*/  
-void Removal(void* pointer, struct TreeSetNode* header, enum dataType pointerType, enum dataType valueType){
+void Removal(void* pointer, struct TreeSetNode* header, enum dataType pointerType, enum dataType valueType, int numLetters){
 	//Now let's get the pointer defined
 	int isDummyPointer = (pointerType == DUMMY)?1:0;
 	//Is it the new node greater than or less than the pointer
@@ -774,7 +772,7 @@ void Removal(void* pointer, struct TreeSetNode* header, enum dataType pointerTyp
 	int smaller = (header->smaller != NULL)?1:0;
 	//check if this node's value is greater than that of the header's
 	if(isDummyPointer == 0){
-		isGreater = compare(((struct TreeSetNode*)(pointer))->data, header->data, valueType);
+		isGreater = compare(((struct TreeSetNode*)(pointer))->data, header->data, valueType, numLetters);
 		
 	}
 	
@@ -814,8 +812,8 @@ void Removal(void* pointer, struct TreeSetNode* header, enum dataType pointerTyp
 	//if it connects to both smaller && greater, then it's a bit trickier
 	else{
 		
-		header->data = Remove_TwoNodeAttatchment(header, (isGreater)?header->greater:header->smaller, isGreater, pointerType, valueType);  
-		balance(pointer, header, pointerType, valueType); 
+		header->data = Remove_TwoNodeAttatchment(header, (isGreater)?header->greater:header->smaller, isGreater, pointerType, valueType, numLetters);  
+		balance(pointer, header, pointerType, valueType, numLetters); 
 		DetermineDepth(header); 
  
 	}
@@ -824,8 +822,6 @@ void Removal(void* pointer, struct TreeSetNode* header, enum dataType pointerTyp
 
 //Removal for one node attatchment
 void Remove_OneNodeAttatchment(void* pointer, struct TreeSetNode *connection, int isGreater, int isDummyPointer) { 
-	
-		
 	//Then connect the pointer to the temp
 	if(isDummyPointer == 1){
 		
@@ -840,16 +836,11 @@ void Remove_OneNodeAttatchment(void* pointer, struct TreeSetNode *connection, in
 		else{
 			((struct TreeSetNode*)(pointer))->smaller = connection;
 		}
-			
-			
 	}
-
-	
-	
 }
 
 
-void* Remove_TwoNodeAttatchment(void* pointer, struct TreeSetNode *curNode, int isGreater, enum dataType pointerType, enum dataType valueType){
+void* Remove_TwoNodeAttatchment(void* pointer, struct TreeSetNode *curNode, int isGreater, enum dataType pointerType, enum dataType valueType, int numLetters){
 	//Keeps the data such that when it is removed, it can still be stored & returned
 	void* temp; 
 	void* output = NULL; 
@@ -857,22 +848,22 @@ void* Remove_TwoNodeAttatchment(void* pointer, struct TreeSetNode *curNode, int 
 	if(isGreater){
 		if(curNode->smaller == NULL){
 			temp = curNode->data; 
-			Removal(pointer, curNode, SET_NODE, valueType); 
+			Removal(pointer, curNode, SET_NODE, valueType, numLetters); 
 			return temp; 
 		}
 		else{
-			output = Remove_TwoNodeAttatchment(curNode, curNode->smaller, isGreater, pointerType, valueType); 
+			output = Remove_TwoNodeAttatchment(curNode, curNode->smaller, isGreater, pointerType, valueType, numLetters); 
 		}
 	}
 	//If it is smaller
 	else{
 		if(curNode->greater == NULL){
 			temp = curNode->data; 
-			Removal(pointer, curNode, SET_NODE, valueType);
+			Removal(pointer, curNode, SET_NODE, valueType, numLetters);
 			return temp; 
 		}
 		else{
-			output = Remove_TwoNodeAttatchment(curNode, curNode->greater, isGreater, pointerType, valueType); 
+			output = Remove_TwoNodeAttatchment(curNode, curNode->greater, isGreater, pointerType, valueType, numLetters); 
 		}
 	}
 	
@@ -935,7 +926,7 @@ void postorder_TreeSet(struct TreeSetNode *header){
 	
 } 
 
-struct DummyHeadNode* ConvertArrayToTree(int dim1Size, void** arr, enum dataType type){
+struct DummyHeadNode* ConvertArrayToTree(int dim1Size, void** arr, enum dataType type, int numLetters){
 	//Allocate the tree
 	struct DummyHeadNode *tree = Allocate_TreeSet(arr); 
 	int i;
@@ -943,149 +934,93 @@ struct DummyHeadNode* ConvertArrayToTree(int dim1Size, void** arr, enum dataType
 	//Loop until the one before the last one, starting at 1
 	for(i = 1; i < dim1Size - 1; i++){
 		void* data = (void*)&a[i];		
-		AddNode_TreeSet(data, tree, tree->start, DUMMY, type); 
+		AddNode_TreeSet(data, tree, tree->start, DUMMY, type, numLetters); 
 		
 	} 
 	void* data = (void*)&a[i];		
-	AddNode_TreeSet(data, tree, tree->start, DUMMY, type); 
+	AddNode_TreeSet(data, tree, tree->start, DUMMY, type, numLetters); 
 	return tree; 
 }
 
-void BigAVLTest(){
+void BigAVLTest(int numLetters){
 
 int rr[] = {1, 2, 3}; 
-	AVLTestQuick(rr, 3); 
+	AVLTestQuick(rr, 3, numLetters); 
 	
 	int rl[] = {1, 3, 2}; 
-	AVLTestQuick(rl, 3); 
+	AVLTestQuick(rl, 3, numLetters); 
 	
 	int rll[] = {50, 25, 75, 60, 100, 55}; 
-	AVLTestQuick(rll, 6); 
+	AVLTestQuick(rll, 6, numLetters); 
 	
 	int rlr[] = {50, 25, 75, 60, 100, 65}; 
-	AVLTestQuick(rlr, 6); 
+	AVLTestQuick(rlr, 6, numLetters); 
 	
 	int rrl[] = {50, 25, 75, 60, 100, 80}; 
-	AVLTestQuick(rrl, 6); 	
+	AVLTestQuick(rrl, 6, numLetters); 	
 	
 	int rrr[] = {50, 25, 75, 60, 100, 115};
-	AVLTestQuick(rrr, 6);
+	AVLTestQuick(rrr, 6, numLetters);
 	
 	int rrrr[] = {50, 0, 100, -25, 25, 75, 125, 60, 80, 110, 140, 145}; 
-	AVLTestQuick(rrrr, 12); 
+	AVLTestQuick(rrrr, 12, numLetters); 
 	
 	int rrrl[] = {50, 0, 100, -25, 25, 75, 125, 60, 80, 110, 140, 130}; 
-	AVLTestQuick(rrrl, 12); 
+	AVLTestQuick(rrrl, 12, numLetters); 
 	
 	int rrlr[] = {50, 0, 100, -25, 25, 75, 125, 60, 80, 110, 140, 115}; 
-	AVLTestQuick(rrlr, 12); 
+	AVLTestQuick(rrlr, 12, numLetters); 
 	
 	int rrll[] = {50, 0, 100, -25, 25, 75, 125, 60, 80, 110, 140, 105}; 
-	AVLTestQuick(rrll, 12); 	
+	AVLTestQuick(rrll, 12, numLetters); 	
 	
 	int rlrr[] = {50, 0, 100, -25, 25, 75, 125, 60, 80, 110, 140, 85}; 
-	AVLTestQuick(rlrr, 12); 	 
+	AVLTestQuick(rlrr, 12, numLetters); 	 
 	
 	int rlrl[] = {50, 0, 100, -25, 25, 75, 125, 60, 80, 110, 140, 78}; 
-	AVLTestQuick(rlrl, 12); 
+	AVLTestQuick(rlrl, 12, numLetters); 
 	
 	int rllr[] = {50, 0, 100, -25, 25, 75, 125, 60, 80, 110, 140, 70}; 
-	AVLTestQuick(rllr, 12); 
+	AVLTestQuick(rllr, 12, numLetters); 
 	
 	int rlll[] = {50, 0, 100, -25, 25, 75, 125, 60, 80, 110, 140, 55};
-	AVLTestQuick(rlll, 12);	 	 
+	AVLTestQuick(rlll, 12, numLetters);	 	 
 	
 	int ll[] = {3, 2, 1};
-	AVLTestQuick(ll, 3); 
+	AVLTestQuick(ll, 3, numLetters); 
 	
 	int lr[] = {3, 1, 2}; 
-	AVLTestQuick(lr, 3); 
+	AVLTestQuick(lr, 3, numLetters); 
 
 	int lll[] = {4, 2, 5, 1, 3, 0}; 
-	AVLTestQuick(lll, 6); 
+	AVLTestQuick(lll, 6, numLetters); 
 	
 	int llr[] = {4, 2, 5, 0, 3, 1}; 
-	AVLTestQuick(llr, 6); 
+	AVLTestQuick(llr, 6, numLetters); 
 		
 	int lrl[] = {4, 1, 5, 0, 3, 2}; 
-	AVLTestQuick(lrl, 6);
+	AVLTestQuick(lrl, 6, numLetters);
 	
 	int lrr[] = {4, 2, 5, 1, 3, 0}; 
-	AVLTestQuick(lrr, 6);
+	AVLTestQuick(lrr, 6, numLetters);
 	
 	int llll[] = {50, 40, 75, 20, 45, 60, 100, 10, 30, 42, 47, 5}; 
-	AVLTestQuick(llll, 12); 
+	AVLTestQuick(llll, 12, numLetters); 
 	
 	int lllr[] = {50, 40, 75, 20, 45, 60, 100, 10, 30, 42, 47, 15}; 
-	AVLTestQuick(lllr, 12); 
+	AVLTestQuick(lllr, 12, numLetters); 
 	
 	int llrl[] = {50, 40, 75, 20, 45, 60, 100, 10, 30, 42, 47, 25}; 
-	AVLTestQuick(llrl, 12); 
+	AVLTestQuick(llrl, 12, numLetters); 
 	
 	int llrr[] = {50, 40, 75, 20, 45, 60, 100, 10, 30, 42, 47, 35}; 
-	AVLTestQuick(llrr, 12); 
-	
-	int lrll[] = {50, 40, 75, 20, 45, 60, 100, 10, 30, 42, 47, 41}; 
-	AVLTestQuick(lrll, 12); 
-	
-	int lrlr[] = {50, 40, 75, 20, 45, 60, 100, 10, 30, 42, 47, 43}; 
-	AVLTestQuick(lrlr, 12); 	
-	
-	int lrrl[] = {50, 40, 75, 20, 45, 60, 100, 10, 30, 42, 47, 46}; 
-	AVLTestQuick(lrrl, 12); 	
-	
-	int lrrr[] = {50, 40, 75, 20, 45, 60, 100, 10, 30, 42, 47, 48}; 
-	AVLTestQuick(lrrr, 12); 	
-	
-	
-	
-	
-	printf("g: ");
-	int g[] = {4, 2, 5, 1, 3, 0};  
-	AVLTestQuick(g, 6);
-	
-	
-	printf("h: ");
-	int h[] = {4, 2, 5, 0, 3, 1};  
-	AVLTestQuick(h, 6);
-
-	printf("i: ");
-	int i[] = {4, 1, 5, 0, 3, 2};  
-	AVLTestQuick(i, 6);
-	
-	printf("j: ");
-	int j[] = {4, 1, 5, 0, 2, 3};  
-	AVLTestQuick(j, 6);
-	
-	printf("k: ");
-	int k[] = {1, 0, 4, 3, 5, 2};  
-	AVLTestQuick(k, 6);
-	
-	printf("l: ");
-	int l[] = {1, 0, 4, 2, 5, 3};  
-	AVLTestQuick(l, 6);
-	
-	printf("m: ");
-	int m[] = {1, 0, 4, 2, 5, 3};  
-	AVLTestQuick(m, 6);
-	
-	printf("n: ");
-	int n[] = {1, 0, 3, 2, 4, 5};  
-	AVLTestQuick(n, 6);
-	printf("o: ");
-	
-	int o[] = {50, 25, 75, 10, 40, 60, 100, 5, 20, 30, 45, 0};
-	AVLTestQuick(o, 12); 
-
-
-
-
+	AVLTestQuick(llrr, 12, numLetters); 
 }
 
 
-void AVLTestQuick(int* a, int length){
+void AVLTestQuick(int* a, int length, int numLetters){
 
-	struct DummyHeadNode *tree = ConvertArrayToTree(length, (void**)a, INTEGER);
+	struct DummyHeadNode *tree = ConvertArrayToTree(length, (void**)a, INTEGER, numLetters);
 	Print_TreeSet(tree->start, INTEGER); 
 	printf("\n"); 
 	preorder_TreeSet(tree->start); 
@@ -1096,11 +1031,11 @@ void AVLTestQuick(int* a, int length){
 	
 }
 //This is the lobby where all the permutations will be started
-void arrayPermutations_Lobby(){
+void arrayPermutations_Lobby(int numLetters){
 	int a[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 	int length = 10;  
 
-	permute(a, 0, length - 1); 
+	permute(a, 0, length - 1, numLetters); 
 
 	
 	//In order to get the permutations, I need to: 	
@@ -1116,23 +1051,23 @@ void arrayPermutations_Lobby(){
 //So, we're going to need to have a for loop: 
 //We're also going to need to have a recursion
 
-void permute(int *arr, int l, int r) { 
+void permute(int *arr, int l, int r, int numLetters) { 
 	
 	int i; 
 	if (l == r) {
 	   	
-	   	struct DummyHeadNode *t = ConvertArrayToTree(r + 1, (void**)arr, INTEGER); 
+	   	struct DummyHeadNode *t = ConvertArrayToTree(r + 1, (void**)arr, INTEGER, numLetters); 
 	   	int i = 5; 
 	   	int *p = &i; 
-	   	Remove_TreeSet((void*)p, t, t->start, DUMMY, INTEGER); 
+	   	Remove_TreeSet((void*)p, t, t->start, DUMMY, INTEGER, numLetters); 
 		i = 0; 
-		Remove_TreeSet((void*)p, t, t->start, DUMMY, INTEGER); 
+		Remove_TreeSet((void*)p, t, t->start, DUMMY, INTEGER, numLetters); 
 		i = 3; 
-		Remove_TreeSet((void*)p, t, t->start, DUMMY, INTEGER); 
+		Remove_TreeSet((void*)p, t, t->start, DUMMY, INTEGER, numLetters); 
 		i = 7; 
-		Remove_TreeSet((void*)p, t, t->start, DUMMY, INTEGER); 
+		Remove_TreeSet((void*)p, t, t->start, DUMMY, INTEGER, numLetters); 
 		i = 8; 
-		Remove_TreeSet((void*)p, t, t->start, DUMMY, INTEGER); 
+		Remove_TreeSet((void*)p, t, t->start, DUMMY, INTEGER, numLetters); 
 		Print_TreeSet(t->start, INTEGER);
 		printf("\n");  
 	}
@@ -1143,7 +1078,7 @@ void permute(int *arr, int l, int r) {
 	    { 
 	    
 	        swap(arr,l,i); 
-	        permute(arr, l+1, r); 
+	        permute(arr, l+1, r, numLetters); 
 	        swap(arr,l,i); //backtrack 
 	    } 
 	} 

@@ -11,8 +11,10 @@ Description: This is for methods that allow the Four Letter Word Game to be play
 #include "../../structs/includes/HashMap.h"
 #include "../../structs/includes/TreeSet.h"
 #include "../../structs/includes/WordSet.h"
+#include "../../api/includes/FLWG-API.h"
 
-void Multiplayer_FLWG(struct DummyHeadNode** *WordToInt_HashMap, struct wordDataArray *IntToWord_HashMap, struct WordSet* wordSet);
+
+void Multiplayer_FLWG(struct DataStructures *data);
 
 void MultiplayerTest(struct wordDataArray *IntToWord_HashMap, struct WordSet* wordSet);
 
