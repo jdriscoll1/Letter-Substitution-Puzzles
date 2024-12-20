@@ -147,7 +147,7 @@ int Input_FLWG(int prevWord,struct DataStructures* data){
 		if(strcmp(wordStr, "\n") != 0){	
 			wordStr = strtok(wordStr, "\n"); 
 		}
-		if(strcmp(wordStr, "end") == 0){
+		if(strcmp(wordStr, "q") == 0){
 			free(wordStr); 
 			return -1; 
 		}
@@ -155,7 +155,7 @@ int Input_FLWG(int prevWord,struct DataStructures* data){
 		//if the word is end -- game over 
 		
 		//It checks if the word is valid
-		isValid = Check_Input(prevWord, wordStr, data); 
+		isValid = (Check_Input(prevWord, wordStr, data) == VALID) ? 1 : 0 ; 
 		if(isValid == 1){
 			wordID = Convert_WordToInt(wordStr, data);
 			//if the word has been used

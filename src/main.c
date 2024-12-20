@@ -36,31 +36,22 @@ Purpose: The four letter pathfinder, this time better
 #include "./flwc/includes/FLWC.h"
 #include "./flwg/includes/MultiplayerFLWG.h"
 
-void testAlpaBetaPruning(struct wordDataArray *IntToWord_HashMap); 
-void runMultiplayerFLWG();
-void PathfindBetweenTwoWords(char* start, char* end, struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray *IntToWord_HashMap, struct WordSet* wordSet);
-void runFLWG();
-void testMCTS();
-void initializeStructures();
-void fourletterwordgame_example(); 
-void test_new_flwg(); 
-
-void flwcChooseGoals_Example(); 
-
-void flwc_gen_example();
+void _FLWT(); 
+void _FLWP(); 
+void _FLWG(); 
+void _FLWC(); 
 
 
 int main(){
-	flwc_gen_example(); 
-
+	_FLWG(); 
 }
 
-void flwc_gen_example(){
+void _FLWC(){
 
 	srand(time(0)); 
-	int numLetters = 4; 
-	int fd = open("docs/4.txt", O_RDONLY);
-	struct DataStructures* dataStructures = initDataStructures(fd, 4); 
+	int numLetters = 2; 
+	int fd = open("docs/2.txt", O_RDONLY);
+	struct DataStructures* dataStructures = initDataStructures(fd, numLetters); 
 	struct GameComponentsFLWC* flwcComponents = initFLWC(0, dataStructures);	
 	printf("Get to a word with 'g' in it\n");
 	printf("Do not touch any words with 's' in it\n"); 
@@ -108,7 +99,8 @@ void flwcChooseGoals_Example(){
 
 	// Initialize the Data Structures
 	srand(time(0)); 
-	int fd = open("docs/4.txt", O_RDONLY);
+	int numLetters = 3; 
+	int fd = open("docs/3.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd, 4); 
 
 	// Initialize the starting word
@@ -136,11 +128,13 @@ void flwcChooseGoals_Example(){
 	freeDataStructures(data); 
 }
 
-void test_new_flwg(){
+void _FLWG(){
 	srand(time(0)); 
-	int fd = open("docs/4.txt", O_RDONLY);
-	struct DataStructures* data = initDataStructures(fd, 4); 
-        int num_games = 800;
+	int numLetters = 2; 
+	int fd = open("docs/2.txt", O_RDONLY);
+	struct DataStructures* data = initDataStructures(fd, numLetters); 
+	printf("Num Letters: %d", data->I2W->numLetters);
+        int num_games = 1;
         int bot_wins = 0;
         int random_wins = 0;
 	for (int i = 0; i < num_games; i++){
@@ -155,15 +149,14 @@ void test_new_flwg(){
 		int whoseTurn = 1; 
 
 		while (winner == -1){
+			printf("Word: %s\n", Convert_IntToWord(word, data->I2W));
                         assert(word != -1);
 			
-			if(whoseTurn){
-				//word = botPly_FLWC(word, depth, data); 
-				//printf("Minimax Chooses: %s\n", (word == -1) ? "LOSE CONDITION" : Convert_IntToWord(word, data->I2W));
+			if(whoseTurn == 1){
+				word = userPly(word, data);
 			}
 			else{
-				word = botPly_Random(word, data); 
-				//printf("Random Chooses: %s\n", (word == -1) ? "LOSE CONDITION" : Convert_IntToWord(word, data->I2W));
+				word = botPly(word, 3, data->I2W, data->wordSet); 
 			}
 			whoseTurn = (whoseTurn + 1) % 2; 
 			if(word == -1){
@@ -180,6 +173,6 @@ void test_new_flwg(){
 	}
 
 	//printf("%s Wins\n\n", (winner != 0) ? "Minimax": "Random");
-        printf("Bot wins: %d Random wins: %d\n", bot_wins, random_wins);
+        printf("User wins: %d Bot wins: %d\n", bot_wins, random_wins);
 	
 }
