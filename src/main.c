@@ -43,7 +43,14 @@ void _FLWC();
 
 
 int main(){
-	_FLWG(); 
+	_FLWG();
+	/*
+	int fd = open("docs/small.txt", O_RDONLY);
+	struct DataStructures* data = initDataStructures(fd, 2); 
+	int word = 0; 
+	word = botPly(word, 6, data->I2W, data->wordSet); 
+	printf("Choice: %d", word);
+	*/
 }
 
 void _FLWC(){
@@ -130,8 +137,8 @@ void flwcChooseGoals_Example(){
 
 void _FLWG(){
 	srand(time(0)); 
-	int numLetters = 2; 
-	int fd = open("docs/2.txt", O_RDONLY);
+	int numLetters = 4; 
+	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd, numLetters); 
 	printf("Num Letters: %d", data->I2W->numLetters);
         int num_games = 100;
@@ -155,7 +162,7 @@ void _FLWG(){
 				word = botPly_Random(word, data);
 			}
 			else{
-				word = botPly(word, 10, data->I2W, data->wordSet); 
+				word = botPly(word, 6, data->I2W, data->wordSet); 
 			}
 			//printf("%s: %s\n", (whoseTurn == 1) ?  "Random" : "Bot",  (word == -1) ? "Loss" : Convert_IntToWord(word, data->I2W));
 			whoseTurn = (whoseTurn + 1) % 2; 

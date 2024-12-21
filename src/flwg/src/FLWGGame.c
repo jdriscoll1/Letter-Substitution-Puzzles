@@ -200,7 +200,7 @@ int botPly(int word, int depth, struct wordDataArray* IntToWord_HashMap, struct 
 	word = output->id;
 	
 	// If the word is not negative one 
-	if(output->score != 1){
+	if(output->id != -1){
 		markUsed_WordSet(word, wordSet);
 	} else {
           return -1;

@@ -82,7 +82,6 @@ struct minimaxOutput* minimax(int id, int currDepth, int maxDepth, int isMaximiz
 			if(currDepth == 0){
 				// Frees the score node
 				free(maxScore); 
-				
 				// Marks the current word as unused
 				markUnused_WordSet(id, wordSet);
 				
@@ -118,12 +117,19 @@ struct minimaxOutput* minimax(int id, int currDepth, int maxDepth, int isMaximiz
 	
 	
 			// Compares the best score to the word being analyzed, if the maximum is better, than it chooses it
+			//printf("Comparing Scores, Is Maximizing Player %d\n", isMaximizingPlayer);
+			//Print_MinimaxOutput(currScore); 
+			//Print_MinimaxOutput(maxScore); 
+			//printf("Choosing: ");	
 			if(compare_mo(maxScore, currScore, isMaximizingPlayer) == isMaximizingPlayer){
+				
+				//Print_MinimaxOutput(maxScore); 
 				free(currScore);	
 			}
 			
 			// If the current score is better it is replaced with the max
 			else{
+				//Print_MinimaxOutput(currScore); 
 				free(maxScore); 
 				maxScore = currScore; 
 			}
