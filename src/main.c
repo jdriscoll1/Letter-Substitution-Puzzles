@@ -134,7 +134,7 @@ void _FLWG(){
 	int fd = open("docs/2.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd, numLetters); 
 	printf("Num Letters: %d", data->I2W->numLetters);
-        int num_games = 1;
+        int num_games = 100;
         int bot_wins = 0;
         int random_wins = 0;
 	for (int i = 0; i < num_games; i++){
@@ -149,15 +149,15 @@ void _FLWG(){
 		int whoseTurn = 1; 
 
 		while (winner == -1){
-			printf("Word: %s\n", Convert_IntToWord(word, data->I2W));
                         assert(word != -1);
 			
 			if(whoseTurn == 1){
-				word = userPly(word, data);
+				word = botPly_Random(word, data);
 			}
 			else{
-				word = botPly(word, 3, data->I2W, data->wordSet); 
+				word = botPly(word, 10, data->I2W, data->wordSet); 
 			}
+			//printf("%s: %s\n", (whoseTurn == 1) ?  "Random" : "Bot",  (word == -1) ? "Loss" : Convert_IntToWord(word, data->I2W));
 			whoseTurn = (whoseTurn + 1) % 2; 
 			if(word == -1){
 				winner = whoseTurn; 
