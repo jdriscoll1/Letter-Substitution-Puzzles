@@ -43,7 +43,7 @@ void _FLWC();
 
 
 int main(){
-	_FLWG();
+	_FLWC();
 	/*
 	int fd = open("docs/small.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd, 2); 
@@ -56,18 +56,19 @@ int main(){
 void _FLWC(){
 
 	srand(time(0)); 
-	int numLetters = 2; 
-	int fd = open("docs/2.txt", O_RDONLY);
+	int numLetters = 4; 
+	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* dataStructures = initDataStructures(fd, numLetters); 
 	struct GameComponentsFLWC* flwcComponents = initFLWC(0, dataStructures);	
-	printf("Get to a word with 'g' in it\n");
-	printf("Do not touch any words with 's' in it\n"); 
+	flwcComponents->wordId = Convert_WordToInt("cars", dataStructures); 
+	printf("Get to a word with 'e' in it\n");
+	printf("Do not touch any words with 't' in it\n"); 
 	printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
 	int turn = 0; 
 	while(isGameWonFLWC(flwcComponents) == -1){
 		 	
 		if(turn % 2 == 0){
-			flwcComponents->wordId = botPly_Random(flwcComponents->wordId, dataStructures); 
+			flwcComponents->wordId = userPly(flwcComponents->wordId, dataStructures); 
 		
 		}
 	
@@ -137,8 +138,8 @@ void flwcChooseGoals_Example(){
 
 void _FLWG(){
 	srand(time(0)); 
-	int numLetters = 4; 
-	int fd = open("docs/4.txt", O_RDONLY);
+	int numLetters = 3; 
+	int fd = open("docs/3.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd, numLetters); 
 	printf("Num Letters: %d", data->I2W->numLetters);
         int num_games = 100;

@@ -119,7 +119,7 @@ struct EndWordParametersFLWC getChallengeGoalParameters(int challengeId){
 	switch(challengeId){
 		case 0: 
 			params.comparatorId=0;
-			params.letter='g';
+			params.letter='e';
 			break; 
 	}
 	return params; 
@@ -132,7 +132,7 @@ struct EndWordParametersFLWC getChallengeAvoidParameters(int challengeId){
 	switch(challengeId){
 		case 0: 
 			params.comparatorId=0;
-			params.letter='q';
+			params.letter='t';
 			break; 
 	}
 	return params; 
