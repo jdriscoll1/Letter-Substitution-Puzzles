@@ -40,7 +40,7 @@ struct GameComponentsFLWC* initFLWC(int challengeId, struct DataStructures* data
 	    .maxAdjacencies = 100,
 	};
 
-	flwcComponents->wordId = chooseStartWord_FLWCGeneral(params, flwcComponents, data);
+	flwcComponents->wordId = Convert_WordToInt("cars", data);//chooseStartWord_FLWCGeneral(params, flwcComponents, data);
 	return flwcComponents; 
 
 }
