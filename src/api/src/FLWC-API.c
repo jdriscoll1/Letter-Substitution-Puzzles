@@ -40,7 +40,7 @@ struct GameComponentsFLWC* initFLWC(int challengeId, struct DataStructures* data
 	    .maxAdjacencies = 100,
 	};
 
-	flwcComponents->wordId = Convert_WordToInt("cars", data);//chooseStartWord_FLWCGeneral(params, flwcComponents, data);
+	flwcComponents->wordId = chooseStartWord_FLWCGeneral(params, flwcComponents, data);
 	return flwcComponents; 
 
 }
@@ -82,7 +82,6 @@ int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents){
 	// if an avoid word gets added, the game is lost
 	if(checkIfUsed_WordSet(flwcComponents->wordId, flwcComponents->avoidWords)){
 		// lose
-		printf("Avoid word reached");
 		return 2; 
 	}
 	return -1; 

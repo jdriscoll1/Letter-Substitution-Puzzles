@@ -35,4 +35,7 @@ int userEntersWordFLWT(char* userInput, struct GameComponentsFLWT* flwtComponent
 struct arrayList* getCurrentWordsFLWT(struct GameComponentsFLWT* flwtComponents); 
 
 int isGameWonFLWT(struct GameComponentsFLWT* flwtComponents); 
+
+void freeGameComponentsFLWT(struct GameComponentsFLWT* flwtComponents);
+
 #endif

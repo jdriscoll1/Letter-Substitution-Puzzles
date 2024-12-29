@@ -60,7 +60,6 @@ void _FLWC(){
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* dataStructures = initDataStructures(fd, numLetters); 
 	struct GameComponentsFLWC* flwcComponents = initFLWC(0, dataStructures);	
-	flwcComponents->wordId = Convert_WordToInt("cars", dataStructures); 
 	printf("Get to a word with 'e' in it\n");
 	printf("Do not touch any words with 't' in it\n"); 
 	printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
