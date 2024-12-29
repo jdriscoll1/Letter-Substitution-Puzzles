@@ -41,6 +41,7 @@ struct GameComponentsFLWC* initFLWC(int challengeId, struct DataStructures* data
 	};
 
 	flwcComponents->wordId = chooseStartWord_FLWCGeneral(params, flwcComponents, data);
+	markUsed_WordSet(flwcComponents->wordId, data->wordSet); 
 	return flwcComponents; 
 
 }
