@@ -30,7 +30,7 @@ int botTakesTurnFLWC(struct GameComponentsFLWC* flwcComopnents, struct DataStruc
 
 int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents); 
 
-void freeFLWC(struct GameComponentsFLWC* flwcComponents); 
+void freeGameComponentsFLWC(struct GameComponentsFLWC* flwcComponents); 
 
 char* getSolutionFLWC(struct GameComponentsFLWC* flwcComponents);
 

@@ -104,7 +104,7 @@ char* getSolutionFLWC(struct GameComponentsFLWC* flwcComponents){
 
 }
 
-void freeFLWC(struct GameComponentsFLWC* flwcComponents){
+void freeGameComponentsFLWC(struct GameComponentsFLWC* flwcComponents){
 	free_WordSet(flwcComponents->avoidWords); 
 	free_WordSet(flwcComponents->goalWords); 
 	free(flwcComponents->solution); 

@@ -48,7 +48,7 @@ int botTakesTurn(struct GameData* gameData, struct DataStructures* data);
 int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructures* dataStructures); 
 void resetWordSet(struct DataStructures* dataStructures);
 int startGameReturnFirstWord(struct DataStructures *dataStructures);
-void freeFLWGComponents(struct GameData* gameData);
+void freeGameComponentsFLWG(struct GameData* gameData);
 
 // flwp behavior
 struct GameComponents* initiateFLWP(int minConnections, struct DataStructures* dataStructures); 
@@ -62,7 +62,7 @@ int isGameWonFLWP(struct GameComponents *gameComponents);
 void undoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
 void redoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
 struct arrayList *getCurrentWordsFLWP(struct GameComponents *gameComponents);
-void freeFLWPComponents(struct GameComponents* gameComponents, struct DataStructures* dataStructures);
+void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures);
 
 // Test Functionality  
 char* convertIntToWord(int wordId, struct DataStructures* dataStructures); 

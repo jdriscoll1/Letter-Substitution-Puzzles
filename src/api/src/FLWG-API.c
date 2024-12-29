@@ -57,7 +57,7 @@ char* getCurrWord(struct GameData* gameData, struct DataStructures* dataStructur
 	return word; 
 }
 
-void freeFLWGComponents(struct GameData* gameData){
+void freeGameComponentsFLWG(struct GameData* gameData){
 	free(gameData); 
 }
 
@@ -147,7 +147,7 @@ void removeWord_FLWP(char* word, struct GameComponents *gameComponents, struct D
 
 }
 
-void freeFLWPComponents(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
+void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
 	FreeGameComponents(gameComponents, dataStructures->I2W); 
 
 }
