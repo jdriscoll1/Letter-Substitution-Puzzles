@@ -95,7 +95,7 @@ void _FLWC(){
 			printf("Word in avoid set reached");
 			break; 
 	}
-	freeFLWC(flwcComponents); 
+	freeGameComponentsFLWC(flwcComponents); 
 	close(fd); 
 	freeDataStructures(dataStructures);	
 
