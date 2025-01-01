@@ -33,6 +33,7 @@ Purpose: The four letter pathfinder, this time better
 #include "./flwp/includes/GameFunctions.h"
 
 #include "./flwg/includes/FLWGGame.h"
+#include "./flwg/includes/Hints2.h"
 #include "./flwc/includes/FLWC.h"
 #include "./flwg/includes/MultiplayerFLWG.h"
 
@@ -43,7 +44,23 @@ void _FLWC();
 
 
 int main(){
-	_FLWC();
+	srand(time(0)); 
+	int numLetters = 4; 
+	int fd = open("docs/4.txt", O_RDONLY);
+	struct DataStructures* dataStructures = initDataStructures(fd, numLetters); 
+	//struct GameComponentsFLWC* flwcComponents = initFLWC(0, dataStructures);	
+	//printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
+	int turn = 0; 
+	markUsed_WordSet(Convert_WordToInt("blat", dataStructures), dataStructures->wordSet); 
+	markUsed_WordSet(Convert_WordToInt("blab", dataStructures), dataStructures->wordSet); 
+	for(int i = 0; i < 10; i++){
+		printf("%d\n", direct_adjacency_hint(Convert_WordToInt("blah", dataStructures), dataStructures)); 
+	}
+	//freeGameComponentsFLWC(flwcComponents); 
+	close(fd); 
+	freeDataStructures(dataStructures);	
+
+
 	/*
 	int fd = open("docs/small.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd, 2); 
