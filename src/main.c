@@ -54,7 +54,7 @@ int main(){
 	markUsed_WordSet(Convert_WordToInt("blat", dataStructures), dataStructures->wordSet); 
 	markUsed_WordSet(Convert_WordToInt("blab", dataStructures), dataStructures->wordSet); 
 	for(int i = 0; i < 10; i++){
-		printf("%d\n", direct_adjacency_hint(Convert_WordToInt("blah", dataStructures), dataStructures)); 
+		printf("%d\n", directAdjacencyHint(Convert_WordToInt("blah", dataStructures), dataStructures)); 
 	}
 	//freeGameComponentsFLWC(flwcComponents); 
 	close(fd); 
