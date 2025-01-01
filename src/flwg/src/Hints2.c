@@ -2,7 +2,7 @@
 #include "../../structs/includes/ArrayList.h"
 #include "../../algs/includes/BreadthFirstSearch.h"
 
-int direct_adjacency_hint(int wordId, struct DataStructures* data){
+int directAdjacencyHint(int wordId, struct DataStructures* data){
 	// 1) Convert the integer to a word 
 	char* word = Convert_IntToWord(wordId, data->I2W); 
 	// 2) Look at all of the valid words
