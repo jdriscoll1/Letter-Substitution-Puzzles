@@ -101,6 +101,11 @@ void ResetFLWP(struct GameComponents *gameComponents, struct DataStructures* dat
 
 	ResetGameComponents(gameComponents, dataStructures->I2W);
 }
+
+int getPrevWordFLWP(struct GameComponents* gameComponents){
+    return gameComponents->prevInput;
+
+}
 int userEntersWord_FLWP(char* userInput, struct GameComponents *gameComponents, struct DataStructures* dataStructures){
     return AddWord_Struct(gameComponents, userInput, dataStructures); 
 }

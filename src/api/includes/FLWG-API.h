@@ -58,6 +58,7 @@ void removeWord_FLWP(char* word, struct GameComponents *gameComponents, struct D
 
 char* getStartWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
 char* getGoalWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
+int getPrevWordFLWP(struct GameComponents* gameComponents);
 int isGameWonFLWP(struct GameComponents *gameComponents);
 void undoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
 void redoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);

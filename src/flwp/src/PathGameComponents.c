@@ -109,7 +109,6 @@ void ResetGameComponents(struct GameComponents *gc, struct wordDataArray* IntToW
 
 }
 
-
 char* RemoveWord_Struct(struct GameComponents* gc, char* input, int freeInput, struct DataStructures* data){
 	//If I have previously undone a move, I need to free that move
 	if(gc->undoCalls != 0){
