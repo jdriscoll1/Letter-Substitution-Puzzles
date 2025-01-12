@@ -44,7 +44,7 @@ void freeDataStructures(struct DataStructures* dataStructures);
 struct GameData* initiateGame(struct DataStructures* dataStructures, int numAdjacencies);
 char* getCurrWord(struct GameData* gameData, struct DataStructures* dataStructures); 
 void endGame(struct GameData* gameData); 
-int botTakesTurn(struct GameData* gameData, struct DataStructures* data);
+int botTakesTurn(struct GameData* gameData, struct DataStructures* data, int botType);
 int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructures* dataStructures); 
 void resetWordSet(struct DataStructures* dataStructures);
 int startGameReturnFirstWord(struct DataStructures *dataStructures);

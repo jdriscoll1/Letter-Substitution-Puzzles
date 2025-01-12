@@ -15,6 +15,7 @@ Purpose: A library to encapsulate & organize the code into an API
 #include "../../flwp/includes/GameFunctions.h"
 #include "../../flwp/includes/UserInput.h"
 #include "../../flwg/includes/FLWGGame.h"
+#include "../../flwc/includes/FLWC.h"
 
 // Creating and destroying data structures
 struct DataStructures* initDataStructures(int fd, int numLetters){
@@ -61,8 +62,20 @@ void freeGameComponentsFLWG(struct GameData* gameData){
 	free(gameData); 
 }
 
-int botTakesTurn(struct GameData* gameData, struct DataStructures* data){
-	int result = botPly(gameData->currWordId, 1, data->I2W, data->wordSet);
+int botTakesTurn(struct GameData* gameData, struct DataStructures* data, int botType){
+    int result = -1;
+    if(botType == -1){
+        result = botPly_MaxAdjacencies(gameData->currWordId, data);
+    }
+    if(botType == 0){
+        result = botPly_Random(gameData->currWordId, data);
+
+    }
+    if(botType > 0){
+        result = botPly(gameData->currWordId, botType, data->I2W, data->wordSet);
+
+
+    }
     if (result >= 0) {
         gameData->currWordId = result;
     }

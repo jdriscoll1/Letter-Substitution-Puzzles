@@ -153,7 +153,35 @@ int botPly_Random(int word, struct DataStructures* data){
 	}
 	// Then run minimax using that score 
 	return resultId; 
-} 
+}
+int botPly_MaxAdjacencies(int word, struct DataStructures* data){
+
+    int resultId = -1;
+    struct intList* options = getConnections(word, data->I2W);
+    options = options->next;
+    while(options != NULL){
+        // if the word is not used
+        if(!checkIfUsed_WordSet(options->data, data->wordSet)) {
+            if (resultId == -1) {
+                resultId = options->data;
+
+            } else {
+                if (data->I2W->array[resultId]->numConnections <
+                    data->I2W->array[options->data]->numConnections) {
+                    resultId = options->data;
+
+                }
+            }
+        }
+        options = options->next;
+
+    }
+    if(resultId != -1){
+        markUsed_WordSet(resultId, data->wordSet);
+    }
+    // Then run minimax using that score
+    return resultId;
+}
 
 /*
 

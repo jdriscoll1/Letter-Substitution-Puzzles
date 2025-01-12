@@ -10,8 +10,8 @@ int* getGoalWordSet(int distance, struct DataStructures* data, int numAdjacencie
 
 // BotPly method -- bot needs to determine the best way to go
 int botPly_FLWC(int word, int depth, struct WordSet* goalWords, struct WordSet* avoidWords, struct DataStructures* data);
-int botPly_Random(int word, struct DataStructures* data);  
-
+int botPly_Random(int word, struct DataStructures* data);
+int botPly_MaxAdjacencies(int word, struct DataStructures* data);
 
 // A method that initalizes the game  
 int FLWC(struct DataStructures* data); 
