@@ -26,7 +26,7 @@ extern int TRANS_SAVED;
 int FLWG(struct DataStructures* data){
 
 	//So, first choose a start word
-	int word = ChooseStart(data->I2W); 
+	int word = ChooseStart(data->I2W, rand() % 20 + 1);
 
 	markUsed_WordSet(word, data->wordSet); 
 	//Variable that determines winner: 1 - Algorithm, 0 - player

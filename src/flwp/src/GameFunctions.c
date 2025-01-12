@@ -63,16 +63,18 @@ int getWordWithNumberOfConnections(int numConnections, struct wordDataArray* Int
 
 
 /*Randomly chooses a word based on an index*/ 
-int ChooseStart(struct wordDataArray* IntToWord_HashMap){
- 	int wordID = 0;
-	int validWord = 0;
-	//randomly choosese a word via an index
-	while(validWord == 0){
-		wordID = rand() % (IntToWord_HashMap->numWords);
-		if(IntToWord_HashMap->array[wordID]->numConnections >= 1){validWord = 1;}
-	}
-	
-	return wordID;  
+int ChooseStart(struct wordDataArray* IntToWord_HashMap, int numAdjacencies){
+    struct arrayList *aList = init_ArrayList(10, 5, NUM);
+    // Create a list of words that have n-adjacencies
+    for(int i = 0; i < IntToWord_HashMap->numWords; i++){
+        if(IntToWord_HashMap->array[i]->numConnections == numAdjacencies){
+            add_ArrayList((void*)(&i), aList, NUM);
+
+        }
+    }
+    int id = ((int*)(aList)->list)[rand() % aList->currPrecision];
+    free_ArrayList(aList);
+	return id;
 }
 
 

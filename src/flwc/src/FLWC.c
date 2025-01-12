@@ -19,7 +19,7 @@ int getNumConnectionsFromTSN(struct TreeStorageNode* node, struct DataStructures
 
 
 // This generates multiple words for a game of FLWC the users compete to get to 
-int* getGoalWordSet(int distance, struct DataStructures* data){
+int* getGoalWordSet(int distance, struct DataStructures* data, int numAdjacenciesToStartWord){
 
 	
 	// While it is unable to find a word whose number of connections is shared by another word equidsitant from the start word 
@@ -36,7 +36,7 @@ int* getGoalWordSet(int distance, struct DataStructures* data){
 	int numWordsWithEqualNumberOfConnectionsAsBaseWord  = -1; 
 	while (true){
 
-		startId = ChooseStart(data->I2W); 
+		startId = ChooseStart(data->I2W, numAdjacenciesToStartWord);
 
 		// Get list of all words d words away from care
 		equidistantWordsResult = BreadthFirstSearch_Distance(startId, distance, data->I2W, data->wordSet); 

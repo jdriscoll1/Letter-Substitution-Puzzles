@@ -6,7 +6,7 @@
 // struct map* IntToWord_HashMap
 // int distance
 // int startWord
-int* getGoalWordSet(int distance, struct DataStructures* data); 
+int* getGoalWordSet(int distance, struct DataStructures* data, int numAdjacenciesToStartWord);
 
 // BotPly method -- bot needs to determine the best way to go
 int botPly_FLWC(int word, int depth, struct WordSet* goalWords, struct WordSet* avoidWords, struct DataStructures* data);

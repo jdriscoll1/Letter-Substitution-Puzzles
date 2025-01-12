@@ -17,7 +17,7 @@ void Multiplayer_FLWG(struct DataStructures *data){
 
 	int numPlayers = 3;
 
-	int wordID = ChooseStart(data->I2W);
+	int wordID = ChooseStart(data->I2W, rand() % 19 + 1);
 	int depth = 6;
 	
 	markUsed_WordSet(wordID, data->wordSet);

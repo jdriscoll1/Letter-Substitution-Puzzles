@@ -38,10 +38,10 @@ void freeDataStructures(struct DataStructures* data){
 }
 
  // FLWG functions
-struct GameData* initiateGame(struct DataStructures* dataStructures){
+struct GameData* initiateGame(struct DataStructures* dataStructures, int numAdjacencies){
 	// reset word set	
 	struct GameData* gameData = malloc(sizeof(struct GameData)); 
-	gameData->currWordId = ChooseStart(dataStructures->I2W);
+	gameData->currWordId = ChooseStart(dataStructures->I2W, numAdjacencies);
 	gameData->difficulty = 0;
 	gameData->numPlayers = 2; 
 	reset_WordSet(dataStructures->wordSet);

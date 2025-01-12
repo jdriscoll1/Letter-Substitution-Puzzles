@@ -41,7 +41,7 @@ struct DataStructures* initDataStructures(int fd, int numLetters);
 
 // flwg behavior
 void freeDataStructures(struct DataStructures* dataStructures); 
-struct GameData* initiateGame(struct DataStructures* dataStructures); 
+struct GameData* initiateGame(struct DataStructures* dataStructures, int numAdjacencies);
 char* getCurrWord(struct GameData* gameData, struct DataStructures* dataStructures); 
 void endGame(struct GameData* gameData); 
 int botTakesTurn(struct GameData* gameData, struct DataStructures* data);

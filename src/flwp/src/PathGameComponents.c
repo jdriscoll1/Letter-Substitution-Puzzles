@@ -15,7 +15,7 @@ struct GameComponents *InitializeGameComponents(struct wordDataArray* IntToWord_
 	struct GameComponents* gameComponents = malloc(sizeof(struct GameComponents)); 
 	do{
 		//This chooses the start word
-		gameComponents->start = ChooseStart(IntToWord_HashMap);   
+		gameComponents->start = ChooseStart(IntToWord_HashMap, rand() % 19 + 1);
 		//Finds the goal word 
 		gameComponents->goal = BreadthFirstSearch_Distance_Goal(gameComponents->start, minConnections, IntToWord_HashMap, wordSet); 
 	}while(gameComponents->goal == -1); 
