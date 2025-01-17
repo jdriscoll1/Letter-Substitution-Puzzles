@@ -10,12 +10,12 @@
 #include "../../structs/includes/GenericLinkedListNode.h"
 
 
-struct GameComponents *InitializeGameComponents(struct wordDataArray* IntToWord_HashMap, int minConnections, struct WordSet *wordSet){
+struct GameComponents *InitializeGameComponents(struct wordDataArray* IntToWord_HashMap, int minConnections, struct WordSet *wordSet, int numAdjacenciesStartWord){
 		//Instantiate the Structure
 	struct GameComponents* gameComponents = malloc(sizeof(struct GameComponents)); 
 	do{
 		//This chooses the start word
-		gameComponents->start = ChooseStart(IntToWord_HashMap, rand() % 19 + 1);
+		gameComponents->start = ChooseStart(IntToWord_HashMap, numAdjacenciesStartWord);
 		//Finds the goal word 
 		gameComponents->goal = BreadthFirstSearch_Distance_Goal(gameComponents->start, minConnections, IntToWord_HashMap, wordSet); 
 	}while(gameComponents->goal == -1); 

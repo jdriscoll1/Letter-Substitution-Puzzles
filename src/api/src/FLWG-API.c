@@ -105,9 +105,9 @@ void resetWordSet(struct DataStructures* data){
 }
 
 
-struct GameComponents* initiateFLWP(int minConnections, struct DataStructures* dataStructures){
+struct GameComponents* initiateFLWP(int minConnections, struct DataStructures* dataStructures, int numAdjacenciesStartWord){
 
-	return InitializeGameComponents(dataStructures->I2W, minConnections, dataStructures->wordSet); 
+	return InitializeGameComponents(dataStructures->I2W, minConnections, dataStructures->wordSet, numAdjacenciesStartWord);
 }
 
 void ResetFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures){

@@ -11,7 +11,7 @@ struct EndWordParametersFLWC getChallengeGoalParameters(int challengeId);
 struct EndWordParametersFLWC getChallengeAvoidParameters(int challengeId);
 
 // This creates the first word and returns a set of game components for the flwt
-struct GameComponentsFLWC* initFLWC(int challengeId, struct DataStructures* data){
+struct GameComponentsFLWC* initFLWC(int numAdjacenciesToStartWord, int botType, char goalCharacter, int minGoalCharacterDistance, char avoidCharacter, int minAvoidCharacterDistance, struct DataStructures* data){
 
 
 	// Create the FLWC Components
@@ -19,10 +19,15 @@ struct GameComponentsFLWC* initFLWC(int challengeId, struct DataStructures* data
 
 	
 	// Create the parameters for the goal word 
-	struct EndWordParametersFLWC goalParams = getChallengeGoalParameters(challengeId); 
+	struct EndWordParametersFLWC goalParams;
+    goalParams.comparatorId=0;
+    goalParams.letter='e';
 
-	// Create teh parameters for the avoid words 
-	struct EndWordParametersFLWC avoidParams = getChallengeAvoidParameters(challengeId); 
+
+    // Create teh parameters for the avoid words
+	struct EndWordParametersFLWC avoidParams;
+    avoidParams.comparatorId=0;
+    avoidParams.letter='t';
 	
 	
 	// Create the list of goal words 
@@ -32,11 +37,11 @@ struct GameComponentsFLWC* initFLWC(int challengeId, struct DataStructures* data
 	struct StartWordParametersFLWC params = {
 	    .goalWords = flwcComponents->goalWords,
 	    .avoidWords = flwcComponents->avoidWords,
-	    .minGoalDistance = 3,
-	    .maxGoalDistance = 6,
-	    .minAvoidDistance = 2,
-	    .maxAvoidDistance = 6,
-	    .minAdjacencies = 5,
+	    .minGoalDistance = minGoalCharacterDistance,
+	    .maxGoalDistance = 8,
+	    .minAvoidDistance = minAvoidCharacterDistance,
+	    .maxAvoidDistance = 8,
+	    .minAdjacencies = numAdjacenciesToStartWord,
 	    .maxAdjacencies = 100,
 	};
 

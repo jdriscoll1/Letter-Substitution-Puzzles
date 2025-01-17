@@ -38,7 +38,7 @@ void Play_FLWP(struct DataStructures *data){
 	int endGame = 0; 
 
 	//This initialises the game components
- 	struct GameComponents* gc = InitializeGameComponents(data->I2W, pc->currRound, data->wordSet); 
+ 	struct GameComponents* gc = InitializeGameComponents(data->I2W, pc->currRound, data->wordSet, 20);
  	
 	//This goes through and plays multiple rounds
 	while(endGame == 0 && pc->currRound < pc->numRounds){
@@ -87,7 +87,7 @@ void Play_FLWP(struct DataStructures *data){
 			if(quit != 4){
 		
 				FreeGameComponents(gc, data->I2W); 
-				gc = InitializeGameComponents(data->I2W, pc->currRound, data->wordSet); 	
+				gc = InitializeGameComponents(data->I2W, pc->currRound, data->wordSet, 20);
 			}
 			else{
 				ResetGameComponents(gc, data->I2W); 

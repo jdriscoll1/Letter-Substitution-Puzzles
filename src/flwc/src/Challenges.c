@@ -10,7 +10,7 @@ struct WordSet* createWordSetGivenCondition(struct EndWordParametersFLWC wordPar
 	int (*comparator[])(char*, char) = {doesWordContainLetter}; 
 	// for each word in the data set
 	for(int i = 0; i < data->I2W->numWords; i++){
-		if(comparator[wordParams.comparatorId](Convert_IntToWord(i, data->I2W), wordParams.letter)){
+		if(wordParams.letter != ' ' && comparator[wordParams.comparatorId](Convert_IntToWord(i, data->I2W), wordParams.letter)){
 			markUsed_WordSet(i, wordSet); 
 		}
 	}

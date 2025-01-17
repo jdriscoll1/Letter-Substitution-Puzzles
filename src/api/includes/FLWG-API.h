@@ -51,7 +51,7 @@ int startGameReturnFirstWord(struct DataStructures *dataStructures);
 void freeGameComponentsFLWG(struct GameData* gameData);
 
 // flwp behavior
-struct GameComponents* initiateFLWP(int minConnections, struct DataStructures* dataStructures); 
+struct GameComponents* initiateFLWP(int minConnections, struct DataStructures* dataStructures, int numAdjacenciesStartWord);
 void ResetFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures); 
 int userEntersWord_FLWP(char* userInput, struct GameComponents *gameComponents, struct DataStructures* dataStructures); 
 void removeWord_FLWP(char* word, struct GameComponents *gameComponents, struct DataStructures* dataStructures);
