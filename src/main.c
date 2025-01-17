@@ -48,15 +48,49 @@ int main(){
 	int numLetters = 4; 
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* dataStructures = initDataStructures(fd, numLetters); 
-	//struct GameComponentsFLWC* flwcComponents = initFLWC(0, dataStructures);	
-	//printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
+	int numAdjacenciesToStartWord = 6;
+	int botType = -1;
+	char goalCharacter = 'e';
+	int minGoalCharacterDistance = 3;
+	char avoidCharacter = ' ';
+	int minAvoidCharacterDistance = 0; 
+	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesToStartWord, botType, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
+	printf("Get to a word with 'e' in it\n");
+	printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
 	int turn = 0; 
-	markUsed_WordSet(Convert_WordToInt("blat", dataStructures), dataStructures->wordSet); 
-	markUsed_WordSet(Convert_WordToInt("blab", dataStructures), dataStructures->wordSet); 
-	for(int i = 0; i < 10; i++){
-		printf("%d\n", directAdjacencyHint(Convert_WordToInt("blah", dataStructures), dataStructures)); 
+	while(isGameWonFLWC(flwcComponents) == -1){
+		 	
+		if(turn % 2 == 0){
+			flwcComponents->wordId = userPly(flwcComponents->wordId, dataStructures); 
+		
+		}
+	
+		else{
+			botTakesTurnFLWC(6, flwcComponents, dataStructures);
+		}
+		printf("%s: %s\n", (turn % 2 == 0) ? "Johnny (dumber):" : "Jimmy (smarter):", (flwcComponents->wordId != -1) ?  Convert_IntToWord(flwcComponents->wordId, dataStructures->I2W) : "I lose :(");
+
+		turn++; 
+	}	
+	printf("\n\nBest  Solution:\n%s\n", getSolutionFLWC(flwcComponents));
+	int result = isGameWonFLWC(flwcComponents); 
+	printf("Result: %d\n", result);
+	switch(result){
+		case -1: 
+			printf("Error Status");
+			break; 
+		case 0: 
+			printf("Game is tied");
+			break; 
+		case 1:
+			printf("Word in goal set reached");
+			break; 
+		case 2: 
+			printf("Word in avoid set reached");
+			break; 
 	}
-	//freeGameComponentsFLWC(flwcComponents); 
+	freeGameComponentsFLWC(flwcComponents); 
+
 	close(fd); 
 	freeDataStructures(dataStructures);	
 
@@ -72,6 +106,7 @@ int main(){
 
 void _FLWC(){
 
+	/*
 	srand(time(0)); 
 	int numLetters = 4; 
 	int fd = open("docs/4.txt", O_RDONLY);
@@ -115,7 +150,7 @@ void _FLWC(){
 	freeGameComponentsFLWC(flwcComponents); 
 	close(fd); 
 	freeDataStructures(dataStructures);	
-
+	*/
 }
 
 void flwcChooseGoals_Example(){
@@ -153,6 +188,7 @@ void flwcChooseGoals_Example(){
 }
 
 void _FLWG(){
+	/*
 	srand(time(0)); 
 	int numLetters = 3; 
 	int fd = open("docs/3.txt", O_RDONLY);
@@ -198,5 +234,6 @@ void _FLWG(){
 
 	//printf("%s Wins\n\n", (winner != 0) ? "Minimax": "Random");
         printf("User wins: %d Bot wins: %d\n", bot_wins, random_wins);
-	
+	*/	
+
 }

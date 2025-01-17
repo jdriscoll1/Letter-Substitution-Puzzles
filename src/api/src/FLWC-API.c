@@ -20,14 +20,14 @@ struct GameComponentsFLWC* initFLWC(int numAdjacenciesToStartWord, int botType, 
 	
 	// Create the parameters for the goal word 
 	struct EndWordParametersFLWC goalParams;
-    goalParams.comparatorId=0;
-    goalParams.letter='e';
+        goalParams.comparatorId=0;
+        goalParams.letter = goalCharacter;
 
 
     // Create teh parameters for the avoid words
 	struct EndWordParametersFLWC avoidParams;
-    avoidParams.comparatorId=0;
-    avoidParams.letter='t';
+        avoidParams.comparatorId=0;
+        avoidParams.letter= avoidCharacter;
 	
 	
 	// Create the list of goal words 
@@ -96,10 +96,14 @@ int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents){
 
 }
 
-int botTakesTurnFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
-	
-	int depth = 6; 
-	int result = botPly_FLWC(flwcComponents->wordId, depth, flwcComponents->avoidWords, flwcComponents->goalWords, data);
+int botTakesTurnFLWC(int botId, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	int result; 	
+	if(botId == -1){
+		result = botPly_MaxAdjacencies(flwcComponents->wordId, flwcComponents->goalWords, data); 	
+	}
+	if(botId > 0){
+		result = botPly_FLWC(flwcComponents->wordId, botId, flwcComponents->avoidWords, flwcComponents->goalWords, data);
+	}
 	flwcComponents->wordId = result;  
 	return result; 
 

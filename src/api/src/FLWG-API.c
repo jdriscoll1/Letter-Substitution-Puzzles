@@ -65,7 +65,7 @@ void freeGameComponentsFLWG(struct GameData* gameData){
 int botTakesTurn(struct GameData* gameData, struct DataStructures* data, int botType){
     int result = -1;
     if(botType == -1){
-        result = botPly_MaxAdjacencies(gameData->currWordId, data);
+        result = botPly_MaxAdjacencies(gameData->currWordId, NULL, data);
     }
     if(botType == 0){
         result = botPly_Random(gameData->currWordId, data);

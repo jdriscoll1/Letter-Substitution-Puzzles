@@ -154,7 +154,7 @@ int botPly_Random(int word, struct DataStructures* data){
 	// Then run minimax using that score 
 	return resultId; 
 }
-int botPly_MaxAdjacencies(int word, struct DataStructures* data){
+int botPly_MaxAdjacencies(int word, struct WordSet* goalWords, struct DataStructures* data){
 
     int resultId = -1;
     struct intList* options = getConnections(word, data->I2W);
@@ -166,9 +166,15 @@ int botPly_MaxAdjacencies(int word, struct DataStructures* data){
                 resultId = options->data;
 
             } else {
-                if (data->I2W->array[resultId]->numConnections <
-                    data->I2W->array[options->data]->numConnections) {
-                    resultId = options->data;
+                if (data->I2W->array[resultId]->numConnections <  data->I2W->array[options->data]->numConnections) {
+			if(goalWords == NULL){
+			    resultId = options->data;
+			}
+			else{
+				if(checkIfUsed_WordSet(options->data, goalWords) != 0){
+					resultId = options->data; 
+				}
+			}
 
                 }
             }
