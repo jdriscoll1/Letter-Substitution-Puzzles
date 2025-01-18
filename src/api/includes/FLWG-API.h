@@ -35,6 +35,11 @@ struct GameData {
 	int goalWord; 
 };
 
+struct GameComponentsFLWGP{
+	struct GameComponents* flwpComponents; 
+	struct GameComponentsFLWC* flwcComponents; 
+
+}; 
 
 // Shared behavior
 struct DataStructures* initDataStructures(int fd, int numLetters); 
@@ -64,6 +69,12 @@ void undoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* 
 void redoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
 struct arrayList *getCurrentWordsFLWP(struct GameComponents *gameComponents);
 void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures);
+
+// flwp-generalized additional functionality 
+struct GameComponents* initiateFLWGP(int minDistance, int numAdjacenciesStartWord,  char goalCharacter, int minGoalCharacterDistance, char avoidCharacter, int minAvoidCharacterDistance, struct DataStructures* dataStructures);
+struct GameComponents* getFLWPComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents);
+struct GameComponentsFLWC* getFLWCComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents); 
+void freeGameComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures); 
 
 // Test Functionality  
 char* convertIntToWord(int wordId, struct DataStructures* dataStructures); 

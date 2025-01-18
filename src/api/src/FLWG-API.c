@@ -169,3 +169,67 @@ void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataSt
 	FreeGameComponents(gameComponents, dataStructures->I2W); 
 
 }
+
+struct GameComponentsFLWGP* initiateFLWPGeneralized(int minDistance, int numAdjacenciesStartWord,  char goalCharacter, int minGoalCharacterDistance, char avoidCharacter, int minAvoidCharacterDistance, struct DataStructures* dataStructures){
+
+	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesStartWord, -1, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
+
+	struct GameComponents* flwpComponents = malloc(sizeof(struct GameComponents)); 
+	flwpComponents->start = flwcComponents->wordId; 
+	flwpComponents->goal = -1;  
+	//Sets the minimum number of connection
+	flwpComponents->minConnections = minDistance; 
+	//Sets the number of moves
+	flwpComponents->numMoves = 0;
+	//Instantiates the number of undo calls 
+	flwpComponents->undoCalls = 0; 
+ 	//Instantiates the number of hint points
+ 	flwpComponents->hc = NULL; 
+	flwpComponents->prevInput = flwpComponents->start; 
+	//Initialize the arrayList 
+	flwpComponents->aList = init_ArrayList(dataStructures->I2W->numLetters * (minDistance * 1.5), dataStructures->I2W->numLetters * (minDistance), STR); 
+	//Instantiate the input storage 
+	flwpComponents->storage = malloc(sizeof(struct GenericLinkedListNode)); 
+	flwpComponents->storage->next = NULL; 
+	flwpComponents->storage->prev =  NULL; 
+
+	//Creates the storage header
+	flwpComponents->storageHeader = flwpComponents->storage; 
+
+	//Instantiates the user connection
+	flwpComponents->userConnections = malloc(sizeof(struct intList)); 
+	flwpComponents->userConnections->size = 0; 
+	flwpComponents->userConnections->next = NULL; 
+
+	//There is no input to be freed
+	//Insert the word into the back of the word linked list
+	AddToBack_IntLL(flwpComponents->start, flwpComponents->userConnections); 
+ 
+ 	addString_ArrayList(Convert_IntToWord(flwpComponents->start, dataStructures->I2W), dataStructures->I2W->numLetters, flwpComponents->aList); 
+ 	 
+	//Allocates space at the beginning of the generic linked list node
+	AddToFront_GenericLinkedListNode(flwpComponents->storage, INT_LL); 
+
+	//Insert the word into the front of the Generic Linked List
+	CopyInto_GenericLinkedListNode(flwpComponents->userConnections, flwpComponents->storage, 1, INT_LL);
+	
+	struct GameComponentsFLWGP* flwgpComponents = malloc(sizeof(struct GameComponentsFLWGP)); 
+	flwgpComponents->flwcComponents = flwcComponents; 
+	flwgpComponents->flwpComponents = flwpComponents; 
+	return flwgpComponents; 
+
+}
+
+void freeGameComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures){
+	freeGameComponentsFLWP(flwgpComponents->flwpComponents, dataStructures); 
+	freeGameComponentsFLWC(flwgpComponents->flwcComponents); 
+	free(flwgpComponents); 
+} 
+
+struct GameComponentsFLWC* getFLWCComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents){
+	return flwgpComponents->flwcComponents; 
+}
+
+struct GameComponents* getFLWPComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents){
+	return flwgpComponents->flwpComponents; 
+}

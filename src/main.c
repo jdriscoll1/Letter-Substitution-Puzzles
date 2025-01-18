@@ -41,9 +41,16 @@ void _FLWT();
 void _FLWP(); 
 void _FLWG(); 
 void _FLWC(); 
+int __FLWC();
 
 
 int main(){
+
+	_FLWP(); 
+
+}
+
+int __FLWC(){
 	srand(time(0)); 
 	int numLetters = 4; 
 	int fd = open("docs/4.txt", O_RDONLY);
@@ -94,6 +101,7 @@ int main(){
 	close(fd); 
 	freeDataStructures(dataStructures);	
 
+	return 0; 
 
 	/*
 	int fd = open("docs/small.txt", O_RDONLY);
@@ -104,6 +112,56 @@ int main(){
 	*/
 }
 
+void _FLWP(){
+
+	/*
+	srand(time(0)); 
+	int numLetters = 4; 
+	int fd = open("docs/4.txt", O_RDONLY);
+	int numAdjacenciesToStartWord = 6;
+	char goalCharacter = 'e';
+	int minGoalCharacterDistance = 3;
+	char avoidCharacter = ' ';
+	int minAvoidCharacterDistance = 0; 
+	struct DataStructures* dataStructures = initDataStructures(fd, numLetters); 
+
+	struct GameComponents* flwpComponents = initiateFLWPGeneralized(minGoalCharacterDistance, numAdjacenciesToStartWord, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
+
+	printf("Get to a word with 'e' in it\n");
+	printf("Start Word: %s\n", getStartWordFLWP(flwpComponents, dataStructures));
+	int turn = 0; 
+	while(isGameWon(flwpComponents) == -1){
+		char str[BUFSIZ]; 
+		fgets(str, BUFSIZ, stdin);
+		// Remove trailing newline if present
+		str[strcspn(str, "\n")] = 0;
+		int errorId = userEntersWord_FLWP(str, flwpComponents, dataStructures); 
+		printf("Error Id: %d", errorId); 
+
+	}	
+	int result = isGameWonFLWPGeneralized(flwpComponents, goalCharacter, avoidCharacter); 
+	printf("Result: %d\n", result);
+	switch(result){
+		case -1: 
+			printf("Error Status");
+			break; 
+		case 0: 
+			printf("Game is tied");
+			break; 
+		case 1:
+			printf("Word in goal set reached");
+			break; 
+		case 2: 
+			printf("Word in avoid set reached");
+			break; 
+	}
+	freeGameComponentsFLWP(flwpComponents, dataStructures); 
+
+	close(fd); 
+	freeDataStructures(dataStructures);	
+	*/
+
+}
 void _FLWC(){
 
 	/*
