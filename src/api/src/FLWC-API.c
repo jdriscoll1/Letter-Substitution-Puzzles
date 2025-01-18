@@ -11,7 +11,7 @@ struct EndWordParametersFLWC getChallengeGoalParameters(int challengeId);
 struct EndWordParametersFLWC getChallengeAvoidParameters(int challengeId);
 
 // This creates the first word and returns a set of game components for the flwt
-struct GameComponentsFLWC* initFLWC(int numAdjacenciesToStartWord, int botType, char goalCharacter, int minGoalCharacterDistance, char avoidCharacter, int minAvoidCharacterDistance, struct DataStructures* data){
+struct GameComponentsFLWC* initFLWC(int numAdjacenciesToStartWord, char goalCharacter, int minGoalCharacterDistance, char avoidCharacter, int minAvoidCharacterDistance, struct DataStructures* data){
 
 
 	// Create the FLWC Components
@@ -96,13 +96,13 @@ int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents){
 
 }
 
-int botTakesTurnFLWC(int botId, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+int botTakesTurnFLWC(int botType, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
 	int result; 	
-	if(botId == -1){
+	if(botType == -1){
 		result = botPly_MaxAdjacencies(flwcComponents->wordId, flwcComponents->goalWords, data); 	
 	}
-	if(botId > 0){
-		result = botPly_FLWC(flwcComponents->wordId, botId, flwcComponents->avoidWords, flwcComponents->goalWords, data);
+	if(botType > 0){
+		result = botPly_FLWC(flwcComponents->wordId, botType, flwcComponents->avoidWords, flwcComponents->goalWords, data);
 	}
 	flwcComponents->wordId = result;  
 	return result; 
