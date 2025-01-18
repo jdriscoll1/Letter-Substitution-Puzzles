@@ -61,7 +61,7 @@ int __FLWC(){
 	int minGoalCharacterDistance = 3;
 	char avoidCharacter = ' ';
 	int minAvoidCharacterDistance = 0; 
-	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesToStartWord, botType, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
+	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesToStartWord, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
 	printf("Get to a word with 'e' in it\n");
 	printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
 	int turn = 0; 
