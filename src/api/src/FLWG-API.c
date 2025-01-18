@@ -170,7 +170,7 @@ void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataSt
 
 }
 
-struct GameComponentsFLWGP* initiateFLWPGeneralized(int minDistance, int numAdjacenciesStartWord,  char goalCharacter, int minGoalCharacterDistance, char avoidCharacter, int minAvoidCharacterDistance, struct DataStructures* dataStructures){
+struct GameComponentsFLWGP* initiateFLWGP(int minDistance, int numAdjacenciesStartWord,  char goalCharacter, int minGoalCharacterDistance, char avoidCharacter, int minAvoidCharacterDistance, struct DataStructures* dataStructures){
 
 	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesStartWord, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
 
