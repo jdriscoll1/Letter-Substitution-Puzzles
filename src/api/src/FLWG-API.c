@@ -170,7 +170,7 @@ void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataSt
 
 }
 
-struct GameComponentsFLWGP* initiateFLWGP(int minDistance, int numAdjacenciesStartWord,  char goalCharacter, int minGoalCharacterDistance, char avoidCharacter, int minAvoidCharacterDistance, struct DataStructures* dataStructures){
+struct GameComponentsFLWGP* initiateFLWGP(int numAdjacenciesStartWord,  char goalCharacter, int minGoalCharacterDistance, char avoidCharacter, int minAvoidCharacterDistance, struct DataStructures* dataStructures){
 
 	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesStartWord, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
 
@@ -178,7 +178,7 @@ struct GameComponentsFLWGP* initiateFLWGP(int minDistance, int numAdjacenciesSta
 	flwpComponents->start = flwcComponents->wordId; 
 	flwpComponents->goal = -1;  
 	//Sets the minimum number of connection
-	flwpComponents->minConnections = minDistance; 
+	flwpComponents->minConnections = minGoalCharacterDistance;
 	//Sets the number of moves
 	flwpComponents->numMoves = 0;
 	//Instantiates the number of undo calls 
@@ -187,7 +187,7 @@ struct GameComponentsFLWGP* initiateFLWGP(int minDistance, int numAdjacenciesSta
  	flwpComponents->hc = NULL; 
 	flwpComponents->prevInput = flwpComponents->start; 
 	//Initialize the arrayList 
-	flwpComponents->aList = init_ArrayList(dataStructures->I2W->numLetters * (minDistance * 1.5), dataStructures->I2W->numLetters * (minDistance), STR); 
+	flwpComponents->aList = init_ArrayList(dataStructures->I2W->numLetters * (minGoalCharacterDistance * 1.5), dataStructures->I2W->numLetters * (minGoalCharacterDistance), STR);
 	//Instantiate the input storage 
 	flwpComponents->storage = malloc(sizeof(struct GenericLinkedListNode)); 
 	flwpComponents->storage->next = NULL; 
