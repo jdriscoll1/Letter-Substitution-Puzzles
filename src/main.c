@@ -114,7 +114,6 @@ int __FLWC(){
 
 void _FLWP(){
 
-	/*
 	srand(time(0)); 
 	int numLetters = 4; 
 	int fd = open("docs/4.txt", O_RDONLY);
@@ -125,21 +124,24 @@ void _FLWP(){
 	int minAvoidCharacterDistance = 0; 
 	struct DataStructures* dataStructures = initDataStructures(fd, numLetters); 
 
-	struct GameComponents* flwpComponents = initiateFLWPGeneralized(minGoalCharacterDistance, numAdjacenciesToStartWord, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
-
+	struct GameComponentsFLWGP* flwgp = initiateFLWGP(numAdjacenciesToStartWord, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
 	printf("Get to a word with 'e' in it\n");
-	printf("Start Word: %s\n", getStartWordFLWP(flwpComponents, dataStructures));
+	printf("Start Word: %s\n", getStartWordFLWP(flwgp->flwpComponents, dataStructures));
 	int turn = 0; 
-	while(isGameWon(flwpComponents) == -1){
+	while(isGameWonFLWC(flwgp->flwcComponents) == -1){
+		struct arrayList* aList = getCurrentWordsFLWP(flwgp->flwpComponents); 
+		printf("Array List: \n");
+		print_ArrayList(aList, STR); 	
 		char str[BUFSIZ]; 
 		fgets(str, BUFSIZ, stdin);
 		// Remove trailing newline if present
 		str[strcspn(str, "\n")] = 0;
-		int errorId = userEntersWord_FLWP(str, flwpComponents, dataStructures); 
-		printf("Error Id: %d", errorId); 
-
+		int errorId = userEntersWord_FLWP(str, flwgp->flwpComponents, dataStructures); 
+		printf("Error Id: %d\n", errorId); 
+		int result = isGameWonFLWC(flwgp->flwcComponents);
+		printf("Result: %d\n", result);
 	}	
-	int result = isGameWonFLWPGeneralized(flwpComponents, goalCharacter, avoidCharacter); 
+	int result = isGameWonFLWC(flwgp->flwcComponents);
 	printf("Result: %d\n", result);
 	switch(result){
 		case -1: 
@@ -155,11 +157,10 @@ void _FLWP(){
 			printf("Word in avoid set reached");
 			break; 
 	}
-	freeGameComponentsFLWP(flwpComponents, dataStructures); 
+	freeGameComponentsFLWP(flwgp->flwpComponents, dataStructures); 
 
 	close(fd); 
 	freeDataStructures(dataStructures);	
-	*/
 
 }
 void _FLWC(){

@@ -233,3 +233,14 @@ struct GameComponentsFLWC* getFLWCComponentsFLWGP(struct GameComponentsFLWGP* fl
 struct GameComponents* getFLWPComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents){
 	return flwgpComponents->flwpComponents; 
 }
+
+int userEntersWord_FLWGP(char* userInput, struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures){
+
+	int result = userEntersWord_FLWP(userInput, flwgpComponents->flwpComponents, dataStructures); 
+	if(result == 0){
+		markUnused_WordSet(Convert_WordToInt(userInput, dataStructures), dataStructures->wordSet); 
+		userEntersWordFLWC(userInput, flwgpComponents->flwcComponents, dataStructures); 
+	}
+	return result; 
+
+}
