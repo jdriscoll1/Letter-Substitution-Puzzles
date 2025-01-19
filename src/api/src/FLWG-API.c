@@ -221,7 +221,10 @@ struct GameComponentsFLWGP* initiateFLWGP(int numAdjacenciesStartWord,  char goa
 }
 
 void freeGameComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures){
-	freeGameComponentsFLWP(flwgpComponents->flwpComponents, dataStructures); 
+	Free_IntLL(flwgpComponents->flwpComponents->userConnections);
+        Free_GenericLinkedList(flwgpComponents->flwpComponents->storageHeader);
+        free_ArrayList(flwgpComponents->flwpComponents->aList);
+        free(flwgpComponents->flwpComponents);
 	freeGameComponentsFLWC(flwgpComponents->flwcComponents); 
 	free(flwgpComponents); 
 } 

@@ -55,10 +55,10 @@ int __FLWC(){
 	int numLetters = 4; 
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* dataStructures = initDataStructures(fd, numLetters); 
-	int numAdjacenciesToStartWord = 6;
+	int numAdjacenciesToStartWord = 16;
 	int botType = -1;
 	char goalCharacter = 'e';
-	int minGoalCharacterDistance = 3;
+	int minGoalCharacterDistance = 1;
 	char avoidCharacter = ' ';
 	int minAvoidCharacterDistance = 0; 
 	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesToStartWord, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
@@ -66,12 +66,9 @@ int __FLWC(){
 	printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
 	int turn = 0; 
 	while(isGameWonFLWC(flwcComponents) == -1){
-		 	
 		if(turn % 2 == 0){
 			flwcComponents->wordId = userPly(flwcComponents->wordId, dataStructures); 
-		
 		}
-	
 		else{
 			botTakesTurnFLWC(6, flwcComponents, dataStructures);
 		}
@@ -117,9 +114,9 @@ void _FLWP(){
 	srand(time(0)); 
 	int numLetters = 4; 
 	int fd = open("docs/4.txt", O_RDONLY);
-	int numAdjacenciesToStartWord = 6;
+	int numAdjacenciesToStartWord = 16;
 	char goalCharacter = 'e';
-	int minGoalCharacterDistance = 3;
+	int minGoalCharacterDistance = 1;
 	char avoidCharacter = ' ';
 	int minAvoidCharacterDistance = 0; 
 	struct DataStructures* dataStructures = initDataStructures(fd, numLetters); 
@@ -130,13 +127,12 @@ void _FLWP(){
 	int turn = 0; 
 	while(isGameWonFLWC(flwgp->flwcComponents) == -1){
 		struct arrayList* aList = getCurrentWordsFLWP(flwgp->flwpComponents); 
-		printf("Array List: \n");
 		print_ArrayList(aList, STR); 	
 		char str[BUFSIZ]; 
 		fgets(str, BUFSIZ, stdin);
 		// Remove trailing newline if present
 		str[strcspn(str, "\n")] = 0;
-		int errorId = userEntersWord_FLWP(str, flwgp->flwpComponents, dataStructures); 
+		int errorId = userEntersWord_FLWGP(str, flwgp, dataStructures); 
 		printf("Error Id: %d\n", errorId); 
 		int result = isGameWonFLWC(flwgp->flwcComponents);
 		printf("Result: %d\n", result);
@@ -157,7 +153,7 @@ void _FLWP(){
 			printf("Word in avoid set reached");
 			break; 
 	}
-	freeGameComponentsFLWP(flwgp->flwpComponents, dataStructures); 
+	freeGameComponentsFLWGP(flwgp, dataStructures); 
 
 	close(fd); 
 	freeDataStructures(dataStructures);	
