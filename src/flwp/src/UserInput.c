@@ -13,7 +13,6 @@
 
 //This takes the input, and returns a pointer -- this is with a known size
 char* Take_Input(int size){
-	printf("\nGivith me thine fine input: "); 
 	//In order to remember the jazz that happened in this function, outside of this function, we must use malloc
 	char* input = malloc(sizeof(char) * size);   
 	//We want to refrain from using scanf, because it is insecure. 
@@ -84,28 +83,16 @@ int Check_Input(int prevWord, const char* currWord, struct DataStructures *data)
 		terminate = (*(currWord + i) == '\0') ? 1 : 0;
 		if(i > data->I2W->numLetters){
 			// WORD IS TOO LONG
-			printf("Word is Too Long\n");
 			return TOO_LONG; 
 
 		}
 		else if(i < data->I2W->numLetters && *(currWord + i) == '\0'){
-			printf("Word is too short\n");
 			return TOO_SHORT; 
 		
-		}
-		else if(equalLetters < data->I2W->numLetters - 1 && *(currWord + i) == '\0'){
-			printf("Not enough letters in common\n");
-			return NOT_ENOUGH_LETTERS_IN_COMMON;
-		  
-		}
-
-		if(*(prev + i) == *(currWord + i)){
-			equalLetters++; 
 		}
 		i++; 
 		  
 	}
-
 	
 	//First: Make sure it is a real word
 	//Go into the hash map
@@ -113,21 +100,21 @@ int Check_Input(int prevWord, const char* currWord, struct DataStructures *data)
 	int id = Convert_WordToInt((char*)currWord, data); 
 	// Check if the word is used
 	if(equalLetters == data->I2W->numLetters + 1 || checkIfUsed_WordSet(id, data->wordSet)){
-		printf("Word Already Used\n");
 		return WORD_USED;
 	}
- 
-	if(inDictionary(id) == 0){
-		printf("Word not in dictionary\n");
+ 	if(inDictionary(id) == 0){
 		return WORD_DOES_NOT_EXIST; 
 	}
-	
-	//Originally, I was going to check if the word has already been used, but now I am making the concious decision to say that
-	//reusing the word is a valid move, because it can show them that they made need to remove words
+	switch(Order_Check(prevWord, Convert_WordToInt((char*) currWord, data), data)){
 
-	else if(equalLetters == data->I2W->numLetters){ 
-		return VALID; 
+		case(0):
+			return VALID;
+		case(1):
+			return NOT_ENOUGH_LETTERS_IN_COMMON; 
+		case(2):
+			return WRONG_ORDER; 
 	}
+	
 	return UNKNOWN_ERROR; 
 	
 }
@@ -273,4 +260,33 @@ int safeStrLen(char* word){
 }
 
 
-
+int Order_Check(int w1, int w2, struct DataStructures* data){
+	int A[26] = {0};
+	int B[26] = {0};
+	char* a = Convert_IntToWord(w1, data->I2W); 
+	char* b = Convert_IntToWord(w2, data->I2W); 
+	// not necessary in right order
+	int lettersInCommon = 0; 
+	// in right order
+	int equalLetters = 0; 
+	
+	for(int i = 0; i < data->I2W->numLetters; i++){
+		A[a[i] - 'a']++; 
+		B[b[i] - 'b']++; 
+		if(a[i] == b[i]){
+			equalLetters++; 
+		}
+	}
+	for(int i = 0; i < 26; i++){
+		if(A[i] == B[i]){
+			lettersInCommon++; 	
+		}
+	}
+	if(equalLetters == data->I2W->numLetters - 1 && lettersInCommon == data->I2W->numLetters - 1){
+		return 1; 	
+	}
+	if(equalLetters < data->I2W->numLetters - 1) {
+		return 2; 
+	}
+	return 0; 
+}

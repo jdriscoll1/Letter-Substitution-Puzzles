@@ -28,7 +28,8 @@ enum ERROR_CODE{
                 NOT_ENOUGH_LETTERS_IN_COMMON = 4,
 		WORD_USED = 5,
                 WORD_DOES_NOT_EXIST = 6,
-                UNKNOWN_ERROR = 7
+                WRONG_ORDER = 7,
+                UNKNOWN_ERROR = 8
 };
 /*This method checks gitthe input to make sure that it is valid
 @param prevWord --> The previous word, the word it is checking the current characters against
@@ -91,6 +92,8 @@ int safeStrtok(char* line, char token, int start);
 int safeStrLen(char* word); 
 
    
+int Order_Check(int w1, int w2, struct DataStructures* data);
+
 #endif
 
 
