@@ -50,15 +50,8 @@ int main(){
 	//_FLWP(); 
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* dataStructures = initDataStructures(fd, 4); 
-	printf("Tare: %d\n", Check_Input(0, "tare", dataStructures));
-	printf("Car: %d\n", Check_Input(0, "car", dataStructures));
-	printf("Harsh: %d\n", Check_Input(0, "harsh", dataStructures));
-	printf("XYZ: %d\n", Check_Input(0, "xyz", dataStructures));
-	printf("XYZA: %d\n", Check_Input(0, "xyza", dataStructures));
-	printf("Data: %d\n", Check_Input(0, "data", dataStructures));
-	printf("Brit: %d\n", Check_Input(0, "brit", dataStructures));
-	printf("Cart: %d\n", Check_Input(0, "cart", dataStructures));
-	printf("Race: %d\n", Check_Input(0, "race", dataStructures));
+	printf("Cars: %d\n", Check_Input(0, "cars", dataStructures));
+	printf("Part: %d\n", Check_Input(0, "part", dataStructures));
 	printf("Rake: %d\n", Check_Input(0, "rake", dataStructures));
 
 }
