@@ -269,24 +269,25 @@ int Order_Check(int w1, int w2, struct DataStructures* data){
 	int lettersInCommon = 0; 
 	// in right order
 	int equalLetters = 0; 
-	
+	// first we go through each word	
 	for(int i = 0; i < data->I2W->numLetters; i++){
 		A[a[i] - 'a']++; 
-		B[b[i] - 'b']++; 
+		B[b[i] - 'a']++; 
 		if(a[i] == b[i]){
 			equalLetters++; 
 		}
 	}
 	for(int i = 0; i < 26; i++){
-		if(A[i] == B[i]){
+		if(A[i] == B[i] && A[i] > 0){
 			lettersInCommon++; 	
 		}
 	}
-	if(equalLetters == data->I2W->numLetters - 1 && lettersInCommon == data->I2W->numLetters - 1){
-		return 1; 	
+	printf("Equal Letters: %d\nLetters In Common: %d\n", equalLetters, lettersInCommon); 
+	if(equalLetters < data->I2W->numLetters - 1 && lettersInCommon == data->I2W->numLetters - 1){
+		return 2; 	
 	}
 	if(equalLetters < data->I2W->numLetters - 1) {
-		return 2; 
+		return 1; 
 	}
 	return 0; 
 }
