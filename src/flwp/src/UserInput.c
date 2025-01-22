@@ -13,7 +13,6 @@
 
 //This takes the input, and returns a pointer -- this is with a known size
 char* Take_Input(int size){
-	printf("\nGivith me thine fine input: "); 
 	//In order to remember the jazz that happened in this function, outside of this function, we must use malloc
 	char* input = malloc(sizeof(char) * size);   
 	//We want to refrain from using scanf, because it is insecure. 
@@ -72,84 +71,53 @@ enum Difficulty ChooseDifficulty(){
 }
 
 
-// Check the input 
-int Check_Input(int prevWord, const char* currWord, struct DataStructures *data) {
+int Check_Input(int prevWord, const char* currWord, struct DataStructures *data){
+	//First, find prev word 
+	char* prev = Convert_IntToWord(prevWord, data->I2W);
 
-    // Retrieve the previous word from the integer identifier
-    char* prev = Convert_IntToWord(prevWord, data->I2W);
+	int i = 0;
+	int equalLetters = 0;  
+	//for(i = 0; i < strlen(currWord)+1; i++){
+	int terminate = 0; 
+	while(terminate == 0){
+		terminate = (*(currWord + i) == '\0') ? 1 : 0;
+		if(i > data->I2W->numLetters){
+			// WORD IS TOO LONG
+			return TOO_LONG; 
 
-    int i = 0;
-    int equalLetters = 0;
+		}
+		else if(i < data->I2W->numLetters && *(currWord + i) == '\0'){
+			return TOO_SHORT; 
+		
+		}
+		i++; 
+		  
+	}
+	
+	//First: Make sure it is a real word
+	//Go into the hash map
+	//Find it in the hash map
+	int id = Convert_WordToInt((char*)currWord, data); 
+	// Check if the word is used
+	if(equalLetters == data->I2W->numLetters + 1 || checkIfUsed_WordSet(id, data->wordSet)){
+		return WORD_USED;
+	}
+ 	if(inDictionary(id) == 0){
+		return WORD_DOES_NOT_EXIST; 
+	}
+	switch(Order_Check(prevWord, Convert_WordToInt((char*) currWord, data), data)){
 
-    // Validate the current word against length constraints and letter match requirements
-    while (1) {
-        if (*(currWord + i) == '\0') {
-            if (i > data->I2W->numLetters) {
-                printf("Word is too long\n");
-                return TOO_LONG;
-            } else if (i < data->I2W->numLetters) {
-                printf("Word is too short\n");
-                return TOO_SHORT;
-            } else if (equalLetters < data->I2W->numLetters - 1) {
-                printf("Not enough letters in common\n");
-                return NOT_ENOUGH_LETTERS_IN_COMMON;
-            }
-            break;
-        }
-
-        if (*(prev + i) == *(currWord + i)) {
-            equalLetters++;
-        }
-
-        if (i >= data->I2W->numLetters) {
-            printf("Word is too long\n");
-            return TOO_LONG;
-        }
-
-        i++;
-    }
-
-    // Check for correct letters but in the wrong order
-    int prevCounts[26] = {0};
-    int currCounts[26] = {0};
-    for (int j = 0; j < data->I2W->numLetters; j++) {
-        prevCounts[prev[j] - 'a']++;
-        currCounts[currWord[j] - 'a']++;
-    }
-
-    int matchedLetters = 0;
-    for (int j = 0; j < 26; j++) {
-        matchedLetters += (prevCounts[j] < currCounts[j]) ? prevCounts[j] : currCounts[j];
-    }
-
-    if (matchedLetters >= data->I2W->numLetters - 1 && equalLetters < data->I2W->numLetters - 1) {
-        printf("Right letters but wrong order\n");
-        return WRONG_ORDER;
-    }
-
-    // Convert the current word to its integer identifier
-    int id = Convert_WordToInt((char*)currWord, data);
-
-    // Check if the word is already used
-    if (checkIfUsed_WordSet(id, data->wordSet)) {
-        printf("Word already used\n");
-        return WORD_USED;
-    }
-
-    // Check if the word exists in the dictionary
-    if (!inDictionary(id)) {
-        printf("Word not in dictionary\n");
-        return WORD_DOES_NOT_EXIST;
-    }
-
-    // Check if the word is valid
-    if (equalLetters == data->I2W->numLetters) {
-        return VALID;
-    }
-
-    return UNKNOWN_ERROR;
+		case(0):
+			return VALID;
+		case(1):
+			return NOT_ENOUGH_LETTERS_IN_COMMON; 
+		case(2):
+			return WRONG_ORDER; 
+	}
+	
+	return UNKNOWN_ERROR; 
+	
 }
-
 
 int ContinueGames(){
 	printf("\nWould you like to advance??\ny - harder level \nr - equal level\np - easier level\nq - quit\n");
@@ -292,4 +260,33 @@ int safeStrLen(char* word){
 }
 
 
-
+int Order_Check(int w1, int w2, struct DataStructures* data){
+	int A[26] = {0};
+	int B[26] = {0};
+	char* a = Convert_IntToWord(w1, data->I2W); 
+	char* b = Convert_IntToWord(w2, data->I2W); 
+	// not necessary in right order
+	int lettersInCommon = 0; 
+	// in right order
+	int equalLetters = 0; 
+	
+	for(int i = 0; i < data->I2W->numLetters; i++){
+		A[a[i] - 'a']++; 
+		B[b[i] - 'b']++; 
+		if(a[i] == b[i]){
+			equalLetters++; 
+		}
+	}
+	for(int i = 0; i < 26; i++){
+		if(A[i] == B[i]){
+			lettersInCommon++; 	
+		}
+	}
+	if(equalLetters == data->I2W->numLetters - 1 && lettersInCommon == data->I2W->numLetters - 1){
+		return 1; 	
+	}
+	if(equalLetters < data->I2W->numLetters - 1) {
+		return 2; 
+	}
+	return 0; 
+}
