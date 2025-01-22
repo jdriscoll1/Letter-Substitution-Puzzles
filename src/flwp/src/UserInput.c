@@ -72,65 +72,84 @@ enum Difficulty ChooseDifficulty(){
 }
 
 
-int Check_Input(int prevWord, const char* currWord, struct DataStructures *data){
-	//First, find prev word 
-	char* prev = Convert_IntToWord(prevWord, data->I2W);
+// Check the input 
+int Check_Input(int prevWord, const char* currWord, struct DataStructures *data) {
 
-	int i = 0;
-	int equalLetters = 0;  
-	//for(i = 0; i < strlen(currWord)+1; i++){
-	int terminate = 0; 
-	while(terminate == 0){
-		terminate = (*(currWord + i) == '\0') ? 1 : 0;
-		if(i > data->I2W->numLetters){
-			// WORD IS TOO LONG
-			printf("Word is Too Long\n");
-			return TOO_LONG; 
+    // Retrieve the previous word from the integer identifier
+    char* prev = Convert_IntToWord(prevWord, data->I2W);
 
-		}
-		else if(i < data->I2W->numLetters && *(currWord + i) == '\0'){
-			printf("Word is too short\n");
-			return TOO_SHORT; 
-		
-		}
-		else if(equalLetters < data->I2W->numLetters - 1 && *(currWord + i) == '\0'){
-			printf("Not enough letters in common\n");
-			return NOT_ENOUGH_LETTERS_IN_COMMON;
-		  
-		}
+    int i = 0;
+    int equalLetters = 0;
 
-		if(*(prev + i) == *(currWord + i)){
-			equalLetters++; 
-		}
-		i++; 
-		  
-	}
+    // Validate the current word against length constraints and letter match requirements
+    while (1) {
+        if (*(currWord + i) == '\0') {
+            if (i > data->I2W->numLetters) {
+                printf("Word is too long\n");
+                return TOO_LONG;
+            } else if (i < data->I2W->numLetters) {
+                printf("Word is too short\n");
+                return TOO_SHORT;
+            } else if (equalLetters < data->I2W->numLetters - 1) {
+                printf("Not enough letters in common\n");
+                return NOT_ENOUGH_LETTERS_IN_COMMON;
+            }
+            break;
+        }
 
-	
-	//First: Make sure it is a real word
-	//Go into the hash map
-	//Find it in the hash map
-	int id = Convert_WordToInt((char*)currWord, data); 
-	// Check if the word is used
-	if(equalLetters == data->I2W->numLetters + 1 || checkIfUsed_WordSet(id, data->wordSet)){
-		printf("Word Already Used\n");
-		return WORD_USED;
-	}
- 
-	if(inDictionary(id) == 0){
-		printf("Word not in dictionary\n");
-		return WORD_DOES_NOT_EXIST; 
-	}
-	
-	//Originally, I was going to check if the word has already been used, but now I am making the concious decision to say that
-	//reusing the word is a valid move, because it can show them that they made need to remove words
+        if (*(prev + i) == *(currWord + i)) {
+            equalLetters++;
+        }
 
-	else if(equalLetters == data->I2W->numLetters){ 
-		return VALID; 
-	}
-	return UNKNOWN_ERROR; 
-	
+        if (i >= data->I2W->numLetters) {
+            printf("Word is too long\n");
+            return TOO_LONG;
+        }
+
+        i++;
+    }
+
+    // Check for correct letters but in the wrong order
+    int prevCounts[26] = {0};
+    int currCounts[26] = {0};
+    for (int j = 0; j < data->I2W->numLetters; j++) {
+        prevCounts[prev[j] - 'a']++;
+        currCounts[currWord[j] - 'a']++;
+    }
+
+    int matchedLetters = 0;
+    for (int j = 0; j < 26; j++) {
+        matchedLetters += (prevCounts[j] < currCounts[j]) ? prevCounts[j] : currCounts[j];
+    }
+
+    if (matchedLetters >= data->I2W->numLetters - 1 && equalLetters < data->I2W->numLetters - 1) {
+        printf("Right letters but wrong order\n");
+        return WRONG_ORDER;
+    }
+
+    // Convert the current word to its integer identifier
+    int id = Convert_WordToInt((char*)currWord, data);
+
+    // Check if the word is already used
+    if (checkIfUsed_WordSet(id, data->wordSet)) {
+        printf("Word already used\n");
+        return WORD_USED;
+    }
+
+    // Check if the word exists in the dictionary
+    if (!inDictionary(id)) {
+        printf("Word not in dictionary\n");
+        return WORD_DOES_NOT_EXIST;
+    }
+
+    // Check if the word is valid
+    if (equalLetters == data->I2W->numLetters) {
+        return VALID;
+    }
+
+    return UNKNOWN_ERROR;
 }
+
 
 int ContinueGames(){
 	printf("\nWould you like to advance??\ny - harder level \nr - equal level\np - easier level\nq - quit\n");

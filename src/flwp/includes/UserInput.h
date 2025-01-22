@@ -28,6 +28,7 @@ enum ERROR_CODE{
                 NOT_ENOUGH_LETTERS_IN_COMMON = 4,
 		WORD_USED = 5,
                 WORD_DOES_NOT_EXIST = 6,
+		WRONG_ORDER = 8,
                 UNKNOWN_ERROR = 7
 };
 /*This method checks gitthe input to make sure that it is valid
