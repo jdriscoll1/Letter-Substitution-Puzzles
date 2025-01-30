@@ -46,6 +46,7 @@ struct GameComponentsFLWC* initFLWC(int numAdjacenciesToStartWord, char goalChar
 	};
 
 	flwcComponents->wordId = chooseStartWord_FLWCGeneral(params, flwcComponents, data);
+	reset_WordSet(data->wordSet); 
 	markUsed_WordSet(flwcComponents->wordId, data->wordSet); 
 	return flwcComponents; 
 
