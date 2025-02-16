@@ -227,3 +227,19 @@ int weakBotPly(int word, struct wordDataArray* IntToWord_HashMap, struct WordSet
 	
 	
 }
+
+
+int isTrapped(int id, struct DataStructures* data){
+
+	struct intList* conn = getConnections(id, data->I2W);
+	conn = conn->next; 	
+	while(conn != NULL){
+		if(checkIfUsed_WordSet(conn->data, data->wordSet)){
+			return 0; 
+		}
+		conn = conn->next; 
+		
+	}
+	return 1;  
+
+}
