@@ -63,23 +63,27 @@ void freeGameComponentsFLWG(struct GameData* gameData){
 }
 
 int botTakesTurn(struct GameData* gameData, struct DataStructures* data, int botType){
-    int result = -1;
-    if(botType == -1){
-        result = botPly_MaxAdjacencies(gameData->currWordId, NULL, data);
-    }
-    if(botType == 0){
-        result = botPly_Random(gameData->currWordId, data);
+	int result = -1;
+	if(botType == -1){
+		result = botPly_MaxAdjacencies(gameData->currWordId, NULL, data);
+	}
+	if(botType == 0){
+		result = botPly_Random(gameData->currWordId, data);
 
-    }
-    if(botType > 0){
-        result = botPly(gameData->currWordId, botType, data->I2W, data->wordSet);
+    	}
+    	if(botType > 0){
+		result = botPly(gameData->currWordId, botType, data->I2W, data->wordSet);
 
 
-    }
-    if (result >= 0) {
-        gameData->currWordId = result;
-    }
-    return result;
+    	}
+    	if(result == -1){
+		return -1; 
+    	}
+	gameData->currWordId = result;
+	if(isTrapped(gameData->currWordId, data) == 1){
+		return -2; 
+    	}
+    	return result;
 }
 
 int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructures* data){

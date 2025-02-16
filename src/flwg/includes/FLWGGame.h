@@ -41,6 +41,6 @@ int userPly(int word, struct DataStructures* data);
  
 void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 
-
+int isTrapped(int id, struct DataStructures* data);
 
 #endif

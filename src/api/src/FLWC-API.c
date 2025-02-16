@@ -6,6 +6,7 @@
 #include "../../flwc/includes/Challenges.h"
 #include "../../flwc/includes/FLWC.h"
 #include "../../flwp/includes/UserInput.h"
+#include "../../flwg/includes/FLWGGame.h"
 
 struct EndWordParametersFLWC getChallengeGoalParameters(int challengeId);
 struct EndWordParametersFLWC getChallengeAvoidParameters(int challengeId);
@@ -98,6 +99,7 @@ int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents){
 }
 
 int botTakesTurnFLWC(int botType, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	// This is what will be returend 
 	int result; 	
 	if(botType == -1){
 		result = botPly_MaxAdjacencies(flwcComponents->wordId, flwcComponents->goalWords, data); 	
@@ -105,7 +107,17 @@ int botTakesTurnFLWC(int botType, struct GameComponentsFLWC* flwcComponents, str
 	if(botType > 0){
 		result = botPly_FLWC(flwcComponents->wordId, botType, flwcComponents->avoidWords, flwcComponents->goalWords, data);
 	}
+
 	flwcComponents->wordId = result;  
+
+	if(result == -1){
+		return -1; 
+	}
+
+	// if the bot has trapped the user, let the user know 
+	if(isTrapped(flwcComponents->wordId, data) == 1){
+		return -2; 
+	}
 	return result; 
 
 }
