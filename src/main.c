@@ -48,12 +48,11 @@ int __FLWC();
 int main(){
 
 	//_FLWP(); 
-	int fd = open("docs/4.txt", O_RDONLY);
-	struct DataStructures* dataStructures = initDataStructures(fd, 4); 
-	printf("Cars: %d\n", Check_Input(0, "cars", dataStructures));
-	printf("Part: %d\n", Check_Input(0, "part", dataStructures));
-	printf("Rake: %d\n", Check_Input(0, "rake", dataStructures));
-
+	int fd = open("docs/playerWin.txt", O_RDONLY);
+	struct DataStructures* data = initDataStructures(fd, 4); 
+	printf("Is Trapped: %d\n", isTrapped(0, data)); 
+	markUsed_WordSet(1, data->wordSet);	
+	printf("Is Trapped: %d", isTrapped(0, data)); 
 }
 
 int __FLWC(){

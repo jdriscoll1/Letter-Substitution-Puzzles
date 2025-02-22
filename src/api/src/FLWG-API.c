@@ -64,18 +64,22 @@ void freeGameComponentsFLWG(struct GameData* gameData){
 
 int botTakesTurn(struct GameData* gameData, struct DataStructures* data, int botType){
 	int result = -1;
+	// If the bot type is -1 it is its easiest version
 	if(botType == -1){
 		result = botPly_MaxAdjacencies(gameData->currWordId, NULL, data);
 	}
+	// If the bot type is 0, it chooses randomly which is a little harder than its easiest variant 
 	if(botType == 0){
 		result = botPly_Random(gameData->currWordId, data);
 
     	}
+	// If the bot tyep is greater than 0, it uses that as its depth 
     	if(botType > 0){
 		result = botPly(gameData->currWordId, botType, data->I2W, data->wordSet);
 
 
     	}
+	// If the result is -1 the bot has lost
     	if(result == -1){
 		return -1; 
     	}
