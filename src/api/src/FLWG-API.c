@@ -181,10 +181,10 @@ void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataSt
 struct GameComponentsFLWGP* initiateFLWGP(int numAdjacenciesStartWord,  char goalCharacter, int minGoalCharacterDistance, char avoidCharacter, int minAvoidCharacterDistance, struct DataStructures* dataStructures){
 
 	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesStartWord, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
-
 	struct GameComponents* flwpComponents = malloc(sizeof(struct GameComponents)); 
 	flwpComponents->start = flwcComponents->wordId; 
 	flwpComponents->goal = -1;  
+	markUnused_WordSet(Convert_WordToInt(flwpComponents->start, dataStructures), dataStructures->wordSet); 
 	//Sets the minimum number of connection
 	flwpComponents->minConnections = minGoalCharacterDistance;
 	//Sets the number of moves
@@ -251,6 +251,7 @@ int userEntersWord_FLWGP(char* userInput, struct GameComponentsFLWGP* flwgpCompo
 	if(result == 0){
 		markUnused_WordSet(Convert_WordToInt(userInput, dataStructures), dataStructures->wordSet); 
 		userEntersWordFLWC(userInput, flwgpComponents->flwcComponents, dataStructures); 
+		markUnused_WordSet(Convert_WordToInt(userInput, dataStructures), dataStructures->wordSet); 
 	}
 	return result; 
 
