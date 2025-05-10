@@ -184,7 +184,7 @@ struct GameComponentsFLWGP* initiateFLWGP(int numAdjacenciesStartWord,  char goa
 	struct GameComponents* flwpComponents = malloc(sizeof(struct GameComponents)); 
 	flwpComponents->start = flwcComponents->wordId; 
 	flwpComponents->goal = -1;  
-	markUnused_WordSet(Convert_WordToInt(flwpComponents->start, dataStructures), dataStructures->wordSet); 
+	markUnused_WordSet(flwpComponents->start, dataStructures->wordSet); 
 	//Sets the minimum number of connection
 	flwpComponents->minConnections = minGoalCharacterDistance;
 	//Sets the number of moves
