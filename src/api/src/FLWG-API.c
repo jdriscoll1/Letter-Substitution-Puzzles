@@ -46,7 +46,6 @@ struct GameData* initiateGame(struct DataStructures* dataStructures, int numAdja
 	gameData->difficulty = 0;
 	gameData->numPlayers = 2; 
 	reset_WordSet(dataStructures->wordSet);
-    markUsed_WordSet(gameData->currWordId, dataStructures->wordSet);
     return gameData;
 	
 	
@@ -104,7 +103,6 @@ int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructu
 		return WORD_USED; 
 	} 
 	// Add word to word set 
-	markUsed_WordSet(wordId, data->wordSet); 
         gameData->currWordId = wordId;
 	return VALID;
 }
