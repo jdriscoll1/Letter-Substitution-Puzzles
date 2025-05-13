@@ -43,9 +43,26 @@ void _FLWP();
 void _FLWG(); 
 void _FLWC(); 
 int __FLWC();
+void _FLWGP();
 
+void _FLWGP(){
+	int numLetters = 4; 
+	int fd = open("docs/4.txt", O_RDONLY);
+	struct DataStructures* data = initDataStructures(fd, 4); 
+	struct GameComponentsFLWGP* flwgp = initiateFLWGP(10, 'e', 3, ' ', 0, data); 
+	freeGameComponentsFLWGP(flwgp, data); 
+
+
+
+}
 
 int main(){
+
+	_FLWGP();
+	return 0; 
+}
+
+void trapTest(){
 
 	//_FLWP(); 
 	int fd = open("docs/playerWin.txt", O_RDONLY);
@@ -53,6 +70,22 @@ int main(){
 	printf("Is Trapped: %d\n", isTrapped(0, data)); 
 	markUsed_WordSet(1, data->wordSet);	
 	printf("Is Trapped: %d", isTrapped(0, data)); 
+}
+
+void _FLWT(){
+	srand(time(0)); 
+	int numLetters = 4; 
+	int fd = open("docs/4.txt", O_RDONLY);
+	struct DataStructures* data = initDataStructures(fd, numLetters); 
+	struct GameComponentsFLWT* flwt = initFLWT(20, 20, data); 
+	char* start = getStartWordFLWT(flwt, data); 
+	printf("Start Word: %s", start);
+	int hint = directAdjacencyHint(flwt->startWordId, data); 
+	printf("Yo Snazzy Hint: %d", hint);
+
+
+
+
 }
 
 int __FLWC(){
