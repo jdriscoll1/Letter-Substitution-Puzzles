@@ -46,7 +46,6 @@ struct GameComponentsFLWC* initFLWC(int numAdjacenciesToStartWord, char goalChar
 	    .maxAdjacencies = 100,
 	};
 	chooseStartWord_FLWCGeneral(params, flwcComponents, data);
-	flwcComponents->wordId = Convert_WordToInt("goof", data);
 	reset_WordSet(data->wordSet); 
 	markUsed_WordSet(flwcComponents->wordId, data->wordSet); 
 	return flwcComponents; 
