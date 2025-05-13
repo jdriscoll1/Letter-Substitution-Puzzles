@@ -50,6 +50,14 @@ void _FLWGP(){
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd, 4); 
 	struct GameComponentsFLWGP* flwgp = initiateFLWGP(10, 'e', 3, ' ', 0, data); 
+	int isWon = isGameWonFLWC(flwgp->flwcComponents); 
+	userEntersWordFLWC("good", flwgp->flwcComponents, data); 
+	 isWon = isGameWonFLWC(flwgp->flwcComponents); 
+	userEntersWordFLWC("gold", flwgp->flwcComponents, data); 
+	 isWon = isGameWonFLWC(flwgp->flwcComponents); 
+	userEntersWordFLWC("hold", flwgp->flwcComponents, data); 
+	 isWon = isGameWonFLWC(flwgp->flwcComponents); 
+	userEntersWordFLWC("hole", flwgp->flwcComponents, data); 
 	freeGameComponentsFLWGP(flwgp, data); 
 
 
