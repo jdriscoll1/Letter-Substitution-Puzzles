@@ -46,18 +46,38 @@ int __FLWC();
 void _FLWGP();
 
 void _FLWGP(){
+	// initialize flwg ds
 	int numLetters = 4; 
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd, 4); 
+	
+	// Initialize FLWGP 
 	struct GameComponentsFLWGP* flwgp = initiateFLWGP(10, 'e', 3, ' ', 0, data); 
+
+	// Check if the game is won and enter words 
 	int isWon = isGameWonFLWC(flwgp->flwcComponents); 
-	userEntersWordFLWC("good", flwgp->flwcComponents, data); 
+
+	 userEntersWord_FLWGP("root", flwgp, data); 
+	 printf("%s\n", Convert_IntToWord(flwgp->flwcComponents->wordId, data->I2W)); 
+
+	 userEntersWord_FLWGP("boot", flwgp, data); 
+	 printf("%s\n", Convert_IntToWord(flwgp->flwcComponents->wordId, data->I2W)); 
+
+	 userEntersWord_FLWGP("loot", flwgp, data); 
+	 printf("%s\n", Convert_IntToWord(flwgp->flwcComponents->wordId, data->I2W)); 
+
+	 undoMoveFLWGP(flwgp, data); 
+	 printf("%s\n", Convert_IntToWord(flwgp->flwcComponents->wordId, data->I2W)); 
+
+	 userEntersWord_FLWGP("bolt", flwgp,  data); 
+	 printf("%s\n", Convert_IntToWord(flwgp->flwcComponents->wordId, data->I2W)); 
+
+	 userEntersWord_FLWGP("belt", flwgp, data); 
+	 printf("%s\n", Convert_IntToWord(flwgp->flwcComponents->wordId, data->I2W)); 
+	
 	 isWon = isGameWonFLWC(flwgp->flwcComponents); 
-	userEntersWordFLWC("gold", flwgp->flwcComponents, data); 
-	 isWon = isGameWonFLWC(flwgp->flwcComponents); 
-	userEntersWordFLWC("hold", flwgp->flwcComponents, data); 
-	 isWon = isGameWonFLWC(flwgp->flwcComponents); 
-	userEntersWordFLWC("hole", flwgp->flwcComponents, data); 
+	 printf("Is Won: %d", isWon); 
+
 	freeGameComponentsFLWGP(flwgp, data); 
 
 

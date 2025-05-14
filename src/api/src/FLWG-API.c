@@ -149,6 +149,7 @@ void undoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* 
     Undo_Struct(gameComponents, dataStructures->I2W);
 }
 
+
 void redoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
     Redo_Struct(gameComponents, dataStructures->I2W);
 }
@@ -256,3 +257,17 @@ int userEntersWord_FLWGP(char* userInput, struct GameComponentsFLWGP* flwgpCompo
 	return result; 
 
 }
+
+
+void undoMoveFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures) {
+	Undo_Struct(flwgpComponents->flwpComponents, dataStructures->I2W);
+	flwgpComponents->flwcComponents->wordId = getPrevWordFLWP(flwgpComponents->flwpComponents); 
+
+}
+
+
+void redoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStructures* dataStructures) {
+	Redo_Struct(flwgpComponents->flwpComponents, dataStructures->I2W);
+	flwgpComponents->flwcComponents->wordId = getPrevWordFLWP(flwgpComponents->flwpComponents); 
+}
+
