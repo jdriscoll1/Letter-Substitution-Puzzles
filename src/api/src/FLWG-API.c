@@ -249,7 +249,6 @@ struct GameComponents* getFLWPComponentsFLWGP(struct GameComponentsFLWGP* flwgpC
 int userEntersWord_FLWGP(char* userInput, struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures){
 
 	int result = userEntersWord_FLWP(userInput, flwgpComponents->flwpComponents, dataStructures); 
-	printf("GET PREV WORD: %d\n",  getPrevWordFLWP(flwgpComponents->flwpComponents)); 
 	if(result == 0){
 		markUnused_WordSet(Convert_WordToInt(userInput, dataStructures), dataStructures->wordSet); 
 		userEntersWordFLWC(userInput, flwgpComponents->flwcComponents, dataStructures); 
@@ -262,13 +261,13 @@ int userEntersWord_FLWGP(char* userInput, struct GameComponentsFLWGP* flwgpCompo
 
 void undoMoveFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures) {
 	Undo_Struct(flwgpComponents->flwpComponents, dataStructures->I2W);
-	//flwgpComponents->flwcComponents->wordId = getPrevWordFLWP(flwgpComponents->flwpComponents); 
+	flwgpComponents->flwcComponents->wordId = getPrevWordFLWP(flwgpComponents->flwpComponents); 
 
 }
 
 
 void redoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStructures* dataStructures) {
 	Redo_Struct(flwgpComponents->flwpComponents, dataStructures->I2W);
-	//flwgpComponents->flwcComponents->wordId = getPrevWordFLWP(flwgpComponents->flwpComponents); 
+	flwgpComponents->flwcComponents->wordId = getPrevWordFLWP(flwgpComponents->flwpComponents); 
 }
 
