@@ -47,7 +47,7 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 
 	if(validWords->currPrecision == 0){
 		printf("There are no valid words!!!"); 
-		exit(0); 
+		return -1; 
 	}
 	
 	int choiceId = rand() % validWords->currPrecision; 
