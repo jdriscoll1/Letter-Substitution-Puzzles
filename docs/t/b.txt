@@ -1,6 +1,0 @@
-5
-aaaa 1 2 3
-aaab 0
-aaac 0 3 4
-aaad 0 2
-aaae 2

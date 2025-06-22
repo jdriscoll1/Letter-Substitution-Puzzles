@@ -1,0 +1,14 @@
+13
+aaaa 2 1
+aaab 3
+aaac 9 4
+aaad 5 8
+aaae 6 11 7
+aaaf
+aaag 12
+aaah
+aaai 10
+aaaj
+aaak
+aaal
+aaam

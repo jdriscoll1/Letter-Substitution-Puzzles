@@ -1,6 +1,0 @@
-card
-plug
-sets
-part
-wits
-heat
