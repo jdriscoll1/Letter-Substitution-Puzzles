@@ -40,10 +40,65 @@ Purpose: The four letter pathfinder, this time better
 
 void _FLWT(); 
 void _FLWP(); 
-void _FLWG(); 
+// FLWG
+void flwg_example(); 
+
+//FLWC
 void _FLWC(); 
+void flwc_validparameters(); 
+void flwc_invalidparameters(); 
 int __FLWC();
+
 void _FLWGP();
+
+
+// flwc skeletal code, no game logic
+int flwc();
+
+int main(){
+	return flwc();   
+}
+
+int flwc(){
+	// Initialize Structures
+	srand(time(0)); 
+	int numLetters = 4; 
+	int fd = open("docs/4.txt", O_RDONLY);
+	struct DataStructures* dataStructures = initDataStructures(fd, numLetters); 
+
+	// FLWC Parameters
+	int numAdjacenciesToStartWord = 4; 
+	int botType = -1;
+	char goalCharacter = 'e';
+	int minGoalCharacterDistance = 1;
+	char avoidCharacter = ' ';
+	int minAvoidCharacterDistance = 0;
+
+	// Initialize the Game
+	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesToStartWord, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
+	if (!isStartValidFLWC(flwcComponents) == 0){
+		printf("First Failed"); 
+		return -1; 
+
+	}
+	printf("First Went Through Well!");
+	flwcComponents = initFLWC(16, goalCharacter, 15, avoidCharacter, minAvoidCharacterDistance, dataStructures);
+	if (!isStartValidFLWC(flwcComponents) == 0){
+		printf("Second Failed"); 
+		return -1; 
+	}
+	printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
+
+
+	/******GAME LOGIC GOES HERE**********/
+
+	// End the Game
+	freeGameComponentsFLWC(flwcComponents); 
+	close(fd); 
+	freeDataStructures(dataStructures);	
+	return 0; 
+}
+
 
 void _FLWGP(){
 	// initialize flwg ds
@@ -84,11 +139,6 @@ void _FLWGP(){
 
 }
 
-int main(){
-
-	__FLWC(); 
-	return 0; 
-}
 
 void trapTest(){
 
@@ -134,7 +184,8 @@ int __FLWC(){
 	char avoidCharacter = ' ';
 	int minAvoidCharacterDistance = 0; 
 	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesToStartWord, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
-	if (flwcComponents->wordId == -1){
+	// If the start is not valid, end the function
+	if (!isStartValidFLWC(flwcComponents) == 0){
 		printf("No valid combination"); 
 		return -1; 
 
@@ -237,54 +288,6 @@ void _FLWP(){
 	freeDataStructures(dataStructures);	
 
 }
-void _FLWC(){
-
-	/*
-	srand(time(0)); 
-	int numLetters = 4; 
-	int fd = open("docs/4.txt", O_RDONLY);
-	struct DataStructures* dataStructures = initDataStructures(fd, numLetters); 
-	struct GameComponentsFLWC* flwcComponents = initFLWC(0, dataStructures);	
-	printf("Get to a word with 'e' in it\n");
-	printf("Do not touch any words with 't' in it\n"); 
-	printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
-	int turn = 0; 
-	while(isGameWonFLWC(flwcComponents) == -1){
-		 	
-		if(turn % 2 == 0){
-			flwcComponents->wordId = userPly(flwcComponents->wordId, dataStructures); 
-		
-		}
-	
-		else{
-			botTakesTurnFLWC(flwcComponents, dataStructures);
-		}
-		printf("%s: %s\n", (turn % 2 == 0) ? "Johnny (dumber):" : "Jimmy (smarter):", (flwcComponents->wordId != -1) ?  Convert_IntToWord(flwcComponents->wordId, dataStructures->I2W) : "I lose :(");
-
-		turn++; 
-	}	
-	printf("\n\nBest  Solution:\n%s\n", getSolutionFLWC(flwcComponents));
-	int result = isGameWonFLWC(flwcComponents); 
-	printf("Result: %d\n", result);
-	switch(result){
-		case -1: 
-			printf("Error Status");
-			break; 
-		case 0: 
-			printf("Game is tied");
-			break; 
-		case 1:
-			printf("Word in goal set reached");
-			break; 
-		case 2: 
-			printf("Word in avoid set reached");
-			break; 
-	}
-	freeGameComponentsFLWC(flwcComponents); 
-	close(fd); 
-	freeDataStructures(dataStructures);	
-	*/
-}
 
 void flwcChooseGoals_Example(){
 
@@ -320,8 +323,7 @@ void flwcChooseGoals_Example(){
 	freeDataStructures(data); 
 }
 
-void _FLWG(){
-	/*
+void flwg_example(){
 	srand(time(0)); 
 	int numLetters = 3; 
 	int fd = open("docs/3.txt", O_RDONLY);
@@ -334,7 +336,7 @@ void _FLWG(){
                 if (i % 100 == 0) {
                   printf("%d/%d games complete\n", i, num_games);
                 }
-		int word = ChooseStart(data->I2W); 
+		int word = ChooseStart(data->I2W, 12); //12 is an arbitrarily chosen # of direct adjacencies
                 //int word = 0;
 		markUsed_WordSet(word, data->wordSet); 
 		int winner = -1; 
@@ -367,6 +369,5 @@ void _FLWG(){
 
 	//printf("%s Wins\n\n", (winner != 0) ? "Minimax": "Random");
         printf("User wins: %d Bot wins: %d\n", bot_wins, random_wins);
-	*/	
 
 }
