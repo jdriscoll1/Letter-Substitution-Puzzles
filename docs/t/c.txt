@@ -1,8 +1,0 @@
-7
-aaaa 1 5
-aaab 0 2
-aaac 1 3
-aaad 2 4
-aaae 3
-aaaf 0 6
-aaag 5

@@ -86,7 +86,7 @@ void _FLWGP(){
 
 int main(){
 
-	_FLWGP();
+	__FLWC(); 
 	return 0; 
 }
 
@@ -99,6 +99,7 @@ void trapTest(){
 	markUsed_WordSet(1, data->wordSet);	
 	printf("Is Trapped: %d", isTrapped(0, data)); 
 }
+
 
 void _FLWT(){
 	srand(time(0)); 
@@ -117,19 +118,30 @@ void _FLWT(){
 }
 
 int __FLWC(){
+	// Initialize Game
 	srand(time(0)); 
 	int numLetters = 4; 
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* dataStructures = initDataStructures(fd, numLetters); 
 	int numAdjacenciesToStartWord = 16;
+
+	// Determine the Bot Type 
 	int botType = -1;
+
+	// Establish the goal character
 	char goalCharacter = 'e';
-	int minGoalCharacterDistance = 1;
+	int minGoalCharacterDistance = 5;
 	char avoidCharacter = ' ';
 	int minAvoidCharacterDistance = 0; 
 	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesToStartWord, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
+	if (flwcComponents->wordId == -1){
+		printf("No valid combination"); 
+		return -1; 
+
+	}
 	printf("Get to a word with 'e' in it\n");
 	printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
+	/* 
 	int turn = 0; 
 	while(isGameWonFLWC(flwcComponents) == -1){
 		if(turn % 2 == 0){
@@ -163,7 +175,7 @@ int __FLWC(){
 
 	close(fd); 
 	freeDataStructures(dataStructures);	
-
+	*/ 
 	return 0; 
 
 	/*

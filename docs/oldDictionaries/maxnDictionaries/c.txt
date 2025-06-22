@@ -1,0 +1,21 @@
+20
+aaaa 13 5 1
+bbbb 3 2
+cccc
+dddd 4
+eeee
+ffff 9 6
+gggg 7
+hhhh 8
+iiii
+jjjj 11 10
+kkkk
+llll 12
+mmmm
+nnnn 18 14
+oooo 16 15
+pppp
+qqqq 17
+rrrr
+ssss 19
+tttt

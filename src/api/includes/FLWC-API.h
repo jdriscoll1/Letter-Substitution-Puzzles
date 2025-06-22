@@ -34,4 +34,7 @@ void freeGameComponentsFLWC(struct GameComponentsFLWC* flwcComponents);
 
 char* getSolutionFLWC(struct GameComponentsFLWC* flwcComponents);
 
+// Confirms if the parameters inputted are valid
+int isValidStartFLWC(struct GameComponentsFLWC* flwcComponents){
+
 #endif
