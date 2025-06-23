@@ -162,7 +162,7 @@ struct EndWordParametersFLWC getChallengeAvoidParameters(int challengeId){
 }
 
 int isStartValidFLWC(struct GameComponentsFLWC* flwcComponents){
-	return flwcComponents->wordId == -1;
+	return flwcComponents->wordId != -1;
 }
 
 #endif
