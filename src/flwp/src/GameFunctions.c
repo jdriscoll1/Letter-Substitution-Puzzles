@@ -68,7 +68,7 @@ int ChooseStart_Range(struct wordDataArray* IntToWord_HashMap, int minAdjacencie
 	for(int i = 0; i < IntToWord_HashMap->numWords; i++){
 
 		// If the word is in the range of valid adjacencies
-		if( IntToWord_HashMap->array[i]->numConnections >= minAdjacencies || IntToWord_HashMap->array[i]->numConnections <= maxAdjacencies ){
+		if( IntToWord_HashMap->array[i]->numConnections >= minAdjacencies && IntToWord_HashMap->array[i]->numConnections <= maxAdjacencies ){
 		    add_ArrayList((void*)(&i), aList, NUM);
 
 		}
