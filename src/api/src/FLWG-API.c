@@ -39,15 +39,18 @@ void freeDataStructures(struct DataStructures* data){
 }
 
  // FLWG functions
-struct GameData* initiateGame(struct DataStructures* dataStructures, int numAdjacencies){
+struct GameData* initFLWG(struct DataStructures* dataStructures, int minAdjacencies, int maxAdjacencies){
 	// reset word set	
 	struct GameData* gameData = malloc(sizeof(struct GameData)); 
-	gameData->currWordId = ChooseStart(dataStructures->I2W, numAdjacencies);
+	gameData->currWordId = ChooseStart_Range(dataStructures->I2W, minAdjacencies, maxAdjacencies);
 	gameData->difficulty = 0;
 	gameData->numPlayers = 2; 
 	reset_WordSet(dataStructures->wordSet);
-    markUsed_WordSet(gameData->currWordId, dataStructures->wordSet);
-    return gameData;
+	
+	if(gameData->currWordId != -1){
+		markUsed_WordSet(gameData->currWordId, dataStructures->wordSet);
+        }
+	return gameData;
 	
 	
 }
@@ -271,3 +274,8 @@ void redoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStruc
 	flwgpComponents->flwcComponents->wordId = getPrevWordFLWP(flwgpComponents->flwpComponents); 
 }
 
+int isStartValidFLWG(struct GameData* gameData){
+
+	return gameData->currWordId != -1; 
+
+}

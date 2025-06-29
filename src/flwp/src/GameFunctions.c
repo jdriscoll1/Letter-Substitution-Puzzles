@@ -60,20 +60,47 @@ int getWordWithNumberOfConnections(int numConnections, struct wordDataArray* Int
 
 }
 
+int ChooseStart_Range(struct wordDataArray* IntToWord_HashMap, int minAdjacencies, int maxAdjacencies){
+   
+	struct arrayList *aList = init_ArrayList(10, 5, NUM);
 
+	// Create a list of words that have n-adjacencies
+	for(int i = 0; i < IntToWord_HashMap->numWords; i++){
+
+		// If the word is in the range of valid adjacencies
+		if( IntToWord_HashMap->array[i]->numConnections >= minAdjacencies || IntToWord_HashMap->array[i]->numConnections <= maxAdjacencies ){
+		    add_ArrayList((void*)(&i), aList, NUM);
+
+		}
+	}
+	// If the length of the list is 0 -- return err (-1)
+	if(aList->currPrecision == 0){
+	return -1; 
+	}
+	int id = ((int*)(aList)->list)[rand() % aList->currPrecision];
+	free_ArrayList(aList);
+	return id;
+}
 
 /*Randomly chooses a word based on an index*/ 
 int ChooseStart(struct wordDataArray* IntToWord_HashMap, int numAdjacencies){
-    struct arrayList *aList = init_ArrayList(10, 5, NUM);
-    // Create a list of words that have n-adjacencies
-    for(int i = 0; i < IntToWord_HashMap->numWords; i++){
-        if(IntToWord_HashMap->array[i]->numConnections == numAdjacencies){
-            add_ArrayList((void*)(&i), aList, NUM);
+   
+	struct arrayList *aList = init_ArrayList(10, 5, NUM);
 
-        }
-    }
-    int id = ((int*)(aList)->list)[rand() % aList->currPrecision];
-    free_ArrayList(aList);
+	// Create a list of words that have n-adjacencies
+	for(int i = 0; i < IntToWord_HashMap->numWords; i++){
+
+		if(IntToWord_HashMap->array[i]->numConnections == numAdjacencies){
+		    add_ArrayList((void*)(&i), aList, NUM);
+
+		}
+	}
+	// If the length of the list is 0 -- return err (-1)
+	if(aList->currPrecision == 0){
+	return -1; 
+	}
+	int id = ((int*)(aList)->list)[rand() % aList->currPrecision];
+	free_ArrayList(aList);
 	return id;
 }
 
