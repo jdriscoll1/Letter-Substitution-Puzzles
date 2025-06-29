@@ -166,7 +166,7 @@ int isStartValidFLWC(struct GameComponentsFLWC* flwcComponents){
 }
 char** getAllWords(struct DataStructures* dataStructures){
 	
-	char** allWords = malloc(sizeof(char) * dataStructures->I2W->numLetters * dataStructures->I2W->numWords); 
+	char** allWords = malloc(sizeof(char*) * dataStructures->I2W->numWords); 
 	for(int i = 0; i < dataStructures->I2W->numWords; i++){
 		allWords[i] = dataStructures->I2W->array[i]->word; 
 	}
