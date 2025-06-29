@@ -27,6 +27,7 @@ void AfterGameOutput(int gameEndCondition, struct GameComponents* gc);
 @param allWordsArray --> The array that stores every single word in it
 @return --> Returns a word that will be considered the start word*/ 
 int ChooseStart(struct wordDataArray* IntToWord_HashMap, int numAdjacencies);
+int ChooseStart_Range(struct wordDataArray* IntToWord_HashMap, int minAdjacencies, int maxAdjacencies);
 
 int getWordWithNumberOfConnections(int numConnections, struct wordDataArray* IntToWord_HashMap);
 

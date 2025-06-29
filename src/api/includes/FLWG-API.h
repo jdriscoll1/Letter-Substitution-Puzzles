@@ -46,7 +46,7 @@ struct DataStructures* initDataStructures(int fd, int numLetters);
 
 // flwg behavior
 void freeDataStructures(struct DataStructures* dataStructures); 
-struct GameData* initiateGame(struct DataStructures* dataStructures, int numAdjacencies);
+struct GameData* initFLWG(struct DataStructures* dataStructures, int minAdjacencies, int maxAdjacencies);
 char* getCurrWord(struct GameData* gameData, struct DataStructures* dataStructures); 
 void endGame(struct GameData* gameData); 
 int botTakesTurn(struct GameData* gameData, struct DataStructures* data, int botType);
@@ -54,6 +54,7 @@ int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructu
 void resetWordSet(struct DataStructures* dataStructures);
 int startGameReturnFirstWord(struct DataStructures *dataStructures);
 void freeGameComponentsFLWG(struct GameData* gameData);
+int isStartValidFLWG(struct GameData* gameData);
 
 // flwp behavior
 struct GameComponents* initiateFLWP(int minConnections, struct DataStructures* dataStructures, int numAdjacenciesStartWord);
@@ -80,5 +81,6 @@ void redoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStruc
 // Test Functionality  
 char* convertIntToWord(int wordId, struct DataStructures* dataStructures); 
 int convertWordToInt(char* word, struct DataStructures* dataStructures); 
+
 
 #endif 

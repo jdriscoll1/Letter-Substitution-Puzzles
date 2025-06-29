@@ -54,10 +54,44 @@ void _FLWGP();
 
 // flwc skeletal code, no game logic
 int flwc();
+int flwg();
 
 int main(){
-	return flwc();   
+	return flwg();   
 }
+
+int flwg(){
+
+	// Initialize Structures
+	srand(time(0)); 
+	int numLetters = 4; 
+	int fd = open("docs/4.txt", O_RDONLY);
+	struct DataStructures* dataStructures = initDataStructures(fd, numLetters); 
+
+	// FLWG Parameters
+	int minAdjacencies = 4; 
+	int maxAdjacencies = 4; 
+
+	// Initialize the Game
+	struct GameData* gameData = initFLWG(dataStructures, minAdjacencies, maxAdjacencies);
+	if (isStartValidFLWG(gameData) == 0){
+		printf("Invalid FLWG Parameters");
+		return -1; 
+
+	}
+	printf("Start Word: %s\n", getCurrWord(gameData, dataStructures));
+
+
+	/******GAME LOGIC GOES HERE**********/
+
+	// End the Game
+	freeGameComponentsFLWG(gameData); 
+	close(fd); 
+	freeDataStructures(dataStructures);	
+	return 0; 
+}
+
+
 
 int flwc(){
 	// Initialize Structures
