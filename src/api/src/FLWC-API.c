@@ -164,5 +164,13 @@ struct EndWordParametersFLWC getChallengeAvoidParameters(int challengeId){
 int isStartValidFLWC(struct GameComponentsFLWC* flwcComponents){
 	return flwcComponents->wordId != -1;
 }
+char** getAllWords(struct DataStructures* dataStructures){
+	
+	char** allWords = malloc(sizeof(char) * dataStructures->I2W->numLetters * dataStructures->I2W->numWords); 
+	for(int i = 0; i < dataStructures->I2W->numWords; i++){
+		allWords[i] = dataStructures->I2W->array[i]->word; 
+	}
+	return allWords; 
+}
 
 #endif
