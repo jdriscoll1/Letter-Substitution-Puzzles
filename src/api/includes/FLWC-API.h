@@ -37,4 +37,7 @@ char* getSolutionFLWC(struct GameComponentsFLWC* flwcComponents);
 // Confirms if the parameters inputted are valid
 int isStartValidFLWC(struct GameComponentsFLWC* flwcComponents);
 
+char** getAllWords(struct DataStructures* dataStructures);
+
 #endif
+
