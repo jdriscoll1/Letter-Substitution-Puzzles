@@ -18,7 +18,7 @@ struct GameComponentsFLWC{
 
 // This creates the first word and returns a set of game components for the flwt
 
-struct GameComponentsFLWC* initFLWC(int numAdjacenciesToStartWord, char goalCharacter, int minGoalCharacterDistance, char avoidCharacter, int minAvoidCharacterDistance,  struct DataStructures *data);
+struct GameComponentsFLWC* initFLWC(int numAdjacenciesToStartWord, char** avoidWords, char** goalWords, int minGoalDistance, int minAvoidDistance, struct DataStructures* dataStructures);
 
 // Choose a word
 char* getStartWordFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures *data); 

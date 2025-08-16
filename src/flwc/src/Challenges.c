@@ -4,24 +4,17 @@
 #include "../../algs/includes/BreadthFirstSearch.h"
 #include "../../algs/includes/TreeStorageNode.h"
 
-struct WordSet* createWordSetGivenCondition(struct EndWordParametersFLWC wordParams, struct DataStructures* data){
+struct WordSet* convertCharPtrPtrToWordSet(char** words, struct DataStructures* data){
 
 	struct WordSet* wordSet = init_WordSet(data->I2W->numWords);
-	int (*comparator[])(char*, char) = {doesWordContainLetter}; 
-	// for each word in the data set
-	for(int i = 0; i < data->I2W->numWords; i++){
-		if(wordParams.letter != ' ' && comparator[wordParams.comparatorId](Convert_IntToWord(i, data->I2W), wordParams.letter)){
-			markUsed_WordSet(i, wordSet); 
-		}
+	int i = 0; 
+	int wordId; 
+	while(words[i] != NULL){
+		wordId = convertWordToInt(words[i], data);
+	 	markUsed_WordSet(wordId, wordSet); 	
+		i++; 
 	}
 	return wordSet; 
-
-
-}
-
-// Conditions 
-int doesWordContainLetter(char* word, char letter) {
-	return (strchr(word, letter) != NULL) ? 1 : 0;   
 }
 
 int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){

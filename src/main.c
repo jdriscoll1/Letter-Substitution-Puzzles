@@ -57,7 +57,14 @@ int flwc();
 int flwg();
 
 int main(){
-	return flwg();   
+	
+	srand(time(0)); 
+	int numLetters = 4; 
+	int fd = open("docs/4.txt", O_RDONLY);
+	struct DataStructures* dataStructures = initDataStructures(fd, numLetters); 
+	char** allWords = getAllWords(dataStructures); 
+	printf("Word 0: %s", allWords[0]); 
+	return 0; 
 }
 
 int flwg(){
@@ -93,6 +100,7 @@ int flwg(){
 
 
 
+/*
 int flwc(){
 	// Initialize Structures
 	srand(time(0)); 
@@ -124,7 +132,6 @@ int flwc(){
 	printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
 
 
-	/******GAME LOGIC GOES HERE**********/
 
 	// End the Game
 	freeGameComponentsFLWC(flwcComponents); 
@@ -132,6 +139,7 @@ int flwc(){
 	freeDataStructures(dataStructures);	
 	return 0; 
 }
+*/
 
 
 void _FLWGP(){
@@ -201,6 +209,7 @@ void _FLWT(){
 
 }
 
+/*
 int __FLWC(){
 	// Initialize Game
 	srand(time(0)); 
@@ -226,7 +235,6 @@ int __FLWC(){
 	}
 	printf("Get to a word with 'e' in it\n");
 	printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
-	/* 
 	int turn = 0; 
 	while(isGameWonFLWC(flwcComponents) == -1){
 		if(turn % 2 == 0){
@@ -260,18 +268,16 @@ int __FLWC(){
 
 	close(fd); 
 	freeDataStructures(dataStructures);	
-	*/ 
 	return 0; 
 
-	/*
 	int fd = open("docs/small.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd, 2); 
 	int word = 0; 
 	word = botPly(word, 6, data->I2W, data->wordSet); 
 	printf("Choice: %d", word);
-	*/
 }
 
+	*/
 void _FLWP(){
 
 	srand(time(0)); 
