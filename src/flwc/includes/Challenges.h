@@ -5,11 +5,6 @@
 #include "../../api/includes/FLWG-API.h"
 #include "../../api/includes/FLWC-API.h"
 
-struct EndWordParametersFLWC{
-	int comparatorId; 
-	char letter; 
-}; 
-
 struct StartWordParametersFLWC{
 	// This is the set of goal words 
 	struct WordSet* goalWords; 
@@ -32,9 +27,7 @@ struct StartWordParametersFLWC{
 	int maxAdjacencies; 	
 }; 
 
-
-struct WordSet* createWordSetGivenCondition(struct EndWordParametersFLWC wordParams, struct DataStructures* data);
-int doesWordContainLetter(char* word, char letter); 
+struct WordSet* convertCharPtrPtrToWordSet(char** words, struct DataStructures* data);
 int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data);
 // put a given word and all of its adjacencies (up to distance) into word set
 void getSetOfSurroundingWords(int id, int distance, struct WordSet* wordSet, struct DataStructures* data); 

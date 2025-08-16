@@ -182,9 +182,10 @@ void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataSt
 
 }
 
+
 struct GameComponentsFLWGP* initiateFLWGP(int numAdjacenciesStartWord,  char goalCharacter, int minGoalCharacterDistance, char avoidCharacter, int minAvoidCharacterDistance, struct DataStructures* dataStructures){
 
-	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesStartWord, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
+	struct GameComponentsFLWC* flwcComponents = NULL; //initFLWC(numAdjacenciesStartWord, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
 	struct GameComponents* flwpComponents = malloc(sizeof(struct GameComponents)); 
 	flwpComponents->start = flwcComponents->wordId; 
 	flwpComponents->goal = -1;  

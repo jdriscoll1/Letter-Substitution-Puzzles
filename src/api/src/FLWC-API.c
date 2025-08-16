@@ -8,46 +8,31 @@
 #include "../../flwp/includes/UserInput.h"
 #include "../../flwg/includes/FLWGGame.h"
 
-struct EndWordParametersFLWC getChallengeGoalParameters(int challengeId);
-struct EndWordParametersFLWC getChallengeAvoidParameters(int challengeId);
 
 // This creates the first word and returns a set of game components for the flwt
-struct GameComponentsFLWC* initFLWC(int numAdjacenciesToStartWord, char goalCharacter, int minGoalCharacterDistance, char avoidCharacter, int minAvoidCharacterDistance, struct DataStructures* data){
+struct GameComponentsFLWC* initFLWC(int numAdjacenciesToStartWord, char** avoidWords, char** goalWords, int minGoalDistance, int minAvoidDistance, struct DataStructures* dataStructures){
 
 
 	// Create the FLWC Components
 	struct GameComponentsFLWC* flwcComponents = malloc(sizeof(struct GameComponentsFLWC)); 
 
 	
-	// Create the parameters for the goal word 
-	struct EndWordParametersFLWC goalParams;
-        goalParams.comparatorId=0;
-        goalParams.letter = goalCharacter;
-
-
-    // Create teh parameters for the avoid words
-	struct EndWordParametersFLWC avoidParams;
-        avoidParams.comparatorId=0;
-        avoidParams.letter= avoidCharacter;
-	
-	
-	// Create the list of goal words 
-	flwcComponents->goalWords = createWordSetGivenCondition(goalParams, data); 
-	flwcComponents->avoidWords = createWordSetGivenCondition(avoidParams, data); 
+	flwcComponents->goalWords = convertCharPtrPtrToWordSet(goalWords, dataStructures); 
+	flwcComponents->avoidWords = convertCharPtrPtrToWordSet(avoidWords, dataStructures); 
 
 	struct StartWordParametersFLWC params = {
 	    .goalWords = flwcComponents->goalWords,
 	    .avoidWords = flwcComponents->avoidWords,
-	    .minGoalDistance = minGoalCharacterDistance,
+	    .minGoalDistance = minGoalDistance,
 	    .maxGoalDistance = 8,
-	    .minAvoidDistance = minAvoidCharacterDistance,
+	    .minAvoidDistance = minAvoidDistance,
 	    .maxAvoidDistance = 8,
 	    .minAdjacencies = numAdjacenciesToStartWord,
 	    .maxAdjacencies = 100,
 	};
-	flwcComponents->wordId = chooseStartWord_FLWCGeneral(params, flwcComponents, data);
-	reset_WordSet(data->wordSet); 
-	markUsed_WordSet(flwcComponents->wordId, data->wordSet); 
+	flwcComponents->wordId = chooseStartWord_FLWCGeneral(params, flwcComponents, dataStructures);
+	reset_WordSet(dataStructures->wordSet); 
+	markUsed_WordSet(flwcComponents->wordId, dataStructures->wordSet); 
 	return flwcComponents; 
 
 }
@@ -131,32 +116,6 @@ void freeGameComponentsFLWC(struct GameComponentsFLWC* flwcComponents){
 	free_WordSet(flwcComponents->goalWords); 
 	free(flwcComponents->solution); 
 	free(flwcComponents); 
-
-
-}
-
-struct EndWordParametersFLWC getChallengeGoalParameters(int challengeId){
-	struct EndWordParametersFLWC params; 
-	switch(challengeId){
-		case 0: 
-			params.comparatorId=0;
-			params.letter='e';
-			break; 
-	}
-	return params; 
-
-}
-
-
-struct EndWordParametersFLWC getChallengeAvoidParameters(int challengeId){
-	struct EndWordParametersFLWC params; 
-	switch(challengeId){
-		case 0: 
-			params.comparatorId=0;
-			params.letter='t';
-			break; 
-	}
-	return params; 
 
 
 }
