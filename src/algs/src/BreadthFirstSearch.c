@@ -225,9 +225,8 @@ struct arrayList* getPathToNearestWordInWordSet(int id, int maxDistance, struct 
 		prevDistance = parent->data->distance; 
 
 		// if distance is equal to current distance, add one to it 
-		if(prevDistance == currDistance){
-			currDistance += 1; 
-		}
+		currDistance = prevDistance + 1; 
+
 		int currId = parent->data->id; 
 
 
@@ -251,6 +250,7 @@ struct arrayList* getPathToNearestWordInWordSet(int id, int maxDistance, struct 
 			// if it's not already explored and it is not in the list of avoid words, it is permitted
 			if(checkIfUsed_WordSet(currConnId, exploredNodes) == 0 && checkIfUsed_WordSet(currConnId, avoidWords) == 0){
 				enqueue(currConnId, currDistance, parent, q); 	
+				markUsed_WordSet(currConnId, exploredNodes);
 			}
 		}	
 

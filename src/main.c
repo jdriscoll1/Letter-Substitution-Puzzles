@@ -58,12 +58,7 @@ int flwg();
 
 int main(){
 	
-	srand(time(0)); 
-	int numLetters = 4; 
-	int fd = open("docs/4.txt", O_RDONLY);
-	struct DataStructures* dataStructures = initDataStructures(fd, numLetters); 
-	char** allWords = getAllWords(dataStructures); 
-	printf("Word 0: %s", allWords[0]); 
+	flwc(); 
 	return 0; 
 }
 
@@ -100,7 +95,6 @@ int flwg(){
 
 
 
-/*
 int flwc(){
 	// Initialize Structures
 	srand(time(0)); 
@@ -111,13 +105,12 @@ int flwc(){
 	// FLWC Parameters
 	int numAdjacenciesToStartWord = 4; 
 	int botType = -1;
-	char goalCharacter = 'e';
-	int minGoalCharacterDistance = 1;
-	char avoidCharacter = ' ';
-	int minAvoidCharacterDistance = 0;
-
+	char *goalWords[] = {"ties", "pies", "lies", NULL};
+	char *avoidWords[] = {NULL}; 
 	// Initialize the Game
-	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesToStartWord, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
+	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesToStartWord, goalWords, avoidWords, 1, 2, dataStructures);
+	return 0; 
+	/*
 	if (!isStartValidFLWC(flwcComponents) == 0){
 		printf("First Failed"); 
 		return -1; 
@@ -138,9 +131,8 @@ int flwc(){
 	close(fd); 
 	freeDataStructures(dataStructures);	
 	return 0; 
+	*/ 
 }
-*/
-
 
 void _FLWGP(){
 	// initialize flwg ds
