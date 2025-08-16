@@ -10,7 +10,9 @@ struct WordSet* convertCharPtrPtrToWordSet(char** words, struct DataStructures* 
 	int i = 0; 
 	int wordId; 
 	while(words[i] != NULL){
+		
 		wordId = convertWordToInt(words[i], data);
+		printf("%d", wordId); 
 	 	markUsed_WordSet(wordId, wordSet); 	
 		i++; 
 	}
@@ -31,7 +33,7 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 			// It is within the minimum and maximum distance from any goal words
 			struct arrayList* pathToNearestWord = getPathToNearestWordInWordSet(i, p.maxGoalDistance,  p.goalWords, p.avoidWords, data);  
 			int distanceFromGoal = pathToNearestWord->currPrecision; 
-			if(distanceFromGoal > p.minGoalDistance && distanceFromGoal < p.maxGoalDistance){
+			if(distanceFromGoal >= p.minGoalDistance && distanceFromGoal <= p.maxGoalDistance){
 				add_ArrayList(&i, validWords, NUM); 
 			}
 			free_ArrayList(pathToNearestWord); 
