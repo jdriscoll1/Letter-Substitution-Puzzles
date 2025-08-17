@@ -108,7 +108,7 @@ int flwc(){
 	char *goalWords[] = {"ties", "pies", "lies", NULL};
 	char *avoidWords[] = {NULL}; 
 	// Initialize the Game
-	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesToStartWord, goalWords, avoidWords, 1, 2, dataStructures);
+	struct GameComponentsFLWC* flwcComponents = initFLWC(numAdjacenciesToStartWord, goalWords, avoidWords, 1, 2, 2, 3, dataStructures);
 	return 0; 
 	/*
 	if (!isStartValidFLWC(flwcComponents) == 0){
