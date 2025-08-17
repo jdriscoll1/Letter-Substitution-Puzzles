@@ -183,15 +183,15 @@ void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataSt
 }
 
 
-struct GameComponentsFLWGP* initiateFLWGP(int numAdjacenciesStartWord,  char goalCharacter, int minGoalCharacterDistance, char avoidCharacter, int minAvoidCharacterDistance, struct DataStructures* dataStructures){
+struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, struct DataStructures* dataStructures){
 
-	struct GameComponentsFLWC* flwcComponents = NULL; //initFLWC(numAdjacenciesStartWord, goalCharacter, minGoalCharacterDistance, avoidCharacter, minAvoidCharacterDistance, dataStructures);
+	struct GameComponentsFLWC* flwcComponents = initFLWC(minAdjacenciesToStart, maxAdjacenciesToStart, goalWords, avoidWords, minGoalDistance, minAvoidDistance, maxGoalDistance, maxAvoidDistance, dataStructures);
 	struct GameComponents* flwpComponents = malloc(sizeof(struct GameComponents)); 
 	flwpComponents->start = flwcComponents->wordId; 
 	flwpComponents->goal = -1;  
 	markUnused_WordSet(flwpComponents->start, dataStructures->wordSet); 
 	//Sets the minimum number of connection
-	flwpComponents->minConnections = minGoalCharacterDistance;
+	flwpComponents->minConnections = minGoalDistance;
 	//Sets the number of moves
 	flwpComponents->numMoves = 0;
 	//Instantiates the number of undo calls 
@@ -200,7 +200,7 @@ struct GameComponentsFLWGP* initiateFLWGP(int numAdjacenciesStartWord,  char goa
  	flwpComponents->hc = NULL; 
 	flwpComponents->prevInput = flwpComponents->start; 
 	//Initialize the arrayList 
-	flwpComponents->aList = init_ArrayList(dataStructures->I2W->numLetters * (minGoalCharacterDistance * 1.5), dataStructures->I2W->numLetters * (minGoalCharacterDistance), STR);
+	flwpComponents->aList = init_ArrayList(dataStructures->I2W->numLetters * (minGoalDistance * 1.5), dataStructures->I2W->numLetters * (minGoalDistance), STR);
 	//Instantiate the input storage 
 	flwpComponents->storage = malloc(sizeof(struct GenericLinkedListNode)); 
 	flwpComponents->storage->next = NULL; 
