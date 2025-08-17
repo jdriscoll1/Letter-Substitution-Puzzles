@@ -213,6 +213,10 @@ struct arrayList* getPathToNearestWordInWordSet(int id, int maxDistance, struct 
 	if(checkIfUsed_WordSet(id, avoidWords) == 0){
 		enqueue(id, currDistance, NULL,  q); 	
 	}
+	// If the current word meets the requirements, the distance is 0 
+	if(checkIfUsed_WordSet(id, goalWords) == 1 || checkIfUsed_WordSet(id, goalWords)){
+		return pathToNearestWord; 
+	}
 
 	int minNumConnectionsFromGoal = -1; 
 
@@ -231,7 +235,7 @@ struct arrayList* getPathToNearestWordInWordSet(int id, int maxDistance, struct 
 
 
 		// Check if the current word is one of the goal words, or if the max distance has been reached
-		if(checkIfUsed_WordSet(currId, goalWords) || currDistance == maxDistance){
+		if(checkIfUsed_WordSet(currId, goalWords) || currDistance > maxDistance){
 			free_ArrayList(pathToNearestWord); 
 			pathToNearestWord = getPathToHeader_Queue(parent); 	
 			break; 
