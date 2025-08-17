@@ -141,6 +141,7 @@ int flwc(){
 }
 
 void _FLWGP(){
+	/*
 	// initialize flwg ds
 	int numLetters = 4; 
 	int fd = open("docs/4.txt", O_RDONLY);
@@ -174,6 +175,7 @@ void _FLWGP(){
 	 printf("Is Won: %d", isWon); 
 
 	freeGameComponentsFLWGP(flwgp, data); 
+	*/
 
 
 
@@ -278,6 +280,7 @@ int __FLWC(){
 	*/
 void _FLWP(){
 
+	/*
 	srand(time(0)); 
 	int numLetters = 4; 
 	int fd = open("docs/4.txt", O_RDONLY);
@@ -324,6 +327,7 @@ void _FLWP(){
 
 	close(fd); 
 	freeDataStructures(dataStructures);	
+	*/
 
 }
 
