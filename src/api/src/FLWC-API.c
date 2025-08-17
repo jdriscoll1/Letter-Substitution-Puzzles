@@ -10,7 +10,7 @@
 
 
 // This creates the first word and returns a set of game components for the flwt
-struct GameComponentsFLWC* initFLWC(int numAdjacenciesToStartWord, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, struct DataStructures* dataStructures){
+struct GameComponentsFLWC* initFLWC(int numAdjacenciesToStartWord, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, struct DataStructures* dataStructures){
 
 
 	// Create the FLWC Components
@@ -24,9 +24,9 @@ struct GameComponentsFLWC* initFLWC(int numAdjacenciesToStartWord, char** goalWo
 	    .goalWords = flwcComponents->goalWords,
 	    .avoidWords = flwcComponents->avoidWords,
 	    .minGoalDistance = minGoalDistance,
-	    .maxGoalDistance = 3,
+	    .maxGoalDistance = maxGoalDistance,
 	    .minAvoidDistance = minAvoidDistance,
-	    .maxAvoidDistance = 2,
+	    .maxAvoidDistance = maxAvoidDistance,
 	    .minAdjacencies = numAdjacenciesToStartWord,
 	    .maxAdjacencies = 100,
 	};
