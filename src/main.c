@@ -30,6 +30,7 @@ Purpose: The four letter pathfinder, this time better
 
 
 #include "./flwp/includes/PathfinderGame.h"
+#include "./flwp/includes/BreadthFirstSearch_FLWP.h"
 #include "./flwp/includes/GameFunctions.h"
 #include "./flwp/includes/UserInput.h"
 
@@ -55,13 +56,13 @@ void _FLWGP();
 // flwc skeletal code, no game logic
 int flwc();
 int flwg();
+void flwp();
 
 int main(){
 	
-	flwc(); 
-	return 0; 
-}
+	flwp(); 
 
+}
 int flwg(){
 
 	// Initialize Structures
@@ -94,6 +95,32 @@ int flwg(){
 }
 
 
+void flwp(){
+	// Set the Game Data
+	srand(time(0)); 
+	int numLetters = 4; 
+	int fd = open("docs/4.txt", O_RDONLY);
+	struct DataStructures* data = initDataStructures(fd, numLetters); 
+
+	// Set the FLWP Parameters
+	int minAdjToStart = 4; 
+	int maxAdjToStart = 16; 
+	int minDistance = 4; 
+	int maxDistance = 8; 
+	int minAdjToGoal = 4; 
+	int maxAdjToGoal = 16; 
+	struct GameComponents* gc = initiateFLWP(minAdjToStart, maxAdjToStart, minDistance, maxDistance, minAdjToGoal, maxAdjToGoal, data); 
+	printf("%s: %d\n", Convert_IntToWord(gc->start, data->I2W), getNumAdjacencies(gc->start, data));
+	printf("%s: %d\n", Convert_IntToWord(gc->goal, data->I2W), getNumAdjacencies(gc->goal, data));
+	printf("Solution: \n");
+	PrintStrings_IntLL(gc->solution, data->I2W); 
+	freeGameComponentsFLWP(gc, data); 
+	close(fd); 
+	freeDataStructures(data);	
+	
+}
+
+
 
 int flwc(){
 	// Initialize Structures
@@ -110,11 +137,13 @@ int flwc(){
 	int maxGoalDistance = 4; 
 	int minAvoidDistance = 4; 
 	int maxAvoidDistance = 16; 
+	int minGoalAdjacencies = 0; 
+	int maxGoalAdjacencies = 0; 
 	int botType = -1;
 	char *goalWords[] = {"ties", "pies", "lies", NULL};
 	char *avoidWords[] = {NULL}; 
 	// Initialize the Game
-	struct GameComponentsFLWC* flwcComponents = initFLWC(minAdjacenciesToStart, maxAdjacenciesToStart,  goalWords, avoidWords, 1, 2, 2, 3, dataStructures);
+	struct GameComponentsFLWC* flwcComponents = initFLWC(minAdjacenciesToStart, maxAdjacenciesToStart,  goalWords, avoidWords, 1, 2, 2, 3, minGoalAdjacencies, maxGoalAdjacencies, dataStructures);
 	return 0; 
 	/*
 	if (!isStartValidFLWC(flwcComponents) == 0){

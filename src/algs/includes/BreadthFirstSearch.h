@@ -72,6 +72,6 @@ struct TreeStorageNode* AddToTreeStorage_Dist_BFS(struct BFSComponents *bc, int 
 @return --> Returns the current last node in the tree storage node linked list */
 struct TreeStorageNode* AddToTreeStorage_BFS(struct BFSComponents *bc, int minConnections, struct arrayList *options, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet); 
 
-struct arrayList* getPathToNearestWordInWordSet(int id, int maxDistance, struct WordSet* goalWords, struct WordSet* avoidWords, struct DataStructures* data);
+struct arrayList* getPathToNearestWordInWordSet(int id, int minGoalAdjacencies, int maxGoalAdjacencies, int maxDistance, struct WordSet* goalWords, struct WordSet* avoidWords, struct DataStructures* data);
 
 #endif

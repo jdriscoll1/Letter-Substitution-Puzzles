@@ -14,6 +14,7 @@ Purpose: A library to encapsulate & organize the code into an API
 #include "../includes/FLWG-API.h"
 #include "../../flwp/includes/GameFunctions.h"
 #include "../../flwp/includes/UserInput.h"
+#include "../../flwp/includes/BreadthFirstSearch_FLWP.h"
 #include "../../flwg/includes/FLWGGame.h"
 #include "../../flwc/includes/FLWC.h"
 
@@ -116,9 +117,9 @@ void resetWordSet(struct DataStructures* data){
 }
 
 
-struct GameComponents* initiateFLWP(int minConnections, struct DataStructures* dataStructures, int numAdjacenciesStartWord){
+struct GameComponents* initiateFLWP(int minAdjacenciesToStart, int maxAdjacenciesToStart, int minDistance, int maxDistance, int minAdjacenciesToGoal, int maxAdjacenciesToGoal, struct DataStructures* data){
 
-	return InitializeGameComponents(dataStructures->I2W, minConnections, dataStructures->wordSet, numAdjacenciesStartWord);
+	return InitializeGameComponents(minAdjacenciesToStart, maxAdjacenciesToStart, minDistance, maxDistance, minAdjacenciesToGoal, maxAdjacenciesToGoal, data);
 }
 
 void ResetFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures){
@@ -183,9 +184,9 @@ void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataSt
 }
 
 
-struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, struct DataStructures* dataStructures){
+struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, int minGoalAdjacencies, int maxGoalAdjacencies, struct DataStructures* dataStructures){
 
-	struct GameComponentsFLWC* flwcComponents = initFLWC(minAdjacenciesToStart, maxAdjacenciesToStart, goalWords, avoidWords, minGoalDistance, minAvoidDistance, maxGoalDistance, maxAvoidDistance, dataStructures);
+	struct GameComponentsFLWC* flwcComponents = initFLWC(minAdjacenciesToStart, maxAdjacenciesToStart, goalWords, avoidWords, minGoalDistance, minAvoidDistance, maxGoalDistance, maxAvoidDistance, minGoalAdjacencies, maxGoalAdjacencies, dataStructures);
 	struct GameComponents* flwpComponents = malloc(sizeof(struct GameComponents)); 
 	flwpComponents->start = flwcComponents->wordId; 
 	flwpComponents->goal = -1;  

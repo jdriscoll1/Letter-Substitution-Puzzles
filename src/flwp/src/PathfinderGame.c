@@ -7,6 +7,7 @@
 #include "../includes/UserInput.h"
 
 //This will initialize the pathfinder game
+/*
 struct PathfinderGame* init_PathfinderGame(){
 	struct PathfinderGame* pc = malloc(sizeof(struct PathfinderGame)); 
 	pc->currRound = 2; 
@@ -129,6 +130,7 @@ int finalScore(struct PathfinderGame* pc){
 	
 	return score; 
 }
+*/
 //Advance
 //Replay
 //Backwards

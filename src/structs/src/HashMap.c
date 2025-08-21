@@ -13,6 +13,12 @@
 
 typedef enum {false, true} bool;
 
+
+int getNumAdjacencies(int id, struct DataStructures* data){
+
+	return data->I2W->array[id]->numConnections; 
+}
+
 void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, int fd, int numLetters){
 	//Open up the file 
 	FILE* wordDoc = fdopen(fd, "r"); 

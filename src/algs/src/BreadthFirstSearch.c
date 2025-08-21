@@ -193,7 +193,7 @@ int BreadthFirstSearch_Distance_Goal(int start, int minConnections, struct wordD
 
 
 
-struct arrayList* getPathToNearestWordInWordSet(int id, int maxDistance, struct WordSet* goalWords, struct WordSet* avoidWords, struct DataStructures* data){
+struct arrayList* getPathToNearestWordInWordSet(int id, int minGoalAdjacencies, int maxGoalAdjacencies, int maxDistance, struct WordSet* goalWords, struct WordSet* avoidWords, struct DataStructures* data){
 
 	// initalize the Queue 
 	struct Queue* q = init_Queue(); 		
@@ -233,9 +233,10 @@ struct arrayList* getPathToNearestWordInWordSet(int id, int maxDistance, struct 
 
 		int currId = parent->data->id; 
 
-
+		int adj = getNumAdjacencies(currId, data);
+		
 		// Check if the current word is one of the goal words, or if the max distance has been reached
-		if(checkIfUsed_WordSet(currId, goalWords) || currDistance > maxDistance){
+		if(adj >= minGoalAdjacencies && adj <= maxGoalAdjacencies && checkIfUsed_WordSet(currId, goalWords) || currDistance > maxDistance){
 			free_ArrayList(pathToNearestWord); 
 			pathToNearestWord = getPathToHeader_Queue(parent); 	
 			break; 

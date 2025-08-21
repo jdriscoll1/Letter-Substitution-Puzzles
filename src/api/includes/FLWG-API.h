@@ -57,7 +57,7 @@ void freeGameComponentsFLWG(struct GameData* gameData);
 int isStartValidFLWG(struct GameData* gameData);
 
 // flwp behavior
-struct GameComponents* initiateFLWP(int minConnections, struct DataStructures* dataStructures, int numAdjacenciesStartWord);
+struct GameComponents* initiateFLWP(int minAdjacenciesToStart, int maxAdjacenciesToStart, int minDistance, int maxDistance, int minAdjacenciesToGoal, int maxAdjacenciesToGoal, struct DataStructures* data);
 void ResetFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures); 
 int userEntersWord_FLWP(char* userInput, struct GameComponents *gameComponents, struct DataStructures* dataStructures); 
 void removeWord_FLWP(char* word, struct GameComponents *gameComponents, struct DataStructures* dataStructures);
@@ -71,7 +71,7 @@ struct arrayList *getCurrentWordsFLWP(struct GameComponents *gameComponents);
 void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures);
 
 // flwp-generalized additional functionality 
-struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, struct DataStructures* dataStructures);
+struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, int minGoalAdjacencies, int maxGoalAdjacencies, struct DataStructures* dataStructures);
 struct GameComponents* getFLWPComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents);
 struct GameComponentsFLWC* getFLWCComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents); 
 void freeGameComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures); 

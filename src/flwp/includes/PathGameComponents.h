@@ -32,6 +32,8 @@ struct  GameComponents{
 	int prevInput; 
 	//Now we need an array list which is a string
 	struct arrayList* aList; 
+	// This is the FLWP Solution
+	struct intList* solution; 
 	
 
 };
@@ -41,7 +43,7 @@ struct  GameComponents{
 @param HashMap --> The HashMap that stores all word's connections
 @param minConnections --> The minimum number of connections needed to connect
 @return --> Returns all of the Initalized Game Components, including the Start & Goal Word*/
-struct GameComponents *InitializeGameComponents(struct wordDataArray* IntToWord_HashMap, int minConnections, struct WordSet *wordSet, int numAdjacenciesStartWord);
+struct GameComponents* InitializeGameComponents(int minAdjacenciesToStart, int maxAdjacenciesToStart, int minDistance, int maxDistance, int minAdjacenciesToGoal, int maxAdjacenciesToGoal, struct DataStructures* data);
 
 /*This resets the Game Components so if the user decides to redo the round, they can*/
 void ResetGameComponents(struct GameComponents *gc, struct wordDataArray* IntToWord_HashMap);

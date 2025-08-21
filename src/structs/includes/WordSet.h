@@ -15,6 +15,7 @@ struct WordSet{
 	unsigned long* words; 
 	//the total number of words
 	int totalWords; 
+	int arrLength; 
 };
 
 /*Allocates the structure and creates all of the necessary longs*/

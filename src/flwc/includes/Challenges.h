@@ -25,6 +25,8 @@ struct StartWordParametersFLWC{
 	int minAdjacencies; 
 	// If it has too many connections it may be too easy 
 	int maxAdjacencies; 	
+	int minGoalAdjacencies; 	
+	int maxGoalAdjacencies; 	
 }; 
 
 struct WordSet* convertCharPtrPtrToWordSet(char** words, struct DataStructures* data);
