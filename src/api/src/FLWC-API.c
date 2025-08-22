@@ -10,7 +10,7 @@
 
 
 // This creates the first word and returns a set of game components for the flwt
-struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, struct DataStructures* dataStructures){
+struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, int minGoalAdjacencies, int maxGoalAdjacencies, struct DataStructures* dataStructures){
 
 
 	// Create the FLWC Components
@@ -20,17 +20,6 @@ struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacencie
 	flwcComponents->goalWords = convertCharPtrPtrToWordSet(goalWords, dataStructures); 
 	flwcComponents->avoidWords = convertCharPtrPtrToWordSet(avoidWords, dataStructures); 
 
-	/*
-	struct WordSet* goalTemps = init_WordSet(dataStructures->I2W->numWords);
-	for(int j = 0; j < dataStructures->I2W->numWords; j++){
-		if(strchr(dataStructures->I2W->array[j]->word, 'e')){
-			
-			markUsed_WordSet(j, goalTemps);
-		}
-
-	}
-	flwcComponents->goalWords=goalTemps; 
-	*/
 	struct StartWordParametersFLWC params = {
 	    .goalWords = flwcComponents->goalWords,
 	    .avoidWords = flwcComponents->avoidWords,
@@ -42,6 +31,8 @@ struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacencie
 	    .maxAvoidDistance = maxAvoidDistance + 1,
 	    .minAdjacencies = minAdjacenciesToStart,
 	    .maxAdjacencies = maxAdjacenciesToStart,
+	    .minGoalAdjacencies = minGoalAdjacencies,
+	    .maxGoalAdjacencies = maxGoalAdjacencies,
 	};
 	flwcComponents->wordId = chooseStartWord_FLWCGeneral(params, flwcComponents, dataStructures);
 	reset_WordSet(dataStructures->wordSet); 

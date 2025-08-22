@@ -20,14 +20,7 @@ struct WordSet* convertCharPtrPtrToWordSet(char** words, struct DataStructures* 
 }
 
 int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
-	/* CODE TO TEST OUT A SPECIFIC WORD
-	int id1 = Convert_WordToInt("wart", data); 
-	struct arrayList* pathToNearestWord = getPathToNearestWordInWordSet(id1, 1,  p.goalWords, p.avoidWords, data);  
 	
-	printf("%s\nDistance: %ld\n", idArrayListToString(pathToNearestWord, data), pathToNearestWord->currPrecision); 
-
-	return 0; 
-	*/ 
 	// The array of valid words
 	struct arrayList* validWords = init_ArrayList(20, 10, NUM); 	
 	
@@ -35,11 +28,10 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 	for(int i = 0; i < data->I2W->numWords; i++){
 		int numConnections = data->I2W->array[i]->numConnections; 
 
-		
 		// if it has between the minimum and maximum number of connections 
 		if(numConnections >= p.minAdjacencies && numConnections <= p.maxAdjacencies){
 			// It is within the minimum and maximum distance from any goal words
-			struct arrayList* pathToNearestWord = getPathToNearestWordInWordSet(i, p.maxGoalDistance,  p.goalWords, p.avoidWords, data);  
+			struct arrayList* pathToNearestWord = getPathToNearestWordInWordSet(i, p.minGoalAdjacencies, p.maxGoalAdjacencies,  p.maxGoalDistance,  p.goalWords, p.avoidWords, data);  
 			int distanceFromGoal = pathToNearestWord->currPrecision; 
 			if(distanceFromGoal >= p.minGoalDistance && distanceFromGoal <= p.maxGoalDistance){
 				add_ArrayList(&i, validWords, NUM); 
@@ -60,7 +52,7 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 	free_ArrayList(validWords); 
 	
 	
-	struct arrayList* solutionArray = getPathToNearestWordInWordSet(startWordId, p.maxGoalDistance,  p.goalWords, p.avoidWords, data);  
+	struct arrayList* solutionArray = getPathToNearestWordInWordSet(startWordId, p.minGoalAdjacencies, p.maxGoalAdjacencies, p.maxGoalDistance,  p.goalWords, p.avoidWords, data);  
 	flwcComponents->solution = idArrayListToString(solutionArray, data); 
 	free_ArrayList(solutionArray); 
 	

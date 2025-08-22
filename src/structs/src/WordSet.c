@@ -8,94 +8,85 @@ Desc: A Hash Set for all words to determine if they are used*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <limits.h>
 
 #include "../includes/WordSet.h"
 
-#define NUM_BYTES 8
+struct WordSet* init_WordSet(int totalWords) {
+    int bitsPerBlock = sizeof(unsigned long) * CHAR_BIT;
+    int arrLength = (totalWords + bitsPerBlock - 1) / bitsPerBlock;  // ceil division
 
-/*Allocates the structure and creates all of the necessary longs*/
-struct WordSet* init_WordSet(int totalWords){
-	//the total number of word blocks
-	int arrLength = ceil((double)totalWords / (double)(sizeof(unsigned long) * NUM_BYTES));
+    struct WordSet *wordSet = calloc(1, sizeof(struct WordSet)); // zero entire struct
+    if (!wordSet) return NULL;
 
-	//the hash set that contains whether all words have been, or have not been used 
-	struct WordSet *wordSet = malloc(sizeof(struct WordSet));
-	wordSet->words = calloc(arrLength, sizeof(unsigned long)); 
-	int i; 
-	for(i = 0; i < arrLength; i++){
-		//setting all the words to be unused
-		wordSet->words[i] = 0; 
-	}
-	wordSet->totalWords = totalWords; 
-	return wordSet; 
-	
+    wordSet->words = calloc(arrLength, sizeof(unsigned long));  // zero array
+    if (!wordSet->words) {
+        free(wordSet);
+        return NULL;
+    }
+
+    wordSet->totalWords = totalWords;
+    wordSet->arrLength = arrLength;
+
+    return wordSet;
 }
 
 /*Function that marks a word as used or unused
 @param wordID --> The word that is being marked used or unused
 @param isUsed --> 1 - the word was just seen 0 - the word is being marked as unseen*/
-void markUsed_WordSet(int wordID, struct WordSet *wordSet){
-	int numBytes = sizeof(unsigned long) * NUM_BYTES;
-	//First get the block that the word is in 
-	int block = (int)(wordID / numBytes);
-	int byte = wordID % numBytes;
-	//Then, from that block set the particular byte to either 0 or 1, or set it to isUsed
-	//Places the 1 all the way on the right
-	unsigned long temp = 1; 
-	//Shifts that 1 to 64 - bytes. If it was 0, it would be all hte way on the left, so this has to get pushed to the left
-	
-	//it has to be -1 because otherwise it will not be 0-index, it will be 1-index
-	temp <<= (numBytes - byte - 1); 
+void markUsed_WordSet(int wordID, struct WordSet *wordSet) {
+    int bitsPerBlock = sizeof(unsigned long) * CHAR_BIT;
 
-	//Then it does a bitwise OR on the two operators, and the word that was used should be set to TRUE 
-	wordSet->words[block] |= temp; 
-	
+    if (wordID < 0 || wordID >= wordSet->totalWords) {
+        fprintf(stderr, "markUsed_WordSet: wordID %d out of bounds (total=%d)\n",
+                wordID, wordSet->totalWords);
+        return;
+    }
 
+    int block = wordID / bitsPerBlock;
+    int bit   = wordID % bitsPerBlock;
+
+    if (block >= wordSet->arrLength) return; // extra safety
+
+    unsigned long mask = 1UL << bit;
+    wordSet->words[block] |= mask; // mark as used
 }
 
-/*Function that marks a word as used or unused
-@param wordID --> The word that is being marked used or unused
-@param isUsed --> 1 - the word was just seen 0 - the word is being marked as unseen*/
-void markUnused_WordSet(int wordID, struct WordSet *wordSet){
-	int numBytes = sizeof(unsigned long) * NUM_BYTES;
-	//First get the block that the word is in 
-	int block = (int)(wordID / numBytes);
-	//the index at which the byte is at
-	int byte = wordID % numBytes;
-	//Then, from that block set the particular byte to either 0 or 1, or set it to isUsed
-	//Places the 1 all the way on the right
-	unsigned long temp = 1; 
-	//Shifts that 1 to 64 - bytes. If it was 0, it would be all hte way on the left, so this has to get pushed to the left
-	
-	//it has to be -1 because otherwise it will not be 0-index, it will be 1-index
-	temp <<= (numBytes - byte - 1); 
 
-	//Then it does a bitwise OR on the two operators, and the word that was used should be set to TRUE 
-	wordSet->words[block] &= ~temp; 
-	
-	
+void markUnused_WordSet(int wordID, struct WordSet *wordSet) {
+    int bitsPerBlock = sizeof(unsigned long) * CHAR_BIT;
+
+    if (wordID < 0 || wordID >= wordSet->totalWords) {
+        fprintf(stderr, "markUnused_WordSet: wordID %d out of bounds (total=%d)\n",
+                wordID, wordSet->totalWords);
+        return;
+    }
+
+    int block = wordID / bitsPerBlock;
+    int bit   = wordID % bitsPerBlock;
+
+    if (block >= wordSet->arrLength) return; // extra safety
+
+    unsigned long mask = 1UL << bit;
+    wordSet->words[block] &= ~mask; // mark as unused
 }
 
-/*Outputs if a word has been used*/
-long unsigned int checkIfUsed_WordSet(int wordID, struct WordSet *wordSet){
-	int numBytes = sizeof(unsigned long) * NUM_BYTES;
-	//First get the block that the word is in 
-	int block = (int)(wordID / numBytes);
-	//the index at which the byte is at
-	int byte = wordID % numBytes;
-	//Then, from that block set the particular byte to either 0 or 1, or set it to isUsed
-	//Places the 1 all the way on the right
-	unsigned long temp = 1; 
-	//Shifts that 1 to 64 - bytes. If it was 0, it would be all hte way on the left, so this has to get pushed to the left
-	
-	//it has to be -1 because otherwise it will not be 0-index, it will be 1-index
-	temp <<= (numBytes - byte - 1);
+unsigned long checkIfUsed_WordSet(int wordID, struct WordSet *wordSet) {
+    int bitsPerBlock = sizeof(unsigned long) * CHAR_BIT;
 
-	//This returns whether or not the and results in true. 
-	//If the index at which the byte was moved is True: True
-	//If the index at which the byte was moved is False: False
-	return wordSet->words[block] & temp; 
-	
+    if (wordID < 0 || wordID >= wordSet->totalWords) {
+        fprintf(stderr, "checkIfUsed_WordSet: wordID %d out of bounds (total=%d)\n",
+                wordID, wordSet->totalWords);
+        return 0;
+    }
+
+    int block = wordID / bitsPerBlock;
+    int bit   = wordID % bitsPerBlock;
+
+    if (block >= wordSet->arrLength) return 0; // extra safety
+
+    unsigned long mask = 1UL << bit;
+    return (wordSet->words[block] & mask) != 0;
 }
 
 int ceil_div(int x, int y) {
@@ -103,16 +94,19 @@ int ceil_div(int x, int y) {
 }
 
 /*Go through all the words and mark them unused*/
-void reset_WordSet(struct WordSet* wordSet){
-	for(unsigned int i = 0; i < (unsigned int)ceil_div(wordSet->totalWords, (sizeof(unsigned long) * NUM_BYTES)); i++){
-		wordSet->words[i] = 0;
-	}
-		
+void reset_WordSet(struct WordSet* wordSet) {
+    if (!wordSet || !wordSet->words) return;
+
+    for (int i = 0; i < wordSet->arrLength; i++) {
+        wordSet->words[i] = 0; // mark all bits as unused
+    }
 }
+
+
 void print_WordSet(struct WordSet* wordSet){
 	printf("WordSet:\n");
 	unsigned int i; 
-	for(i = 0; i < wordSet->totalWords / (sizeof(unsigned long) * NUM_BYTES); i++){
+	for(i = 0; i < wordSet->totalWords / (sizeof(unsigned long) * CHAR_BIT); i++){
 		printf("%ld\n", wordSet->words[i]);
 	}
 	

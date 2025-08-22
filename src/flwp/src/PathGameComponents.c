@@ -6,34 +6,28 @@
 #include "../includes/GameFunctions.h"
 #include "../includes/PathGameComponents.h"
 #include "../includes/UserInput.h"
+#include "../includes/BreadthFirstSearch_FLWP.h"
 
 #include "../../structs/includes/GenericLinkedListNode.h"
 
 
-struct GameComponents *InitializeGameComponents(struct wordDataArray* IntToWord_HashMap, int minConnections, struct WordSet *wordSet, int numAdjacenciesStartWord){
-		//Instantiate the Structure
-	struct GameComponents* gameComponents = malloc(sizeof(struct GameComponents)); 
-	do{
-		//This chooses the start word
-		gameComponents->start = ChooseStart(IntToWord_HashMap, numAdjacenciesStartWord);
-		//Finds the goal word 
-		gameComponents->goal = BreadthFirstSearch_Distance_Goal(gameComponents->start, minConnections, IntToWord_HashMap, wordSet); 
-	}while(gameComponents->goal == -1); 
+struct GameComponents *InitializeGameComponents(int minAdjacenciesToStart, int maxAdjacenciesToStart, int minDistance, int maxDistance, int minAdjacenciesToGoal, int maxAdjacenciesToGoal, struct DataStructures* data){
+	//Instantiate the Structure
+	struct GameComponents* gameComponents = findFLWPStartAndGoal(minAdjacenciesToStart, maxAdjacenciesToStart, minDistance, maxDistance, minAdjacenciesToGoal, maxAdjacenciesToGoal, data); 
 	
 	//Sets the minimum number of connection
-	gameComponents->minConnections = minConnections; 
 	//Sets the number of moves
 	gameComponents->numMoves = 0;
 	//Instantiates the number of undo calls 
 	gameComponents->undoCalls = 0; 
  	//Instantiates the number of hint points
  	gameComponents->hc = init_HintComponents(); 
- 	setHintFound(gameComponents->start, IntToWord_HashMap); 
+ 	setHintFound(gameComponents->start, data->I2W); 
 
 	gameComponents->prevInput = gameComponents->start; 
 	
 	//Initialize the arrayList 
-	gameComponents->aList = init_ArrayList(IntToWord_HashMap->numLetters * (minConnections * 1.5), IntToWord_HashMap->numLetters * (minConnections), STR); 
+	gameComponents->aList = init_ArrayList(data->I2W->numLetters * (gameComponents->minConnections * 1.5), data->I2W->numLetters * (gameComponents->minConnections), STR); 
 	
 	//Instantiate the input storage 
 	gameComponents->storage = malloc(sizeof(struct GenericLinkedListNode)); 
@@ -51,7 +45,7 @@ struct GameComponents *InitializeGameComponents(struct wordDataArray* IntToWord_
 	//Insert the word into the back of the word linked list
 	AddToBack_IntLL(gameComponents->start, gameComponents->userConnections); 
  
- 	addString_ArrayList(Convert_IntToWord(gameComponents->start, IntToWord_HashMap), IntToWord_HashMap->numLetters, gameComponents->aList); 
+ 	addString_ArrayList(Convert_IntToWord(gameComponents->start, data->I2W), data->I2W->numLetters, gameComponents->aList); 
  	 
 	//Allocates space at the beginning of the generic linked list node
 	AddToFront_GenericLinkedListNode(gameComponents->storage, INT_LL); 
@@ -230,6 +224,9 @@ void FreeGameComponents(struct GameComponents *gc, struct wordDataArray* IntToWo
  	//Only want to free the goal, because the start is in the array of all the words
 	Free_GenericLinkedList(gc->storageHeader); 
 	free_ArrayList(gc->aList); 
+	if(gc->solution != NULL){
+		Free_IntLL(gc->solution); 
+	}
 	free(gc);  
 
 }

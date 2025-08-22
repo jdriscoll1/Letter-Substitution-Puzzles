@@ -43,6 +43,7 @@ struct wordDataArray{
 	
 };
 
+int getNumAdjacencies(int id, struct DataStructures* data); 
 void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, int fd, int numLetters);
 
 void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, char* path, int numLetters); 
