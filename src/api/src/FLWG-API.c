@@ -278,7 +278,7 @@ void redoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStruc
 	Redo_Struct(flwgpComponents->flwpComponents, dataStructures->I2W);
 	flwgpComponents->flwcComponents->wordId = getPrevWordFLWP(flwgpComponents->flwpComponents); 
 }
-int isStartValidFLWGP(struct GameComponentsFLWGP *flwgpComponents){
+int isStartValid_FLWGP(struct GameComponentsFLWGP *flwgpComponents){
 
 	return isStartValidFLWC(flwgpComponents->flwcComponents);
 }
