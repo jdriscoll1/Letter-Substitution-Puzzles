@@ -227,7 +227,7 @@ void _FLWT(){
 	int numLetters = 4; 
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd, numLetters); 
-	struct GameComponentsFLWT* flwt = initFLWT(20, 20, data); 
+	struct GameComponentsFLWT* flwt = initFLWT(4, 15, 20, data); 
 	char* start = getStartWordFLWT(flwt, data); 
 	printf("Start Word: %s", start);
 	int hint = directAdjacencyHint(flwt->startWordId, data); 

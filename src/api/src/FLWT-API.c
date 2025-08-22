@@ -7,17 +7,21 @@
 
 
 // This creates the first word and returns a set of game components for the flwt
-struct GameComponentsFLWT* initFLWT(int minAdjacencies, int maxAdjacencies, struct DataStructures* data){
+struct GameComponentsFLWT* initFLWT(int numTurns, int minAdjacencies, int maxAdjacencies, struct DataStructures* data){
 
 	struct GameComponentsFLWT* flwtComponents = malloc(sizeof(struct GameComponentsFLWT)); 
 	flwtComponents->numAdjacenciesFound = 0; 
-	flwtComponents->minAdjacenciesUserNeedsToFind = minAdjacencies; 
+	flwtComponents->minAdjacenciesUserNeedsToFind = numTurns; 
 	flwtComponents->maxAdjacenciesThatCanBeFound = maxAdjacencies; 
 	flwtComponents->prevWords = init_ArrayList(minAdjacencies, 5, STR); 
-	flwtComponents->startWordId = getWordWithNumberOfConnections(maxAdjacencies, data->I2W);
+	flwtComponents->startWordId = getWordWithNumberOfConnections(minAdjacencies, maxAdjacencies, data);
 	reset_WordSet(data->wordSet); 
 	markUsed_WordSet(flwtComponents->startWordId, data->wordSet); 
 	return flwtComponents; 
+
+}
+int isStartValidFLWT(struct GameComponentsFLWT* flwtComponents){
+	return flwtComponents->startWordId != -1; 
 
 }
 

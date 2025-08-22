@@ -35,28 +35,19 @@ int GetMinConnections(enum Difficulty difficulty){
 	
 }
 
-int getWordWithNumberOfConnections(int numConnections, struct wordDataArray* IntToWord_HashMap){
-	int minId = -1; 
-	int maxId = -1; 
-	for(int i = 0; i < IntToWord_HashMap->numWords; i++){
-		int currNumConnections = IntToWord_HashMap->array[i]->numConnections; 
-	
-		// if the number of  is equal to the numConnections that are desired 		
-		if(currNumConnections == numConnections){
-			if (minId == -1){
-				minId = i; 	
-			}
+int getWordWithNumberOfConnections(int minConnections, int maxConnections, struct DataStructures* data){
+	int wordsWithinRange[data->I2W->numWords]; 
+	int numWordsWithinRange = 0; 
+	for(int i  = 0; i < data->I2W->numWords; i++){
+		int adj = getNumAdjacencies(i, data); 
+		if(adj >= minConnections && adj <= maxConnections){
+			wordsWithinRange[numWordsWithinRange++]	= i; 
 		}
-		if(currNumConnections < numConnections){
-			if (maxId == -1){
-				maxId = i; 
-			}
-
-		}
-	}	
-
-	return (rand() % (maxId - minId)) + minId; 
-
+	}
+	if(numWordsWithinRange == 0){
+		return -1; 
+	}
+	return wordsWithinRange[rand() % numWordsWithinRange]; 
 
 }
 
