@@ -61,6 +61,7 @@ struct GameComponents* initiateFLWP(int minAdjacenciesToStart, int maxAdjacencie
 void ResetFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures); 
 int userEntersWord_FLWP(char* userInput, struct GameComponents *gameComponents, struct DataStructures* dataStructures); 
 void removeWord_FLWP(char* word, struct GameComponents *gameComponents, struct DataStructures* dataStructures);
+int isStartValid_FLWP(struct GameComponents *gameComponents); 
 char* getStartWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
 char* getGoalWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
 int getPrevWordFLWP(struct GameComponents* gameComponents);
@@ -78,9 +79,12 @@ void freeGameComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct
 int userEntersWord_FLWGP(char* userInput, struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures); 
 void undoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStructures* dataStructures);
 void redoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStructures* dataStructures);
+int isStartValid_FLWGP(struct GameComponentsFLWGP* flwgpComponents); 
+
 // Test Functionality  
 char* convertIntToWord(int wordId, struct DataStructures* dataStructures); 
 int convertWordToInt(char* word, struct DataStructures* dataStructures); 
+
 
 
 #endif 

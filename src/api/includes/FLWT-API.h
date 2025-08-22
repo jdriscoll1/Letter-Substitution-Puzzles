@@ -23,7 +23,10 @@ struct GameComponentsFLWT{
 
 
 // This creates the first word and returns a set of game components for the flwt
-struct GameComponentsFLWT* initFLWT(int minAdjacencies, int maxAdjacencies, struct DataStructures* data);
+struct GameComponentsFLWT* initFLWT(int numTurns, int minAdjacencies, int maxAdjacencies, struct DataStructures* data);
+
+// Is the word oufn in FLWC valid? 
+int isStartValidFLWT(struct GameComponentsFLWT* flwtComponents);
 
 // Choose a word
 char* getStartWordFLWT(struct GameComponentsFLWT* flwtComponents, struct DataStructures *data); 

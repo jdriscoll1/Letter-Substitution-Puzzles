@@ -29,7 +29,7 @@ void AfterGameOutput(int gameEndCondition, struct GameComponents* gc);
 int ChooseStart(struct wordDataArray* IntToWord_HashMap, int numAdjacencies);
 int ChooseStart_Range(struct wordDataArray* IntToWord_HashMap, int minAdjacencies, int maxAdjacencies);
 
-int getWordWithNumberOfConnections(int numConnections, struct wordDataArray* IntToWord_HashMap);
+int getWordWithNumberOfConnections(int minConnections, int maxConnections, struct DataStructures* data);
 
 /*Method that determines when the game will be stopped
 @param input --> the current word who may be the end

@@ -175,9 +175,12 @@ void removeWord_FLWP(char* word, struct GameComponents *gameComponents, struct D
     strncpy(&tempStr[1], word, dataStructures->I2W->numLetters);
 
     RemoveWord_Struct(gameComponents, tempStr, 0, dataStructures); 
-
 }
 
+int isStartValid_FLWP(struct GameComponents* gameComponents){
+	return gameComponents->start != -1; 	
+
+}
 void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
 	FreeGameComponents(gameComponents, dataStructures->I2W); 
 
@@ -274,6 +277,10 @@ void undoMoveFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStruc
 void redoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStructures* dataStructures) {
 	Redo_Struct(flwgpComponents->flwpComponents, dataStructures->I2W);
 	flwgpComponents->flwcComponents->wordId = getPrevWordFLWP(flwgpComponents->flwpComponents); 
+}
+int isStartValidFLWGP(struct GameComponentsFLWGP *flwgpComponents){
+
+	return isStartValidFLWC(flwgpComponents->flwcComponents);
 }
 
 int isStartValidFLWG(struct GameData* gameData){
