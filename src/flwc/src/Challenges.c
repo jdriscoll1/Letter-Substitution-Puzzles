@@ -12,7 +12,6 @@ struct WordSet* convertCharPtrPtrToWordSet(char** words, struct DataStructures* 
 	while(words[i] != NULL){
 		
 		wordId = convertWordToInt(words[i], data);
-		printf("%d", wordId); 
 	 	markUsed_WordSet(wordId, wordSet); 	
 		i++; 
 	}
@@ -24,15 +23,27 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 	// The array of valid words
 	struct arrayList* validWords = init_ArrayList(20, 10, NUM); 	
 	
-	// Go through each word and check the following:
+
+	/*
+	struct WordSet *goalWordSet = init_WordSet(data->I2W->numWords);	
 	for(int i = 0; i < data->I2W->numWords; i++){
+		char* w1 = Convert_IntToWord(i, data->I2W); 
+		if(strchr(w1, 'e') != NULL){
+			markUsed_WordSet(i, goalWordSet); 
+		}
+	}
+	flwcComponents->goalWords = goalWordSet; 
+	p.goalWords = goalWordSet; 
+	*/
+	for(int i = 0; i < data->I2W->numWords; i++){
+
 		int numConnections = data->I2W->array[i]->numConnections; 
 
 		// if it has between the minimum and maximum number of connections 
 		if(numConnections >= p.minAdjacencies && numConnections <= p.maxAdjacencies){
 			// It is within the minimum and maximum distance from any goal words
-			struct arrayList* pathToNearestWord = getPathToNearestWordInWordSet(i, p.minGoalAdjacencies, p.maxGoalAdjacencies,  p.maxGoalDistance,  p.goalWords, p.avoidWords, data);  
-			int distanceFromGoal = pathToNearestWord->currPrecision; 
+			struct arrayList* pathToNearestWord = getPathToNearestWordInWordSet(i, p, data);  
+			int distanceFromGoal = pathToNearestWord->currPrecision - 1; 
 			if(distanceFromGoal >= p.minGoalDistance && distanceFromGoal <= p.maxGoalDistance){
 				add_ArrayList(&i, validWords, NUM); 
 			}
@@ -52,7 +63,7 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 	free_ArrayList(validWords); 
 	
 	
-	struct arrayList* solutionArray = getPathToNearestWordInWordSet(startWordId, p.minGoalAdjacencies, p.maxGoalAdjacencies, p.maxGoalDistance,  p.goalWords, p.avoidWords, data);  
+	struct arrayList* solutionArray = getPathToNearestWordInWordSet(startWordId, p, data);  
 	flwcComponents->solution = idArrayListToString(solutionArray, data); 
 	free_ArrayList(solutionArray); 
 	
