@@ -153,34 +153,38 @@ void FreeQuantity_GenericLinkedList(int freeAmount, struct GenericLinkedListNode
 
 //Free it
 void Free_GenericLinkedList(struct GenericLinkedListNode *header){
-	struct GenericLinkedListNode temp = *header; 
-	free(header);  	
-	header = temp.next; 
-	while(header != NULL){
-		 
-		//If it's a tree set
-		if(header->listType == TREE_SET_LL){
-			Free_TreeSet(((struct DummyHeadNode*)(header)->listHeader)->start, WORD);  
-			free(header->listHeader); 
-		}
-		
-		else if(header->listType == WORD_LL ){
-			Free_WordLL(((struct word*)(header->listHeader))); 
-		}
-		else if(header->listType == INT_LL ){
-			Free_IntLL(((struct intList*)(header->listHeader))); 
-		}
-		else if(header->listType == HINT3){
-			free_ArrayList(((struct hint3Struct*)(header->listHeader))->letters); 
-	
-			free(header->listHeader);  
-		}
-		/*Temp variable for freeing the actual generic linked list node*/
+	if(header != NULL){
+		printf("Header is NULL I Guess?\n");
 		struct GenericLinkedListNode temp = *header; 
 		free(header);  	
 		header = temp.next; 
+		while(header != NULL){
+			printf("Here?\n");
+			 
+			//If it's a tree set
+			if(header->listType == TREE_SET_LL){
+				Free_TreeSet(((struct DummyHeadNode*)(header)->listHeader)->start, WORD);  
+				free(header->listHeader); 
+			}
+			
+			else if(header->listType == WORD_LL ){
+				Free_WordLL(((struct word*)(header->listHeader))); 
+			}
+			else if(header->listType == INT_LL ){
+				Free_IntLL(((struct intList*)(header->listHeader))); 
+			}
+			else if(header->listType == HINT3){
+				free_ArrayList(((struct hint3Struct*)(header->listHeader))->letters); 
+		
+				free(header->listHeader);  
+			}
+			/*Temp variable for freeing the actual generic linked list node*/
+			struct GenericLinkedListNode temp = *header; 
+			free(header);  	
+			header = temp.next; 
+		}
+		
 	}
-	
 	
 }
 

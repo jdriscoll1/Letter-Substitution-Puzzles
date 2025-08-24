@@ -52,7 +52,8 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 	}
 
 	if(validWords->currPrecision == 0){
-		printf("There are no valid words!!!"); 
+		printf("There are no valid words!!!\n"); 
+		free_ArrayList(validWords); 
 		return -1; 
 	}
 	

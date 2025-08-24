@@ -19,6 +19,7 @@ struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacencie
 	
 	flwcComponents->goalWords = convertCharPtrPtrToWordSet(goalWords, dataStructures); 
 	flwcComponents->avoidWords = convertCharPtrPtrToWordSet(avoidWords, dataStructures); 
+	flwcComponents->solution = NULL; 
 
 	struct StartWordParametersFLWC params = {
 	    .goalWords = flwcComponents->goalWords,
@@ -36,7 +37,9 @@ struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacencie
 	};
 	flwcComponents->wordId = chooseStartWord_FLWCGeneral(params, flwcComponents, dataStructures);
 	reset_WordSet(dataStructures->wordSet); 
-	markUsed_WordSet(flwcComponents->wordId, dataStructures->wordSet); 
+	if(flwcComponents->wordId != -1){
+		markUsed_WordSet(flwcComponents->wordId, dataStructures->wordSet); 
+	}
 	return flwcComponents; 
 
 }
@@ -118,7 +121,9 @@ char* getSolutionFLWC(struct GameComponentsFLWC* flwcComponents){
 void freeGameComponentsFLWC(struct GameComponentsFLWC* flwcComponents){
 	free_WordSet(flwcComponents->avoidWords); 
 	free_WordSet(flwcComponents->goalWords); 
-	free(flwcComponents->solution); 
+	if(flwcComponents->solution != NULL){
+		free(flwcComponents->solution); 
+	}
 	free(flwcComponents); 
 
 
