@@ -190,6 +190,14 @@ void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataSt
 struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, int minGoalAdjacencies, int maxGoalAdjacencies, struct DataStructures* dataStructures){
 
 	struct GameComponentsFLWC* flwcComponents = initFLWC(minAdjacenciesToStart, maxAdjacenciesToStart, goalWords, avoidWords, minGoalDistance, minAvoidDistance, maxGoalDistance, maxAvoidDistance, minGoalAdjacencies, maxGoalAdjacencies, dataStructures);
+	if(flwcComponents->wordId == -1){
+
+		struct GameComponents* flwpComponents = NULL; 
+		struct GameComponentsFLWGP* flwgpComponents = malloc(sizeof(struct GameComponentsFLWGP)); 
+		flwgpComponents->flwcComponents = flwcComponents; 
+		flwgpComponents->flwpComponents = NULL; 
+		return flwgpComponents; 
+	}
 	struct GameComponents* flwpComponents = malloc(sizeof(struct GameComponents)); 
 	flwpComponents->start = flwcComponents->wordId; 
 	flwpComponents->goal = -1;  
@@ -238,10 +246,13 @@ struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdj
 }
 
 void freeGameComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures){
-	Free_IntLL(flwgpComponents->flwpComponents->userConnections);
-        Free_GenericLinkedList(flwgpComponents->flwpComponents->storageHeader);
-        free_ArrayList(flwgpComponents->flwpComponents->aList);
-        free(flwgpComponents->flwpComponents);
+	if(flwgpComponents->flwpComponents != NULL){
+		Free_IntLL(flwgpComponents->flwpComponents->userConnections);
+		Free_GenericLinkedList(flwgpComponents->flwpComponents->storageHeader);
+		free_ArrayList(flwgpComponents->flwpComponents->aList);
+		free(flwgpComponents->flwpComponents);
+
+	}
 	freeGameComponentsFLWC(flwgpComponents->flwcComponents); 
 	free(flwgpComponents); 
 } 

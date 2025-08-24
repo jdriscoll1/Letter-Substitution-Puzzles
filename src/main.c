@@ -51,12 +51,13 @@ void _FLWGP();
 
 
 // flwc skeletal code, no game logic
-int flwc();
+void flwc();
 int flwg();
 void flwp();
+void flwgp(); 
 
 int main(){
-	flwc(); 
+	flwgp(); 
 
 }
 int flwg(){
@@ -118,7 +119,7 @@ void flwp(){
 
 
 
-int flwc(){
+void flwc(){
 	// Initialize Structures
 	srand(time(0)); 
 	int numLetters = 4; 
@@ -140,99 +141,41 @@ int flwc(){
 	char *avoidWords[] = {NULL}; 
 	// Initialize the Game
 	struct GameComponentsFLWC* flwcComponents = initFLWC(minAdjacenciesToStart, maxAdjacenciesToStart,  goalWords, avoidWords, 1, 2, 2, 3, minGoalAdjacencies, maxGoalAdjacencies, data);
-	return 0; 
-	/*
-	if (!isStartValidFLWC(flwcComponents) == 0){
-		printf("First Failed"); 
-		return -1; 
-
-	}
-	printf("First Went Through Well!");
-	flwcComponents = initFLWC(16, goalCharacter, 15, avoidCharacter, minAvoidCharacterDistance, dataStructures);
-	if (!isStartValidFLWC(flwcComponents) == 0){
-		printf("Second Failed"); 
-		return -1; 
-	}
-	printf("Start Word: %s\n", getStartWordFLWC(flwcComponents, dataStructures));
-
-
-
 	// End the Game
 	freeGameComponentsFLWC(flwcComponents); 
 	close(fd); 
-	freeDataStructures(dataStructures);	
-	return 0; 
-	*/ 
+	freeDataStructures(data);	
 }
 
-void _FLWGP(){
-	/*
-	// initialize flwg ds
-	int numLetters = 4; 
-	int fd = open("docs/4.txt", O_RDONLY);
-	struct DataStructures* data = initDataStructures(fd, 4); 
-	
-	// Initialize FLWGP 
-	struct GameComponentsFLWGP* flwgp = initiateFLWGP(10, 'e', 3, ' ', 0, data); 
-
-	// Check if the game is won and enter words 
-	int isWon = isGameWonFLWC(flwgp->flwcComponents); 
-
-	 userEntersWord_FLWGP("root", flwgp, data); 
-	 printf("%s\n", Convert_IntToWord(flwgp->flwcComponents->wordId, data->I2W)); 
-
-	 userEntersWord_FLWGP("boot", flwgp, data); 
-	 printf("%s\n", Convert_IntToWord(flwgp->flwcComponents->wordId, data->I2W)); 
-
-	 userEntersWord_FLWGP("loot", flwgp, data); 
-	 printf("%s\n", Convert_IntToWord(flwgp->flwcComponents->wordId, data->I2W)); 
-
-	 undoMoveFLWGP(flwgp, data); 
-	 printf("%s\n", Convert_IntToWord(flwgp->flwcComponents->wordId, data->I2W)); 
-
-	 userEntersWord_FLWGP("bolt", flwgp,  data); 
-	 printf("%s\n", Convert_IntToWord(flwgp->flwcComponents->wordId, data->I2W)); 
-
-	 userEntersWord_FLWGP("belt", flwgp, data); 
-	 printf("%s\n", Convert_IntToWord(flwgp->flwcComponents->wordId, data->I2W)); 
-	
-	 isWon = isGameWonFLWC(flwgp->flwcComponents); 
-	 printf("Is Won: %d", isWon); 
-
-	freeGameComponentsFLWGP(flwgp, data); 
-	*/
-
-
-
-}
-
-
-void trapTest(){
-
-	//_FLWP(); 
-	int fd = open("docs/playerWin.txt", O_RDONLY);
-	struct DataStructures* data = initDataStructures(fd, 4); 
-	printf("Is Trapped: %d\n", isTrapped(0, data)); 
-	markUsed_WordSet(1, data->wordSet);	
-	printf("Is Trapped: %d", isTrapped(0, data)); 
-}
-
-
-void _FLWT(){
+void flwgp(){
+	// Initialize Structures
 	srand(time(0)); 
 	int numLetters = 4; 
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd, numLetters); 
-	struct GameComponentsFLWT* flwt = initFLWT(4, 15, 20, data); 
-	char* start = getStartWordFLWT(flwt, data); 
-	printf("Start Word: %s", start);
-	int hint = directAdjacencyHint(flwt->startWordId, data); 
-	printf("Yo Snazzy Hint: %d", hint);
 
-
-
-
+	// FLWC Parameters
+ 
+	int minAdjacenciesToStart = 13; 
+	int maxAdjacenciesToStart = 30; 
+	int minGoalDistance = 2; 
+	int maxGoalDistance = 3; 
+	int minAvoidDistance = 0; 
+	int maxAvoidDistance = 0; 
+	int minGoalAdjacencies = 18; 
+	int maxGoalAdjacencies = 30; 
+	int botType = 1;
+	char *goalWords[] = {"ties", "pies", "lies", NULL};
+	char *avoidWords[] = {NULL}; 
+	// Initialize the Game
+	struct GameComponentsFLWGP* flwgpComponents = initiateFLWGP(minAdjacenciesToStart, maxAdjacenciesToStart,  goalWords, avoidWords, minGoalDistance, minAvoidDistance, maxGoalDistance, maxAvoidDistance, minGoalAdjacencies, maxGoalAdjacencies, data);
+	// End the Game
+	freeGameComponentsFLWGP(flwgpComponents, data); 
+	close(fd); 
+	freeDataStructures(data);	
 }
+
+
 
 /*
 int __FLWC(){
