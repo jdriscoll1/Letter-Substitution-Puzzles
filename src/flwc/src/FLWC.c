@@ -143,6 +143,9 @@ int botPly_FLWC(int word, int depth, struct WordSet* goalWords, struct WordSet* 
 	return score.wordId; 
 } 
 
+int botPly_Mirror(int word){
+	return word; 
+}
 int botPly_Random(int word, struct DataStructures* data){
 
 	// Create alpha & beta

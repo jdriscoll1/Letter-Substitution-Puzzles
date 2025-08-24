@@ -69,6 +69,9 @@ void freeGameComponentsFLWG(struct GameData* gameData){
 int botTakesTurn(struct GameData* gameData, struct DataStructures* data, int botType){
 	int result = -1;
 	// If the bot type is -1 it is its easiest version
+	if(botType == -2){
+		result = botPly_Mirror(gameData->currWordId);
+	}
 	if(botType == -1){
 		result = botPly_MaxAdjacencies(gameData->currWordId, NULL, data);
 	}
@@ -290,8 +293,7 @@ void redoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStruc
 	flwgpComponents->flwcComponents->wordId = getPrevWordFLWP(flwgpComponents->flwpComponents); 
 }
 int isStartValid_FLWGP(struct GameComponentsFLWGP *flwgpComponents){
-
-	return isStartValidFLWC(flwgpComponents->flwcComponents);
+	return  isStartValidFLWC(flwgpComponents->flwcComponents);
 }
 
 int isStartValidFLWG(struct GameData* gameData){

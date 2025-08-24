@@ -54,11 +54,45 @@ void _FLWGP();
 void flwc();
 int flwg();
 void flwp();
-void flwgp(); 
+int flwgp(); 
 
 int main(){
 	flwgp(); 
 
+}
+
+int flwgp(){
+	// Initialize Structures
+	srand(time(0)); 
+	int numLetters = 4; 
+	int fd = open("docs/4.txt", O_RDONLY);
+	struct DataStructures* data = initDataStructures(fd, numLetters); 
+
+	// FLWGP Parameters
+	int minAdjacenciesToStart = 18; 
+	int maxAdjacenciesToStart = 30; 
+
+	int minGoalDistance = 2; 
+	int maxGoalDistance = 3; 
+
+	int minAvoidDistance = 0; 
+	int maxAvoidDistance = 0; 
+
+	int minGoalAdjacencies = 18; 
+	int maxGoalAdjacencies = 30; 
+
+	char *goalWords[] = {"ties", "pies", "lies", NULL};
+	char *avoidWords[] = {NULL}; 
+
+	// Initialize the Game
+	struct GameComponentsFLWGP* flwgpComponents = initiateFLWGP(minAdjacenciesToStart, maxAdjacenciesToStart,  goalWords, avoidWords, minGoalDistance, minAvoidDistance, maxGoalDistance, maxAvoidDistance, minGoalAdjacencies, maxGoalAdjacencies, data);
+	if(!isStartValid_FLWGP(flwgpComponents)){
+		return -1; 
+	}
+	printf("[GAME MESSAGE] Start: %s\n", getStartWordFLWP(flwgpComponents->flwpComponents, data));
+	freeGameComponentsFLWGP(flwgpComponents, data); 
+	close(fd); 
+	freeDataStructures(data);	
 }
 int flwg(){
 
@@ -76,16 +110,17 @@ int flwg(){
 	struct GameData* gameData = initFLWG(dataStructures, minAdjacencies, maxAdjacencies);
 	if (isStartValidFLWG(gameData) == 0){
 		printf("Invalid FLWG Parameters");
-		return -1; 
 
 	}
-	printf("Start Word: %s\n", getCurrWord(gameData, dataStructures));
+	else{
+		printf("Start Word: %s\n", getCurrWord(gameData, dataStructures));
 
 
-	/******GAME LOGIC GOES HERE**********/
+		/******GAME LOGIC GOES HERE**********/
 
-	// End the Game
-	freeGameComponentsFLWG(gameData); 
+		// End the Game
+		freeGameComponentsFLWG(gameData); 
+	}
 	close(fd); 
 	freeDataStructures(dataStructures);	
 	return 0; 
@@ -128,7 +163,7 @@ void flwc(){
 
 	// FLWC Parameters
  
-	int minAdjacenciesToStart = 13; 
+	int minAdjacenciesToStart = 12; 
 	int maxAdjacenciesToStart = 30; 
 	int minGoalDistance = 2; 
 	int maxGoalDistance = 3; 
@@ -140,40 +175,15 @@ void flwc(){
 	char *goalWords[] = {"ties", "pies", "lies", NULL};
 	char *avoidWords[] = {NULL}; 
 	// Initialize the Game
-	struct GameComponentsFLWC* flwcComponents = initFLWC(minAdjacenciesToStart, maxAdjacenciesToStart,  goalWords, avoidWords, 1, 2, 2, 3, minGoalAdjacencies, maxGoalAdjacencies, data);
+	struct GameComponentsFLWC* flwcComponents = initFLWC(minAdjacenciesToStart, maxAdjacenciesToStart,  goalWords, avoidWords, minGoalDistance, minAvoidDistance, maxGoalDistance, maxAvoidDistance, minGoalAdjacencies, maxGoalAdjacencies, data);
+	printf("[GAME MESSAGE] Start: %s", getStartWordFLWC(flwcComponents, data));
 	// End the Game
 	freeGameComponentsFLWC(flwcComponents); 
 	close(fd); 
 	freeDataStructures(data);	
 }
 
-void flwgp(){
-	// Initialize Structures
-	srand(time(0)); 
-	int numLetters = 4; 
-	int fd = open("docs/4.txt", O_RDONLY);
-	struct DataStructures* data = initDataStructures(fd, numLetters); 
 
-	// FLWC Parameters
- 
-	int minAdjacenciesToStart = 13; 
-	int maxAdjacenciesToStart = 30; 
-	int minGoalDistance = 2; 
-	int maxGoalDistance = 3; 
-	int minAvoidDistance = 0; 
-	int maxAvoidDistance = 0; 
-	int minGoalAdjacencies = 18; 
-	int maxGoalAdjacencies = 30; 
-	int botType = 1;
-	char *goalWords[] = {"ties", "pies", "lies", NULL};
-	char *avoidWords[] = {NULL}; 
-	// Initialize the Game
-	struct GameComponentsFLWGP* flwgpComponents = initiateFLWGP(minAdjacenciesToStart, maxAdjacenciesToStart,  goalWords, avoidWords, minGoalDistance, minAvoidDistance, maxGoalDistance, maxAvoidDistance, minGoalAdjacencies, maxGoalAdjacencies, data);
-	// End the Game
-	freeGameComponentsFLWGP(flwgpComponents, data); 
-	close(fd); 
-	freeDataStructures(data);	
-}
 
 
 
