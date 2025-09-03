@@ -25,15 +25,29 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 	
 
 	/*
+	
 	struct WordSet *goalWordSet = init_WordSet(data->I2W->numWords);	
 	for(int i = 0; i < data->I2W->numWords; i++){
 		char* w1 = Convert_IntToWord(i, data->I2W); 
-		if(strchr(w1, 'e') != NULL){
+		if(strstr(w1, "oo") != NULL){
 			markUsed_WordSet(i, goalWordSet); 
 		}
 	}
 	flwcComponents->goalWords = goalWordSet; 
 	p.goalWords = goalWordSet; 
+
+	// Avoid Words
+	struct WordSet *avoidWordSet = init_WordSet(data->I2W->numWords);	
+	for(int i = 0; i < data->I2W->numWords; i++){
+		char* w1 = Convert_IntToWord(i, data->I2W); 
+		if(strchr(w1, 'd') != NULL){
+			markUsed_WordSet(i, avoidWordSet); 
+		}
+	}
+	flwcComponents->avoidWords = avoidWordSet; 
+	p.avoidWords = avoidWordSet; 
+	
+	printf("^^!!!REMOVE ME!!!^^^");
 	*/
 	for(int i = 0; i < data->I2W->numWords; i++){
 
@@ -43,7 +57,7 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 		if(numConnections >= p.minAdjacencies && numConnections <= p.maxAdjacencies){
 			// It is within the minimum and maximum distance from any goal words
 			struct arrayList* pathToNearestWord = getPathToNearestWordInWordSet(i, p, data);  
-			int distanceFromGoal = pathToNearestWord->currPrecision - 1; 
+			int distanceFromGoal = pathToNearestWord->currPrecision; 
 			if(distanceFromGoal >= p.minGoalDistance && distanceFromGoal <= p.maxGoalDistance){
 				add_ArrayList(&i, validWords, NUM); 
 			}
