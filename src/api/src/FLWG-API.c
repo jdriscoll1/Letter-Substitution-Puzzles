@@ -286,7 +286,9 @@ void undoMoveFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStruc
 	flwgpComponents->flwcComponents->wordId = getPrevWordFLWP(flwgpComponents->flwpComponents); 
 
 }
-
+char* getSolutionFLWGP(struct GameComponentsFLWGP* flwgpComponents){
+	return flwgpComponents->flwcComponents->solution; 
+}
 
 void redoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStructures* dataStructures) {
 	Redo_Struct(flwgpComponents->flwpComponents, dataStructures->I2W);
