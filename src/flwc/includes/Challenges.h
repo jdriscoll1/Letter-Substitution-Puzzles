@@ -33,5 +33,6 @@ struct WordSet* convertCharPtrPtrToWordSet(char** words, struct DataStructures* 
 int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data);
 // put a given word and all of its adjacencies (up to distance) into word set
 void getSetOfSurroundingWords(int id, int distance, struct WordSet* wordSet, struct DataStructures* data); 
+int isWordValid_StartWordParameters(int i, struct StartWordParametersFLWC p, struct DataStructures* data); 
 
 #endif

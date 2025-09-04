@@ -4,6 +4,7 @@
 #include "../../algs/includes/BreadthFirstSearch.h"
 #include "../../algs/includes/TreeStorageNode.h"
 
+void swapAvoidGoal(struct StartWordParametersFLWC* p);
 struct WordSet* convertCharPtrPtrToWordSet(char** words, struct DataStructures* data){
 
 	struct WordSet* wordSet = init_WordSet(data->I2W->numWords);
@@ -18,14 +19,23 @@ struct WordSet* convertCharPtrPtrToWordSet(char** words, struct DataStructures* 
 	return wordSet; 
 }
 
+
+int isWordValid_StartWordParameters(int i, struct StartWordParametersFLWC p, struct DataStructures* data){
+	struct arrayList* pathToNearestWord = getPathToNearestWordInWordSet(i, p, data);  
+	int distanceFromGoal = pathToNearestWord->currPrecision; 
+	free_ArrayList(pathToNearestWord); 
+	return distanceFromGoal >= p.minGoalDistance && distanceFromGoal <= p.maxGoalDistance; 
+
+}
+
 int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
 	
 	// The array of valid words
 	struct arrayList* validWords = init_ArrayList(20, 10, NUM); 	
 	
 
-	/*
 	
+	/*
 	struct WordSet *goalWordSet = init_WordSet(data->I2W->numWords);	
 	for(int i = 0; i < data->I2W->numWords; i++){
 		char* w1 = Convert_IntToWord(i, data->I2W); 
@@ -46,22 +56,31 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 	}
 	flwcComponents->avoidWords = avoidWordSet; 
 	p.avoidWords = avoidWordSet; 
-	
-	printf("^^!!!REMOVE ME!!!^^^");
 	*/
+	
+
+	// For Each word
 	for(int i = 0; i < data->I2W->numWords; i++){
 
+		// Ensure that it has the correct # of Connections
 		int numConnections = data->I2W->array[i]->numConnections; 
-
-		// if it has between the minimum and maximum number of connections 
 		if(numConnections >= p.minAdjacencies && numConnections <= p.maxAdjacencies){
-			// It is within the minimum and maximum distance from any goal words
-			struct arrayList* pathToNearestWord = getPathToNearestWordInWordSet(i, p, data);  
-			int distanceFromGoal = pathToNearestWord->currPrecision; 
-			if(distanceFromGoal >= p.minGoalDistance && distanceFromGoal <= p.maxGoalDistance){
+
+			int isValid_Goal = 1; 
+			int isValid_Avoid = 1; 
+			// Find the Path To The Nearest Word In the Goal Set
+			// If its distance from the nearest goal word is w/in bounds
+			if(p.minGoalDistance != 1 || p.maxGoalDistance != 1){
+				isValid_Goal = isWordValid_StartWordParameters(i, p, data); 
+			}
+			if(p.minAvoidDistance != 1 || p.maxAvoidDistance != 1){
+				swapAvoidGoal(&p); 
+				isValid_Avoid = isWordValid_StartWordParameters(i, p, data); 
+				swapAvoidGoal(&p); 
+			}
+			if(isValid_Goal == 1 && isValid_Avoid == 1){
 				add_ArrayList(&i, validWords, NUM); 
 			}
-			free_ArrayList(pathToNearestWord); 
 		}
 	}
 
@@ -84,7 +103,19 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 	
 	return startWordId; 
 }
-
+void swapAvoidGoal(struct StartWordParametersFLWC* p) {
+    int a = p->minAvoidDistance;
+    int b = p->maxAvoidDistance;
+    struct WordSet* c = p->avoidWords;
+    
+    p->minAvoidDistance = p->minGoalDistance;
+    p->maxAvoidDistance = p->maxGoalDistance;
+    p->avoidWords = p->goalWords;
+    
+    p->minGoalDistance = a;
+    p->maxGoalDistance = b;
+    p->goalWords = c;
+}
 
 void getSetOfSurroundingWords(int id, int distance, struct WordSet* wordSet, struct DataStructures* data){
 
