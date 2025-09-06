@@ -39,7 +39,6 @@ Purpose: The four letter pathfinder, this time better
 #include "./flwc/includes/FLWC.h"
 #include "./flwg/includes/MultiplayerFLWG.h"
 
-void _FLWT(); 
 void _FLWP(); 
 // FLWG
 void flwg_example(); 
@@ -56,10 +55,11 @@ void inverse_flwc();
 int flwg();
 void flwp();
 int flwgp(); 
+void flwt(); 
 
 int main(){
 	//flwgp(); 	
-	inverse_flwc(); 
+	flwt(); 
 }
 
 int flwgp(){
@@ -98,6 +98,32 @@ int flwgp(){
 	close(fd); 
 	freeDataStructures(data);	
 }
+
+void flwt(){
+	// Initialize Structures
+	printf("-----FLWT----\n"); 
+	srand(time(0)); 
+	int numLetters = 4; 
+
+	int fd = open("docs/4.txt", O_RDONLY);
+	struct DataStructures* data = initDataStructures(fd, numLetters); 
+
+	// FLWT Parameters
+	int numTurns = 3; 
+	int minAdj = 10; 
+	int maxAdj = 30; 
+
+	// Initialize the Game
+	struct GameComponentsFLWT* flwt = initFLWT(numTurns, minAdj,  maxAdj, data); 
+	printf("[GAME MESSAGE] Start: %s\n", getStartWordFLWT(flwt, data));
+	printf("[GAME MESSAGE] Hint Character: %c\n", hint_letterToConsiderFLWT(flwt, data));
+	printf("[GAME MESSAGE] Hint Num Options: %d\n", hint_numOptionsFLWT(flwt, data));
+	freeGameComponentsFLWT(flwt); 
+	close(fd); 
+	freeDataStructures(data);	
+	
+}
+
 int flwg(){
 
 	// Initialize Structures
