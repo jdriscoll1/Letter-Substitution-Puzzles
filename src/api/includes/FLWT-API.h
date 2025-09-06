@@ -41,4 +41,7 @@ int isGameWonFLWT(struct GameComponentsFLWT* flwtComponents);
 
 void freeGameComponentsFLWT(struct GameComponentsFLWT* flwtComponents);
 
+char hint_letterToConsiderFLWT(struct GameComponentsFLWT* flwtComponents, struct DataStructures* data);
+
+int hint_numOptionsFLWT(struct GameComponentsFLWT* flwtComponents, struct DataStructures* data); 
 #endif

@@ -69,3 +69,55 @@ void freeGameComponentsFLWT(struct GameComponentsFLWT* flwtComponents){
 
 }
 
+char hint_letterToConsiderFLWT(struct GameComponentsFLWT* flwtComponents, struct DataStructures* data){
+
+	// Take the start word ID
+	int id = flwtComponents->startWordId; 
+	int hintWordId = -1; 
+	char hint = '?';
+	struct intList* c = getConnections(id, data->I2W); 
+	c = c->next; 
+	// Loop through the num adjacenceis
+	while(c != NULL){
+		int c_id = c->data; 
+		if(checkIfUsed_WordSet(c_id, data->wordSet) == 0){
+			// if the word is not used, then you can set it to the hint word id and Break 	
+			hintWordId = c_id; 
+			break;
+		}
+		c = c->next; 
+
+	}
+	
+	char* goalWord = Convert_IntToWord(hintWordId, data->I2W); 
+	char* currWord = Convert_IntToWord(id, data->I2W); 
+	for(int i = 0; i < data->I2W->numLetters; i++){
+		if(goalWord[i] != currWord[i]){
+			hint = goalWord[i]; 
+		}
+
+	}
+	return hint; 
+}
+
+int hint_numOptionsFLWT(struct GameComponentsFLWT* flwtComponents, struct DataStructures* data){
+
+	// Take the start word ID
+	int id = flwtComponents->startWordId; 
+	int numOptions = 0;
+	struct intList* c = getConnections(id, data->I2W); 
+	c = c->next; 
+	// Loop through the num adjacenceis
+	while(c != NULL){
+		int c_id = c->data; 
+		if(checkIfUsed_WordSet(c_id, data->wordSet) == 0){
+			// if the word is not used, then you can set it to the hint word id and Break 	
+			numOptions++;
+			c = c->next; 
+		}
+	}
+	return numOptions; 
+
+	
+	
+}
