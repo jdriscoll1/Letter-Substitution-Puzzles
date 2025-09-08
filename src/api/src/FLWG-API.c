@@ -314,3 +314,24 @@ char hintNumOptionsFLWG(struct GameData* flwgComponents, struct DataStructures* 
 	return numOptionsHint(flwgComponents->currWordId, data); 
 }
 
+
+
+char* hintGetHeadAdjacencyFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
+	return Convert_IntToWord(gameComponents->solution->next->next->data, dataStructures->I2W);
+}
+char* hintGetTailAdjacencyFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
+	int size = gameComponents->solution->size; 
+	struct intList* curr = gameComponents->solution; 
+	for(int i = 0; i < size - 1; i++){
+		curr = curr->next; 	
+		
+
+	}
+	return Convert_IntToWord(curr->data, dataStructures->I2W); 
+
+}
+int hintGetMinAdjacenciesFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
+	return gameComponents->solution->size; 
+
+
+}

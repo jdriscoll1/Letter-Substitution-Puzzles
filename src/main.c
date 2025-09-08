@@ -59,7 +59,7 @@ void flwt();
 
 int main(){
 	//flwgp(); 	
-	flwt(); 
+	flwp(); 
 }
 
 int flwgp(){
@@ -172,10 +172,14 @@ void flwp(){
 	int minAdjToGoal = 4; 
 	int maxAdjToGoal = 16; 
 	struct GameComponents* gc = initiateFLWP(minAdjToStart, maxAdjToStart, minDistance, maxDistance, minAdjToGoal, maxAdjToGoal, data); 
-	printf("%s: %d\n", Convert_IntToWord(gc->start, data->I2W), getNumAdjacencies(gc->start, data));
-	printf("%s: %d\n", Convert_IntToWord(gc->goal, data->I2W), getNumAdjacencies(gc->goal, data));
-	printf("Solution: \n");
+	printf("[GAME MESSAGE]: Start: %s\n", Convert_IntToWord(gc->start, data->I2W)); 
+	printf("[GAME MESSAGE]: Goal: %s\n", Convert_IntToWord(gc->goal, data->I2W)); 
+	printf("[HINT MESSAGE]: A direct adjacency to the start word is: %s\n", hintGetHeadAdjacencyFLWP(gc, data));
+	printf("[HINT MESSAGE]: A direct adjacency to the goal word is: %s\n", hintGetTailAdjacencyFLWP(gc, data));
+	printf("[HINT MESSAGE]: The minimum distance between the start & goal is: %d\n", hintGetMinAdjacenciesFLWP(gc, data));
+	printf("[GAME MESSAGE]: Solution: \n");
 	PrintStrings_IntLL(gc->solution, data->I2W); 
+
 	freeGameComponentsFLWP(gc, data); 
 	close(fd); 
 	freeDataStructures(data);	
