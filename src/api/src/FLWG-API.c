@@ -17,6 +17,7 @@ Purpose: A library to encapsulate & organize the code into an API
 #include "../../flwp/includes/BreadthFirstSearch_FLWP.h"
 #include "../../flwg/includes/FLWGGame.h"
 #include "../../flwc/includes/FLWC.h"
+#include "../../flwg/includes/Hints2.h"
 
 // Creating and destroying data structures
 struct DataStructures* initDataStructures(int fd, int numLetters){
@@ -303,3 +304,13 @@ int isStartValidFLWG(struct GameData* gameData){
 	return gameData->currWordId != -1; 
 
 }
+
+
+char hintletterToConsiderFLWG(struct GameData* flwgComponents, struct DataStructures* data){
+	return letterToConsiderHint(flwgComponents->currWordId, data); 
+}
+
+char hintNumOptionsFLWG(struct GameData* flwgComponents, struct DataStructures* data){
+	return numOptionsHint(flwgComponents->currWordId, data); 
+}
+
