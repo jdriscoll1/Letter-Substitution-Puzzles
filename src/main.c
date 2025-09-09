@@ -93,7 +93,7 @@ int flwgp(){
 		return -1; 
 	}
 	printf("[GAME MESSAGE]\nStart: %s\n", getStartWordFLWP(flwgpComponents->flwpComponents, data));
-	printf("[GAME MESSAGE]\n Solution:\n%s\n", getSolutionFLWGP(flwgpComponents)); 
+	//printf("[GAME MESSAGE]\n Solution:\n%s\n", getSolutionFLWGP(flwgpComponents)); 
 	freeGameComponentsFLWGP(flwgpComponents, data); 
 	close(fd); 
 	freeDataStructures(data);	
@@ -223,7 +223,6 @@ void flwc(){
 		maxGoalAdjacencies, data);
 		
 	printf("[GAME MESSAGE]\nStart: %s", getStartWordFLWC(flwcComponents, data));
-	printf("[GAME MESSAGE]\nSolution:\n%s\n", flwcComponents->solution); 
 	// End the Game
 	freeGameComponentsFLWC(flwcComponents); 
 	close(fd); 
@@ -264,7 +263,6 @@ void inverse_flwc(){
 		maxGoalAdjacencies, data);
 		
 	printf("[GAME MESSAGE]\nStart: %s", getStartWordFLWC(flwcComponents, data));
-	printf("[GAME MESSAGE]\nSolution:\n%s\n", flwcComponents->solution); 
 	// End the Game
 	freeGameComponentsFLWC(flwcComponents); 
 	close(fd); 

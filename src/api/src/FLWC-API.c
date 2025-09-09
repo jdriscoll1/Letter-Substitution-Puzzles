@@ -19,7 +19,6 @@ struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacencie
 	
 	flwcComponents->goalWords = convertCharPtrPtrToWordSet(goalWords, dataStructures); 
 	flwcComponents->avoidWords = convertCharPtrPtrToWordSet(avoidWords, dataStructures); 
-	flwcComponents->solution = NULL; 
 
 	struct StartWordParametersFLWC params = {
 	    .goalWords = flwcComponents->goalWords,
@@ -113,17 +112,10 @@ int botTakesTurnFLWC(int botType, struct GameComponentsFLWC* flwcComponents, str
 
 }
 
-char* getSolutionFLWC(struct GameComponentsFLWC* flwcComponents){
-	return flwcComponents->solution; 		
-
-}
 
 void freeGameComponentsFLWC(struct GameComponentsFLWC* flwcComponents){
 	free_WordSet(flwcComponents->avoidWords); 
 	free_WordSet(flwcComponents->goalWords); 
-	if(flwcComponents->solution != NULL){
-		free(flwcComponents->solution); 
-	}
 	free(flwcComponents); 
 
 
