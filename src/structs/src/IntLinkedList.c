@@ -6,6 +6,15 @@
 
 #include "../../flwp/includes/UserInput.h"
 
+struct intList* init_IntLL(){
+	struct intList* header = malloc(sizeof(struct intList)); 
+	header->size = 0; 
+	header->next = NULL; 
+	return header; 
+	
+
+}
+
 /*This adds a word to the back of an integer linked list*/
 void AddToBack_IntLL(int data, struct intList* header){
 	header->size++; 

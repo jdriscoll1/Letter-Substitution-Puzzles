@@ -5,6 +5,7 @@ Desc: A Hash Set for all words to determine if they are used*/
 
 
 
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -133,4 +134,25 @@ void long2binary(unsigned long hash){
 
 
 
+}
+
+struct WordSet* copyWordSetDeep(struct WordSet* original) {
+    if (!original) return NULL;
+
+    struct WordSet* copy = malloc(sizeof(struct WordSet));
+    if (!copy) return NULL;
+
+    // Copy simple fields
+    copy->totalWords = original->totalWords;
+    copy->arrLength  = original->arrLength;
+
+    // Allocate and copy array
+    copy->words = malloc(sizeof(unsigned long) * original->arrLength);
+    if (!copy->words) {
+        free(copy);
+        return NULL;
+    }
+    memcpy(copy->words, original->words, sizeof(unsigned long) * original->arrLength);
+
+    return copy;
 }

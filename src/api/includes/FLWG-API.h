@@ -83,6 +83,10 @@ int userEntersWord_FLWGP(char* userInput, struct GameComponentsFLWGP* flwgpCompo
 void undoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStructures* dataStructures);
 void redoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStructures* dataStructures);
 int isStartValid_FLWGP(struct GameComponentsFLWGP* flwgpComponents); 
+int hintGetMinAdjacenciesFLWGP(struct GameComponentsFLWGP* flwgpComponents); 
+char* hintWordTowardsGoalFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* data); 
+char* hintGetValidGoalWordFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* data); 
+
 
 // Test Functionality  
 char* convertIntToWord(int wordId, struct DataStructures* dataStructures); 

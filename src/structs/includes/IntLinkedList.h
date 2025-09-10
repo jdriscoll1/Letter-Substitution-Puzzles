@@ -17,6 +17,7 @@ struct intList {
 	
 };
 
+struct intList* init_IntLL(); 
 /*This adds a word to the back of an integer linked list*/
 void AddToBack_IntLL(int data, struct intList* header); 
 

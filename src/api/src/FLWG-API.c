@@ -242,6 +242,40 @@ struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdj
 	//Insert the word into the front of the Generic Linked List
 	CopyInto_GenericLinkedListNode(flwpComponents->userConnections, flwpComponents->storage, 1, INT_LL);
 	
+	/*GET SOLUTION FLWGP*/
+
+	// Start parameters for getting a solution
+	struct StartWordParametersFLWC p = {
+	.goalWords=flwcComponents->goalWords,
+	.avoidWords=flwcComponents->avoidWords,
+	.minGoalDistance=0,
+	.maxGoalDistance=100,
+	.minAvoidDistance=0,
+	.maxAvoidDistance=100,
+	.minAdjacencies=1,
+	.maxAdjacencies=100,
+	.minGoalAdjacencies=1,
+	.maxGoalAdjacencies=100
+	};
+	struct arrayList* solution_ArrayList = getPathToNearestWordInWordSet(flwcComponents->wordId, p, dataStructures);
+	struct intList* solution = init_IntLL(); 
+	for(int i = 0; i < solution_ArrayList->currPrecision; i++){
+		AddToBack_IntLL(((int*)(solution_ArrayList->list))[i], solution); 
+	}
+	free_ArrayList(solution_ArrayList); 
+	flwpComponents->solution = solution; 
+
+
+
+
+
+
+
+
+
+
+	/*END GET SOLUTION FLWGP*/
+	
 	struct GameComponentsFLWGP* flwgpComponents = malloc(sizeof(struct GameComponentsFLWGP)); 
 	flwgpComponents->flwcComponents = flwcComponents; 
 	flwgpComponents->flwpComponents = flwpComponents; 
@@ -254,6 +288,7 @@ void freeGameComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct
 		Free_IntLL(flwgpComponents->flwpComponents->userConnections);
 		Free_GenericLinkedList(flwgpComponents->flwpComponents->storageHeader);
 		free_ArrayList(flwgpComponents->flwpComponents->aList);
+		Free_IntLL(flwgpComponents->flwpComponents->solution); 
 		free(flwgpComponents->flwpComponents);
 
 	}
@@ -332,3 +367,23 @@ int hintGetMinAdjacenciesFLWP(struct GameComponents* gameComponents, struct Data
 
 
 }
+
+int hintGetMinAdjacenciesFLWGP(struct GameComponentsFLWGP* flwgpComponents){	
+	 return flwgpComponents->flwpComponents->solution->size - 1; 
+}
+char* hintWordTowardsGoalFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* data){
+	return Convert_IntToWord(flwgpComponents->flwpComponents->solution->next->next->data, data->I2W);
+}
+char* hintGetValidGoalWordFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* data){
+	struct intList* curr = flwgpComponents->flwpComponents->solution; 
+	
+	while(curr->next != NULL){
+
+		curr = curr->next; 
+	}
+	return Convert_IntToWord(curr->data, data->I2W); 
+
+}
+
+
+

@@ -51,15 +51,14 @@ void _FLWGP();
 
 // flwc skeletal code, no game logic
 void flwc();
-void inverse_flwc();
+void flwic();
 int flwg();
 void flwp();
 int flwgp(); 
 void flwt(); 
 
 int main(){
-	//flwgp(); 	
-	flwp(); 
+	flwic(); 	
 }
 
 int flwgp(){
@@ -84,7 +83,7 @@ int flwgp(){
 	int maxGoalAdjacencies = 30; 
 
 	// These are temporary values that are replaced later
-	char *goalWords[] = {NULL};
+	char *goalWords[] = {"ties", "pies", "lies", NULL};
 	char *avoidWords[] = {NULL}; 
 
 	// Initialize the Game
@@ -93,6 +92,9 @@ int flwgp(){
 		return -1; 
 	}
 	printf("[GAME MESSAGE]\nStart: %s\n", getStartWordFLWP(flwgpComponents->flwpComponents, data));
+	printf("[HINT MESSAGE]\nThere are %d connections at minimum\n", hintGetMinAdjacenciesFLWGP(flwgpComponents)); 
+	printf("[HINT MESSAGE]\nA direct adjacency towards teh goal is %s\n", hintWordTowardsGoalFLWGP(flwgpComponents, data)); 
+	printf("[HINT MESSAGE]\nA valid goal word is %s\n", hintGetValidGoalWordFLWGP(flwgpComponents, data)); 
 	//printf("[GAME MESSAGE]\n Solution:\n%s\n", getSolutionFLWGP(flwgpComponents)); 
 	freeGameComponentsFLWGP(flwgpComponents, data); 
 	close(fd); 
@@ -222,13 +224,20 @@ void flwc(){
 		minGoalAdjacencies, 
 		maxGoalAdjacencies, data);
 		
-	printf("[GAME MESSAGE]\nStart: %s", getStartWordFLWC(flwcComponents, data));
+	printf("[GAME MESSAGE]: Start: %s", getStartWordFLWC(flwcComponents, data));
+	printf("[GAME MESSAGE]: A Potential Goal Is %s", hintGoalWordFLWC(flwcComponents, data));
+	char* pathToGoal = hintPathToGoalFLWC(flwcComponents, data);
+	printf("[GAME MESSAGE]: A Way To Get to the Goal Is: %s", pathToGoal);
+	free(pathToGoal); 
+	printf("[GAME MESSAGE]: A Word That Gets You Closer to the Goal Is: %s", hintAdjacencyTowardsGoalFLWC(flwcComponents, data));
+	printf("[GAME MESSAGE]: You are %d words away from the goal", hintMinDistanceToGoalFLWC(flwcComponents, data));
+	
 	// End the Game
 	freeGameComponentsFLWC(flwcComponents); 
 	close(fd); 
 	freeDataStructures(data);	
 }
-void inverse_flwc(){
+void flwic(){
 	printf("-----Inverse FLWC----\n"); 
 	// Initialize Structures
 	srand(time(0)); 
@@ -262,7 +271,9 @@ void inverse_flwc(){
 		minGoalAdjacencies, 
 		maxGoalAdjacencies, data);
 		
-	printf("[GAME MESSAGE]\nStart: %s", getStartWordFLWC(flwcComponents, data));
+	printf("[GAME MESSAGE]\nStart: %s\n", getStartWordFLWC(flwcComponents, data));
+	printf("[HINT MESSAGE]\nTo Stay Away From The Avoid Word, You Should Use %s\n", hintBestDirectAdjacencyFLWIC(flwcComponents, data)); 
+	printf("[HINT MESSAGE]\nThe Closest Avoid Word is %d away\n", hintDistanceFromNearestAvoidWordFLWIC(flwcComponents, data));
 	// End the Game
 	freeGameComponentsFLWC(flwcComponents); 
 	close(fd); 

@@ -279,7 +279,7 @@ struct arrayList* getPathToNearestWordInWordSet(int id, struct StartWordParamete
 	struct Queue* q = init_Queue(); 		
 
 	// The lists that have been explored in the BFS 
-	struct WordSet* exploredNodes = init_WordSet(data->I2W->numWords);
+	struct WordSet* exploredNodes = copyWordSetDeep(data->wordSet); 
 
 	// distance words activeley being traversed are from the root 
 	int currDistance = 0; 
@@ -295,6 +295,10 @@ struct arrayList* getPathToNearestWordInWordSet(int id, struct StartWordParamete
 	}
 	// If the current word meets the requirements, the distance is 0 
 	if(checkIfUsed_WordSet(id, p.goalWords) == 1 || checkIfUsed_WordSet(id, p.goalWords)){
+		// free Queue
+		free_Queue(q); 
+		// freeWordSet
+		free_WordSet(exploredNodes); 
 		return pathToNearestWord; 
 	}
 

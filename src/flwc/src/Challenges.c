@@ -97,10 +97,6 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 	free_ArrayList(validWords); 
 	
 	
-//	struct arrayList* solutionArray = getPathToNearestWordInWordSet(startWordId, p, data);  
-//	flwcComponents->solution = idArrayListToString(solutionArray, data); 
-//	free_ArrayList(solutionArray); 
-	
 	return startWordId; 
 }
 void swapAvoidGoal(struct StartWordParametersFLWC* p) {

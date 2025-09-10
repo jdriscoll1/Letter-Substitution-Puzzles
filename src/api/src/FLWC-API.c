@@ -7,6 +7,7 @@
 #include "../../flwc/includes/FLWC.h"
 #include "../../flwp/includes/UserInput.h"
 #include "../../flwg/includes/FLWGGame.h"
+#include "../../algs/includes/BreadthFirstSearch.h"
 
 
 // This creates the first word and returns a set of game components for the flwt
@@ -131,6 +132,128 @@ char** getAllWords(struct DataStructures* dataStructures){
 		allWords[i] = dataStructures->I2W->array[i]->word; 
 	}
 	return allWords; 
+}
+
+
+
+char* hintGoalWordFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	struct StartWordParametersFLWC p = {
+		.goalWords=flwcComponents->goalWords,
+		.avoidWords=flwcComponents->avoidWords,
+		.minGoalDistance=0,
+		.maxGoalDistance=100,
+		.minAvoidDistance=0,
+		.maxAvoidDistance=100,
+		.minAdjacencies=1,
+		.maxAdjacencies=100,
+		.minGoalAdjacencies=1,
+		.maxGoalAdjacencies=100
+	};
+	struct arrayList* solution = getPathToNearestWordInWordSet(flwcComponents->wordId, p, data);
+	if(!solution || !solution->list) return NULL; 
+
+	int goalId = ((int*)(solution->list))[solution->currPrecision - 1]; 
+	char* goalStr = Convert_IntToWord(goalId, data->I2W); 
+	
+	free_ArrayList(solution); 
+
+	return goalStr; 
+}
+char* hintPathToGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	struct StartWordParametersFLWC p = {
+		.goalWords=flwcComponents->goalWords,
+		.avoidWords=flwcComponents->avoidWords,
+		.minGoalDistance=0,
+		.maxGoalDistance=100,
+		.minAvoidDistance=0,
+		.maxAvoidDistance=100,
+		.minAdjacencies=1,
+		.maxAdjacencies=100,
+		.minGoalAdjacencies=1,
+		.maxGoalAdjacencies=100
+	};
+	struct arrayList* solution = getPathToNearestWordInWordSet(flwcComponents->wordId, p, data);
+	if(!solution || !solution->list) return NULL; 
+	char* hint = idArrayListToString(solution, data); 
+	free_ArrayList(solution); 
+	return hint; 
+
+}
+
+char* hintAdjacencyTowardsGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	struct StartWordParametersFLWC p = {
+		.goalWords=flwcComponents->goalWords,
+		.avoidWords=flwcComponents->avoidWords,
+		.minGoalDistance=0,
+		.maxGoalDistance=100,
+		.minAvoidDistance=0,
+		.maxAvoidDistance=100,
+		.minAdjacencies=1,
+		.maxAdjacencies=100,
+		.minGoalAdjacencies=1,
+		.maxGoalAdjacencies=100
+	};
+	struct arrayList* solution = getPathToNearestWordInWordSet(flwcComponents->wordId, p, data);
+	if(!solution || !solution->list) return NULL; 
+
+	int goalId = ((int*)(solution->list))[1]; 
+	char* goalStr = Convert_IntToWord(goalId, data->I2W); 
+	
+	free_ArrayList(solution); 
+
+	return goalStr; 
+}
+int hintMinDistanceToGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	struct StartWordParametersFLWC p = {
+		.goalWords=flwcComponents->goalWords,
+		.avoidWords=flwcComponents->avoidWords,
+		.minGoalDistance=0,
+		.maxGoalDistance=100,
+		.minAvoidDistance=0,
+		.maxAvoidDistance=100,
+		.minAdjacencies=1,
+		.maxAdjacencies=100,
+		.minGoalAdjacencies=1,
+		.maxGoalAdjacencies=100
+	};
+	struct arrayList* solution = getPathToNearestWordInWordSet(flwcComponents->wordId, p, data);
+	if(!solution || !solution->list) return -1; 
+	int hint = solution->currPrecision-1; 
+	free_ArrayList(solution); 
+
+	return hint; 
+}
+
+char* hintBestDirectAdjacencyFLWIC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+
+	// Given FLWC Components, it runs an FLWC Bot Ply After Switching Avoid & Goal Words
+	int id = botPly_FLWC(flwcComponents->wordId, 5, flwcComponents->avoidWords, flwcComponents->goalWords, data); 
+	if(id != -1){
+		markUnused_WordSet(id, data->wordSet); 
+		return Convert_IntToWord(id, data->I2W); 
+	}
+	return NULL; 
+}
+int hintDistanceFromNearestAvoidWordFLWIC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	struct StartWordParametersFLWC p = {
+		.goalWords=flwcComponents->avoidWords,
+		.avoidWords=flwcComponents->goalWords,
+		.minGoalDistance=0,
+		.maxGoalDistance=100,
+		.minAvoidDistance=0,
+		.maxAvoidDistance=100,
+		.minAdjacencies=1,
+		.maxAdjacencies=100,
+		.minGoalAdjacencies=1,
+		.maxGoalAdjacencies=100
+	};
+	struct arrayList* solution = getPathToNearestWordInWordSet(flwcComponents->wordId, p, data);
+	if(!solution || !solution->list) return -1; 
+	int hint = solution->currPrecision-1; 
+	free_ArrayList(solution); 
+
+	return hint; 
+
 }
 
 #endif

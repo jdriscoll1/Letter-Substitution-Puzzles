@@ -35,5 +35,13 @@ int isStartValidFLWC(struct GameComponentsFLWC* flwcComponents);
 
 char** getAllWords(struct DataStructures* dataStructures);
 
+char* hintGoalWordFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data); 
+char* hintAdjacencyTowardsGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data); 
+char* hintPathToGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data); 
+int hintMinDistanceToGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data); 
+
+
+char* hintBestDirectAdjacencyFLWIC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data); 
+int hintDistanceFromNearestAvoidWordFLWIC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data); 
 #endif
 
