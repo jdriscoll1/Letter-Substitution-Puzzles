@@ -342,7 +342,7 @@ char hintLetterToConsiderFLWG(struct GameData* flwgComponents, struct DataStruct
 	return letterToConsiderHint(flwgComponents->currWordId, data); 
 }
 
-char hintNumOptionsFLWG(struct GameData* flwgComponents, struct DataStructures* data){
+int hintNumOptionsFLWG(struct GameData* flwgComponents, struct DataStructures* data){
 	return numOptionsHint(flwgComponents->currWordId, data); 
 }
 
@@ -363,7 +363,7 @@ char* hintGetTailAdjacencyFLWP(struct GameComponents* gameComponents, struct Dat
 
 }
 int hintGetMinAdjacenciesFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
-	return gameComponents->solution->size; 
+	return gameComponents->solution->size - 1; 
 
 
 }
