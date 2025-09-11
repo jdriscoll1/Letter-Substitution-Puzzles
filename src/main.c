@@ -58,7 +58,7 @@ int flwgp();
 void flwt(); 
 
 int main(){
-	flwic(); 	
+	flwg(); 	
 }
 
 int flwgp(){
@@ -142,10 +142,12 @@ int flwg(){
 	struct GameData* gameData = initFLWG(dataStructures, minAdjacencies, maxAdjacencies);
 	if (isStartValidFLWG(gameData) == 0){
 		printf("Invalid FLWG Parameters");
-
+		return 0; 
 	}
 	else{
-		printf("Start Word: %s\n", getCurrWord(gameData, dataStructures));
+		printf("[GAME MESSAGE] Start: %s\n", getCurrWord(gameData, dataStructures));
+		printf("[HINT MESSAGE] Hint Character: %c\n", hintLetterToConsiderFLWG(gameData, dataStructures));
+		printf("[HINT MESSAGE] Hint Num Options: %d\n", hintNumOptionsFLWG(gameData, dataStructures));
 
 
 		/******GAME LOGIC GOES HERE**********/
