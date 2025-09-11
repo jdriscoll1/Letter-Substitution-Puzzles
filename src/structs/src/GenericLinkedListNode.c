@@ -154,13 +154,10 @@ void FreeQuantity_GenericLinkedList(int freeAmount, struct GenericLinkedListNode
 //Free it
 void Free_GenericLinkedList(struct GenericLinkedListNode *header){
 	if(header != NULL){
-		printf("Header is NULL I Guess?\n");
 		struct GenericLinkedListNode temp = *header; 
 		free(header);  	
 		header = temp.next; 
 		while(header != NULL){
-			printf("Here?\n");
-			 
 			//If it's a tree set
 			if(header->listType == TREE_SET_LL){
 				Free_TreeSet(((struct DummyHeadNode*)(header)->listHeader)->start, WORD);  

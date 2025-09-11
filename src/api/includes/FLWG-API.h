@@ -70,17 +70,23 @@ void undoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* 
 void redoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
 struct arrayList *getCurrentWordsFLWP(struct GameComponents *gameComponents);
 void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures);
+char* hintGetHeadAdjacencyFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures); 
+char* hintGetTailAdjacencyFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures); 
+int hintGetMinAdjacenciesFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures); 
 
 // flwp-generalized additional functionality 
 struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, int minGoalAdjacencies, int maxGoalAdjacencies, struct DataStructures* dataStructures);
 struct GameComponents* getFLWPComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents);
 struct GameComponentsFLWC* getFLWCComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents); 
 void freeGameComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures); 
-char* getSolutionFLWGP(struct GameComponentsFLWGP* flwgpComponents);
 int userEntersWord_FLWGP(char* userInput, struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures); 
 void undoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStructures* dataStructures);
 void redoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStructures* dataStructures);
 int isStartValid_FLWGP(struct GameComponentsFLWGP* flwgpComponents); 
+int hintGetMinAdjacenciesFLWGP(struct GameComponentsFLWGP* flwgpComponents); 
+char* hintWordTowardsGoalFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* data); 
+char* hintGetValidGoalWordFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* data); 
+
 
 // Test Functionality  
 char* convertIntToWord(int wordId, struct DataStructures* dataStructures); 

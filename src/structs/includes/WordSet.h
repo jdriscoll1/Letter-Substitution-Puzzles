@@ -46,4 +46,6 @@ void print_WordSet(struct WordSet* wordSet);
 //outputs a long as binary
 void long2binary(unsigned long hash);
 
+struct WordSet* copyWordSetDeep(struct WordSet* original); 
+
 #endif

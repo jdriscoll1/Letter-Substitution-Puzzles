@@ -5,4 +5,8 @@
 
 int directAdjacencyHint(int wordId, struct DataStructures* data); 
 
+char letterToConsiderHint(int id, struct DataStructures* data);
+
+int numOptionsHint(int id, struct DataStructures* data);
+
 #endif

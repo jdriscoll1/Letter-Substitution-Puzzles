@@ -246,3 +246,5 @@ void CopyWordLLOntoArrayList(struct GameComponents *gc, struct wordDataArray* In
 
 	free(output); 
 }
+
+

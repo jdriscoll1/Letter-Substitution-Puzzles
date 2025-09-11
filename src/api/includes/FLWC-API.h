@@ -11,8 +11,6 @@ struct GameComponentsFLWC{
 	struct WordSet* goalWords; 
 	// The set of words the user wants to avoid
 	struct WordSet* avoidWords; 
-	// The solution of the game 
-	char* solution; 
 };
 
 
@@ -32,12 +30,18 @@ int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents);
 
 void freeGameComponentsFLWC(struct GameComponentsFLWC* flwcComponents); 
 
-char* getSolutionFLWC(struct GameComponentsFLWC* flwcComponents);
-
 // Confirms if the parameters inputted are valid
 int isStartValidFLWC(struct GameComponentsFLWC* flwcComponents);
 
 char** getAllWords(struct DataStructures* dataStructures);
 
+char* hintGoalWordFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data); 
+char* hintAdjacencyTowardsGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data); 
+char* hintPathToGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data); 
+int hintMinDistanceToGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data); 
+
+
+char* hintBestDirectAdjacencyFLWIC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data); 
+int hintDistanceFromNearestAvoidWordFLWIC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data); 
 #endif
 
