@@ -338,7 +338,7 @@ int isStartValidFLWG(struct GameData* gameData){
 }
 
 
-char hintletterToConsiderFLWG(struct GameData* flwgComponents, struct DataStructures* data){
+char hintLetterToConsiderFLWG(struct GameData* flwgComponents, struct DataStructures* data){
 	return letterToConsiderHint(flwgComponents->currWordId, data); 
 }
 
