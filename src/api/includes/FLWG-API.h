@@ -87,6 +87,8 @@ int hintGetMinAdjacenciesFLWGP(struct GameComponentsFLWGP* flwgpComponents);
 char* hintWordTowardsGoalFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* data); 
 char* hintGetValidGoalWordFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* data); 
 
+char hintletterToConsiderFLWG(struct GameData* flwgComponents, struct DataStructures* data);
+char hintNumOptionsFLWG(struct GameData* flwgComponents, struct DataStructures* data);
 
 // Test Functionality  
 char* convertIntToWord(int wordId, struct DataStructures* dataStructures); 
