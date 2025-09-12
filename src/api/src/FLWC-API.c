@@ -227,7 +227,7 @@ int hintMinDistanceToGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct 
 char* hintBestDirectAdjacencyFLWIC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
 
 	// Given FLWC Components, it runs an FLWC Bot Ply After Switching Avoid & Goal Words
-	int id = botPly_FLWC(flwcComponents->wordId, 5, flwcComponents->avoidWords, flwcComponents->goalWords, data); 
+	int id = botPly_FLWC(flwcComponents->wordId, 5, flwcComponents->goalWords, flwcComponents->avoidWords, data); 
 	if(id != -1){
 		markUnused_WordSet(id, data->wordSet); 
 		return Convert_IntToWord(id, data->I2W); 
