@@ -65,7 +65,7 @@ int flwgp(){
 	// Initialize Structures
 	printf("-----FLWGP----\n"); 
 	srand(time(0)); 
-	int numLetters = 4; 
+	int numLetters = 3; 
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd, numLetters); 
 
@@ -105,7 +105,7 @@ void flwt(){
 	// Initialize Structures
 	printf("-----FLWT----\n"); 
 	srand(time(0)); 
-	int numLetters = 4; 
+	int numLetters = 3; 
 
 	int fd = open("docs/4.txt", O_RDONLY);
 	struct DataStructures* data = initDataStructures(fd, numLetters); 
@@ -117,6 +117,7 @@ void flwt(){
 
 	// Initialize the Game
 	struct GameComponentsFLWT* flwt = initFLWT(numTurns, minAdj,  maxAdj, data); 
+	flwt->startWordId = Convert_WordToInt("boo", data);
 	printf("[GAME MESSAGE] Start: %s\n", getStartWordFLWT(flwt, data));
 	printf("[GAME MESSAGE] Hint Character: %c\n", hint_letterToConsiderFLWT(flwt, data));
 	printf("[GAME MESSAGE] Hint Num Options: %d\n", hint_numOptionsFLWT(flwt, data));
@@ -125,8 +126,8 @@ void flwt(){
 	fgets(input, sizeof(input), stdin);
 	// Remove trailing newline from fgets
 	input[strcspn(input, "\n")] = 0;
-	userEntersWordFLWT(input, flwt, data);	
-	printf("[GAME MESSAGE] Hint Num Options: %d\n", hint_numOptionsFLWT(flwt, data));
+	int result = userEntersWordFLWT(input, flwt, data);	
+	printf("RESULT: %d", result);
 	freeGameComponentsFLWT(flwt); 
 	close(fd); 
 	freeDataStructures(data);	

@@ -11,6 +11,9 @@
 
 #define MAX_SIZE 256
 
+
+int isSubsequence(const char* subseq, const char* seq, int n);
+
 //This takes the input, and returns a pointer -- this is with a known size
 char* Take_Input(int size){
 	//In order to remember the jazz that happened in this function, outside of this function, we must use malloc
@@ -107,12 +110,14 @@ int Check_Input(int prevWord, const char* currWord, struct DataStructures *data)
 	}
 	switch(Order_Check(prevWord, Convert_WordToInt((char*) currWord, data), data)){
 
-		case(0):
+		case(VALID):
 			return VALID;
-		case(1):
+		case(NOT_ENOUGH_LETTERS_IN_COMMON):
 			return NOT_ENOUGH_LETTERS_IN_COMMON; 
-		case(2):
+		case(WRONG_ORDER):
 			return WRONG_ORDER; 
+		case(TOO_MANY_LETTERS_IN_COMMON): 
+			return TOO_MANY_LETTERS_IN_COMMON; 
 	}
 	
 	return UNKNOWN_ERROR; 
@@ -259,35 +264,75 @@ int safeStrLen(char* word){
 	
 }
 
+int isSubsequence(const char* subseq, const char* seq, int n) {
+    // Check if subseq is a subsequence of seq
+    int i = 0, j = 0;
+    while (i < n && j < n) {
+        if (subseq[i] == seq[j]) {
+            i++;
+            j++;
+        } else {
+            j++;
+        }
+    }
+    return i == n; // all subseq letters found in order
+}
 
-int Order_Check(int w1, int w2, struct DataStructures* data){
-	int A[26] = {0};
-	int B[26] = {0};
-	char* a = Convert_IntToWord(w1, data->I2W); 
-	char* b = Convert_IntToWord(w2, data->I2W); 
-	// not necessary in right order
-	int lettersInCommon = 0; 
-	// in right order
-	int equalLetters = 0; 
-	// first we go through each word	
-	for(int i = 0; i < data->I2W->numLetters; i++){
-		A[a[i] - 'a']++; 
-		B[b[i] - 'a']++; 
-		if(a[i] == b[i]){
-			equalLetters++; 
-		}
-	}
-	for(int i = 0; i < 26; i++){
-		if(A[i] == B[i] && A[i] > 0){
-			lettersInCommon++; 	
-		}
-	}
-	printf("Equal Letters: %d\nLetters In Common: %d\n", equalLetters, lettersInCommon); 
-	if(equalLetters < data->I2W->numLetters - 1 && lettersInCommon == data->I2W->numLetters - 1){
-		return 2; 	
-	}
-	if(equalLetters < data->I2W->numLetters - 1) {
-		return 1; 
-	}
-	return 0; 
+
+
+int Order_Check(int w1, int w2, struct DataStructures* data) {
+    char* a = Convert_IntToWord(w1, data->I2W);
+    char* b = Convert_IntToWord(w2, data->I2W);
+
+    int n = data->I2W->numLetters;
+
+    // Count letter frequencies in a and b
+    int countA[256] = {0}, countB[256] = {0};
+    for (int i = 0; i < n; i++) {
+        countA[(unsigned char)tolower(a[i])]++;
+        countB[(unsigned char)tolower(b[i])]++;
+    }
+
+    // Count total letters in common (sum of min frequencies)
+    int lettersInCommon = 0;
+    for (int c = 'a'; c <= 'z'; c++) {
+        lettersInCommon += (countA[c] < countB[c]) ? countA[c] : countB[c];
+    }
+
+    // Count letters in correct position
+    int equalPositionedLetters = 0;
+    for (int i = 0; i < n; i++) {
+        if (tolower(a[i]) == tolower(b[i])) {
+            equalPositionedLetters++;
+        }
+    }
+
+    // Case 4: Less than n-1 letters in common
+    if (lettersInCommon < n - 1) {
+        return NOT_ENOUGH_LETTERS_IN_COMMON;
+    }
+
+    // Case 3: n letters in common
+    if (lettersInCommon == n) {
+        if (equalPositionedLetters == n) {
+            // Exact same word
+            return TOO_MANY_LETTERS_IN_COMMON; // Same word repeated
+        } else {
+            // Letters in common but possibly different order -> TOO_MANY_LETTERS_IN_COMMON
+            return TOO_MANY_LETTERS_IN_COMMON;
+        }
+    }
+
+    // Case 1: n-1 letters in common in correct order -> VALID
+    if (lettersInCommon == n - 1 && equalPositionedLetters >= n - 1) {
+        return VALID;
+    }
+
+    // Case 2: n-1 letters in common in incorrect order -> WRONG_ORDER
+    if (lettersInCommon == n - 1 && equalPositionedLetters < n - 1) {
+        return WRONG_ORDER;
+    }
+
+    // fallback for unknown errors or unhandled cases
+    return UNKNOWN_ERROR;
 }

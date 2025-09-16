@@ -29,7 +29,8 @@ enum ERROR_CODE{
 		WORD_USED = 5,
                 WORD_DOES_NOT_EXIST = 6,
                 WRONG_ORDER = 7,
-                UNKNOWN_ERROR = 8
+                UNKNOWN_ERROR = 8,
+		TOO_MANY_LETTERS_IN_COMMON=9
 };
 /*This method checks gitthe input to make sure that it is valid
 @param prevWord --> The previous word, the word it is checking the current characters against
