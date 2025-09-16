@@ -58,7 +58,7 @@ int flwgp();
 void flwt(); 
 
 int main(){
-	flwg(); 	
+	flwt(); 	
 }
 
 int flwgp(){
@@ -119,6 +119,13 @@ void flwt(){
 	struct GameComponentsFLWT* flwt = initFLWT(numTurns, minAdj,  maxAdj, data); 
 	printf("[GAME MESSAGE] Start: %s\n", getStartWordFLWT(flwt, data));
 	printf("[GAME MESSAGE] Hint Character: %c\n", hint_letterToConsiderFLWT(flwt, data));
+	printf("[GAME MESSAGE] Hint Num Options: %d\n", hint_numOptionsFLWT(flwt, data));
+	char input[100];
+ 	printf("Enter a string: ");
+	fgets(input, sizeof(input), stdin);
+	// Remove trailing newline from fgets
+	input[strcspn(input, "\n")] = 0;
+	userEntersWordFLWT(input, flwt, data);	
 	printf("[GAME MESSAGE] Hint Num Options: %d\n", hint_numOptionsFLWT(flwt, data));
 	freeGameComponentsFLWT(flwt); 
 	close(fd); 
