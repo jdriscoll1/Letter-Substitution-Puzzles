@@ -69,8 +69,8 @@ int numOptionsHint(int id, struct DataStructures* data){
 		if(checkIfUsed_WordSet(c_id, data->wordSet) == 0){
 			// if the word is not used, then you can set it to the hint word id and Break 	
 			numOptions++;
-			c = c->next; 
 		}
+		c = c->next; 
 	}
 	return numOptions; 
 }
