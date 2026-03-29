@@ -9,7 +9,7 @@ import java.io.*;
 
 public class IntegerDocumentProducer{
    
-   public static int numLetters = 2; 
+   public static int numLetters = 3; 
    
    public static void main(String[] args) throws FileNotFoundException, IOException {
       String filename; 
