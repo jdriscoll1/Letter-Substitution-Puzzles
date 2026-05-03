@@ -53,6 +53,8 @@ struct GameComponents *InitializeGameComponents(int minAdjacenciesToStart, int m
 	//Insert the word into the front of the Generic Linked List
 	CopyInto_GenericLinkedListNode(gameComponents->userConnections, gameComponents->storage, 1, INT_LL);
 
+	reset_WordSet(data->wordSet);
+	markUsed_WordSet(gameComponents->start, data->wordSet); 
 	return gameComponents;
 
 }

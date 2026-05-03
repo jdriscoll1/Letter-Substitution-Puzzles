@@ -87,6 +87,7 @@ bait
 bake
 bald
 bale
+balk
 ball
 balm
 band
@@ -169,6 +170,7 @@ bomb
 bond
 bone
 bong
+bonk
 bony
 book
 boom
@@ -180,6 +182,7 @@ bore
 born
 boss
 both
+bots
 bout
 bowl
 bows
@@ -222,8 +225,6 @@ buzz
 byes
 byte
 cabs
-cade
-cads
 cafe
 cage
 cagy
@@ -1078,6 +1079,7 @@ mock
 mode
 mold
 mole
+molt
 moms
 monk
 mono
