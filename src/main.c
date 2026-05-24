@@ -39,6 +39,8 @@ Purpose: The four letter pathfinder, this time better
 #include "./flwc/includes/FLWC.h"
 #include "./flwg/includes/MultiplayerFLWG.h"
 
+
+int fix_flwgp_redo_crash(); 
 void _FLWP(); 
 // FLWG
 void flwg_example(); 
@@ -58,8 +60,74 @@ int flwgp();
 void flwt(); 
 
 int main(){
-	flwt(); 	
+	fix_flwgp_redo_crash(); 	
 }
+
+
+int fix_flwgp_redo_crash(){
+		// Initialize Structures
+	printf("-----FLWGP----\n"); 
+	srand(time(0)); 
+	int numLetters = 4; 
+	int fd = open("docs/4.txt", O_RDONLY);
+	struct DataStructures* data = initDataStructures(fd, numLetters); 
+
+	// FLWGP Parameters
+	int minAdjacenciesToStart = 1; 
+	int maxAdjacenciesToStart = 30; 
+
+	int minGoalDistance = 2; 
+	int maxGoalDistance = 2; 
+
+	int minAvoidDistance = 0; 
+	int maxAvoidDistance = 0; 
+
+	int minGoalAdjacencies = 1; 
+	int maxGoalAdjacencies = 30; 
+
+	// These are temporary values that are replaced later
+	char *goalWords[] = {"ties", "pies", "lies", NULL};
+	char *avoidWords[] = {NULL}; 
+
+	// Initialize the Game
+	struct GameComponentsFLWGP* flwgpComponents = initiateFLWGP(minAdjacenciesToStart, maxAdjacenciesToStart,  goalWords, avoidWords, minGoalDistance, minAvoidDistance, maxGoalDistance, maxAvoidDistance, minGoalAdjacencies, maxGoalAdjacencies, data);
+	if(!isStartValid_FLWGP(flwgpComponents)){
+		return -1; 	
+	}
+	printf("[GAME MESSAGE]\nUNDO PRESSED"); 
+	undoMoveFLWGP(flwgpComponents, data); 
+	undoMoveFLWGP(flwgpComponents, data); 
+	undoMoveFLWGP(flwgpComponents, data); 
+	undoMoveFLWGP(flwgpComponents, data); 
+	undoMoveFLWGP(flwgpComponents, data); 
+	undoMoveFLWGP(flwgpComponents, data); 
+	undoMoveFLWGP(flwgpComponents, data); 
+	undoMoveFLWGP(flwgpComponents, data); 
+	printf("[GAME MESSAGE]\nREDO PRESSED"); 
+	redoMoveFLWGP(flwgpComponents, data); 
+	redoMoveFLWGP(flwgpComponents, data); 
+	redoMoveFLWGP(flwgpComponents, data); 
+	redoMoveFLWGP(flwgpComponents, data); 
+	redoMoveFLWGP(flwgpComponents, data); 
+	redoMoveFLWGP(flwgpComponents, data); 
+	redoMoveFLWGP(flwgpComponents, data); 
+	redoMoveFLWGP(flwgpComponents, data); 
+	
+	printf("[GAME MESSAGE]\nStart: %s\n", getStartWordFLWP(flwgpComponents->flwpComponents, data));
+	printf("[HINT MESSAGE]\nThere are %d connections at minimum\n", hintGetMinAdjacenciesFLWGP(flwgpComponents)); 
+	printf("[HINT MESSAGE]\nA direct adjacency towards teh goal is %s\n", hintWordTowardsGoalFLWGP(flwgpComponents, data)); 
+	printf("[HINT MESSAGE]\nA valid goal word is %s\n", hintGetValidGoalWordFLWGP(flwgpComponents, data)); 
+	//printf("[GAME MESSAGE]\n Solution:\n%s\n", getSolutionFLWGP(flwgpComponents)); 
+	freeGameComponentsFLWGP(flwgpComponents, data); 
+	close(fd); 
+	freeDataStructures(data);	
+
+	return 0; 	
+
+
+}
+
+
 
 int flwgp(){
 	// Initialize Structures

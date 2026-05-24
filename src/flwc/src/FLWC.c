@@ -159,36 +159,64 @@ int botPly_Random(int word, struct DataStructures* data){
 }
 int botPly_MaxAdjacencies(int word, struct WordSet* goalWords, struct DataStructures* data){
 
+    // Initialize the ID of the result, word ID to be returned
     int resultId = -1;
+
+    // Get the set of words that could be used
     struct intList* options = getConnections(word, data->I2W);
     options = options->next;
+
+    // otherwise, foreach option in options
     while(options != NULL){
-        // if the word is not used
-        if(!checkIfUsed_WordSet(options->data, data->wordSet)) {
-            if (resultId == -1) {
-                resultId = options->data;
 
-            } else {
-                if (data->I2W->array[resultId]->numConnections <  data->I2W->array[options->data]->numConnections) {
-			if(goalWords == NULL){
-			    resultId = options->data;
-			}
-			else{
-				if(checkIfUsed_WordSet(options->data, goalWords) != 0){
-					resultId = options->data; 
-				}
-			}
+	// get the current option
+	int optionId = options->data; 
 
-                }
-            }
+	// if the word is used, continue
+	if(checkIfUsed_WordSet(optionId, data->wordSet)){
+		options = options->next;
+		continue; 
+	}
+	// if there aren't any words currently, just grab it so long as its not used
+        if (resultId == -1) {
+        	resultId = optionId; 
+		options = options->next;
+		continue; 
         }
+
+	// If the current word is in the goal list and the new one is not, choose the new one 
+	if(goalWords != NULL){
+		bool currWordInGoalWordSet = checkIfUsed_WordSet(resultId, goalWords); 
+		bool optionInGoalWordSet = checkIfUsed_WordSet(optionId, goalWords); 
+		// if the current word is in the goal set (bot loses) and current option isn't choose the option regardless of num connections
+		if(currWordInGoalWordSet && !optionInGoalWordSet){
+			resultId = optionId; 
+			options = options->next; 
+			continue; 
+		}
+		// if the current word is in 
+	}
+        // Number of Options on Current Word (Right Now it needs to be updated)
+	int currWordNumConnections = getNumOptions(resultId, data); 
+
+	// Number of Options on Potential Word (Right now it needs to be updated to take into account used words)
+	int optionNumConnections = getNumOptions(optionId, data); 
+	
+	// If the Potential Word Has More Options Than the Current
+        if (currWordNumConnections >= optionNumConnections) {
+		options = options->next; 
+		continue; 
+
+	}
+	// if all parameters exceed, choose the result
+	resultId = optionId; 
         options = options->next;
 
     }
     if(resultId != -1){
         markUsed_WordSet(resultId, data->wordSet);
     }
-    // Then run minimax using that score
+    // Return the Chosen Word!!
     return resultId;
 }
 

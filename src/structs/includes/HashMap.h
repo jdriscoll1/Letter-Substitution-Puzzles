@@ -129,4 +129,7 @@ void reset_HashSet(struct wordDataArray* IntToWord_HashMap);
 
 void printOptions(int id, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet);
 
+
+int getNumOptions(int id, struct DataStructures* I2W); 
+
 #endif
