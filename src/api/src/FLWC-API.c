@@ -41,7 +41,6 @@ struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacencie
 		markUsed_WordSet(flwcComponents->wordId, dataStructures->wordSet); 
 	}
 	return flwcComponents; 
-
 }
 
 // Choose a word
