@@ -403,3 +403,17 @@ void reset_HashSet(struct wordDataArray* IntToWord_HashMap){
 
 	}
 }
+
+int getNumOptions(int id, struct DataStructures* data){
+	struct intList* options = getConnections(id, data->I2W); 
+	// for each option in options
+	options = options->next; 
+	int numOptions = 0; 
+	while (options != NULL) {
+		int optionId = options->data; 
+		if(!checkIfUsed_WordSet(optionId, data->wordSet)){
+			numOptions++; 
+		}
+	}
+	return numOptions; 
+}
