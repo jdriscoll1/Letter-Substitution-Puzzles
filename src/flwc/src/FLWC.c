@@ -172,28 +172,44 @@ int botPly_MaxAdjacencies(int word, struct WordSet* goalWords, struct DataStruct
 	// get the current option
 	int optionId = options->data; 
 
+	//printf("\n\n---Choosing Between: %s and %s----\n\n", Convert_IntToWord(resultId, data->I2W), Convert_IntToWord(optionId, data->I2W)); 
+
 	// if the word is used, continue
 	if(checkIfUsed_WordSet(optionId, data->wordSet)){
+		//printf("Option Is Used, NEXT\n\n"); 
 		options = options->next;
 		continue; 
 	}
+	//printf("Option Is Not Used, Moving Forward\n"); 
 	// if there aren't any words currently, just grab it so long as its not used
         if (resultId == -1) {
+		///printf("Active ID is -1, Choosing %d\n", optionId); 
         	resultId = optionId; 
 		options = options->next;
 		continue; 
         }
+	//printf("Active ID Not -1, Moving Forward\n"); 
 
 	// If the current word is in the goal list and the new one is not, choose the new one 
 	if(goalWords != NULL){
-		bool currWordInGoalWordSet = checkIfUsed_WordSet(resultId, goalWords); 
-		bool optionInGoalWordSet = checkIfUsed_WordSet(optionId, goalWords); 
+		//printf("Goal Words Is Not NULL\n"); 
+		int currWordInGoalWordSet = checkIfUsed_WordSet(resultId, goalWords); 
+		int optionInGoalWordSet = checkIfUsed_WordSet(optionId, goalWords); 
+		//printf("Curr Word In Goal Set: %s\n", (currWordInGoalWordSet) ? "true" : "false"); 
+		//nprintf("Option In Goal Set: %s\n", (optionInGoalWordSet) ? "true" : "false"); 
 		// if the current word is in the goal set (bot loses) and current option isn't choose the option regardless of num connections
 		if(currWordInGoalWordSet && !optionInGoalWordSet){
+			//printf("Curr Word is in the Goal and the Option is Not, Choosing %d\n", optionId);
 			resultId = optionId; 
 			options = options->next; 
 			continue; 
 		}
+		if(!currWordInGoalWordSet && optionInGoalWordSet){
+			//printf("Curr Word is not in the Goal Set and the Option is, Selecting Current Word\n");
+			options = options->next; 
+			continue; 
+		}
+		//printf("The Current Word is not in the goal set OR the Option is in the Goal Set, Moving Forward\n");
 		// if the current word is in 
 	}
         // Number of Options on Current Word (Right Now it needs to be updated)
@@ -204,11 +220,13 @@ int botPly_MaxAdjacencies(int word, struct WordSet* goalWords, struct DataStruct
 	
 	// If the Potential Word Has More Options Than the Current
         if (currWordNumConnections >= optionNumConnections) {
+		//printf("The Current Word Has More Connections than the option, NOT SELECTING THE OPTION \n"); 
 		options = options->next; 
 		continue; 
 
 	}
 	// if all parameters exceed, choose the result
+	//printf("Success! Selecting The Option"); 
 	resultId = optionId; 
         options = options->next;
 
