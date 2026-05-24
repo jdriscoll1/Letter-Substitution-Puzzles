@@ -60,7 +60,7 @@ int flwgp();
 void flwt(); 
 
 int main(){
-	fix_flwgp_redo_crash(); 	
+	flwc();
 }
 
 
@@ -302,7 +302,13 @@ void flwc(){
 		minGoalAdjacencies, 
 		maxGoalAdjacencies, data);
 		
-	printf("[GAME MESSAGE]: Start: %s", getStartWordFLWC(flwcComponents, data));
+	char* startWord = getStartWordFLWC(flwcComponents, data); 
+	int startId = Convert_WordToInt(startWord, data); 
+	
+		
+	printf("[GAME MESSAGE]: Start: %s", startWord);
+	
+	int id = botPly_MaxAdjacencies(startId, flwcComponents->goalWords, data); 
 	printf("[GAME MESSAGE]: A Potential Goal Is %s", hintGoalWordFLWC(flwcComponents, data));
 	char* pathToGoal = hintPathToGoalFLWC(flwcComponents, data);
 	printf("[GAME MESSAGE]: A Way To Get to the Goal Is: %s", pathToGoal);

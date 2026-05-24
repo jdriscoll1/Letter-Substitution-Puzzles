@@ -414,6 +414,7 @@ int getNumOptions(int id, struct DataStructures* data){
 		if(!checkIfUsed_WordSet(optionId, data->wordSet)){
 			numOptions++; 
 		}
+		options = options->next; 
 	}
 	return numOptions; 
 }
