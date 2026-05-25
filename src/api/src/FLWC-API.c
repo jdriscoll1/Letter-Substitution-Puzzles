@@ -21,15 +21,16 @@ struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacencie
 	flwcComponents->goalWords = convertCharPtrPtrToWordSet(goalWords, dataStructures); 
 	flwcComponents->avoidWords = convertCharPtrPtrToWordSet(avoidWords, dataStructures); 
 
+	
 	struct StartWordParametersFLWC params = {
 	    .goalWords = flwcComponents->goalWords,
 	    .avoidWords = flwcComponents->avoidWords,
 		// adding + 1 to each to account for the initial word pins->pies is counted as 2, but it is thought of as one adjacency away
-	    .minGoalDistance = minGoalDistance + 1,
+	    .minGoalDistance = minGoalDistance,
 		// for max same applies: pies->tins is pies->ties->tins. It's counted as 3. but because it's > 2 it would not be allowed
-	    .maxGoalDistance = maxGoalDistance + 1,
-	    .minAvoidDistance = minAvoidDistance + 1,
-	    .maxAvoidDistance = maxAvoidDistance + 1,
+	    .maxGoalDistance = maxGoalDistance,
+	    .minAvoidDistance = minAvoidDistance,
+	    .maxAvoidDistance = maxAvoidDistance,
 	    .minAdjacencies = minAdjacenciesToStart,
 	    .maxAdjacencies = maxAdjacenciesToStart,
 	    .minGoalAdjacencies = minGoalAdjacencies,

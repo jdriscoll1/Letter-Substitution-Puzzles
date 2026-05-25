@@ -261,7 +261,6 @@ void generalizedFLWCGame(struct DataStructures* data){
 	int startWord = 0; 
 	int depth = 2;   
 	markUsed_WordSet(startWord, data->wordSet); 
-	printf("Start Word: %s", Convert_IntToWord(startWord, data->I2W));
 	int word = startWord;  
 	// Let teh bot take a turn 
 	for(int i = 0; i < 5; i++){
