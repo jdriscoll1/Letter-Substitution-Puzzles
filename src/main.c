@@ -59,8 +59,9 @@ void flwp();
 int flwgp(); 
 void flwt(); 
 
+int level21();
 int main(){
-	flwc();
+	level21();
 }
 
 
@@ -580,4 +581,57 @@ void flwg_example(){
 	//printf("%s Wins\n\n", (winner != 0) ? "Minimax": "Random");
         printf("User wins: %d Bot wins: %d\n", bot_wins, random_wins);
 
+}
+
+int level21(){
+
+	printf("-----LEVEL 21-----\n"); 
+	// Initialize Structures
+	srand(time(0)); 
+	int numLetters = 4; 
+	int fd = open("docs/4.txt", O_RDONLY);
+	struct DataStructures* data = initDataStructures(fd, numLetters); 
+	// FLWC Parameters
+ 
+	int minAdjacenciesToStart = 2; 
+	int maxAdjacenciesToStart = 30; 
+	int minGoalDistance = 2; 
+	int maxGoalDistance = 3; 
+	int minAvoidDistance = 0; 
+	int maxAvoidDistance = 0; 
+	int minGoalAdjacencies = 12; 
+	int maxGoalAdjacencies = 30; 
+	int numTurns = 8; 
+	int botType = 1;
+
+	char *goalWords[] = {"boos", "boot", "coos", "loot", "soot", "hook", "hoot", "loon", "moos", "moot", "root", "cook", "foot", "look", "toot", "book", "boon", "fool", "hood", "moon", "poop", "rook", "woos", "cool", "coop", "food", "pool", "boom", "good", "goon", "hoof", "loom", "mood", "noon", "poof", "room", "took", "tool", "wood", "woof", "goof", "hoop", "loop", "nook", "roof", "soon", "wool", "oops", "poor", "doom", "pooh", "zoom", "zoos", "door", "shoo", "ooze", "oozy", NULL}; 
+	char *avoidWords[] = {NULL}; 
+	// Initialize the Game
+	struct GameComponentsFLWC* flwcComponents = initFLWC(
+		minAdjacenciesToStart, 
+		maxAdjacenciesToStart,  
+		goalWords, 
+		avoidWords, 
+		minGoalDistance, 
+		minAvoidDistance, 
+		maxGoalDistance, 
+		maxAvoidDistance, 
+		minGoalAdjacencies, 
+		maxGoalAdjacencies,
+		numTurns,
+		data);
+		
+	char* startWord = getStartWordFLWC(flwcComponents, data); 
+	printf("[GAME MESSAGE]: Start: %s\n", startWord);
+	printf("[GAME MESSAGE]: A Potential Goal Is %s", hintGoalWordFLWC(flwcComponents, data));
+	char* pathToGoal = hintPathToGoalFLWC(flwcComponents, data);
+	printf("[GAME MESSAGE]: A Way To Get to the Goal Is: %s", pathToGoal);
+	free(pathToGoal); 
+	printf("[GAME MESSAGE]: A Word That Gets You Closer to the Goal Is: %s", hintAdjacencyTowardsGoalFLWC(flwcComponents, data));
+	printf("[GAME MESSAGE]: You are %d words away from the goal", hintMinDistanceToGoalFLWC(flwcComponents, data));
+	
+	// End the Game
+	freeGameComponentsFLWC(flwcComponents); 
+	close(fd); 
+	freeDataStructures(data);	
 }
