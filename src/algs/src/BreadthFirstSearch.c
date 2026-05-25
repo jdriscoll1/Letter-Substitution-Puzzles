@@ -275,45 +275,30 @@ void Free_BFSResults(struct BFSResults results, struct WordSet* wordSet){
 
 struct arrayList* getPathToNearestWordInWordSet(int id, struct StartWordParametersFLWC p, struct DataStructures* data){
 
-	// initalize the Queue 
+	// Initalize the Queue 
 	struct Queue* q = init_Queue(); 		
 
-	// The lists that have been explored in the BFS 
+	// This Can Run Mid Game So It Is Vital To Know the Explored Words
 	struct WordSet* exploredNodes = copyWordSetDeep(data->wordSet); 
-
-	// distance words activeley being traversed are from the root 
-	int currDistance = 0; 
-
-	// distance immediate parent is from root 
-	int prevDistance = 0; 
 	
 	struct arrayList* pathToNearestWord = init_ArrayList(0, 1, NUM); 
 
 	// if the current word is in the not set of avoid words, it is to be enqueued
-	if(checkIfUsed_WordSet(id, p.avoidWords) == 0){
-		enqueue(id, currDistance, NULL,  q); 	
+	if(!checkIfUsed_WordSet(id, p.avoidWords)){
+		enqueue(id, 0, NULL,  q); 	
 	}
+
 	// If the current word meets the requirements, the distance is 0 
-	if(checkIfUsed_WordSet(id, p.goalWords) == 1 || checkIfUsed_WordSet(id, p.goalWords)){
-		// free Queue
-		free_Queue(q); 
-		// freeWordSet
-		free_WordSet(exploredNodes); 
-		return pathToNearestWord; 
-	}
-
-	int minNumConnectionsFromGoal = -1; 
-
 	while(!isEmpty_Queue(q)){
 		
-		// pop current from queue 
+		// dequeue 
 		struct QueueNode* parent = dequeue(q); 
 
 		// the parent's distance 
-		prevDistance = parent->data->distance; 
+		int distance = parent->data->distance; 
 
 		// if distance is equal to current distance, add one to it 
-		currDistance = prevDistance + 1; 
+		int childDistance = distance + 1; 
 
 		int currId = parent->data->id; 
 
@@ -321,24 +306,17 @@ struct arrayList* getPathToNearestWordInWordSet(int id, struct StartWordParamete
 		
 		// Check if the current word is one of the goal words, or if the max distance has been reached
 		// If the goal is too close or too far away, then we mark defeat
-		if(prevDistance < p.minGoalDistance 
-		         && checkIfUsed_WordSet(currId, p.goalWords)
-			 || prevDistance > p.maxGoalDistance){
 
+		// If the Current Word That We're Looking at is In The Goal Set
+		int currIsGoal = checkIfUsed_WordSet(currId, p.goalWords);
+		if (currIsGoal) {
 			free_ArrayList(pathToNearestWord); 
 			pathToNearestWord = getPathToHeader_Queue(parent); 	
 			break; 
-		}  
-		else if(adj >= p.minGoalAdjacencies && 
-			adj <= p.maxGoalAdjacencies && 
-		         checkIfUsed_WordSet(currId, p.goalWords)
-		){
-			free_ArrayList(pathToNearestWord); 
-			pathToNearestWord = getPathToHeader_Queue(parent); 	
-			break; 
-			
 			
 		}
+			
+
 		// This words that directly connect to this word
 		struct intList* conn = getConnections(currId, data->I2W); 
 
@@ -350,11 +328,16 @@ struct arrayList* getPathToNearestWordInWordSet(int id, struct StartWordParamete
 			
 			int currConnId = conn->data; 
 		
-			// if it's not already explored and it is not in the list of avoid words, it is permitted
-			if(checkIfUsed_WordSet(currConnId, exploredNodes) == 0 && checkIfUsed_WordSet(currConnId, p.avoidWords) == 0){
-				enqueue(currConnId, currDistance, parent, q); 	
-				markUsed_WordSet(currConnId, exploredNodes);
+			// if the word is used, continue 
+			if(checkIfUsed_WordSet(currConnId, exploredNodes)){
+				continue; 
 			}
+			// if the word is an avoid word, continue
+			if(checkIfUsed_WordSet(currConnId, p.avoidWords)){
+				continue; 
+			}
+			enqueue(currConnId, childDistance, parent, q); 	
+			markUsed_WordSet(currConnId, exploredNodes);
 		}	
 
 	}

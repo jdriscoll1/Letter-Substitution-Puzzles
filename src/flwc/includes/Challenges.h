@@ -27,6 +27,8 @@ struct StartWordParametersFLWC{
 	int maxAdjacencies; 	
 	int minGoalAdjacencies; 	
 	int maxGoalAdjacencies; 	
+	// Number of Turns in the FLWC Game
+	int numTurns; 
 }; 
 
 struct WordSet* convertCharPtrPtrToWordSet(char** words, struct DataStructures* data);

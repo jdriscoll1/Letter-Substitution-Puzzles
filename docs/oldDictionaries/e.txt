@@ -1,9 +1,10 @@
 8
-aaaa 1 2 5
-aaab 4
-aaac 3 4
-aaad
-aaae 1
-aaaf 6 7
-aaag
-aaah
+aaaa 1 2 3
+bbbb 4 5 
+cccc
+dddd 6
+eeee
+ffff
+gggg
+hhhh
+
