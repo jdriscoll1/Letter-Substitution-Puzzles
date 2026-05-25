@@ -6,6 +6,7 @@
 #include "../../structs/includes/Queue.h"
 
 void swapAvoidGoal(struct StartWordParametersFLWC* p);
+int all_words_are_greater_than_min_distance_and_there_exists_a_word_less_than_max_distance(int id, int minDistance, int maxDistance, struct WordSet* goalWords, struct WordSet *avoidWords, struct DataStructures* data);
 int is_game_winnable_FLWC(
 	// the current id being searched	
 	
