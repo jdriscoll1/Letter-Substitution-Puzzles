@@ -281,13 +281,14 @@ void flwc(){
 	int minAdjacenciesToStart = 1; 
 	int maxAdjacenciesToStart = 30; 
 	int minGoalDistance = 2; 
-	int maxGoalDistance = 2; 
+	int maxGoalDistance = 6; 
 	int minAvoidDistance = 0; 
 	int maxAvoidDistance = 0; 
 	int minGoalAdjacencies = 1; 
 	int maxGoalAdjacencies = 30; 
+	int numTurns = 8; 
 	int botType = 1;
-	char *goalWords[] = {"ties", "pies", "lies", NULL};
+	char *goalWords[] = {"lack", "lock", "pack", "tack", "back", "suck", "hack", "hock", "pock", "rack", "sack", "sock", "suck", "buck", "dock", "duck", "lick", "luck", "muck", "peck", "sick", "mock", "pick", "rock", "tuck", "jack", "jock", "tick", "beck", "deck", "heck", "kick", "wick", "yuck", "neck", NULL};
 	char *avoidWords[] = {NULL}; 
 	// Initialize the Game
 	struct GameComponentsFLWC* flwcComponents = initFLWC(
@@ -300,15 +301,19 @@ void flwc(){
 		maxGoalDistance, 
 		maxAvoidDistance, 
 		minGoalAdjacencies, 
-		maxGoalAdjacencies, data);
+		maxGoalAdjacencies,
+		numTurns,
+		data);
 		
+	flwcComponents->wordId = 1336;
 	char* startWord = getStartWordFLWC(flwcComponents, data); 
-	int startId = Convert_WordToInt(startWord, data); 
+	int aireId = Convert_WordToInt("aire", data); 
+	
 	
 		
-	printf("[GAME MESSAGE]: Start: %s", startWord);
+	printf("[GAME MESSAGE]: Start: %s\n", startWord);
 	
-	int id = botPly_MaxAdjacencies(startId, flwcComponents->goalWords, data); 
+	//int id = botPly_MaxAdjacencies(flwcComponents->wordId, flwcComponents->goalWords, data); 
 	printf("[GAME MESSAGE]: A Potential Goal Is %s", hintGoalWordFLWC(flwcComponents, data));
 	char* pathToGoal = hintPathToGoalFLWC(flwcComponents, data);
 	printf("[GAME MESSAGE]: A Way To Get to the Goal Is: %s", pathToGoal);
@@ -338,6 +343,7 @@ void flwic(){
 	int minAvoidDistance = 1; 
 	int maxAvoidDistance = 3; 
 	int minGoalAdjacencies = 1; 
+	int numTurns = 15; 
 	int maxGoalAdjacencies = 30; 
 	int botType = 1;
 	char *goalWords[] = {NULL};
@@ -353,7 +359,9 @@ void flwic(){
 		maxGoalDistance, 
 		maxAvoidDistance, 
 		minGoalAdjacencies, 
-		maxGoalAdjacencies, data);
+		maxGoalAdjacencies,
+		numTurns,
+		 data);
 		
 	printf("[GAME MESSAGE]\nStart: %s\n", getStartWordFLWC(flwcComponents, data));
 	printf("[HINT MESSAGE]\nTo Stay Away From The Avoid Word, You Should Use %s\n", hintBestDirectAdjacencyFLWIC(flwcComponents, data)); 

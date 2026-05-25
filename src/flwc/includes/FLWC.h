@@ -19,4 +19,23 @@ int FLWC(struct DataStructures* data);
 void FLWC_Test(struct DataStructures* data); 
 
 void generalizedFLWCGame(struct DataStructures* data); 
+
+// Check if a an input is initially winnable
+int is_game_winnable_FLWC(
+	// the current id being searched	
+	int id, 
+	int depth, 
+	// is it currently the player or bot's perspective	
+	int isPlayerPerspective, 
+	// the set of goal words	
+	struct WordSet* goalWords, 
+	// the set of avoid words
+	struct WordSet* avoidWords, 
+	struct DataStructures* data, 
+	// alpha --> Initialized to -100
+	int alpha, 
+	// beta  --> Initialized to +100
+	int beta); 
+
+
 #endif

@@ -11,7 +11,7 @@
 
 
 // This creates the first word and returns a set of game components for the flwt
-struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, int minGoalAdjacencies, int maxGoalAdjacencies, struct DataStructures* dataStructures){
+struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, int minGoalAdjacencies, int maxGoalAdjacencies, int numTurns,struct DataStructures* dataStructures){
 
 
 	// Create the FLWC Components
@@ -34,6 +34,7 @@ struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacencie
 	    .maxAdjacencies = maxAdjacenciesToStart,
 	    .minGoalAdjacencies = minGoalAdjacencies,
 	    .maxGoalAdjacencies = maxGoalAdjacencies,
+	    .numTurns = numTurns,
 	};
 	flwcComponents->wordId = chooseStartWord_FLWCGeneral(params, flwcComponents, dataStructures);
 	reset_WordSet(dataStructures->wordSet); 
@@ -146,7 +147,8 @@ char* hintGoalWordFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStr
 		.minAdjacencies=1,
 		.maxAdjacencies=100,
 		.minGoalAdjacencies=1,
-		.maxGoalAdjacencies=100
+		.maxGoalAdjacencies=100,
+		.numTurns = 100
 	};
 	struct arrayList* solution = getPathToNearestWordInWordSet(flwcComponents->wordId, p, data);
 	if(!solution || !solution->list) return NULL; 
