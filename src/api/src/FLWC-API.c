@@ -37,7 +37,7 @@ struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacencie
 	    .maxGoalAdjacencies = maxGoalAdjacencies,
 	    .numTurns = numTurns,
 	};
-	flwcComponents->wordId = chooseStartWord_FLWCGeneral(params, flwcComponents, dataStructures);
+	flwcComponents->wordId = Convert_WordToInt("peck", dataStructures);//chooseStartWord_FLWCGeneral(params, flwcComponents, dataStructures);
 	reset_WordSet(dataStructures->wordSet); 
 	if(flwcComponents->wordId != -1){
 		markUsed_WordSet(flwcComponents->wordId, dataStructures->wordSet); 
@@ -102,11 +102,12 @@ int botTakesTurnFLWC(int botType, struct GameComponentsFLWC* flwcComponents, str
 
 	flwcComponents->wordId = result;  
 
+	// Bot Loses If Result is -1 
 	if(result == -1){
 		return -1; 
 	}
 
-	// if the bot has trapped the user, let the user know 
+	// Bot Wins (User Is Trapped) on Return -2 
 	if(isTrapped(flwcComponents->wordId, data) == 1){
 		return -2; 
 	}
