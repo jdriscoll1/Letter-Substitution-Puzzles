@@ -7,9 +7,16 @@ import java.util.Scanner;
 import java.util.ArrayList; 
 import java.io.*; 
 
+// Very easy to use this document -
+// 1) Update # of letters as requried
+// 2) Update File: Four_Letters.txt Three_Letters.txt Two_Letters.txt 
+// 3) Type java IntegerDocumentProducer
+// 4) Look for Four_Connections_Int
+
+
 public class IntegerDocumentProducer{
    
-   public static int numLetters = 3; 
+   public static int numLetters = 4; 
    
    public static void main(String[] args) throws FileNotFoundException, IOException {
       String filename; 
