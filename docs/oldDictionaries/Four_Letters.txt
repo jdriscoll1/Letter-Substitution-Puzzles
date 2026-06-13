@@ -1510,6 +1510,7 @@ sift
 sigh
 sign
 silk
+sill
 silo
 silt
 sine
@@ -1657,6 +1658,7 @@ tans
 tape
 taps
 tare
+tarp
 tars
 tart
 task
@@ -1703,6 +1705,7 @@ tile
 till
 tilt
 time
+tine
 tins
 tint
 tiny
@@ -1723,6 +1726,7 @@ tons
 tony
 took
 tool
+toon
 toot
 tops
 tore
