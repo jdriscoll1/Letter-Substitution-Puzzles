@@ -227,7 +227,6 @@ byte
 cabs
 cafe
 cage
-cagy
 cake
 calf
 call
@@ -422,6 +421,7 @@ doom
 door
 dope
 dopy
+dork
 dose
 dote
 dots
@@ -1060,7 +1060,6 @@ mild
 mile
 milk
 mill
-milt
 mime
 mind
 mine
