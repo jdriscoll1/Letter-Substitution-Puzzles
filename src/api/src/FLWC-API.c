@@ -37,7 +37,7 @@ struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacencie
 	    .maxGoalAdjacencies = maxGoalAdjacencies,
 	    .numTurns = numTurns,
 	};
-	flwcComponents->wordId = Convert_WordToInt("tree", dataStructures); //chooseStartWord_FLWCGeneral(params, flwcComponents, dataStructures);
+	flwcComponents->wordId = chooseStartWord_FLWCGeneral(params, flwcComponents, dataStructures);
 	reset_WordSet(dataStructures->wordSet); 
 	if(flwcComponents->wordId != -1){
 		markUsed_WordSet(flwcComponents->wordId, dataStructures->wordSet); 
