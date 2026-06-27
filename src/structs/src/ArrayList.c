@@ -262,7 +262,7 @@ char* idArrayListToString(struct arrayList* aList, struct DataStructures* data){
 		for(int j = 0; j < data->I2W->numLetters; j++){
 			result[i * (data->I2W->numLetters + 1) + j] = Convert_IntToWord(((int*)(aList->list))[i], data->I2W)[j]; 
 		}
-		result[i * (data->I2W->numLetters + 1) + 4] = '\n';
+		result[i * (data->I2W->numLetters + 1) + 4] = ' ';
 	}	
 	result[resultSize - 1] = '\0'; 
 	return result; 	
