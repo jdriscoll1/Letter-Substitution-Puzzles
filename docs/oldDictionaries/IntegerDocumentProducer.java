@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.io.*; 
 
 // Very easy to use this document -
+// 0) Compile the javac IntegerDocumentProducer.java
 // 1) Update # of letters as requried
 // 2) Update File: Four_Letters.txt Three_Letters.txt Two_Letters.txt 
 // 3) Type java IntegerDocumentProducer
