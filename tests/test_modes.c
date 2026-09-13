@@ -21,6 +21,7 @@ start word would move the moment anything about the search changed.
 #include "../src/api/includes/FLWC-API.h"
 #include "../src/api/includes/FLWT-API.h"
 #include "../src/flwc/includes/Challenges.h"
+#include "../src/flwc/includes/FLWC.h"
 #include "../src/flwp/includes/UserInput.h"
 #include "../src/flwp/includes/PathGameComponents.h"
 #include "../src/flwg/includes/FLWGGame.h"
@@ -256,6 +257,40 @@ static void test_flwc_bot_handles_every_bot_type(void){
 		free_WordSet(flwc.avoidWords);
 	}
 
+	freeDataStructures(data);
+}
+
+/*A start word is only accepted if the player can force a win from it, so what
+the search calls a win decides which games get handed out. When somebody runs
+out of moves the game scores it against whoever is stuck, which is what
+botTakesTurnFLWC does: -1 when the bot has no move, which it calls a loss for
+the bot, and -2 when the player is trapped, which it calls a win for the bot*/
+static void test_flwc_winnability_treats_a_dead_end_as_a_loss(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	char* goalWords[] = {"care", NULL};
+	struct WordSet* goals = convertCharPtrPtrToWordSet(goalWords, data);
+	struct WordSet* avoids = convertCharPtrPtrToWordSet(NO_WORDS, data);
+	int ware = Convert_WordToInt("ware", data);
+	struct intList* adjacency;
+
+	/*ware -> care, with turns to spare, is a win*/
+	CHECK_INT(is_game_winnable_FLWC(ware, 4, 1, goals, avoids, data, 0, 1), 1);
+
+	/*Wall it in: every neighbour claimed, so whoever is on turn is stuck*/
+	for(adjacency = getConnections(ware, data->I2W)->next; adjacency != NULL; adjacency = adjacency->next){
+		markUsed_WordSet(adjacency->data, data->wordSet);
+	}
+
+	/*A player with nowhere to go has lost, so the word must not be handed out as
+	a start. This used to come back as the sentinel -100, which every caller
+	reads as a truthy int and so as a win*/
+	CHECK_INT(is_game_winnable_FLWC(ware, 4, 1, goals, avoids, data, 0, 1), 0);
+	/*The opponent running out is the other way round -- a win for the player.
+	This used to come back as +100, truthy for the right reason by accident*/
+	CHECK_INT(is_game_winnable_FLWC(ware, 4, 0, goals, avoids, data, 0, 1), 1);
+
+	free_WordSet(goals);
+	free_WordSet(avoids);
 	freeDataStructures(data);
 }
 
@@ -602,6 +637,7 @@ void suite_modes(void){
 	RUN_TEST(test_flwc_refuses_an_illegal_word_without_moving);
 	RUN_TEST(test_flwc_bot_takes_a_legal_turn);
 	RUN_TEST(test_flwc_bot_handles_every_bot_type);
+	RUN_TEST(test_flwc_winnability_treats_a_dead_end_as_a_loss);
 	RUN_TEST(test_get_all_words_lists_the_dictionary);
 	RUN_TEST(test_flwgp_composes_a_path_and_a_challenge);
 	RUN_TEST(test_flwgp_undo_and_redo_keep_both_halves_in_step);

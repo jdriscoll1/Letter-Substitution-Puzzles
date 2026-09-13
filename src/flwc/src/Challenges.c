@@ -79,7 +79,10 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 		// CHECK #6: If the user cannot force a win, continue
 		// num turns does not apply to FLWGP therefore
 		if(p.numTurns != -1){
-			if(!is_game_winnable_FLWC(i, p.numTurns, 1, p.goalWords, p.avoidWords, data, -100, 100)){
+			// The search only ever scores 0 or 1, so that is the window. From
+			// -100 to 100 alpha never caught up with beta and the pruning inside
+			// never fired once -- every sibling was searched to the bottom
+			if(!is_game_winnable_FLWC(i, p.numTurns, 1, p.goalWords, p.avoidWords, data, 0, 1)){
 				continue;
 			}
 		}
@@ -232,8 +235,12 @@ int is_game_winnable_FLWC(
 	struct intList* options = getConnections(id, data->I2W); 
 	options = options->next; 
 
-	// Start of by doing max scores
-	int result = (isPlayerPerspective) ?  -100 : 100; 
+	// Start of by doing max scores. These are sentinels, not scores anybody can
+	// earn -- the first option that gets looked at replaces them
+	int result = (isPlayerPerspective) ?  -100 : 100;
+
+	// Did anybody actually have a move to make from here?
+	int hasMove = 0;
 
 	while(options != NULL){
 	
@@ -243,8 +250,9 @@ int is_game_winnable_FLWC(
 			options = options->next; 
 			continue; 
 		}
+		hasMove = 1;
 		int option_score = is_game_winnable_FLWC(
-			optionId, 
+			optionId,
 			depth - 1, 
 			!isPlayerPerspective, 
 			goalWords, 	
@@ -271,8 +279,21 @@ int is_game_winnable_FLWC(
 		// Alpha Beta Pruning??
 		options = options->next; 
 	}
-	markUnused_WordSet(id, data->wordSet); 
-	return result; 
+	markUnused_WordSet(id, data->wordSet);
+
+	// Whoever is on turn has nowhere to go, and the game scores that against the
+	// side that is stuck: botTakesTurnFLWC reports -1 when the bot runs out of
+	// moves, which it calls a loss for the bot, and -2 when the player is
+	// trapped, which it calls a win for the bot. So this follows who cannot
+	// move rather than the goal set -- it is not the same ending as the turns
+	// running out, where nobody is stuck and the goal simply went unreached.
+	// Falling out of the loop instead returned the sentinel, so a trapped player
+	// scored -100, and every caller reads this as a truthy int: being trapped
+	// came back as a win
+	if(!hasMove){
+		return !isPlayerPerspective;
+	}
+	return result;
 	
 }
 
