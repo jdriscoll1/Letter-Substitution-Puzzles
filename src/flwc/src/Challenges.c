@@ -254,8 +254,8 @@ int is_game_winnable_FLWC(
 			beta
 		);
 
-		// if it's the player persepctive return max(option_score, result) otherwise min(option_score, result)
-		result = (isPlayerPerspective) ? max(option_score, result) : min(option_score, result); 
+		// Fold the option into the running result: the best the player can
+		// force, or the worst the opponent will allow
 
 		if(isPlayerPerspective){
 			result = max(option_score, result); 
