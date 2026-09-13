@@ -5,14 +5,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build & Run
 
 ```bash
-make            # gcc -O3 -o flwo ./src/*.c ./src/*/src/*.c -lm
-./flwo          # run from the repo root -- dictionary paths (docs/4.txt) are relative
+make             # gcc -O3 -o flwo ./src/*.c ./src/*/src/*.c -lm
+./flwo           # run from the repo root -- dictionary paths (docs/4.txt) are relative
+make test        # build and run the unit tests (tests/), also from the repo root
+make test-memcheck   # the same suite under valgrind -- this is what catches leaks
+make clean
 ```
 
-There is no incremental build, no test framework, and no linter: `make` recompiles every
-`.c` under `src/` in one gcc invocation. The committed `flwo` and `src/flwp_game` are
-Linux x86-64 ELF binaries; `gcc`/`make` are not on PATH in Git Bash on this machine, so
-build from WSL or an MSYS2/MinGW shell.
+There is no incremental build and no linter: `make` recompiles every `.c` under `src/` in
+one gcc invocation. The committed `flwo` and `src/flwp_game` are Linux x86-64 ELF binaries;
+`gcc`/`make` are not on PATH in Git Bash on this machine, so build from WSL or an
+MSYS2/MinGW shell.
+
+`tests/` holds a dependency-free assertion harness (`test_framework.h`) plus four suites:
+containers, dictionary/conversions, the game APIs, and one regression test per bug fixed in
+the memory-leak pass. To add a test, write the function in the matching `tests/test_*.c`,
+add a `RUN_TEST(...)` line to that file's `suite_*` function, and it is picked up — the
+Makefile globs `tests/*.c`. Leaks are invisible to plain `make test`, so run
+`make test-memcheck` when touching ownership. Tests pin `TEST_SEED` because the game APIs
+choose start words with `rand()`; `open_dictionary` re-applies the seed after every load
+since `initDataStructures` reseeds from the clock itself.
 
 The sources use POSIX headers (`unistd.h`, `fcntl.h`) and `open()`/`close()` for dictionary
 files, so they assume a POSIX-ish toolchain.
