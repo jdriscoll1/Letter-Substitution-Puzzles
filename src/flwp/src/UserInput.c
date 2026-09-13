@@ -28,7 +28,7 @@ char* Take_Input(int size){
 		/*Takes care of the \n*/ 
 		fgets(input, size, stdin);
 		/*Makes the last character on the string the end of the string*/  
-		input[size] = '\0';
+		input[size - 1] = '\0';
 		/*Copies the information from the temp back onto the input*/ 
 		
 		safeStrcpy(&input, (const char*)temp, size, size);
@@ -38,8 +38,8 @@ char* Take_Input(int size){
   		return input; 
 	}
 	/*If the user is dumb, they get to try again*/ 
-	Take_Input(size);
-	return input; 
+	free(input);
+	return Take_Input(size);
 	 
 }
 

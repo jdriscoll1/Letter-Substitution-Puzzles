@@ -94,7 +94,7 @@ struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int 
 			//if leaf node, this is the best score (by default)
 			if(numChildren == 0){
 				if(bestScore != NULL){
-					free(bestScore);
+					Free_MaxNNodeScore(bestScore, numPlayers);
 				}
 				bestScore = childScore;
 			}
@@ -114,6 +114,10 @@ struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int 
 				//obtain the sum
 				
 			}
+			//The child is counted before the break below: a break on the first
+			//child would otherwise leave numChildren at 0 and drop bestScore
+			numChildren++;
+
 			long sum = 0;
 
 			//Get the sum of alphas
@@ -130,7 +134,6 @@ struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int 
 			if(sum >= 0){
 				break;
 			}
-			numChildren++;
 			//if it is, it sets the maxScore to the current score
 			//it sets the maxProjected score to the current project score, or the ouputted score
 		}

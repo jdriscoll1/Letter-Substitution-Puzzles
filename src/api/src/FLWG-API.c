@@ -178,7 +178,8 @@ void removeWord_FLWP(char* word, struct GameComponents *gameComponents, struct D
 
     strncpy(&tempStr[1], word, dataStructures->I2W->numLetters);
 
-    RemoveWord_Struct(gameComponents, tempStr, 0, dataStructures); 
+    //RemoveWord_Struct hands back a freshly allocated copy of the word
+    free(RemoveWord_Struct(gameComponents, tempStr, 0, dataStructures)); 
 }
 
 int isStartValid_FLWP(struct GameComponents* gameComponents){

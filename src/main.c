@@ -93,7 +93,10 @@ int fix_flwgp_redo_crash(){
 	// Initialize the Game
 	struct GameComponentsFLWGP* flwgpComponents = initiateFLWGP(minAdjacenciesToStart, maxAdjacenciesToStart,  goalWords, avoidWords, minGoalDistance, minAvoidDistance, maxGoalDistance, maxAvoidDistance, minGoalAdjacencies, maxGoalAdjacencies, data);
 	if(!isStartValid_FLWGP(flwgpComponents)){
-		return -1; 	
+		freeGameComponentsFLWGP(flwgpComponents, data);
+		close(fd);
+		freeDataStructures(data);
+		return -1;
 	}
 	printf("[GAME MESSAGE]\nUNDO PRESSED"); 
 	undoMoveFLWGP(flwgpComponents, data); 
@@ -158,16 +161,20 @@ int flwgp(){
 	// Initialize the Game
 	struct GameComponentsFLWGP* flwgpComponents = initiateFLWGP(minAdjacenciesToStart, maxAdjacenciesToStart,  goalWords, avoidWords, minGoalDistance, minAvoidDistance, maxGoalDistance, maxAvoidDistance, minGoalAdjacencies, maxGoalAdjacencies, data);
 	if(!isStartValid_FLWGP(flwgpComponents)){
-		return -1; 
+		freeGameComponentsFLWGP(flwgpComponents, data);
+		close(fd);
+		freeDataStructures(data);
+		return -1;
 	}
 	printf("[GAME MESSAGE]\nStart: %s\n", getStartWordFLWP(flwgpComponents->flwpComponents, data));
-	printf("[HINT MESSAGE]\nThere are %d connections at minimum\n", hintGetMinAdjacenciesFLWGP(flwgpComponents)); 
-	printf("[HINT MESSAGE]\nA direct adjacency towards teh goal is %s\n", hintWordTowardsGoalFLWGP(flwgpComponents, data)); 
-	printf("[HINT MESSAGE]\nA valid goal word is %s\n", hintGetValidGoalWordFLWGP(flwgpComponents, data)); 
-	//printf("[GAME MESSAGE]\n Solution:\n%s\n", getSolutionFLWGP(flwgpComponents)); 
-	freeGameComponentsFLWGP(flwgpComponents, data); 
-	close(fd); 
-	freeDataStructures(data);	
+	printf("[HINT MESSAGE]\nThere are %d connections at minimum\n", hintGetMinAdjacenciesFLWGP(flwgpComponents));
+	printf("[HINT MESSAGE]\nA direct adjacency towards teh goal is %s\n", hintWordTowardsGoalFLWGP(flwgpComponents, data));
+	printf("[HINT MESSAGE]\nA valid goal word is %s\n", hintGetValidGoalWordFLWGP(flwgpComponents, data));
+	//printf("[GAME MESSAGE]\n Solution:\n%s\n", getSolutionFLWGP(flwgpComponents));
+	freeGameComponentsFLWGP(flwgpComponents, data);
+	close(fd);
+	freeDataStructures(data);
+	return 0;
 }
 
 void flwt(){
@@ -219,7 +226,10 @@ int flwg(){
 	struct GameData* gameData = initFLWG(dataStructures, minAdjacencies, maxAdjacencies);
 	if (isStartValidFLWG(gameData) == 0){
 		printf("Invalid FLWG Parameters");
-		return 0; 
+		freeGameComponentsFLWG(gameData);
+		close(fd);
+		freeDataStructures(dataStructures);
+		return 0;
 	}
 	else{
 		printf("[GAME MESSAGE] Start: %s\n", getCurrWord(gameData, dataStructures));
@@ -631,7 +641,8 @@ int level21(){
 	printf("[GAME MESSAGE]: You are %d words away from the goal", hintMinDistanceToGoalFLWC(flwcComponents, data));
 	
 	// End the Game
-	freeGameComponentsFLWC(flwcComponents); 
-	close(fd); 
-	freeDataStructures(data);	
+	freeGameComponentsFLWC(flwcComponents);
+	close(fd);
+	freeDataStructures(data);
+	return 0;
 }

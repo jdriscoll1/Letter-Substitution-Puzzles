@@ -201,9 +201,9 @@ void getSolution_FLWP(int id, int goalId, struct GameComponents* gc, struct Data
 		}
 	}
 
-	// if the current id is equal to the goal id 
+	// The goal was never reached, so there is no solution to hand back 
+	Free_IntLL(solution); 
 	gc->solution = NULL; 	
-	gc->minConnections -1; 
 
 	// Cleanup BFS structures
 	free_Queue(q);

@@ -1,0 +1,137 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Build & Run
+
+```bash
+make            # gcc -O3 -o flwo ./src/*.c ./src/*/src/*.c -lm
+./flwo          # run from the repo root -- dictionary paths (docs/4.txt) are relative
+```
+
+There is no incremental build, no test framework, and no linter: `make` recompiles every
+`.c` under `src/` in one gcc invocation. The committed `flwo` and `src/flwp_game` are
+Linux x86-64 ELF binaries; `gcc`/`make` are not on PATH in Git Bash on this machine, so
+build from WSL or an MSYS2/MinGW shell.
+
+The sources use POSIX headers (`unistd.h`, `fcntl.h`) and `open()`/`close()` for dictionary
+files, so they assume a POSIX-ish toolchain.
+
+`src/main.c` is a scratchpad of demo entry points (`flwg`, `flwp`, `flwc`, `flwic`, `flwt`,
+`flwgp`, `level21`, ...), each a self-contained "init structures -> set parameters ->
+init game -> print hints -> free" example of one game mode's API. `main()` just calls one
+of them (currently `level21()`); to exercise a different mode, change that call rather than
+adding new plumbing. These functions double as the usage documentation for the APIs.
+
+## Dictionary Files (`docs/`)
+
+`docs/2.txt`, `docs/3.txt`, `docs/4.txt` hold 2-, 3-, and 4-letter words. Format:
+
+```
+1953                          <- word count
+ware 1 3 4 16 20 ...          <- word, then the ids of every word one substitution away
+```
+
+A word's integer id is its 0-based position in the file after the count line. **Everything
+downstream operates on int ids, not strings**; the adjacency lists are precomputed here, not
+at runtime, so a word is "adjacent" exactly when the file says so.
+
+`initDataStructures(fd, numLetters)` takes `numLetters` as a separate argument from the file
+descriptor — it must match the word length in the file being opened. Several demos in
+`main.c` pass a mismatched value; copying one of those blindly produces silent corruption.
+
+## Architecture
+
+### Shared state: `struct DataStructures`
+
+Created once per run by `initDataStructures(fd, numLetters)` (`src/api/src/FLWG-API.c`),
+destroyed by `freeDataStructures`. Every game mode and algorithm takes a `struct
+DataStructures*`. Three members:
+
+- `W2I` — word -> id, a 26-way array of AVL/tree-set buckets (`TreeSet.h`, `HashFunctions.h`).
+- `I2W` — `struct wordDataArray`, id -> `struct wordData` holding the word, its precomputed
+  `connectionHeader` list, `numConnections`, plus two *mutable scratch fields*: `prevID`
+  (used by BFS to reconstruct paths) and `hintFound`.
+- `wordSet` — a bitset over ids, one bit per word.
+
+`WordSet` serves double duty: as the "already used in this game" marker (`markUsed_WordSet` /
+`reset_WordSet`, reset between rounds) and as a general word-membership set. FLWC's goal and
+avoid word lists are `WordSet`s built by `convertCharPtrPtrToWordSet` from a NULL-terminated
+`char**`. Because both the word set and `wordData`'s scratch fields are shared mutable state,
+algorithms that run back-to-back must reset them.
+
+### `src/api` is the public boundary
+
+`src/api/includes/FLWG-API.h` declares `struct DataStructures` and the entry points for the
+FLWG, FLWP, and FLWGP modes; `FLWC-API.h` and `FLWT-API.h` cover the other two. Every mode
+follows the same lifecycle, with mode-suffixed names:
+
+`init<MODE>` -> `isStartValid<MODE>` (parameters may be unsatisfiable; **always check**) ->
+`getStartWord<MODE>` -> `userEntersWord<MODE>` / `botTakesTurn<MODE>` -> `hint*<MODE>` ->
+`isGameWon<MODE>` -> `freeGameComponents<MODE>`.
+
+The `src/flwg`, `src/flwp`, `src/flwc` directories hold the game logic behind that facade;
+callers (including the PHP/SWIG binding mentioned in the README) should go through the API
+headers.
+
+### Game modes
+
+- **FLWG** (`src/flwg`) — two-player substitution game, last player who can move wins.
+  `struct GameData`. Start word chosen by adjacency count range.
+- **FLWP** (`src/flwp`) — pathfinder: get from start to goal. `struct GameComponents` carries
+  the user's current path (`userConnections`), full undo/redo history (`storage`,
+  `undoCalls`), and the BFS-computed `solution`.
+- **FLWC** (`src/flwc`) — challenge mode: reach any word in a goal `WordSet` (or, inverted
+  "FLWIC", avoid an avoid-set) within `numTurns`. `struct GameComponentsFLWC`.
+  `isGameWonFLWC` returns -1 in progress, 0 tie/stuck, 1 goal reached, 2 avoid word hit.
+- **FLWT** (`src/api/src/FLWT-API.c`) — tutorial: find N distinct adjacencies of one word.
+- **FLWGP** — the generalized pathfinder: `struct GameComponentsFLWGP` simply *composes* an
+  FLWP and an FLWC component, so a path game can also carry goal/avoid sets. Changes to
+  either mode have to keep the composed undo/redo path working.
+
+Start-word selection is the hard part of every mode: `Challenges.h`
+(`struct StartWordParametersFLWC`, `chooseStartWord_FLWCGeneral`) and
+`BreadthFirstSearch_FLWP.h` search for a word satisfying min/max adjacency counts *and*
+min/max BFS distance to the goal and avoid sets. When no word qualifies, init succeeds but
+`isStartValid*` returns false.
+
+### Algorithms (`src/algs`)
+
+- **`Minimax-2.{h,c}` is the current engine.** `struct score` (word id, score, win
+  percentage, depth) and `struct score_parameters` carry a *function pointer*
+  `scoreFunction` — `flwg_score` (trap the opponent) or `flwc_score` (reach goal / avoid
+  avoid-set) — so one alpha-beta search serves both game families. Add a game family by
+  writing a new score function, not a new search.
+- `Minimax.h` + `MinimaxTests.h` are the older single-purpose implementation and its
+  experimental variants (`minimax_CountAtZero`, `_FiftyFifty`, `_QuitAtZero`, `_NoBeta`,
+  `_ZeroOptions`), kept for comparison against the current engine — not unit tests.
+- `MaxN.h` / `Hypermax.h` for more than two players; `MontyCarlosTreeSearch.h` as an
+  alternative to minimax; `TreeStorageNode.h` is the BFS/MCTS node.
+- `BreadthFirstSearch.h` does distance-constrained search — it both validates/chooses
+  start-goal pairs and backs the "how far am I from the goal" and "show me a path" hints.
+
+Bot strength is selected by an int `botType` passed to `botTakesTurn*`:
+`-2` mirror, `-1` maximum adjacencies, `0` random, and **any positive value is used as the
+minimax search depth**.
+
+### `src/structs`
+
+Hand-rolled containers (`ArrayList`, `IntLinkedList`, `WordLinkedList`, `Queue`, `TreeSet`,
+`HashMap`, `TranspositionTable`, `WordSet`) with no external dependencies. `HashMap.h` also
+declares `Convert_WordToInt` / `Convert_IntToWord`, the conversions used everywhere.
+
+## Conventions
+
+- Every `.c` has a matching header in its module's `includes/`; cross-module includes are
+  relative paths (`"../../structs/includes/HashMap.h"`) guarded by `#ifndef seen<Name>`.
+- Ownership is manual and inconsistent: some hint functions return a `char*` the caller must
+  `free` (e.g. `hintPathToGoalFLWC`), others return a pointer into `I2W` that must not be
+  freed. Check the implementation before freeing a returned string. The `hint*FLWC` family
+  returns `NULL` (or `-1`) when no path to a goal word exists — check before using the result.
+- `initDataStructures` duplicates the file descriptor it is given, so the caller still owns
+  the `fd` it opened and is the one that closes it.
+- User input validation returns `enum ERROR_CODE` (`src/flwp/includes/UserInput.h`): `VALID=0`,
+  `TOO_SHORT`, `TOO_LONG`, `NOT_ENOUGH_LETTERS_IN_COMMON`, `WORD_USED`, `WORD_DOES_NOT_EXIST`,
+  `WRONG_ORDER`, `UNKNOWN_ERROR`, `TOO_MANY_LETTERS_IN_COMMON`. The `userEntersWord*` API
+  functions propagate these codes; a word id of `-1` means "no move available / lost".
+- Demo output is tagged `[GAME MESSAGE]` / `[HINT MESSAGE]` so a wrapping UI can parse it.

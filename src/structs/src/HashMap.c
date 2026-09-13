@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "../includes/HashMap.h"
 #include "../includes/HashFunctions.h"
@@ -21,7 +22,17 @@ int getNumAdjacencies(int id, struct DataStructures* data){
 
 void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, int fd, int numLetters){
 	//Open up the file 
-	FILE* wordDoc = fdopen(fd, "r"); 
+	//The descriptor is duplicated because the fclose() below closes whatever fdopen()
+	//was handed. The caller keeps ownership of the fd it passed in.
+	int fdCopy = dup(fd); 
+	FILE* wordDoc = (fdCopy == -1) ? NULL : fdopen(fdCopy, "r"); 
+	if(wordDoc == NULL){
+		printf("Could not read file descriptor: %d\n", fd);
+		if(fdCopy != -1){
+			close(fdCopy); 
+		}
+		exit(1); 
+	}
 	//Read the top number from the file
 	int numWords = getNumWords(wordDoc);
 	//Allocate the structure using the number of words int --> word (wordData)
@@ -125,7 +136,10 @@ void Fill_HashMaps(FILE* wordDoc, struct DummyHeadNode** *WordToInt_HashMap, str
 		int letterIndex = FirstHashFunction(wordData->word[0]);
 		int vowelIndex = SecondHashFunction(wordData->word, IntToWord_HashMap); 
 		struct DummyHeadNode *treeHeader = WordToInt_HashMap[letterIndex][vowelIndex]; 
-		AddNode_TreeSet(wordStruct, treeHeader, treeHeader->start, DUMMY, WORD_STRUCT, IntToWord_HashMap->numLetters);
+		//A NULL return means the key was already in the tree, so this node was never stored
+		if(AddNode_TreeSet(wordStruct, treeHeader, treeHeader->start, DUMMY, WORD_STRUCT, IntToWord_HashMap->numLetters) == NULL){
+			Free_WordStruct(wordStruct); 
+		}
   	
 		id++; 
 		
