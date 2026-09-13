@@ -6,7 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 make             # gcc -O3 -flto -o flwo ./src/*.c ./src/*/src/*.c -lm
-./flwo           # run from the repo root -- dictionary paths (docs/4.txt) are relative
+./flwo           # the debug console: pick a mode, name its start word, play it
+                 # run from the repo root -- dictionary paths (docs/4.txt) are relative
 make test        # build and run the unit tests (tests/), also from the repo root
 make test-memcheck   # the same suite under valgrind -- this is what catches leaks
 make clean
@@ -17,9 +18,9 @@ one gcc invocation. The committed `flwo` and `src/flwp_game` are Linux x86-64 EL
 `gcc`/`make` are not on PATH in Git Bash on this machine, so build from WSL or an
 MSYS2/MinGW shell.
 
-`tests/` holds a dependency-free assertion harness (`test_framework.h`) plus four suites:
-containers, dictionary/conversions, the game APIs, and one regression test per bug fixed in
-the memory-leak pass. To add a test, write the function in the matching `tests/test_*.c`,
+`tests/` holds a dependency-free assertion harness (`test_framework.h`) plus five suites:
+containers, dictionary/conversions, the game APIs, the debug starts, and one regression test
+per bug fixed in the memory-leak pass. To add a test, write the function in the matching `tests/test_*.c`,
 add a `RUN_TEST(...)` line to that file's `suite_*` function, and it is picked up — the
 Makefile globs `tests/*.c`. Leaks are invisible to plain `make test`, so run
 `make test-memcheck` when touching ownership. Tests pin `TEST_SEED` because the game APIs
@@ -29,11 +30,16 @@ since `initDataStructures` reseeds from the clock itself.
 The sources use POSIX headers (`unistd.h`, `fcntl.h`) and `open()`/`close()` for dictionary
 files, so they assume a POSIX-ish toolchain.
 
+`src/debug_console.c` is what `main()` runs: a menu of the game modes, each of which asks
+for the word to start on before it plays. Blank at that prompt falls through to the mode's
+own picker. It exists because the modes choose their own start words, so without it the
+position changes every run and a bug cannot be looked at twice.
+
 `src/main.c` is a scratchpad of demo entry points (`flwg`, `flwp`, `flwc`, `flwic`, `flwt`,
 `flwgp`, `level21`, ...), each a self-contained "init structures -> set parameters ->
-init game -> print hints -> free" example of one game mode's API. `main()` just calls one
-of them (currently `level21()`); to exercise a different mode, change that call rather than
-adding new plumbing. These functions double as the usage documentation for the APIs.
+init game -> print hints -> free" example of one game mode's API. They are the older way
+round -- one mode each, parameters written into the source -- and still serve as the usage
+documentation for the APIs. To run one instead of the console, call it from `main()`.
 
 ## Dictionary Files (`docs/`)
 
@@ -79,7 +85,12 @@ algorithms that run back-to-back must reset them.
 ### `src/api` is the public boundary
 
 `src/api/includes/FLWG-API.h` declares `struct DataStructures` and the entry points for the
-FLWG, FLWP, and FLWGP modes; `FLWC-API.h` and `FLWT-API.h` cover the other two. Every mode
+FLWG, FLWP, and FLWGP modes; `FLWC-API.h` and `FLWT-API.h` cover the other two.
+`Debug-API.h` is the same set of games started on a word you name rather than one the mode
+chose: it seats the word and builds the ordinary components, so a debug game and a real one
+differ only in how the first word was arrived at. It deliberately does not apply the
+adjacency and distance ranges the pickers use -- naming a word is the point -- and reports
+an unknown word through the mode's usual `isStartValid*`. Every mode
 follows the same lifecycle, with mode-suffixed names:
 
 `init<MODE>` -> `isStartValid<MODE>` (parameters may be unsatisfiable; **always check**) ->

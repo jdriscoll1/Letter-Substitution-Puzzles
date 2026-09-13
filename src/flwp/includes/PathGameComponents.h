@@ -45,6 +45,11 @@ struct  GameComponents{
 @return --> Returns all of the Initalized Game Components, including the Start & Goal Word*/
 struct GameComponents* InitializeGameComponents(int minAdjacenciesToStart, int maxAdjacenciesToStart, int minDistance, int maxDistance, int minAdjacenciesToGoal, int maxAdjacenciesToGoal, struct DataStructures* data);
 
+/*Sets up everything about a path game that does not depend on which two words
+were picked. InitializeGameComponents calls it after its search; a game given its
+start word by name calls it after seating that word.*/
+void FinishGameComponents(struct GameComponents* gameComponents, struct DataStructures* data);
+
 /*This resets the Game Components so if the user decides to redo the round, they can*/
 void ResetGameComponents(struct GameComponents *gc, struct wordDataArray* IntToWord_HashMap);
 

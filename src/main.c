@@ -61,9 +61,15 @@ void flwt();
 
 int level21();
 int flwg3p();
+/*The menu in debug_console.c: pick a mode, name the word it starts on, and
+play it. The functions above are the older way round - one mode each, with its
+parameters written into the source - and they still double as the usage
+documentation for the APIs. To run one of those instead, call it here.*/
+void debugConsole();
+
 int main(){
 	srand(time(0));
-	flwg3p();
+	debugConsole();
 }
 
 

@@ -14,6 +14,15 @@
 struct GameComponents *InitializeGameComponents(int minAdjacenciesToStart, int maxAdjacenciesToStart, int minDistance, int maxDistance, int minAdjacenciesToGoal, int maxAdjacenciesToGoal, struct DataStructures* data){
 	//Instantiate the Structure
 	struct GameComponents* gameComponents = findFLWPStartAndGoal(minAdjacenciesToStart, maxAdjacenciesToStart, minDistance, maxDistance, minAdjacenciesToGoal, maxAdjacenciesToGoal, data); 
+	FinishGameComponents(gameComponents, data);
+	return gameComponents;
+}
+
+/*Everything about a path game that does not depend on which two words were
+picked: the history, the undo storage, the word list, and the start marked as
+used. Split out of InitializeGameComponents so that a game handed its start by
+name is set up exactly the way one whose start was searched for is.*/
+void FinishGameComponents(struct GameComponents* gameComponents, struct DataStructures* data){
 	
 	//Sets the minimum number of connection
 	//Sets the number of moves
@@ -44,7 +53,7 @@ struct GameComponents *InitializeGameComponents(int minAdjacenciesToStart, int m
 	//No word satisfied the parameters. Every field is initialized so the caller can
 	//still free the components, and isStartValid_FLWP reports the failure
 	if(gameComponents->start == -1){
-		return gameComponents;
+		return;
 	}
 
  	setHintFound(gameComponents->start, data->I2W);
@@ -62,7 +71,6 @@ struct GameComponents *InitializeGameComponents(int minAdjacenciesToStart, int m
 
 	reset_WordSet(data->wordSet);
 	markUsed_WordSet(gameComponents->start, data->wordSet); 
-	return gameComponents;
 
 }
 
