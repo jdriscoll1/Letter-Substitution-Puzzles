@@ -330,7 +330,11 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(int start, int goal, 
 	//Frees the structure
 	Free_BFSComponents(bc, wordSet); 
 	
-	return (goalFound == false)?NULL:output; 
+	if(goalFound == false){
+		free_ArrayList(output);
+		return NULL;
+	}
+	return output;
 	
 	 //Things to keep in mind
 	 //When I add words, I don't want to add letters that are in the hash set meaning that I will have to: 

@@ -199,16 +199,16 @@ int botPly(int word, int depth, struct wordDataArray* IntToWord_HashMap, struct 
 
 	word = output->id;
 	
-	// If the word is not negative one 
-	if(output->id != -1){
-		markUsed_WordSet(word, wordSet);
-	} else {
-          return -1;
-        }
 	//Print_MinimaxOutput(output);
 	free(output); 
 	free(alpha); 
 	free(beta); 
+
+	// If the word is negative one the bot has nowhere left to go 
+	if(word == -1){
+		return -1; 
+	}
+	markUsed_WordSet(word, wordSet);
 	 
 	return word; 
 	

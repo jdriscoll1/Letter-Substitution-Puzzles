@@ -28,7 +28,7 @@ char* Take_Input(int size){
 		/*Takes care of the \n*/ 
 		fgets(input, size, stdin);
 		/*Makes the last character on the string the end of the string*/  
-		input[size] = '\0';
+		input[size - 1] = '\0';
 		/*Copies the information from the temp back onto the input*/ 
 		
 		safeStrcpy(&input, (const char*)temp, size, size);
@@ -38,8 +38,8 @@ char* Take_Input(int size){
   		return input; 
 	}
 	/*If the user is dumb, they get to try again*/ 
-	Take_Input(size);
-	return input; 
+	free(input);
+	return Take_Input(size);
 	 
 }
 
@@ -75,9 +75,6 @@ enum Difficulty ChooseDifficulty(){
 
 
 int Check_Input(int prevWord, const char* currWord, struct DataStructures *data){
-	//First, find prev word 
-	char* prev = Convert_IntToWord(prevWord, data->I2W);
-
 	int i = 0;
 	int equalLetters = 0;  
 	//for(i = 0; i < strlen(currWord)+1; i++){
@@ -100,15 +97,17 @@ int Check_Input(int prevWord, const char* currWord, struct DataStructures *data)
 	//First: Make sure it is a real word
 	//Go into the hash map
 	//Find it in the hash map
-	int id = Convert_WordToInt((char*)currWord, data); 
+	int id = Convert_WordToInt((char*)currWord, data);
+	//A word that is not in the dictionary has no id to look up, so it is ruled out
+	//first. The id is then reused rather than converted again for each check
+ 	if(inDictionary(id) == 0){
+		return WORD_DOES_NOT_EXIST;
+	}
 	// Check if the word is used
 	if(equalLetters == data->I2W->numLetters + 1 || checkIfUsed_WordSet(id, data->wordSet)){
 		return WORD_USED;
 	}
- 	if(inDictionary(id) == 0){
-		return WORD_DOES_NOT_EXIST; 
-	}
-	switch(Order_Check(prevWord, Convert_WordToInt((char*) currWord, data), data)){
+	switch(Order_Check(prevWord, id, data)){
 
 		case(VALID):
 			return VALID;

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "../includes/HashMap.h"
 #include "../includes/HashFunctions.h"
@@ -21,7 +22,17 @@ int getNumAdjacencies(int id, struct DataStructures* data){
 
 void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, int fd, int numLetters){
 	//Open up the file 
-	FILE* wordDoc = fdopen(fd, "r"); 
+	//The descriptor is duplicated because the fclose() below closes whatever fdopen()
+	//was handed. The caller keeps ownership of the fd it passed in.
+	int fdCopy = dup(fd); 
+	FILE* wordDoc = (fdCopy == -1) ? NULL : fdopen(fdCopy, "r"); 
+	if(wordDoc == NULL){
+		printf("Could not read file descriptor: %d\n", fd);
+		if(fdCopy != -1){
+			close(fdCopy); 
+		}
+		exit(1); 
+	}
 	//Read the top number from the file
 	int numWords = getNumWords(wordDoc);
 	//Allocate the structure using the number of words int --> word (wordData)
@@ -112,11 +123,20 @@ void Fill_HashMaps(FILE* wordDoc, struct DummyHeadNode** *WordToInt_HashMap, str
 			//each time it adds a word as a connection, it updates the number of connections
 			wordData->numConnections++; 
 			
-			currValue = strtok(NULL, " "); 
-		}	
+			currValue = strtok(NULL, " ");
+		}
 
-		
-		
+		//Lay the same connections out back to back so they can be indexed directly
+		if(wordData->numConnections > 0){
+			struct intList* walk = wordData->connectionHeader->next;
+			int c = 0;
+			wordData->connections = malloc(sizeof(int) * wordData->numConnections);
+			while(walk != NULL){
+				wordData->connections[c++] = walk->data;
+				walk = walk->next;
+			}
+		}
+
 		//Then it will be time to put the words into their respective locations in their data structure
 		//First, put it in the spot in the array
 		IntToWord_HashMap->array[id] = wordData; 
@@ -125,7 +145,10 @@ void Fill_HashMaps(FILE* wordDoc, struct DummyHeadNode** *WordToInt_HashMap, str
 		int letterIndex = FirstHashFunction(wordData->word[0]);
 		int vowelIndex = SecondHashFunction(wordData->word, IntToWord_HashMap); 
 		struct DummyHeadNode *treeHeader = WordToInt_HashMap[letterIndex][vowelIndex]; 
-		AddNode_TreeSet(wordStruct, treeHeader, treeHeader->start, DUMMY, WORD_STRUCT, IntToWord_HashMap->numLetters);
+		//A NULL return means the key was already in the tree, so this node was never stored
+		if(AddNode_TreeSet(wordStruct, treeHeader, treeHeader->start, DUMMY, WORD_STRUCT, IntToWord_HashMap->numLetters) == NULL){
+			Free_WordStruct(wordStruct); 
+		}
   	
 		id++; 
 		
@@ -224,20 +247,22 @@ int getNumWords(FILE* wordDoc){
 
 
 struct wordData* Create_WordData(char* word){
-	struct wordData* wordData = malloc(sizeof(struct wordData)); 
-	wordData->connectionHeader = malloc(sizeof(struct intList)); 
-	wordData->connectionHeader->next = NULL; 
-	wordData->word = strdup(word);  
+	struct wordData* wordData = malloc(sizeof(struct wordData));
+	wordData->connectionHeader = malloc(sizeof(struct intList));
+	wordData->connectionHeader->next = NULL;
+	wordData->word = strdup(word);
+	wordData->connections = NULL;
 	wordData->hintFound = 0;
-	wordData->numConnections = 0; 
-	wordData->prevID = -1;  
-	return wordData; 
+	wordData->numConnections = 0;
+	wordData->prevID = -1;
+	return wordData;
 } 
 
 void Free_WordData(struct wordData* wordData){
-	Free_IntLL(wordData->connectionHeader); 
-	free(wordData->word); 
-	free(wordData); 
+	Free_IntLL(wordData->connectionHeader);
+	free(wordData->connections);
+	free(wordData->word);
+	free(wordData);
 }
 struct wordStruct* Create_WordStruct(char* word, int id){
 	struct wordStruct* wordStruct = malloc(sizeof(struct wordStruct)); 

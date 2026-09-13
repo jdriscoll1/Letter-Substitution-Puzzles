@@ -77,7 +77,6 @@ struct score flwg_score(int id, struct DataStructures* data, struct score_parame
 // depth: 
 struct score flwc_score(int id, struct DataStructures* data, struct score_parameters parameters){
 
-	char* foundWord = Convert_IntToWord(id, data->I2W); 
 	// 1) Check to see if word is goal/avoid
 	if(parameters.remainingDepth != parameters.startDepth){
 		if (checkIfUsed_WordSet(id, parameters.goalWords)){

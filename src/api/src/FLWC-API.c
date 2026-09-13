@@ -91,10 +91,18 @@ int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents){
 }
 
 int botTakesTurnFLWC(int botType, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
-	// This is what will be returend 
-	int result; 	
+	// This is what will be returend.
+	// Started at -1 (no move): an unrecognised bot type used to leave this
+	// uninitialised and then assign the garbage straight into wordId
+	int result = -1; 	
+	if(botType == -2){
+		result = botPly_Mirror(flwcComponents->wordId); 
+	}
 	if(botType == -1){
 		result = botPly_MaxAdjacencies(flwcComponents->wordId, flwcComponents->goalWords, data); 	
+	}
+	if(botType == 0){
+		result = botPly_Random(flwcComponents->wordId, data); 
 	}
 	if(botType > 0){
 		result = botPly_FLWC(flwcComponents->wordId, botType, flwcComponents->avoidWords, flwcComponents->goalWords, data);
@@ -153,7 +161,15 @@ char* hintGoalWordFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStr
 		.numTurns = 100
 	};
 	struct arrayList* solution = getPathToNearestWordInWordSet(flwcComponents->wordId, p, data);
-	if(!solution || !solution->list) return NULL; 
+	//An empty path means no goal word was reachable. malloc(0) hands back a non-NULL
+	//pointer, so the path has to be judged by its length rather than by its pointer
+	if(solution == NULL){
+		return NULL;
+	}
+	if(solution->currPrecision == 0){
+		free_ArrayList(solution);
+		return NULL;
+	}
 
 	int goalId = ((int*)(solution->list))[solution->currPrecision - 1]; 
 	char* goalStr = Convert_IntToWord(goalId, data->I2W); 
@@ -176,8 +192,14 @@ char* hintPathToGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct DataS
 		.maxGoalAdjacencies=100
 	};
 	struct arrayList* solution = getPathToNearestWordInWordSet(flwcComponents->wordId, p, data);
-	if(!solution || !solution->list) return NULL; 
-	char* hint = idArrayListToString(solution, data); 
+	if(solution == NULL){
+		return NULL;
+	}
+	if(solution->currPrecision == 0){
+		free_ArrayList(solution);
+		return NULL;
+	}
+	char* hint = idArrayListToString(solution, data);
 	free_ArrayList(solution); 
 	return hint; 
 
@@ -197,7 +219,14 @@ char* hintAdjacencyTowardsGoalFLWC(struct GameComponentsFLWC* flwcComponents, st
 		.maxGoalAdjacencies=100
 	};
 	struct arrayList* solution = getPathToNearestWordInWordSet(flwcComponents->wordId, p, data);
-	if(!solution || !solution->list) return NULL; 
+	//The step towards the goal is the second entry, so a path shorter than two is no hint
+	if(solution == NULL){
+		return NULL;
+	}
+	if(solution->currPrecision < 2){
+		free_ArrayList(solution);
+		return NULL;
+	}
 
 	int goalId = ((int*)(solution->list))[1]; 
 	char* goalStr = Convert_IntToWord(goalId, data->I2W); 
@@ -220,8 +249,14 @@ int hintMinDistanceToGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct 
 		.maxGoalAdjacencies=100
 	};
 	struct arrayList* solution = getPathToNearestWordInWordSet(flwcComponents->wordId, p, data);
-	if(!solution || !solution->list) return -1; 
-	int hint = solution->currPrecision-1; 
+	if(solution == NULL){
+		return -1;
+	}
+	if(solution->currPrecision == 0){
+		free_ArrayList(solution);
+		return -1;
+	}
+	int hint = solution->currPrecision-1;
 	free_ArrayList(solution); 
 
 	return hint; 
@@ -251,8 +286,14 @@ int hintDistanceFromNearestAvoidWordFLWIC(struct GameComponentsFLWC* flwcCompone
 		.maxGoalAdjacencies=100
 	};
 	struct arrayList* solution = getPathToNearestWordInWordSet(flwcComponents->wordId, p, data);
-	if(!solution || !solution->list) return -1; 
-	int hint = solution->currPrecision-1; 
+	if(solution == NULL){
+		return -1;
+	}
+	if(solution->currPrecision == 0){
+		free_ArrayList(solution);
+		return -1;
+	}
+	int hint = solution->currPrecision-1;
 	free_ArrayList(solution); 
 
 	return hint; 

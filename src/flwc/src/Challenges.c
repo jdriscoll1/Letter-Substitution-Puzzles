@@ -1,8 +1,10 @@
 #include <string.h>
+#include <stdlib.h>
 
 #include "../includes/Challenges.h"
 #include "../../algs/includes/BreadthFirstSearch.h"
 #include "../../algs/includes/TreeStorageNode.h"
+#include "../../flwp/includes/GameFunctions.h"
 #include "../../structs/includes/Queue.h"
 
 void swapAvoidGoal(struct StartWordParametersFLWC* p);
@@ -29,66 +31,70 @@ int is_game_winnable_FLWC(
 	int beta);
 
 int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
-	
-	// The array of valid words
-	struct arrayList* validWords = init_ArrayList(20, 10, NUM); 	
-	
-	
+
+	// The words that pass the two cheap checks, which is as far as most words get
+	int* candidates = malloc(sizeof(int) * data->I2W->numWords);
+	int numCandidates = 0;
+
+
 	// for wordId in allWords
 	for(int i = 0; i < data->I2W->numWords; i++){
 		// CHECK #0: The Current Word Is Not in the goal word nor avoid word set
 		if(checkIfUsed_WordSet(i, p.goalWords) || checkIfUsed_WordSet(i, p.avoidWords)){
-			continue; 
+			continue;
 		}
 
 		// CHECK #1: Does the word have a # of adjacencies in Range
-		int n = data->I2W->array[i]->numConnections; 
+		int n = data->I2W->array[i]->numConnections;
 		if(n < p.minAdjacencies || n > p.maxAdjacencies){
-			continue; 
-		} 
+			continue;
+		}
 
-	
-		// CHECK #2: If there exists a goal word < the minimum distance, continue 
-		// CHECK #3: If there are no goal words < the maximum distance, continue 
+		candidates[numCandidates++] = i;
+	}
+
+	// The remaining checks each cost a search of their own, so the candidates are
+	// walked in random order and the first word that passes them all is taken. That
+	// is the same uniform choice the full scan made, without paying for a distance
+	// search and a game search on every word in the dictionary.
+	Shuffle_IntArray(candidates, numCandidates);
+
+	for(int c = 0; c < numCandidates; c++){
+		int i = candidates[c];
+
+		// CHECK #2: If there exists a goal word < the minimum distance, continue
+		// CHECK #3: If there are no goal words < the maximum distance, continue
 		if(!all_words_are_greater_than_min_distance_and_there_exists_a_word_less_than_max_distance(i, p.minGoalDistance, p.maxGoalDistance, p.goalWords, p.avoidWords, data)){
-			continue; 
-		
+			continue;
+
 		}
 
-		// CHECK #4: If there exists an avoid word < the minimum distance, continue 
-		// CHECK #5: If there are no avoid words < the maximum distance, continue 
+		// CHECK #4: If there exists an avoid word < the minimum distance, continue
+		// CHECK #5: If there are no avoid words < the maximum distance, continue
 		if(!all_words_are_greater_than_min_distance_and_there_exists_a_word_less_than_max_distance(i, p.minAvoidDistance, p.maxAvoidDistance, p.avoidWords, p.goalWords, data)){
-			continue; 
+			continue;
 		}
-		
 
-		// CHECK #6: If the user cannot force a win, continue 
+
+		// CHECK #6: If the user cannot force a win, continue
 		// num turns does not apply to FLWGP therefore
 		if(p.numTurns != -1){
-			if(!is_game_winnable_FLWC(i, p.numTurns, 1, p.goalWords, p.avoidWords, data, -100, 100)){
-				continue; 
-			} 
+			// The search only ever scores 0 or 1, so that is the window. From
+			// -100 to 100 alpha never caught up with beta and the pruning inside
+			// never fired once -- every sibling was searched to the bottom
+			if(!is_game_winnable_FLWC(i, p.numTurns, 1, p.goalWords, p.avoidWords, data, 0, 1)){
+				continue;
+			}
 		}
-		
 
-		add_ArrayList(&i, validWords, NUM); 
+		free(candidates);
+		return i;
 	}
 
-	// If the Array Length Is Empty - There Are No Valid Words
-	if(validWords->currPrecision == 0){
-		printf("There are no valid words!!!\n"); 
-		free_ArrayList(validWords); 
-		return -1; 
-	}
-	
-	int choiceId = rand() % validWords->currPrecision; 
-	int startWordId = ((int*)validWords->list)[choiceId]; 
-
-	
-	free_ArrayList(validWords); 
-	
-	
-	return startWordId; 
+	// Nothing passed every check - There Are No Valid Words
+	free(candidates);
+	printf("There are no valid words!!!\n");
+	return -1;
 }
 
 
@@ -139,6 +145,13 @@ int all_words_are_greater_than_min_distance_and_there_exists_a_word_less_than_ma
 			}
 			if(distance <= maxDistance){
 				max_distance_constraint = 1; //true
+				// The answer is settled here. A breadth first search hands back
+				// nodes in order of distance, so having got this far without a
+				// word closer than the minimum, there is no longer one to find --
+				// and one word inside the maximum is all the second half asks
+				// for. Carrying on would expand the rest of the ball of radius
+				// maxDistance to learn nothing
+				break; 
 			}
 		}
 		if(distance >= maxDistance){
@@ -222,8 +235,12 @@ int is_game_winnable_FLWC(
 	struct intList* options = getConnections(id, data->I2W); 
 	options = options->next; 
 
-	// Start of by doing max scores
-	int result = (isPlayerPerspective) ?  -100 : 100; 
+	// Start of by doing max scores. These are sentinels, not scores anybody can
+	// earn -- the first option that gets looked at replaces them
+	int result = (isPlayerPerspective) ?  -100 : 100;
+
+	// Did anybody actually have a move to make from here?
+	int hasMove = 0;
 
 	while(options != NULL){
 	
@@ -233,8 +250,9 @@ int is_game_winnable_FLWC(
 			options = options->next; 
 			continue; 
 		}
+		hasMove = 1;
 		int option_score = is_game_winnable_FLWC(
-			optionId, 
+			optionId,
 			depth - 1, 
 			!isPlayerPerspective, 
 			goalWords, 	
@@ -244,8 +262,8 @@ int is_game_winnable_FLWC(
 			beta
 		);
 
-		// if it's the player persepctive return max(option_score, result) otherwise min(option_score, result)
-		result = (isPlayerPerspective) ? max(option_score, result) : min(option_score, result); 
+		// Fold the option into the running result: the best the player can
+		// force, or the worst the opponent will allow
 
 		if(isPlayerPerspective){
 			result = max(option_score, result); 
@@ -261,8 +279,21 @@ int is_game_winnable_FLWC(
 		// Alpha Beta Pruning??
 		options = options->next; 
 	}
-	markUnused_WordSet(id, data->wordSet); 
-	return result; 
+	markUnused_WordSet(id, data->wordSet);
+
+	// Whoever is on turn has nowhere to go, and the game scores that against the
+	// side that is stuck: botTakesTurnFLWC reports -1 when the bot runs out of
+	// moves, which it calls a loss for the bot, and -2 when the player is
+	// trapped, which it calls a win for the bot. So this follows who cannot
+	// move rather than the goal set -- it is not the same ending as the turns
+	// running out, where nobody is stuck and the goal simply went unreached.
+	// Falling out of the loop instead returned the sentinel, so a trapped player
+	// scored -100, and every caller reads this as a truthy int: being trapped
+	// came back as a win
+	if(!hasMove){
+		return !isPlayerPerspective;
+	}
+	return result;
 	
 }
 

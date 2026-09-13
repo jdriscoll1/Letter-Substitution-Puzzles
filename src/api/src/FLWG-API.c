@@ -178,7 +178,8 @@ void removeWord_FLWP(char* word, struct GameComponents *gameComponents, struct D
 
     strncpy(&tempStr[1], word, dataStructures->I2W->numLetters);
 
-    RemoveWord_Struct(gameComponents, tempStr, 0, dataStructures); 
+    //RemoveWord_Struct hands back a freshly allocated copy of the word
+    free(RemoveWord_Struct(gameComponents, tempStr, 0, dataStructures)); 
 }
 
 int isStartValid_FLWP(struct GameComponents* gameComponents){
@@ -196,8 +197,7 @@ struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdj
 	struct GameComponentsFLWC* flwcComponents = initFLWC(minAdjacenciesToStart, maxAdjacenciesToStart, goalWords, avoidWords, minGoalDistance, minAvoidDistance, maxGoalDistance, maxAvoidDistance, minGoalAdjacencies, maxGoalAdjacencies, -1, dataStructures);
 	if(flwcComponents->wordId == -1){
 
-		struct GameComponents* flwpComponents = NULL; 
-		struct GameComponentsFLWGP* flwgpComponents = malloc(sizeof(struct GameComponentsFLWGP)); 
+		struct GameComponentsFLWGP* flwgpComponents = malloc(sizeof(struct GameComponentsFLWGP));
 		flwgpComponents->flwcComponents = flwcComponents; 
 		flwgpComponents->flwpComponents = NULL; 
 		return flwgpComponents; 

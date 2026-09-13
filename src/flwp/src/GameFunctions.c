@@ -51,6 +51,16 @@ int getWordWithNumberOfConnections(int minConnections, int maxConnections, struc
 
 }
 
+void Shuffle_IntArray(int* values, int count){
+	//Fisher-Yates: walk from the back, swapping each slot with a random earlier one
+	for(int i = count - 1; i > 0; i--){
+		int j = rand() % (i + 1);
+		int temp = values[i];
+		values[i] = values[j];
+		values[j] = temp;
+	}
+}
+
 int ChooseStart_Range(struct wordDataArray* IntToWord_HashMap, int minAdjacencies, int maxAdjacencies){
    
 	struct arrayList *aList = init_ArrayList(10, 5, NUM);
@@ -66,7 +76,8 @@ int ChooseStart_Range(struct wordDataArray* IntToWord_HashMap, int minAdjacencie
 	}
 	// If the length of the list is 0 -- return err (-1)
 	if(aList->currPrecision == 0){
-	return -1; 
+		free_ArrayList(aList);
+		return -1; 
 	}
 	int id = ((int*)(aList)->list)[rand() % aList->currPrecision];
 	free_ArrayList(aList);
@@ -88,7 +99,8 @@ int ChooseStart(struct wordDataArray* IntToWord_HashMap, int numAdjacencies){
 	}
 	// If the length of the list is 0 -- return err (-1)
 	if(aList->currPrecision == 0){
-	return -1; 
+		free_ArrayList(aList);
+		return -1; 
 	}
 	int id = ((int*)(aList)->list)[rand() % aList->currPrecision];
 	free_ArrayList(aList);

@@ -18,16 +18,38 @@ Description: Applies MCTS to the FLWG
 #include "../../structs/includes/IntLinkedList.h"
 
 
-struct mctsStruct* updateMax(struct mctsStruct* currMax, struct mctsStruct* currChild, int simulations); 
 
-struct mctsStruct* init_mctsStruct(int isMaximizer, struct mctsStruct* parent, int wordID); 
+struct mctsStruct* init_mctsStruct(struct mctsPool* pool, int player, struct mctsStruct* parent, int wordID);
 
-int getOutput(struct mctsStruct* root); 
+/*Carves bytes off the pool's newest block, starting another when it runs dry*/
+static void* allocate_mctsPool(struct mctsPool* pool, unsigned long bytes);
+
+/*The first block. Each one after it is twice the size of the last, up to the cap,
+so a search that runs long does not end up walking a list of thousands of blocks
+and a search that stops early does not claim far more than it needed*/
+#define MCTS_POOL_FIRST_BLOCK (256UL * 1024UL)
+#define MCTS_POOL_MAX_BLOCK (8UL * 1024UL * 1024UL)
+
+int getOutput(struct mctsStruct* root);
+
+/*The UCT score given ln(t) already worked out. ln(t) is the same for every node in
+a pass, so traverse computes it once instead of calling log() per child compared*/
+static double uctScore(struct mctsStruct* m, double logSimulations);
 
 
 //monty carlos tree search
-//this takes the current word & outputs the best word 
+//this takes the current word & outputs the best word
 int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
+	return montyCarlosTreeSearch_Multiplayer(wordID, 2, wordSet, IntToWord_HashMap);
+}
+
+//The same search, told how many players are at the table. Everything it decides
+//comes down to who is left without a move at the end of a play-out, and that is a
+//question of counting seats: with two players the stranded player is the one an
+//even number of plies away, with three it is every third one. Running the two
+//player search in a three player game therefore credits most of its play-outs to
+//the wrong player, and it ends up playing worse than choosing at random
+int montyCarlosTreeSearch_Multiplayer(int wordID, int numPlayers, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
 	/************ TIMING THE PROGRAM *******************/ 
 	/*The time at which the program begins*/
 	//time_t initTime = time(0);
@@ -40,11 +62,14 @@ int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataAr
 	
 	
 	
-	/*Initialize the root word node*/
-	struct mctsStruct* root = init_mctsStruct(1, NULL, wordID);
-	
+	/*Every node this search builds comes out of here and goes back all at once*/
+	struct mctsPool* pool = create_mctsPool();
+
+	/*Initialize the root word node. The search is player 0 and it is its turn*/
+	struct mctsStruct* root = init_mctsStruct(pool, 0, NULL, wordID);
+
 	/*Explore the root node & obtain its children*/
-	visit_mctsStruct(wordID, root,  wordSet, IntToWord_HashMap);
+	visit_mctsStruct(wordID, root, numPlayers, pool, wordSet, IntToWord_HashMap);
 	
 	/* The Current Simulation*/
 	int s = 0; 
@@ -59,14 +84,14 @@ int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataAr
 	while(s < numRuns) {
 		//printf("Run: %d\n", s);
 		/*1) Find an unexplored node starting at the root*/
-		struct mctsStruct* unexploredNode = traverse(root, s, wordSet, IntToWord_HashMap);
+		struct mctsStruct* unexploredNode = traverse(root, s, numPlayers, pool, wordSet, IntToWord_HashMap);
 		//printf("Unexplored Node: %d\n", unexploredNode->wordID);
 		/*2) Go down a whole bunch of nodes until there is a word that has no connections, or it reaches max depth*/
-		int simulationResult = rollout(unexploredNode->wordID, depth, 1, wordSet, IntToWord_HashMap); 
-		//printf("Simulation Result: %d", simulationResult);
+		int stuckPlayer = rollout(unexploredNode->wordID, depth, unexploredNode->player, numPlayers, wordSet, IntToWord_HashMap);
+		//printf("Stranded Player: %d", stuckPlayer);
 		
 		/*3) Send the result up starting at the unexplored node*/
-		backpropogate(unexploredNode, simulationResult, wordSet);
+		backpropogate(unexploredNode, stuckPlayer, wordSet);
 		
 		/*Move to the next simulation*/
 		s++;
@@ -76,8 +101,8 @@ int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataAr
 	}
 	
 	int bestChoice = getOutput(root);
-	free_mctsStruct(root);
-	return bestChoice;  
+	free_mctsPool(pool);
+	return bestChoice;
 	
 	
 
@@ -94,29 +119,6 @@ int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataAr
 
 
 
-struct mctsStruct* updateMax(struct mctsStruct* currMax, struct mctsStruct* currChild, int simulations){
-	
-	//if there is not yet a max, set the max
-	struct mctsStruct* max = (currMax == NULL) ? currChild : currMax;  
-	
-	//If the max is not equal to the current child 
-	if(max != currChild){
-	
-		//Get the score of the maximum node 
-		double maxScore = calculate_mctsScore(max, simulations); 
-		//Get the score of the current child 
-		double currScore = calculate_mctsScore(currChild, simulations);
-		  
-		//If the current child's score is better than the max score. Update the max 
-		if(currScore > maxScore){	
-			max = currChild;
-
-		}
-		
-	}
-	return max; 
-}
-
 
 
 /*
@@ -128,12 +130,13 @@ There'll be two cases:
 	
 Return: An unexplored node 
 What if? All of the nodes are deadends? What if it reaches a point where just all of the nodes are dead ends? */
-struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
+struct mctsStruct* traverse(struct mctsStruct *node, int simulations, int numPlayers, struct mctsPool* pool, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
 	
 	
-	//This is probably the maximum output node 
+	//This is probably the maximum output node, and the score it earned
 	struct mctsStruct *max = NULL;
-	
+	double maxScore = 0.0;
+
 	//Has it found a child that has not been explored yet? 
 	int unexploredChildFound = 0; 
 	
@@ -142,8 +145,12 @@ struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct Wor
 	struct mctsStruct *outputNode = NULL; 
 	
 	//Now the parent node is going to be the node whose children are going to be explored
-	struct mctsStruct *parent = node; 
-	
+	struct mctsStruct *parent = node;
+
+	//ln(t) is fixed for this whole pass, so it is worked out once here rather than
+	//once per child comparison -- this loop is the hottest part of the search
+	double logSimulations = (simulations < 1) ? 0.0 : log((double)simulations);
+
 	
 	
 	//Until it finds a child that has not been explored, it will continue going deeper and deeper through children
@@ -180,7 +187,7 @@ struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct Wor
 			if(!childIsExplored){
 				//printf("Child Not Explored\n");
 				//Visits the current child, and fills it out 
-				visit_mctsStruct(currChild->wordID, currChild, wordSet, IntToWord_HashMap);
+				visit_mctsStruct(currChild->wordID, currChild, numPlayers, pool, wordSet, IntToWord_HashMap);
 				
 				//sets the output node to the unexplored node (the current child)
 				outputNode = currChild;
@@ -198,9 +205,14 @@ struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct Wor
 			
 			//if the child is found
 			else{
-				
-				max = updateMax(max, currChild, simulations);
-			}	
+				//The best score is carried along instead of being recomputed for
+				//the incumbent on every comparison, halving the square roots
+				double currScore = uctScore(currChild, logSimulations);
+				if(max == NULL || currScore > maxScore){
+					max = currChild;
+					maxScore = currScore;
+				}
+			}
 		}	
 		
 		//After it's gone through & all the children have been explored. It chooses to explore the "best" node to explore
@@ -211,6 +223,7 @@ struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct Wor
 		}
 		//It also sets the current max to null because it doesn't exist anymore
 		max = NULL;
+		maxScore = 0.0;
 		
 		
 	}
@@ -234,16 +247,21 @@ struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct Wor
 	//return the score of this node
 
 //backpropogate -- This takes results & sends it upwards
-void backpropogate(struct mctsStruct* node, int isWin, struct WordSet* wordSet){
-	
+void backpropogate(struct mctsStruct* node, int stuckPlayer, struct WordSet* wordSet){
+
 	//until it is has reached the root it will back propogate
 	while(node->parent != NULL){
-		
-		node->numWins += (isWin == 1) ?  1 : 0; 
-		markUnused_WordSet(node->wordID, wordSet); 
-		
+
+		//A node is a move by whoever was on turn at its parent, and the only way
+		//to lose is to be the player left without a move. So every player the
+		//play-out did not strand scores, which with three or more players means
+		//one play-out can be a win for two nodes on the same path
+		if(stuckPlayer != -1 && stuckPlayer != node->parent->player){
+			node->numWins++;
+		}
+		markUnused_WordSet(node->wordID, wordSet);
+
 		node = node->parent;
-		isWin = (isWin == 1) ? -1 : 1; 
 	}
 
 	
@@ -256,7 +274,7 @@ void backpropogate(struct mctsStruct* node, int isWin, struct WordSet* wordSet){
 //bestChild -- this chooses node with the higest number of visits
 
 //This takes a look at a node & fills out its current data based on where it lies in the tree 
-void visit_mctsStruct(int wordID, struct mctsStruct* node, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
+void visit_mctsStruct(int wordID, struct mctsStruct* node, int numPlayers, struct mctsPool* pool, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
 	
 	//The Current Child Is NOT going to change - this only adds its children & sets there values 
 	
@@ -264,8 +282,8 @@ void visit_mctsStruct(int wordID, struct mctsStruct* node, struct WordSet* wordS
 	//The number of children the current node has 
 	int numChildren = 0;
 	
-	 //The 
-	int isMaximizer = (node->isMaximizer == 1) ? 0 : 1; 
+	 //A child is one ply further on, so the turn passes to the next player
+	int childPlayer = (node->player + 1) % numPlayers;
 	
 	
 	struct intList* options = IntToWord_HashMap->array[wordID]->connectionHeader; 
@@ -284,22 +302,18 @@ void visit_mctsStruct(int wordID, struct mctsStruct* node, struct WordSet* wordS
 	
 	//if the parent's children have been found
 	if(node->children == NULL){
-		//Allocate space for the children
-		node->children = calloc(numChildren, sizeof(struct mctsStruct*));
-		
-		//The current child being looked at's ID 
+		//Allocate space for the children. The loop below writes every one of
+		//these slots, so unlike calloc there is nothing to zero first
+		node->children = allocate_mctsPool(pool, numChildren * sizeof(struct mctsStruct*));
+
+		//The current child being looked at's ID
 		int i = 0;
-		
-		//The Options of the children to be searched through 
-		options = IntToWord_HashMap->array[wordID]->connectionHeader; 
-		
-		for(i = 0; i < numChildren; i++){
-			do{
-				options = options->next;
-			}while(options->next != NULL && checkIfUsed_WordSet(options->data, wordSet) != 0);
-			
-			node->children[i] = init_mctsStruct(isMaximizer, node, options->data); 
-			
+
+		//One pass down the adjacencies, taking each word that is still available
+		for(options = IntToWord_HashMap->array[wordID]->connectionHeader->next; options != NULL; options = options->next){
+			if(checkIfUsed_WordSet(options->data, wordSet) == 0){
+				node->children[i++] = init_mctsStruct(pool, childPlayer, node, options->data);
+			}
 		}
 	}
 	node->numChildren = numChildren;
@@ -313,18 +327,20 @@ void visit_mctsStruct(int wordID, struct mctsStruct* node, struct WordSet* wordS
 //It takes a node and explores it using some policy
 //This policy could be a lot of things, however,
 //to keep it simple, it will be randomly assigned
-int rollout(int id, int depth, int isMaximizing, struct WordSet* wordSet, struct wordDataArray *IntToWord_HashMap){
+int rollout(int id, int depth, int playerToMove, int numPlayers, struct WordSet* wordSet, struct wordDataArray *IntToWord_HashMap){
 	//While it is not a leaf
-	 
+
+	//No verdict: the play-out ran out of depth before anyone was stranded
 	if(depth == 0){
-		return 0;
-		
+		return -1;
+
 	}
 
 	id = chooseRandom(id, IntToWord_HashMap, wordSet);
-	//printf("ID: %d, Maximizing: %d\n", id, isMaximizing);
+	//printf("ID: %d, To Move: %d\n", id, playerToMove);
+	//Whoever is on turn has nowhere left to go, so they are the one who loses
 	if(id == -1){
-		return (isMaximizing == 1) ? 1: -1;
+		return playerToMove;
 	}
 	
 	
@@ -334,13 +350,13 @@ int rollout(int id, int depth, int isMaximizing, struct WordSet* wordSet, struct
 	markUsed_WordSet(id, wordSet);
 
 	//Once it reaches the original node, that will mean it tried every option, and did not have a choice
-	int isWin = rollout(id, depth - 1, (isMaximizing == 1) ? 0 : 1, wordSet, IntToWord_HashMap); 
+	int stuckPlayer = rollout(id, depth - 1, (playerToMove + 1) % numPlayers, numPlayers, wordSet, IntToWord_HashMap);
 	markUnused_WordSet(id, wordSet);
 
-	return isWin; 
+	return stuckPlayer;
 }
 
-double calculate_mctsScore(struct mctsStruct* m, int simulations){
+static double uctScore(struct mctsStruct* m, double logSimulations){
 	/*S_i = x_i + c sqrt(ln(t) / n_i)*/
 	//c -> Constant that grows with the desire to explore.
 	double c = 5;//sqrt(2);	
@@ -348,24 +364,28 @@ double calculate_mctsScore(struct mctsStruct* m, int simulations){
 	//n_i is the number of times the action has previously been selected
 	double n = (double)m->visits; 
 	
-	//x_i = the value of the node 
-	double x = m->numWins / n; 
-	//t is 
-	
-	
-	double t = (double)simulations; 
-	
-	//log = ln in C 
-	return x + c * (log(t) / n);
+	//x_i = the value of the node
+	double x = m->numWins / n;
+
+	//ln(t) arrives already worked out: it is the same for every node being compared
+	return x + c * sqrt(logSimulations / n);
 	
 
 
 
 }
 
+double calculate_mctsScore(struct mctsStruct* m, int simulations){
+	//log = ln in C. Under one simulation there is nothing for the exploration term
+	//to weigh against and ln(0) is -inf, so the term is dropped rather than letting
+	//a NaN into the comparison
+	double t = (double)simulations;
+	return uctScore(m, (t < 1.0) ? 0.0 : log(t));
+}
+
 void print_mctsStruct(struct mctsStruct* m){
 	printf("<%d> {\n", m->wordID);
-	printf("\tisMaximizer: %d\n", m->isMaximizer);
+	printf("\tplayer: %d\n", m->player);
 	printf("\tvisits: %d\n", m->visits);
 	printf("\tnumChildren: %d\n", m->numChildren);
 	if(m->numChildren > 0){
@@ -390,17 +410,54 @@ void print_mctsStruct(struct mctsStruct* m){
 	
 }
 
-void free_mctsStruct(struct mctsStruct *root){
-	/*It has to first free all of it's children recursively, then free itself*/
-	int c = 0; 
-	for(c = 0; c < root->numChildren; c++){
-		free_mctsStruct(root->children[c]); 
-		
-	}
-	//frees the array
-	free(root->children);
-	free(root);
+struct mctsPool* create_mctsPool(void){
+	struct mctsPool* pool = malloc(sizeof(struct mctsPool));
+	pool->head = NULL;
+	pool->nextCapacity = MCTS_POOL_FIRST_BLOCK;
+	return pool;
+}
 
+static void* allocate_mctsPool(struct mctsPool* pool, unsigned long bytes){
+	struct mctsBlock* block = pool->head;
+	void* carved;
+
+	/*Nodes hold a double, so every carving stays eight byte aligned*/
+	bytes = (bytes + 7UL) & ~7UL;
+
+	/*The newest block is the only one carved from, so the tail of the one before
+	it is given up. That is a few bytes against 600,000 malloc calls*/
+	if(block == NULL || block->used + bytes > block->capacity){
+		unsigned long capacity = pool->nextCapacity;
+		if(capacity < bytes){
+			capacity = bytes;
+		}
+		block = malloc(sizeof(struct mctsBlock));
+		block->memory = malloc(capacity);
+		block->used = 0;
+		block->capacity = capacity;
+		block->next = pool->head;
+		pool->head = block;
+		if(pool->nextCapacity < MCTS_POOL_MAX_BLOCK){
+			pool->nextCapacity *= 2;
+		}
+	}
+
+	carved = block->memory + block->used;
+	block->used += bytes;
+	return carved;
+}
+
+void free_mctsPool(struct mctsPool* pool){
+	struct mctsBlock* block = pool->head;
+	/*The whole tree goes here, in as many frees as the search needed blocks --
+	about a dozen, rather than one per node*/
+	while(block != NULL){
+		struct mctsBlock* next = block->next;
+		free(block->memory);
+		free(block);
+		block = next;
+	}
+	free(pool);
 }
 
 int getOutput(struct mctsStruct* root){
@@ -430,10 +487,10 @@ int getOutput(struct mctsStruct* root){
 }
 	
 
-struct mctsStruct* init_mctsStruct(int isMaximizer, struct mctsStruct* parent, int wordID){
+struct mctsStruct* init_mctsStruct(struct mctsPool* pool, int player, struct mctsStruct* parent, int wordID){
 	/*Initialize the root word node*/
-	struct mctsStruct* newNode = malloc(sizeof(struct mctsStruct)); 
-	newNode->isMaximizer = isMaximizer; 
+	struct mctsStruct* newNode = allocate_mctsPool(pool, sizeof(struct mctsStruct));
+	newNode->player = player;
 	newNode->numChildren = 0;
 	newNode->numWins = 0;  
 	newNode->parent = parent;

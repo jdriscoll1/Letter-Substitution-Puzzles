@@ -1,40 +1,53 @@
 #include <stddef.h>
 #include "../includes/BreadthFirstSearch_FLWP.h"
+#include "../includes/GameFunctions.h"
 #include "../../structs/includes/Queue.h"
 #include "../../structs/includes/IntLinkedList.h"
 
 struct GameComponents *findFLWPStartAndGoal(int minAdjacenciesToStart, int maxAdjacenciesToStart, int minDistance, int maxDistance, int minAdjacenciesToGoal, int maxAdjacenciesToGoal, struct DataStructures* data){
-	struct GameComponents *gc = malloc(sizeof(struct GameComponents)); 
+	struct GameComponents *gc = malloc(sizeof(struct GameComponents));
 
-	// Initialize the array list that will store all of the potentially valid words
-	int validIDs[data->I2W->numWords];
-	int numValidWords = 0; 
+	// Every word whose own adjacency count is in range, which is the cheap half of the test
+	int candidates[data->I2W->numWords];
+	int numCandidates = 0;
 
-	// Check each word to see if it can have a valid goal 
+	int start = -1;
+	int goal = -1;
+
 	for(int id = 0; id < data->I2W->numWords; id++){
-
-		// Ensure each start word has a valid number of adjacencies
-		int adj = getNumAdjacencies(id, data); 
+		int adj = getNumAdjacencies(id, data);
 		if(adj >= minAdjacenciesToStart && adj <= maxAdjacenciesToStart){
-
-			// if it can find at least one valid word, choose it 
-			if(BFS_IsFLWPStartValid(id, minDistance, maxDistance, minAdjacenciesToGoal, maxAdjacenciesToGoal, data) == 1){
-				validIDs[numValidWords++] = id; 
-			}
+			candidates[numCandidates++] = id;
 		}
-		// if it can, add it to the word set
-
 	}
-	
-	int start = validIDs[rand() % numValidWords]; 
-	int goal = chooseGoalBFS_FLWP(start, minDistance, maxDistance, minAdjacenciesToGoal, maxAdjacenciesToGoal, data); 	
-	// Choose a word randomly from the eword set, figure out all words it can connect to given the constraints and then choose one of those
-	gc->start = start; 
-	gc->goal = goal; 
-	gc->minConnections = 4; 
-	
-	getSolution_FLWP(gc->start, gc->goal, gc, data); 
-	return gc; 
+
+	// Walk the candidates in random order and keep the first one that can reach a goal.
+	// Taking the first hit out of a shuffled list picks uniformly among the words that
+	// qualify, exactly as scoring every word and then choosing one at random did, but
+	// it runs a search per attempt instead of a search per word in the dictionary.
+	// The goal search doubles as the validity test, so a start can no longer be accepted
+	// and then fail to produce a goal.
+	Shuffle_IntArray(candidates, numCandidates);
+	for(int i = 0; i < numCandidates && start == -1; i++){
+		int candidateGoal = chooseGoalBFS_FLWP(candidates[i], minDistance, maxDistance, minAdjacenciesToGoal, maxAdjacenciesToGoal, data);
+		if(candidateGoal != -1){
+			start = candidates[i];
+			goal = candidateGoal;
+		}
+	}
+
+	gc->start = start;
+	gc->goal = goal;
+	gc->minConnections = 4;
+	gc->solution = NULL;
+
+	// No word in the dictionary can host these parameters -- isStartValid_FLWP reports it
+	if(start == -1){
+		return gc;
+	}
+
+	getSolution_FLWP(gc->start, gc->goal, gc, data);
+	return gc;
 
 
 }
@@ -201,9 +214,9 @@ void getSolution_FLWP(int id, int goalId, struct GameComponents* gc, struct Data
 		}
 	}
 
-	// if the current id is equal to the goal id 
+	// The goal was never reached, so there is no solution to hand back 
+	Free_IntLL(solution); 
 	gc->solution = NULL; 	
-	gc->minConnections -1; 
 
 	// Cleanup BFS structures
 	free_Queue(q);

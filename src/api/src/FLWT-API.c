@@ -61,7 +61,10 @@ struct arrayList* getCurrentWordsFLWT(struct GameComponentsFLWT* flwtComponents)
 }
 
 int isGameWonFLWT(struct GameComponentsFLWT* flwtComponents){
-	return flwtComponents->numAdjacenciesFound == flwtComponents->minAdjacenciesUserNeedsToFind; 
+	// Nothing stops the user carrying on once they have found enough, so this
+	// counts from the target upwards. Testing for equality meant a game came
+	// un-won the moment they found one more than they were asked for
+	return flwtComponents->numAdjacenciesFound >= flwtComponents->minAdjacenciesUserNeedsToFind; 
 }
 
 void freeGameComponentsFLWT(struct GameComponentsFLWT* flwtComponents){
