@@ -142,6 +142,13 @@ int all_words_are_greater_than_min_distance_and_there_exists_a_word_less_than_ma
 			}
 			if(distance <= maxDistance){
 				max_distance_constraint = 1; //true
+				// The answer is settled here. A breadth first search hands back
+				// nodes in order of distance, so having got this far without a
+				// word closer than the minimum, there is no longer one to find --
+				// and one word inside the maximum is all the second half asks
+				// for. Carrying on would expand the rest of the ball of radius
+				// maxDistance to learn nothing
+				break; 
 			}
 		}
 		if(distance >= maxDistance){
