@@ -60,8 +60,10 @@ int flwgp();
 void flwt(); 
 
 int level21();
+int flwg3p();
 int main(){
-	level21();
+	srand(time(0));
+	flwg3p();
 }
 
 
@@ -643,6 +645,118 @@ int level21(){
 	// End the Game
 	freeGameComponentsFLWC(flwcComponents);
 	close(fd);
+	freeDataStructures(data);
+	return 0;
+}
+
+/*----------------------------------------------------------------------------
+Three player FLWG, played out move by move so it can be watched: the multiplayer
+MCTS against a bot that plays at random and a bot that always moves to the word
+with the fewest adjacencies left. Ordinary FLWG rules, so the player who runs out
+of moves loses and the other two win.
+----------------------------------------------------------------------------*/
+static const char* PLAYER_NAMES[] = {"MCTS  ", "RANDOM", "MINADJ"};
+
+/*How many of a word's adjacencies nobody has played yet*/
+static int demo_optionsLeft(int id, struct DataStructures* data){
+	struct intList* adjacency = getConnections(id, data->I2W)->next;
+	int available = 0;
+	while(adjacency != NULL){
+		if(!checkIfUsed_WordSet(adjacency->data, data->wordSet)){
+			available++;
+		}
+		adjacency = adjacency->next;
+	}
+	return available;
+}
+
+/*The opposite of botPly_MaxAdjacencies: leave the next player the least room*/
+static int demo_chooseMinAdjacencies(int id, struct DataStructures* data){
+	struct intList* adjacency = getConnections(id, data->I2W)->next;
+	int best = -1;
+	int fewest = 0;
+	while(adjacency != NULL){
+		if(!checkIfUsed_WordSet(adjacency->data, data->wordSet)){
+			int available = demo_optionsLeft(adjacency->data, data);
+			if(best == -1 || available < fewest){
+				best = adjacency->data;
+				fewest = available;
+			}
+		}
+		adjacency = adjacency->next;
+	}
+	return best;
+}
+
+int flwg3p(){
+	int numLetters = 3;
+	int fd = open("docs/3.txt", O_RDONLY);
+	struct DataStructures* data;
+	int word;
+	int seat = 0;
+	int ply = 0;
+	int i;
+
+	if(fd == -1){
+		printf("[GAME MESSAGE]\nCould not open docs/3.txt -- run this from the repository root\n");
+		return -1;
+	}
+	data = initDataStructures(fd, numLetters);
+	close(fd);
+
+	/*Any word with somewhere to go*/
+	do{
+		word = rand() % data->I2W->numWords;
+	}while(getNumAdjacencies(word, data) == 0);
+	markUsed_WordSet(word, data->wordSet);
+
+	printf("\n===============================================\n");
+	printf(" THREE PLAYER FLWG -- MCTS vs RANDOM vs MINADJ\n");
+	printf("===============================================\n");
+	printf("Change one letter each turn, no word twice.\n");
+	printf("The player with no move left loses; the other two win.\n\n");
+	printf("[GAME MESSAGE]\nStart word: %s (%d options)\n\n",
+		Convert_IntToWord(word, data->I2W), demo_optionsLeft(word, data));
+	fflush(stdout);
+
+	for(;;){
+		int move;
+		if(seat == 0){
+			move = montyCarlosTreeSearch_Multiplayer(word, 3, data->wordSet, data->I2W);
+		}
+		else if(seat == 1){
+			move = chooseRandom(word, data->I2W, data->wordSet);
+		}
+		else{
+			move = demo_chooseMinAdjacencies(word, data);
+		}
+
+		if(move == -1){
+			printf("\n[GAME MESSAGE]\n%s is stuck at '%s' after %d moves -- %s LOSES.\n",
+				PLAYER_NAMES[seat], Convert_IntToWord(word, data->I2W), ply, PLAYER_NAMES[seat]);
+			printf("[GAME MESSAGE]\nWinners: ");
+			for(i = 0; i < 3; i++){
+				if(i != seat){
+					printf("%s%s", PLAYER_NAMES[i], (i < 2 && (i + 1) != seat) ? ", " : "");
+				}
+			}
+			printf("\n\n");
+			fflush(stdout);
+			break;
+		}
+
+		markUsed_WordSet(move, data->wordSet);
+		ply++;
+		printf("  %2d. %s plays %s   (%d options left)\n", ply, PLAYER_NAMES[seat],
+			Convert_IntToWord(move, data->I2W), demo_optionsLeft(move, data));
+		fflush(stdout);
+		/*Slow enough to follow along with*/
+		usleep(350000);
+
+		word = move;
+		seat = (seat + 1) % 3;
+	}
+
 	freeDataStructures(data);
 	return 0;
 }
