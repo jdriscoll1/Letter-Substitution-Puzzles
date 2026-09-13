@@ -140,6 +140,13 @@ be accepted and then fail to produce a goal.
   Those two properties are what `tests/test_mcts.c` exists to hold down. The simulation
   count and rollout depth are hardcoded in `montyCarlosTreeSearch`; lowering them is not an
   optimization, it is a weaker search.
+  Every node carries the `player` whose turn it is, and `montyCarlosTreeSearch_Multiplayer`
+  takes the number of players — the caller is always player 0 and it is its turn.
+  `montyCarlosTreeSearch` is that search with two. The count is not cosmetic: a playout
+  only ever proves *who was left without a move*, and how many seats sit between this move
+  and that one decides whether that is a win. Told two when there are three, the search
+  credits most of its playouts to the wrong player and plays worse than random —
+  `test_mcts_wins_a_three_player_game` is what holds that down.
 - `BreadthFirstSearch.h` does distance-constrained search — it both validates/chooses
   start-goal pairs and backs the "how far am I from the goal" and "show me a path" hints.
 

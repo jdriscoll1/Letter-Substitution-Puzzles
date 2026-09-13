@@ -145,7 +145,7 @@ static void test_visit_expands_only_unused_neighbours(void){
 	}
 	CHECK(expected > 0);
 
-	root.isMaximizer = 1;
+	root.player = 0;
 	root.wordID = start;
 	root.score = 0;
 	root.visits = 0;
@@ -154,7 +154,7 @@ static void test_visit_expands_only_unused_neighbours(void){
 	root.numWins = 0;
 	root.children = NULL;
 
-	visit_mctsStruct(start, &root, data->wordSet, data->I2W);
+	visit_mctsStruct(start, &root, 2, data->wordSet, data->I2W);
 
 	/*A node is expanded into exactly the moves that are still available*/
 	CHECK_INT(root.numChildren, expected);
@@ -169,8 +169,8 @@ static void test_visit_expands_only_unused_neighbours(void){
 			notNeighbours++;
 		}
 		CHECK_INT(root.children[i]->parent == &root, 1);
-		/*The child plays for the other side*/
-		CHECK_INT(root.children[i]->isMaximizer, 0);
+		/*The child is one ply on, so the turn has passed to the other side*/
+		CHECK_INT(root.children[i]->player, 1);
 	}
 	/*A word that has already been played is not a move*/
 	CHECK_INT(usedChildren, 0);
@@ -194,20 +194,22 @@ static void test_rollout_scores_a_finished_game(void){
 	for(i = 0; i < data->I2W->numWords; i++){
 		markUsed_WordSet(i, data->wordSet);
 	}
-	/*A playout that cannot move scores for the side that is not stuck*/
-	CHECK_INT(rollout(start, 10, 1, data->wordSet, data->I2W), 1);
-	CHECK_INT(rollout(start, 10, 0, data->wordSet, data->I2W), -1);
+	/*A playout that cannot move names whoever was on turn as the loser, and that
+	is whoever the caller said it was -- the seat, not a fixed "the opponent"*/
+	CHECK_INT(rollout(start, 10, 0, 2, data->wordSet, data->I2W), 0);
+	CHECK_INT(rollout(start, 10, 1, 2, data->wordSet, data->I2W), 1);
+	CHECK_INT(rollout(start, 10, 2, 3, data->wordSet, data->I2W), 2);
 
 	/*A playout from an open position has to leave the set as it found it*/
 	reset_WordSet(data->wordSet);
 	markUsed_WordSet(start, data->wordSet);
 	before = copyWordSetDeep(data->wordSet);
-	result = rollout(start, 1000, 1, data->wordSet, data->I2W);
-	CHECK(result == 1 || result == -1 || result == 0);
+	result = rollout(start, 1000, 0, 2, data->wordSet, data->I2W);
+	CHECK(result == 0 || result == 1);
 	CHECK_INT(word_sets_match(before, data->wordSet, data->I2W->numWords), 1);
 
 	/*No depth left means no verdict*/
-	CHECK_INT(rollout(start, 0, 1, data->wordSet, data->I2W), 0);
+	CHECK_INT(rollout(start, 0, 0, 2, data->wordSet, data->I2W), -1);
 
 	free_WordSet(before);
 	freeDataStructures(data);
@@ -261,6 +263,132 @@ static void test_rollout_policy_is_uniform(void){
 	freeDataStructures(data);
 }
 
+/*------------------------------------------------------------------------------
+Three player FLWG: one MCTS, one bot that plays at random, one that always moves
+to the neighbour with the fewest adjacencies left. Ordinary FLWG rules -- a player
+who cannot move loses and the other two win -- so a player with no skill at all
+loses one game in three. The claim under test is that the MCTS loses far fewer.
+
+The three player game is what separates the search from the two player one: what a
+play-out proves depends on how many seats sit between this move and the one that
+strands somebody. Told there are two players when there are three, the search
+credits most of its play-outs to the wrong player, and it was measurably the worst
+of the three bots here -- 35 losses out of 59 on docs/3.txt where 20 is chance.
+------------------------------------------------------------------------------*/
+#define BOT_MCTS 0
+#define BOT_RANDOM 1
+#define BOT_MIN_ADJACENCIES 2
+#define NUM_BOTS 3
+
+/*How many of a word's adjacencies nobody has played yet*/
+static int unused_adjacencies(int id, struct DataStructures* data){
+	struct intList* adjacency = getConnections(id, data->I2W)->next;
+	int available = 0;
+	while(adjacency != NULL){
+		if(!checkIfUsed_WordSet(adjacency->data, data->wordSet)){
+			available++;
+		}
+		adjacency = adjacency->next;
+	}
+	return available;
+}
+
+/*The opposite of botPly_MaxAdjacencies: take the move that leaves the next player
+the least room. A greedy way to play FLWG, and a real opponent rather than a foil*/
+static int choose_min_adjacencies(int id, struct DataStructures* data){
+	struct intList* adjacency = getConnections(id, data->I2W)->next;
+	int best = -1;
+	int fewest = 0;
+	while(adjacency != NULL){
+		if(!checkIfUsed_WordSet(adjacency->data, data->wordSet)){
+			int available = unused_adjacencies(adjacency->data, data);
+			if(best == -1 || available < fewest){
+				best = adjacency->data;
+				fewest = available;
+			}
+		}
+		adjacency = adjacency->next;
+	}
+	return best;
+}
+
+/*Plays one turn, marking the word it plays. -1 means this bot is stuck and lost*/
+static int three_player_turn(int bot, int word, struct DataStructures* data){
+	int move;
+	if(bot == BOT_MCTS){
+		/*The search always calls itself player 0; the other two follow it round*/
+		move = montyCarlosTreeSearch_Multiplayer(word, NUM_BOTS, data->wordSet, data->I2W);
+	}
+	else if(bot == BOT_RANDOM){
+		move = chooseRandom(word, data->I2W, data->wordSet);
+	}
+	else{
+		move = choose_min_adjacencies(word, data);
+	}
+	if(move != -1){
+		markUsed_WordSet(move, data->wordSet);
+	}
+	return move;
+}
+
+/*Plays a game out from start and returns the bot that ran out of moves*/
+static int play_three_player_game(int start, int* seats, struct DataStructures* data){
+	int word = start;
+	int seat = 0;
+	reset_WordSet(data->wordSet);
+	markUsed_WordSet(start, data->wordSet);
+	for(;;){
+		int move = three_player_turn(seats[seat], word, data);
+		if(move == -1){
+			return seats[seat];
+		}
+		word = move;
+		seat = (seat + 1) % NUM_BOTS;
+	}
+}
+
+static void test_mcts_wins_a_three_player_game(void){
+	struct DataStructures* data = open_dictionary("docs/2.txt", 2);
+	/*Every seating, so nobody keeps whatever edge moving first or last is worth*/
+	int seatings[6][NUM_BOTS] = {
+		{BOT_MCTS, BOT_RANDOM, BOT_MIN_ADJACENCIES},
+		{BOT_MCTS, BOT_MIN_ADJACENCIES, BOT_RANDOM},
+		{BOT_RANDOM, BOT_MCTS, BOT_MIN_ADJACENCIES},
+		{BOT_MIN_ADJACENCIES, BOT_MCTS, BOT_RANDOM},
+		{BOT_RANDOM, BOT_MIN_ADJACENCIES, BOT_MCTS},
+		{BOT_MIN_ADJACENCIES, BOT_RANDOM, BOT_MCTS}
+	};
+	const int games = 60;
+	int losses[NUM_BOTS] = {0, 0, 0};
+	int played = 0;
+	int game;
+
+	for(game = 0; game < games; game++){
+		/*A different start each time, stepped by a stride coprime to the count*/
+		int start = (game * 7) % data->I2W->numWords;
+		if(getNumAdjacencies(start, data) == 0){
+			continue;
+		}
+		losses[play_three_player_game(start, seatings[game % 6], data)]++;
+		played++;
+	}
+
+	printf("    %d games: mcts lost %d, random lost %d, min adjacencies lost %d\n",
+		played, losses[BOT_MCTS], losses[BOT_RANDOM], losses[BOT_MIN_ADJACENCIES]);
+
+	CHECK(played > 0);
+	/*Every game ends with exactly one bot stuck*/
+	CHECK_INT(losses[BOT_MCTS] + losses[BOT_RANDOM] + losses[BOT_MIN_ADJACENCIES], played);
+	/*It has to beat both opponents, not just the weaker one*/
+	CHECK(losses[BOT_MCTS] < losses[BOT_RANDOM]);
+	CHECK(losses[BOT_MCTS] < losses[BOT_MIN_ADJACENCIES]);
+	/*And beat the one-in-three a bot with no skill would lose, with room to
+	spare -- a third of the games is the bar for playing no worse than chance*/
+	CHECK(losses[BOT_MCTS] * 3 < played);
+
+	freeDataStructures(data);
+}
+
 static void test_uct_score_matches_the_formula(void){
 	struct mctsStruct node;
 	double expected;
@@ -303,4 +431,5 @@ void suite_mcts(void){
 	RUN_TEST(test_rollout_scores_a_finished_game);
 	RUN_TEST(test_rollout_policy_is_uniform);
 	RUN_TEST(test_uct_score_matches_the_formula);
+	RUN_TEST(test_mcts_wins_a_three_player_game);
 }
