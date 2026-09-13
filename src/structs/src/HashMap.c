@@ -123,11 +123,20 @@ void Fill_HashMaps(FILE* wordDoc, struct DummyHeadNode** *WordToInt_HashMap, str
 			//each time it adds a word as a connection, it updates the number of connections
 			wordData->numConnections++; 
 			
-			currValue = strtok(NULL, " "); 
-		}	
+			currValue = strtok(NULL, " ");
+		}
 
-		
-		
+		//Lay the same connections out back to back so they can be indexed directly
+		if(wordData->numConnections > 0){
+			struct intList* walk = wordData->connectionHeader->next;
+			int c = 0;
+			wordData->connections = malloc(sizeof(int) * wordData->numConnections);
+			while(walk != NULL){
+				wordData->connections[c++] = walk->data;
+				walk = walk->next;
+			}
+		}
+
 		//Then it will be time to put the words into their respective locations in their data structure
 		//First, put it in the spot in the array
 		IntToWord_HashMap->array[id] = wordData; 
@@ -238,20 +247,22 @@ int getNumWords(FILE* wordDoc){
 
 
 struct wordData* Create_WordData(char* word){
-	struct wordData* wordData = malloc(sizeof(struct wordData)); 
-	wordData->connectionHeader = malloc(sizeof(struct intList)); 
-	wordData->connectionHeader->next = NULL; 
-	wordData->word = strdup(word);  
+	struct wordData* wordData = malloc(sizeof(struct wordData));
+	wordData->connectionHeader = malloc(sizeof(struct intList));
+	wordData->connectionHeader->next = NULL;
+	wordData->word = strdup(word);
+	wordData->connections = NULL;
 	wordData->hintFound = 0;
-	wordData->numConnections = 0; 
-	wordData->prevID = -1;  
-	return wordData; 
+	wordData->numConnections = 0;
+	wordData->prevID = -1;
+	return wordData;
 } 
 
 void Free_WordData(struct wordData* wordData){
-	Free_IntLL(wordData->connectionHeader); 
-	free(wordData->word); 
-	free(wordData); 
+	Free_IntLL(wordData->connectionHeader);
+	free(wordData->connections);
+	free(wordData->word);
+	free(wordData);
 }
 struct wordStruct* Create_WordStruct(char* word, int id){
 	struct wordStruct* wordStruct = malloc(sizeof(struct wordStruct)); 

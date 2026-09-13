@@ -16,15 +16,20 @@
 //Therefore it is the wordInformationStruct
 struct wordData{
 	//Necessary for number to word conversions
-	char* word; 
+	char* word;
 	//Necessary to find word's connections
-	struct intList* connectionHeader; 
+	struct intList* connectionHeader;
+	//The same connections laid out back to back, built once when the dictionary is
+	//read. Walking the list to reach the n-th adjacency is a chain of pointer hops;
+	//searches that index into the adjacencies at random (the Monte Carlo rollout
+	//policy) read this instead. Holds numConnections entries, in list order.
+	int* connections;
 	//Finds if it has been given as a hint
-	int hintFound; 
+	int hintFound;
 	//Finds the number of connections a word has
-	int numConnections; 
+	int numConnections;
 	//Necessary to know which the previous id is in the bfs
-	int prevID; 
+	int prevID;
 };
 
 struct wordStruct{

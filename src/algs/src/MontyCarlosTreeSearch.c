@@ -18,11 +18,14 @@ Description: Applies MCTS to the FLWG
 #include "../../structs/includes/IntLinkedList.h"
 
 
-struct mctsStruct* updateMax(struct mctsStruct* currMax, struct mctsStruct* currChild, int simulations); 
 
-struct mctsStruct* init_mctsStruct(int isMaximizer, struct mctsStruct* parent, int wordID); 
+struct mctsStruct* init_mctsStruct(int isMaximizer, struct mctsStruct* parent, int wordID);
 
-int getOutput(struct mctsStruct* root); 
+int getOutput(struct mctsStruct* root);
+
+/*The UCT score given ln(t) already worked out. ln(t) is the same for every node in
+a pass, so traverse computes it once instead of calling log() per child compared*/
+static double uctScore(struct mctsStruct* m, double logSimulations);
 
 
 //monty carlos tree search
@@ -94,29 +97,6 @@ int montyCarlosTreeSearch(int wordID, struct WordSet* wordSet, struct wordDataAr
 
 
 
-struct mctsStruct* updateMax(struct mctsStruct* currMax, struct mctsStruct* currChild, int simulations){
-	
-	//if there is not yet a max, set the max
-	struct mctsStruct* max = (currMax == NULL) ? currChild : currMax;  
-	
-	//If the max is not equal to the current child 
-	if(max != currChild){
-	
-		//Get the score of the maximum node 
-		double maxScore = calculate_mctsScore(max, simulations); 
-		//Get the score of the current child 
-		double currScore = calculate_mctsScore(currChild, simulations);
-		  
-		//If the current child's score is better than the max score. Update the max 
-		if(currScore > maxScore){	
-			max = currChild;
-
-		}
-		
-	}
-	return max; 
-}
-
 
 
 /*
@@ -131,9 +111,10 @@ What if? All of the nodes are deadends? What if it reaches a point where just al
 struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct WordSet* wordSet, struct wordDataArray* IntToWord_HashMap){
 	
 	
-	//This is probably the maximum output node 
+	//This is probably the maximum output node, and the score it earned
 	struct mctsStruct *max = NULL;
-	
+	double maxScore = 0.0;
+
 	//Has it found a child that has not been explored yet? 
 	int unexploredChildFound = 0; 
 	
@@ -142,8 +123,12 @@ struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct Wor
 	struct mctsStruct *outputNode = NULL; 
 	
 	//Now the parent node is going to be the node whose children are going to be explored
-	struct mctsStruct *parent = node; 
-	
+	struct mctsStruct *parent = node;
+
+	//ln(t) is fixed for this whole pass, so it is worked out once here rather than
+	//once per child comparison -- this loop is the hottest part of the search
+	double logSimulations = (simulations < 1) ? 0.0 : log((double)simulations);
+
 	
 	
 	//Until it finds a child that has not been explored, it will continue going deeper and deeper through children
@@ -198,9 +183,14 @@ struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct Wor
 			
 			//if the child is found
 			else{
-				
-				max = updateMax(max, currChild, simulations);
-			}	
+				//The best score is carried along instead of being recomputed for
+				//the incumbent on every comparison, halving the square roots
+				double currScore = uctScore(currChild, logSimulations);
+				if(max == NULL || currScore > maxScore){
+					max = currChild;
+					maxScore = currScore;
+				}
+			}
 		}	
 		
 		//After it's gone through & all the children have been explored. It chooses to explore the "best" node to explore
@@ -211,6 +201,7 @@ struct mctsStruct* traverse(struct mctsStruct *node, int simulations, struct Wor
 		}
 		//It also sets the current max to null because it doesn't exist anymore
 		max = NULL;
+		maxScore = 0.0;
 		
 		
 	}
@@ -286,20 +277,15 @@ void visit_mctsStruct(int wordID, struct mctsStruct* node, struct WordSet* wordS
 	if(node->children == NULL){
 		//Allocate space for the children
 		node->children = calloc(numChildren, sizeof(struct mctsStruct*));
-		
-		//The current child being looked at's ID 
+
+		//The current child being looked at's ID
 		int i = 0;
-		
-		//The Options of the children to be searched through 
-		options = IntToWord_HashMap->array[wordID]->connectionHeader; 
-		
-		for(i = 0; i < numChildren; i++){
-			do{
-				options = options->next;
-			}while(options->next != NULL && checkIfUsed_WordSet(options->data, wordSet) != 0);
-			
-			node->children[i] = init_mctsStruct(isMaximizer, node, options->data); 
-			
+
+		//One pass down the adjacencies, taking each word that is still available
+		for(options = IntToWord_HashMap->array[wordID]->connectionHeader->next; options != NULL; options = options->next){
+			if(checkIfUsed_WordSet(options->data, wordSet) == 0){
+				node->children[i++] = init_mctsStruct(isMaximizer, node, options->data);
+			}
 		}
 	}
 	node->numChildren = numChildren;
@@ -340,7 +326,7 @@ int rollout(int id, int depth, int isMaximizing, struct WordSet* wordSet, struct
 	return isWin; 
 }
 
-double calculate_mctsScore(struct mctsStruct* m, int simulations){
+static double uctScore(struct mctsStruct* m, double logSimulations){
 	/*S_i = x_i + c sqrt(ln(t) / n_i)*/
 	//c -> Constant that grows with the desire to explore.
 	double c = 5;//sqrt(2);	
@@ -348,19 +334,23 @@ double calculate_mctsScore(struct mctsStruct* m, int simulations){
 	//n_i is the number of times the action has previously been selected
 	double n = (double)m->visits; 
 	
-	//x_i = the value of the node 
-	double x = m->numWins / n; 
-	//t is 
-	
-	
-	double t = (double)simulations; 
-	
-	//log = ln in C 
-	return x + c * (log(t) / n);
+	//x_i = the value of the node
+	double x = m->numWins / n;
+
+	//ln(t) arrives already worked out: it is the same for every node being compared
+	return x + c * sqrt(logSimulations / n);
 	
 
 
 
+}
+
+double calculate_mctsScore(struct mctsStruct* m, int simulations){
+	//log = ln in C. Under one simulation there is nothing for the exploration term
+	//to weigh against and ln(0) is -inf, so the term is dropped rather than letting
+	//a NaN into the comparison
+	double t = (double)simulations;
+	return uctScore(m, (t < 1.0) ? 0.0 : log(t));
 }
 
 void print_mctsStruct(struct mctsStruct* m){

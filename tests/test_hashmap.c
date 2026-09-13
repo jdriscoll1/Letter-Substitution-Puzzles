@@ -141,6 +141,43 @@ static void test_adjacencies_are_symmetric(void){
 	freeDataStructures(data);
 }
 
+static void test_flat_connections_match_the_list(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	int id;
+	int mismatches = 0;
+	int missingArrays = 0;
+
+	/*wordData carries the adjacencies twice: as the linked list everything walks
+	and as a flat array for the searches that index into them at random. The two
+	have to agree, entry for entry, or a search reads a word that is not adjacent*/
+	for(id = 0; id < data->I2W->numWords; id++){
+		struct wordData* word = data->I2W->array[id];
+		struct intList* walk = word->connectionHeader->next;
+		int i = 0;
+
+		if(word->numConnections > 0 && word->connections == NULL){
+			missingArrays++;
+			continue;
+		}
+		while(walk != NULL && i < word->numConnections){
+			if(word->connections[i] != walk->data){
+				mismatches++;
+			}
+			walk = walk->next;
+			i++;
+		}
+		/*Both have to run out at the same moment*/
+		if(walk != NULL || i != word->numConnections){
+			mismatches++;
+		}
+	}
+
+	CHECK_INT(missingArrays, 0);
+	CHECK_INT(mismatches, 0);
+
+	freeDataStructures(data);
+}
+
 static void test_num_options_tracks_used_words(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
 	int id = Convert_WordToInt("ware", data);
@@ -169,5 +206,6 @@ void suite_hashmap(void){
 	RUN_TEST(test_lookups_reject_bad_input);
 	RUN_TEST(test_adjacencies_are_single_substitutions);
 	RUN_TEST(test_adjacencies_are_symmetric);
+	RUN_TEST(test_flat_connections_match_the_list);
 	RUN_TEST(test_num_options_tracks_used_words);
 }

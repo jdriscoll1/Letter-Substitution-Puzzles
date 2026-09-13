@@ -63,7 +63,11 @@ DataStructures*`. Three members:
 - `W2I` — word -> id, a 26-way array of AVL/tree-set buckets (`TreeSet.h`, `HashFunctions.h`).
 - `I2W` — `struct wordDataArray`, id -> `struct wordData` holding the word, its precomputed
   `connectionHeader` list, `numConnections`, plus two *mutable scratch fields*: `prevID`
-  (used by BFS to reconstruct paths) and `hintFound`.
+  (used by BFS to reconstruct paths) and `hintFound`. The adjacencies are also kept flat in
+  `connections` (same entries, same order, built once at load). Walk the list for iteration;
+  read the array when you need the n-th adjacency, since indexing the list is a pointer
+  chase. Anything that builds adjacencies has to fill both — `test_flat_connections_match_the_list`
+  checks they agree.
 - `wordSet` — a bitset over ids, one bit per word.
 
 `WordSet` serves double duty: as the "already used in this game" marker (`markUsed_WordSet` /
@@ -126,8 +130,16 @@ be accepted and then fail to produce a goal.
 - `Minimax.h` + `MinimaxTests.h` are the older single-purpose implementation and its
   experimental variants (`minimax_CountAtZero`, `_FiftyFifty`, `_QuitAtZero`, `_NoBeta`,
   `_ZeroOptions`), kept for comparison against the current engine — not unit tests.
-- `MaxN.h` / `Hypermax.h` for more than two players; `MontyCarlosTreeSearch.h` as an
-  alternative to minimax; `TreeStorageNode.h` is the BFS/MCTS node.
+- `MaxN.h` / `Hypermax.h` for more than two players; `TreeStorageNode.h` is the BFS/MCTS node.
+- `MontyCarlosTreeSearch.h` is the MCTS alternative to minimax: 50,000 simulations of
+  select (`traverse`, UCT) -> expand (`visit_mctsStruct`) -> play out (`rollout`) -> record
+  (`backpropogate`). It borrows the shared `wordSet`, marking words as it descends and
+  unmarking them on the way back up, so it must leave the set exactly as it found it — a
+  stray mark silently deletes a word from the live game. `chooseRandom` (in `MinimaxTests.c`)
+  is the playout policy and **must stay uniform**: the estimates mean nothing otherwise.
+  Those two properties are what `tests/test_mcts.c` exists to hold down. The simulation
+  count and rollout depth are hardcoded in `montyCarlosTreeSearch`; lowering them is not an
+  optimization, it is a weaker search.
 - `BreadthFirstSearch.h` does distance-constrained search — it both validates/chooses
   start-goal pairs and backs the "how far am I from the goal" and "show me a path" hints.
 
