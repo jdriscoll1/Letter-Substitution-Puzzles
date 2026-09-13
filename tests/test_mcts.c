@@ -129,6 +129,9 @@ static void test_visit_expands_only_unused_neighbours(void){
 	int i;
 	int usedChildren = 0;
 	int notNeighbours = 0;
+	/*Nodes are carved out of a pool rather than malloc'd one at a time, so the
+	tree is torn down by closing the pool -- there is no free for a single node*/
+	struct mctsPool* pool = create_mctsPool();
 
 	/*Claim the start and one of its neighbours*/
 	markUsed_WordSet(start, data->wordSet);
@@ -154,7 +157,7 @@ static void test_visit_expands_only_unused_neighbours(void){
 	root.numWins = 0;
 	root.children = NULL;
 
-	visit_mctsStruct(start, &root, 2, data->wordSet, data->I2W);
+	visit_mctsStruct(start, &root, 2, pool, data->wordSet, data->I2W);
 
 	/*A node is expanded into exactly the moves that are still available*/
 	CHECK_INT(root.numChildren, expected);
@@ -176,10 +179,7 @@ static void test_visit_expands_only_unused_neighbours(void){
 	CHECK_INT(usedChildren, 0);
 	CHECK_INT(notNeighbours, 0);
 
-	for(i = 0; i < root.numChildren; i++){
-		free_mctsStruct(root.children[i]);
-	}
-	free(root.children);
+	free_mctsPool(pool);
 	freeDataStructures(data);
 }
 
