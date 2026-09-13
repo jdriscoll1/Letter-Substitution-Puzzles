@@ -25,6 +25,7 @@ int main(void){
 	suite_hashmap();
 	suite_games();
 	suite_mcts();
+	suite_modes();
 	suite_regressions();
 
 	return test_summary();

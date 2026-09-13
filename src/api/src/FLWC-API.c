@@ -91,10 +91,18 @@ int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents){
 }
 
 int botTakesTurnFLWC(int botType, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
-	// This is what will be returend 
-	int result; 	
+	// This is what will be returend.
+	// Started at -1 (no move): an unrecognised bot type used to leave this
+	// uninitialised and then assign the garbage straight into wordId
+	int result = -1; 	
+	if(botType == -2){
+		result = botPly_Mirror(flwcComponents->wordId); 
+	}
 	if(botType == -1){
 		result = botPly_MaxAdjacencies(flwcComponents->wordId, flwcComponents->goalWords, data); 	
+	}
+	if(botType == 0){
+		result = botPly_Random(flwcComponents->wordId, data); 
 	}
 	if(botType > 0){
 		result = botPly_FLWC(flwcComponents->wordId, botType, flwcComponents->avoidWords, flwcComponents->goalWords, data);

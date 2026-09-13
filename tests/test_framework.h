@@ -83,6 +83,7 @@ void suite_hashmap(void);
 void suite_games(void);
 void suite_regressions(void);
 void suite_mcts(void);
+void suite_modes(void);
 
 /*The suites pick start words with rand(), so the seed is pinned to keep a
 failing run reproducible*/
