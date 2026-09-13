@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build & Run
 
 ```bash
-make             # gcc -O3 -o flwo ./src/*.c ./src/*/src/*.c -lm
+make             # gcc -O3 -flto -o flwo ./src/*.c ./src/*/src/*.c -lm
 ./flwo           # run from the repo root -- dictionary paths (docs/4.txt) are relative
 make test        # build and run the unit tests (tests/), also from the repo root
 make test-memcheck   # the same suite under valgrind -- this is what catches leaks
@@ -106,6 +106,15 @@ Start-word selection is the hard part of every mode: `Challenges.h`
 `BreadthFirstSearch_FLWP.h` search for a word satisfying min/max adjacency counts *and*
 min/max BFS distance to the goal and avoid sets. When no word qualifies, init succeeds but
 `isStartValid*` returns false.
+
+**Both pickers filter on the cheap checks, shuffle the survivors with
+`Shuffle_IntArray`, and keep the first word that passes the expensive checks** (a BFS, and
+for FLWC a full `is_game_winnable_FLWC` game search). Taking the first hit from a shuffled
+list is the same uniform choice as scoring every word and picking one at random — verified
+to select from an identical valid set — but it costs one search instead of one per word in
+the dictionary. Do not "fix" this back into a full scan: that was a 40x slowdown on every
+game start. For FLWP the goal search doubles as the validity test, so a start can no longer
+be accepted and then fail to produce a goal.
 
 ### Algorithms (`src/algs`)
 

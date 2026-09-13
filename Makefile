@@ -1,8 +1,10 @@
 main:
 	make flwo
 
+# -flto lets the hot one-line accessors (checkIfUsed_WordSet, getConnections, ...)
+# inline across files; the game searches call them millions of times per move.
 flwo: ./src/*.c ./src/*/src/*.c ./src/*/includes/*.h
-	gcc -O3 -o flwo ./src/*.c  ./src/*/src/*.c -lm
+	gcc -O3 -flto -o flwo ./src/*.c  ./src/*/src/*.c -lm
 
 # Unit tests. src/main.c is left out because the suite brings its own main().
 # Run from the repository root: the tests load docs/ by relative path.

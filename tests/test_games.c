@@ -50,7 +50,6 @@ static void test_check_input_classifies_words(void){
 	CHECK_INT(Check_Input(ware, "ware", data), TOO_MANY_LETTERS_IN_COMMON);
 
 	/*A word the dictionary does not have*/
-	printf("    (the bounds warning below comes from looking up an unknown word)\n");
 	CHECK_INT(Check_Input(ware, "zzzz", data), WORD_DOES_NOT_EXIST);
 
 	/*Two or more substitutions away is too far. Picked from the dictionary so
@@ -196,7 +195,6 @@ static void test_flwt_counts_adjacencies_the_user_finds(void){
 	CHECK_INT(flwt->numAdjacenciesFound, 1);
 
 	/*Neither does a word that is not in the dictionary*/
-	printf("    (the bounds warning below comes from looking up an unknown word)\n");
 	CHECK_INT(userEntersWordFLWT("zzzz", flwt, data), WORD_DOES_NOT_EXIST);
 	CHECK_INT(flwt->numAdjacenciesFound, 1);
 

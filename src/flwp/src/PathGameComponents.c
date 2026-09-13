@@ -18,32 +18,39 @@ struct GameComponents *InitializeGameComponents(int minAdjacenciesToStart, int m
 	//Sets the minimum number of connection
 	//Sets the number of moves
 	gameComponents->numMoves = 0;
-	//Instantiates the number of undo calls 
-	gameComponents->undoCalls = 0; 
+	//Instantiates the number of undo calls
+	gameComponents->undoCalls = 0;
  	//Instantiates the number of hint points
- 	gameComponents->hc = init_HintComponents(); 
- 	setHintFound(gameComponents->start, data->I2W); 
+ 	gameComponents->hc = init_HintComponents();
 
-	gameComponents->prevInput = gameComponents->start; 
-	
-	//Initialize the arrayList 
-	gameComponents->aList = init_ArrayList(data->I2W->numLetters * (gameComponents->minConnections * 1.5), data->I2W->numLetters * (gameComponents->minConnections), STR); 
-	
-	//Instantiate the input storage 
-	gameComponents->storage = malloc(sizeof(struct GenericLinkedListNode)); 
-	gameComponents->storage->next = NULL; 
-	gameComponents->storage->prev =  NULL; 
+	gameComponents->prevInput = gameComponents->start;
+
+	//Initialize the arrayList
+	gameComponents->aList = init_ArrayList(data->I2W->numLetters * (gameComponents->minConnections * 1.5), data->I2W->numLetters * (gameComponents->minConnections), STR);
+
+	//Instantiate the input storage
+	gameComponents->storage = malloc(sizeof(struct GenericLinkedListNode));
+	gameComponents->storage->next = NULL;
+	gameComponents->storage->prev =  NULL;
 
 	//Creates the storage header
-	gameComponents->storageHeader = gameComponents->storage; 
+	gameComponents->storageHeader = gameComponents->storage;
 
 	//Instantiates the user connection
-	gameComponents->userConnections = malloc(sizeof(struct intList)); 
-	gameComponents->userConnections->size = 0; 
-	gameComponents->userConnections->next = NULL; 
+	gameComponents->userConnections = malloc(sizeof(struct intList));
+	gameComponents->userConnections->size = 0;
+	gameComponents->userConnections->next = NULL;
+
+	//No word satisfied the parameters. Every field is initialized so the caller can
+	//still free the components, and isStartValid_FLWP reports the failure
+	if(gameComponents->start == -1){
+		return gameComponents;
+	}
+
+ 	setHintFound(gameComponents->start, data->I2W);
 	//There is no input to be freed
 	//Insert the word into the back of the word linked list
-	AddToBack_IntLL(gameComponents->start, gameComponents->userConnections); 
+	AddToBack_IntLL(gameComponents->start, gameComponents->userConnections);
  
  	addString_ArrayList(Convert_IntToWord(gameComponents->start, data->I2W), data->I2W->numLetters, gameComponents->aList); 
  	 

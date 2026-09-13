@@ -66,10 +66,8 @@ struct BFSResults BreadthFirstSearch_Distance(int start, int minConnections, str
 	bc->End = bc->prevConnection->next; 
 
 	// Stores all words that are minConnections away from start
-	struct arrayList* options = init_ArrayList(50, 50, TSN); 
+	struct arrayList* options = init_ArrayList(50, 50, TSN);
 
-	bool goalFound = false;
-	
 	while(bc->End != NULL){
 		
 		// aka curr	
@@ -300,10 +298,8 @@ struct arrayList* getPathToNearestWordInWordSet(int id, struct StartWordParamete
 		// if distance is equal to current distance, add one to it 
 		int childDistance = distance + 1; 
 
-		int currId = parent->data->id; 
+		int currId = parent->data->id;
 
-		int adj = getNumAdjacencies(currId, data);
-		
 		// Check if the current word is one of the goal words, or if the max distance has been reached
 		// If the goal is too close or too far away, then we mark defeat
 

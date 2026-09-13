@@ -31,6 +31,14 @@ int ChooseStart_Range(struct wordDataArray* IntToWord_HashMap, int minAdjacencie
 
 int getWordWithNumberOfConnections(int minConnections, int maxConnections, struct DataStructures* data);
 
+/*Shuffles an array of word ids into a random order (Fisher-Yates)
+@param values --> The ids to be shuffled, rearranged in place
+@param count --> How many ids there are
+@note --> Used by the start word searches: walking a shuffled candidate list and
+stopping at the first word that qualifies picks the same word a full scan would
+have, without evaluating every word in the dictionary*/
+void Shuffle_IntArray(int* values, int count);
+
 /*Method that determines when the game will be stopped
 @param input --> the current word who may be the end
 @param isValid --> Is it valid?

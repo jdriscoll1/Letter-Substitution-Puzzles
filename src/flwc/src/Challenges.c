@@ -1,8 +1,10 @@
 #include <string.h>
+#include <stdlib.h>
 
 #include "../includes/Challenges.h"
 #include "../../algs/includes/BreadthFirstSearch.h"
 #include "../../algs/includes/TreeStorageNode.h"
+#include "../../flwp/includes/GameFunctions.h"
 #include "../../structs/includes/Queue.h"
 
 void swapAvoidGoal(struct StartWordParametersFLWC* p);
@@ -29,66 +31,67 @@ int is_game_winnable_FLWC(
 	int beta);
 
 int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
-	
-	// The array of valid words
-	struct arrayList* validWords = init_ArrayList(20, 10, NUM); 	
-	
-	
+
+	// The words that pass the two cheap checks, which is as far as most words get
+	int* candidates = malloc(sizeof(int) * data->I2W->numWords);
+	int numCandidates = 0;
+
+
 	// for wordId in allWords
 	for(int i = 0; i < data->I2W->numWords; i++){
 		// CHECK #0: The Current Word Is Not in the goal word nor avoid word set
 		if(checkIfUsed_WordSet(i, p.goalWords) || checkIfUsed_WordSet(i, p.avoidWords)){
-			continue; 
+			continue;
 		}
 
 		// CHECK #1: Does the word have a # of adjacencies in Range
-		int n = data->I2W->array[i]->numConnections; 
+		int n = data->I2W->array[i]->numConnections;
 		if(n < p.minAdjacencies || n > p.maxAdjacencies){
-			continue; 
-		} 
+			continue;
+		}
 
-	
-		// CHECK #2: If there exists a goal word < the minimum distance, continue 
-		// CHECK #3: If there are no goal words < the maximum distance, continue 
+		candidates[numCandidates++] = i;
+	}
+
+	// The remaining checks each cost a search of their own, so the candidates are
+	// walked in random order and the first word that passes them all is taken. That
+	// is the same uniform choice the full scan made, without paying for a distance
+	// search and a game search on every word in the dictionary.
+	Shuffle_IntArray(candidates, numCandidates);
+
+	for(int c = 0; c < numCandidates; c++){
+		int i = candidates[c];
+
+		// CHECK #2: If there exists a goal word < the minimum distance, continue
+		// CHECK #3: If there are no goal words < the maximum distance, continue
 		if(!all_words_are_greater_than_min_distance_and_there_exists_a_word_less_than_max_distance(i, p.minGoalDistance, p.maxGoalDistance, p.goalWords, p.avoidWords, data)){
-			continue; 
-		
+			continue;
+
 		}
 
-		// CHECK #4: If there exists an avoid word < the minimum distance, continue 
-		// CHECK #5: If there are no avoid words < the maximum distance, continue 
+		// CHECK #4: If there exists an avoid word < the minimum distance, continue
+		// CHECK #5: If there are no avoid words < the maximum distance, continue
 		if(!all_words_are_greater_than_min_distance_and_there_exists_a_word_less_than_max_distance(i, p.minAvoidDistance, p.maxAvoidDistance, p.avoidWords, p.goalWords, data)){
-			continue; 
+			continue;
 		}
-		
 
-		// CHECK #6: If the user cannot force a win, continue 
+
+		// CHECK #6: If the user cannot force a win, continue
 		// num turns does not apply to FLWGP therefore
 		if(p.numTurns != -1){
 			if(!is_game_winnable_FLWC(i, p.numTurns, 1, p.goalWords, p.avoidWords, data, -100, 100)){
-				continue; 
-			} 
+				continue;
+			}
 		}
-		
 
-		add_ArrayList(&i, validWords, NUM); 
+		free(candidates);
+		return i;
 	}
 
-	// If the Array Length Is Empty - There Are No Valid Words
-	if(validWords->currPrecision == 0){
-		printf("There are no valid words!!!\n"); 
-		free_ArrayList(validWords); 
-		return -1; 
-	}
-	
-	int choiceId = rand() % validWords->currPrecision; 
-	int startWordId = ((int*)validWords->list)[choiceId]; 
-
-	
-	free_ArrayList(validWords); 
-	
-	
-	return startWordId; 
+	// Nothing passed every check - There Are No Valid Words
+	free(candidates);
+	printf("There are no valid words!!!\n");
+	return -1;
 }
 
 

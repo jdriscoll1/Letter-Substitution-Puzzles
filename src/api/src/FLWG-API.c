@@ -197,8 +197,7 @@ struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdj
 	struct GameComponentsFLWC* flwcComponents = initFLWC(minAdjacenciesToStart, maxAdjacenciesToStart, goalWords, avoidWords, minGoalDistance, minAvoidDistance, maxGoalDistance, maxAvoidDistance, minGoalAdjacencies, maxGoalAdjacencies, -1, dataStructures);
 	if(flwcComponents->wordId == -1){
 
-		struct GameComponents* flwpComponents = NULL; 
-		struct GameComponentsFLWGP* flwgpComponents = malloc(sizeof(struct GameComponentsFLWGP)); 
+		struct GameComponentsFLWGP* flwgpComponents = malloc(sizeof(struct GameComponentsFLWGP));
 		flwgpComponents->flwcComponents = flwcComponents; 
 		flwgpComponents->flwpComponents = NULL; 
 		return flwgpComponents; 
