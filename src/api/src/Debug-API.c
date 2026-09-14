@@ -74,6 +74,115 @@ struct GameComponents* initFLWPAtStart(char* startWord, int minDistance, int max
 	return pathGameBetween(start, goal, data);
 }
 
+/* A pathfinder board with no way through, on purpose.
+ *
+ * pathGameBetween refuses a pair with no route between them, and is right to
+ * for every board meant to be walked. A board meant not to be is a different
+ * thing: the start is real, the goal is real, and the absence of a route is
+ * the puzzle. The player is not asked to prove that absence by searching -
+ * the board states how far the goal is at least, and on a board like this that
+ * number is larger than the moves they have, which is the whole of the proof.
+ *
+ * The dictionary can supply these: four letter words are one body of 1828 and
+ * ninety odd islands, most of them a single word. A goal on an island is
+ * unreachable from anywhere in the body, whatever anybody plays.
+ *
+ * Leaves solution NULL, which is what having no route means. Everything that
+ * walks the solution has to expect that - see the guards on the hints below.
+ */
+struct GameComponents* initFLWPUnreachable(int minAdjacencies, int maxAdjacencies, struct DataStructures* data){
+	int numWords = data->I2W->numWords;
+	int start = -1;
+	int goal = -1;
+	int* candidates = malloc(sizeof(int) * numWords);
+	int* reachable = malloc(sizeof(int) * numWords);
+	int count = 0;
+	int i;
+
+	if(candidates == NULL || reachable == NULL){
+		free(candidates);
+		free(reachable);
+		return pathGameBetween(-1, -1, data);
+	}
+
+	/*A start with room to move, taken from a shuffled list so the board is not
+	the same one every time*/
+	for(i = 0; i < numWords; i++){
+		int adjacencies = data->I2W->array[i]->numConnections;
+		if(adjacencies >= minAdjacencies && adjacencies <= maxAdjacencies){
+			candidates[count++] = i;
+		}
+	}
+	if(count == 0){
+		free(candidates);
+		free(reachable);
+		return pathGameBetween(-1, -1, data);
+	}
+	Shuffle_IntArray(candidates, count);
+	start = candidates[0];
+
+	/*Everywhere that start can get to, so the goal can be chosen from
+	everywhere it cannot*/
+	for(i = 0; i < numWords; i++){
+		reachable[i] = 0;
+	}
+	{
+		int head = 0;
+		int tail = 0;
+		candidates[tail++] = start;
+		reachable[start] = 1;
+		while(head < tail){
+			int curr = candidates[head++];
+			struct intList* c = getConnections(curr, data->I2W);
+			for(c = c->next; c != NULL; c = c->next){
+				if(!reachable[c->data]){
+					reachable[c->data] = 1;
+					candidates[tail++] = c->data;
+				}
+			}
+		}
+	}
+
+	/*Any word the start cannot get to. Counted first and then chosen from, so
+	every island is as likely as every other rather than the first one found*/
+	count = 0;
+	for(i = 0; i < numWords; i++){
+		if(!reachable[i]){
+			count++;
+		}
+	}
+	if(count > 0){
+		int wanted = rand() % count;
+		for(i = 0; i < numWords; i++){
+			if(!reachable[i]){
+				if(wanted == 0){
+					goal = i;
+					break;
+				}
+				wanted--;
+			}
+		}
+	}
+
+	free(candidates);
+	free(reachable);
+
+	if(goal == -1){
+		// every word is reachable from this start, so there is no such board
+		return pathGameBetween(-1, -1, data);
+	}
+
+	{
+		struct GameComponents* gc = malloc(sizeof(struct GameComponents));
+		gc->start = start;
+		gc->goal = goal;
+		gc->minConnections = 4;
+		gc->solution = NULL;
+		FinishGameComponents(gc, data);
+		return gc;
+	}
+}
+
 struct GameComponents* initFLWPBetween(char* startWord, char* goalWord, struct DataStructures* data){
 	int start = idOf(startWord, data);
 	int goal = idOf(goalWord, data);

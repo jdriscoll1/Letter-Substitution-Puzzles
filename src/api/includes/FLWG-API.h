@@ -73,6 +73,8 @@ void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataSt
 char* hintGetHeadAdjacencyFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures); 
 char* hintGetTailAdjacencyFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures); 
 int hintGetMinAdjacenciesFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures); 
+/*Distance from the word the player is on to the goal, around spent words; -1 if there is no way*/
+int distanceToGoalFLWP(struct GameComponents* gameComponents, struct DataStructures* data);
 
 // flwp-generalized additional functionality 
 struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, int minGoalAdjacencies, int maxGoalAdjacencies, struct DataStructures* dataStructures);

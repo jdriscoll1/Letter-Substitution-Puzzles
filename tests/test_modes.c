@@ -757,11 +757,142 @@ static void test_every_mode_starts_from_a_clear_board(void){
 	freeDataStructures(data);
 }
 
+/* The number the pathfinder's bound is made of.
+ *
+ * Asked again after every move, so it has to answer from where the player is
+ * standing - and it has to walk around the words they have spent, because a
+ * route through one is not a route they have. On a board where calling it
+ * wrong costs the level, counting a spent word would be the one mistake that
+ * tells a player a lost board is still winnable.
+ */
+static void test_flwp_distance_answers_from_where_the_player_is(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	struct GameComponents* gc = initFLWPAtStart("ware", 4, 8, 1, 30, data);
+	int atStart;
+
+	CHECK_INT(gc->start, Convert_WordToInt("ware", data));
+	atStart = distanceToGoalFLWP(gc, data);
+	CHECK(atStart > 0);
+	/*the same answer the board was solved to, before anybody has moved*/
+	CHECK_INT(atStart, hintGetMinAdjacenciesFLWP(gc, data));
+
+	/*A step along the solution brings it down by exactly one*/
+	CHECK_INT(userEntersWord_FLWP(Convert_IntToWord(nth_entry(gc->solution, 1), data->I2W), gc, data), VALID);
+	CHECK_INT(distanceToGoalFLWP(gc, data), atStart - 1);
+
+	/*and standing on the goal is no distance at all*/
+	while(distanceToGoalFLWP(gc, data) > 0){
+		int next = nth_entry(gc->solution, gc->numMoves + 1);
+		if(next < 0){
+			break;
+		}
+		CHECK_INT(userEntersWord_FLWP(Convert_IntToWord(next, data->I2W), gc, data), VALID);
+	}
+	CHECK_INT(distanceToGoalFLWP(gc, data), 0);
+
+	freeGameComponentsFLWP(gc, data);
+	freeDataStructures(data);
+}
+
+/*A goal with nothing leading to it has no distance to report, and must say so
+rather than search for ever*/
+static void test_flwp_distance_reports_no_way_through(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	struct GameComponents* gc = initFLWPAtStart("ware", 4, 8, 1, 30, data);
+	int i;
+
+	/*Spend the whole dictionary bar the word being stood on: there is now no
+	route anywhere, because every step would be through a used word*/
+	for(i = 0; i < data->I2W->numWords; i++){
+		if(i != gc->prevInput && i != gc->goal){
+			markUsed_WordSet(i, data->wordSet);
+		}
+	}
+	CHECK_INT(distanceToGoalFLWP(gc, data), -1);
+
+	freeGameComponentsFLWP(gc, data);
+	freeDataStructures(data);
+}
+
+/* A board dealt with no way through.
+ *
+ * The four letter dictionary is one body of 1828 words and ninety odd islands,
+ * so a goal on an island cannot be reached from the body whatever is played.
+ * That is the board this deals, and everything downstream has to cope with a
+ * game whose solution does not exist - the hints that read it, the distance
+ * that searches for it, and the free that takes it apart.
+ */
+static void test_flwp_deals_a_board_with_no_way_through(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	struct GameComponents* gc = initFLWPUnreachable(4, 16, data);
+
+	CHECK(gc->start != -1);
+	CHECK(gc->goal != -1);
+	CHECK(gc->start != gc->goal);
+	/*no route, and it says so rather than pretending to one*/
+	CHECK_NULL(gc->solution);
+	CHECK_INT(distanceToGoalFLWP(gc, data), -1);
+
+	/*the hints that walk the solution must not walk a NULL*/
+	CHECK_INT(hintGetMinAdjacenciesFLWP(gc, data), -1);
+	CHECK_NULL(hintGetHeadAdjacencyFLWP(gc, data));
+	CHECK_NULL(hintGetTailAdjacencyFLWP(gc, data));
+
+	/*and the start word still reads, because the board is playable even though
+	it cannot be finished*/
+	CHECK_NOT_NULL(getStartWordFLWP(gc, data));
+
+	freeGameComponentsFLWP(gc, data);
+	freeDataStructures(data);
+}
+
+/*The goal really is out of reach, not merely far: nothing the player can play
+from the start ever arrives at it*/
+static void test_flwp_unreachable_goal_is_truly_unreachable(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	int round;
+
+	for(round = 0; round < 12; round++){
+		struct GameComponents* gc = initFLWPUnreachable(4, 16, data);
+		CHECK(gc->start != -1);
+		if(gc->start != -1){
+			/*walk everywhere the start can go and confirm the goal is not there*/
+			int numWords = data->I2W->numWords;
+			int* seen = calloc(numWords, sizeof(int));
+			int* queue = malloc(sizeof(int) * numWords);
+			int head = 0, tail = 0, found = 0;
+			queue[tail++] = gc->start;
+			seen[gc->start] = 1;
+			while(head < tail){
+				struct intList* c = getConnections(queue[head++], data->I2W);
+				for(c = c->next; c != NULL; c = c->next){
+					if(c->data == gc->goal){
+						found = 1;
+					}
+					if(!seen[c->data]){
+						seen[c->data] = 1;
+						queue[tail++] = c->data;
+					}
+				}
+			}
+			CHECK_INT(found, 0);
+			free(seen);
+			free(queue);
+		}
+		freeGameComponentsFLWP(gc, data);
+	}
+	freeDataStructures(data);
+}
+
 void suite_modes(void){
 	printf("\n-- game modes --\n");
 	RUN_TEST(test_flwc_start_word_satisfies_its_parameters);
 	RUN_TEST(test_flwc_traps_the_player_when_the_board_runs_out);
 	RUN_TEST(test_every_mode_starts_from_a_clear_board);
+	RUN_TEST(test_flwp_distance_answers_from_where_the_player_is);
+	RUN_TEST(test_flwp_distance_reports_no_way_through);
+	RUN_TEST(test_flwp_deals_a_board_with_no_way_through);
+	RUN_TEST(test_flwp_unreachable_goal_is_truly_unreachable);
 	RUN_TEST(test_flwc_reports_an_invalid_start_rather_than_failing);
 	RUN_TEST(test_flwc_is_won_by_reaching_a_goal_word);
 	RUN_TEST(test_flwic_is_lost_by_reaching_an_avoid_word);

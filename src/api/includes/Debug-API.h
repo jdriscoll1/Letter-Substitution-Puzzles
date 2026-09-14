@@ -38,6 +38,9 @@ struct GameComponents* initFLWPAtStart(char* startWord, int minDistance, int max
 /*FLWP with both ends named. The solution is the shortest path between them.
 isStartValid_FLWP is false if either word is unknown or no path joins them.*/
 struct GameComponents* initFLWPBetween(char* startWord, char* goalWord, struct DataStructures* data);
+/*A pathfinder board with no route at all: a start with room to move and a
+goal on an island it cannot reach. solution is left NULL.*/
+struct GameComponents* initFLWPUnreachable(int minAdjacencies, int maxAdjacencies, struct DataStructures* data);
 
 /*FLWC - reach any goal word, or (with an empty goal list) avoid every avoid
 word. Both lists are NULL-terminated, as initFLWC takes them.*/

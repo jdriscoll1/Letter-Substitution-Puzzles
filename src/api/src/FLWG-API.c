@@ -359,9 +359,18 @@ int hintNumOptionsFLWG(struct GameData* flwgComponents, struct DataStructures* d
 
 
 char* hintGetHeadAdjacencyFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
+	/* A board with no route has no solution to read a word out of. Boards like
+	   that are dealt on purpose now, so every one of these has to say it has
+	   nothing rather than walk a NULL. */
+	if(gameComponents->solution == NULL || gameComponents->solution->size < 3){
+		return NULL;
+	}
 	return Convert_IntToWord(gameComponents->solution->next->next->data, dataStructures->I2W);
 }
 char* hintGetTailAdjacencyFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
+	if(gameComponents->solution == NULL || gameComponents->solution->size < 2){
+		return NULL;
+	}
 	int size = gameComponents->solution->size; 
 	struct intList* curr = gameComponents->solution; 
 	for(int i = 0; i < size - 1; i++){
@@ -372,7 +381,88 @@ char* hintGetTailAdjacencyFLWP(struct GameComponents* gameComponents, struct Dat
 	return Convert_IntToWord(curr->data, dataStructures->I2W); 
 
 }
+/* How far the goal is from where the player is standing, over words they have
+ * not already spent. -1 when there is no way through at all.
+ *
+ * Not the same question as hintGetMinAdjacenciesFLWP, which reports the route
+ * the board was solved to when it was built and never changes. This is asked
+ * again after every move, and it is the number the pathfinder's bound is made
+ * of, so it has to answer from the current word rather than the first one.
+ *
+ * Words already played are walked around rather than through. A route that
+ * needs a word the player has spent is not a route the player has, so counting
+ * it would tell them a board was still winnable when it is not - and on a
+ * board where being wrong costs the level, that is the one mistake this must
+ * not make.
+ *
+ * It keeps its own visited array rather than borrowing wordData's prevID. That
+ * field is shared scratch space the searches and the hints both write, and
+ * this runs in the middle of a live game.
+ */
+int distanceToGoalFLWP(struct GameComponents* gameComponents, struct DataStructures* data){
+	if(gameComponents == NULL || data == NULL || data->I2W == NULL){
+		return -1;
+	}
+
+	int numWords = data->I2W->numWords;
+	int start = gameComponents->prevInput;
+	int goal = gameComponents->goal;
+
+	if(start < 0 || goal < 0 || start >= numWords || goal >= numWords){
+		return -1;
+	}
+	if(start == goal){
+		return 0;
+	}
+
+	int* queue = malloc(sizeof(int) * numWords);
+	int* depth = malloc(sizeof(int) * numWords);
+	if(queue == NULL || depth == NULL){
+		free(queue);
+		free(depth);
+		return -1;
+	}
+	for(int i = 0; i < numWords; i++){
+		depth[i] = -1;
+	}
+
+	int head = 0;
+	int tail = 0;
+	int answer = -1;
+	queue[tail++] = start;
+	depth[start] = 0;
+
+	while(head < tail && answer == -1){
+		int curr = queue[head++];
+		struct intList* c = getConnections(curr, data->I2W);
+		for(c = c->next; c != NULL; c = c->next){
+			int next = c->data;
+			if(next == goal){
+				answer = depth[curr] + 1;
+				break;
+			}
+			if(depth[next] != -1){
+				continue;
+			}
+			// spent words are walked around, not through
+			if(checkIfUsed_WordSet(next, data->wordSet)){
+				continue;
+			}
+			depth[next] = depth[curr] + 1;
+			queue[tail++] = next;
+		}
+	}
+
+	free(queue);
+	free(depth);
+	return answer;
+}
+
 int hintGetMinAdjacenciesFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
+	// -1 for a board there is no route through, the same answer distanceToGoalFLWP gives
+	if(gameComponents->solution == NULL){
+		return -1;
+	}
 	return gameComponents->solution->size - 1; 
 
 
