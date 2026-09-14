@@ -20,6 +20,7 @@ start word would move the moment anything about the search changed.
 #include "../src/api/includes/FLWG-API.h"
 #include "../src/api/includes/FLWC-API.h"
 #include "../src/api/includes/FLWT-API.h"
+#include "../src/api/includes/Debug-API.h"
 #include "../src/flwc/includes/Challenges.h"
 #include "../src/flwc/includes/FLWC.h"
 #include "../src/flwp/includes/UserInput.h"
@@ -628,9 +629,139 @@ static void test_flwt_refuses_a_word_that_is_not_an_adjacency(void){
 	freeDataStructures(data);
 }
 
+/* The board the draw rule exists for.
+ *
+ * TREE has four neighbours; TREK has exactly one, and it is TREE. So a player
+ * who plays TREE, answered by a bot that plays TREK, is left with nowhere to
+ * go -- the only way out of TREK is a word already spent.
+ *
+ * How the engine says so matters to everything above it. The bot's turn
+ * returns -2, "the player is trapped". It does NOT set wordId to -1, because
+ * the bot moved perfectly legally, so isGameWonFLWC still reads -1, in
+ * progress. A caller waiting for isGameWonFLWC to return 0 before calling the
+ * game a standoff waits forever, and the player sits on a board they cannot
+ * move on until the clock runs out.
+ */
+static void test_flwc_traps_the_player_when_the_board_runs_out(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	struct GameComponentsFLWC* flwc = initFLWCAtStart("free", NO_WORDS, NO_WORDS, data);
+	int botResult;
+
+	CHECK_INT(isStartValidFLWC(flwc), 1);
+	CHECK_STR(getStartWordFLWC(flwc, data), "free");
+
+	/*Spend the other two ways out of TREE, so TREK is the bot's only legal
+	move whatever kind of bot it is*/
+	markUsed_WordSet(Convert_WordToInt("thee", data), data->wordSet);
+	markUsed_WordSet(Convert_WordToInt("true", data), data->wordSet);
+
+	CHECK_INT(userEntersWordFLWC("tree", flwc, data), VALID);
+	CHECK_INT(isGameWonFLWC(flwc), -1);
+
+	botResult = botTakesTurnFLWC(0, flwc, data);
+
+	CHECK_STR(Convert_IntToWord(flwc->wordId, data->I2W), "trek");
+	CHECK_INT(isTrapped(flwc->wordId, data), 1);
+	/*-2 is the whole signal: the bot played, and the player cannot answer*/
+	CHECK_INT(botResult, -2);
+	/*and the game still reads as in progress, which is the trap*/
+	CHECK_INT(isGameWonFLWC(flwc), -1);
+
+	freeGameComponentsFLWC(flwc);
+	freeDataStructures(data);
+}
+
+/* ------------------------------------------------- the board it starts on --- */
+
+/* How many words the shared set is holding, and which one.
+ *
+ * The word set is one structure reused by every game, and it does double duty:
+ * it is both "already played this round" and a general membership set. So the
+ * state a mode is handed is whatever the last game left behind, and starting a
+ * game has to mean starting from a clear board.
+ */
+static int usedWordCount(struct DataStructures* data){
+	int n = 0;
+	int i;
+	for(i = 0; i < data->I2W->numWords; i++){
+		if(checkIfUsed_WordSet(i, data->wordSet)){
+			n++;
+		}
+	}
+	return n;
+}
+
+/*Leave the set thoroughly dirty, so a mode that forgets to clear it is caught
+rather than flattered by an already empty board*/
+static void dirtyTheWordSet(struct DataStructures* data){
+	int i;
+	for(i = 0; i < data->I2W->numWords; i += 3){
+		markUsed_WordSet(i, data->wordSet);
+	}
+}
+
+/* Every mode begins with one word claimed and one only: the word it starts on.
+ *
+ * Anything still marked from the last game is a word quietly deleted from this
+ * one - it exists, it is spelt correctly, it is one letter away, and the game
+ * refuses it as already used. And the start word itself has to be marked, or
+ * the player can walk back onto it later, which no mode intends.
+ */
+static void test_every_mode_starts_from_a_clear_board(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	char* goalWords[] = {"ties", "pies", "lies", NULL};
+
+	/*FLWG*/
+	dirtyTheWordSet(data);
+	struct GameData* flwg = initFLWG(data, 1, 30);
+	CHECK_INT(isStartValidFLWG(flwg), 1);
+	CHECK_INT(usedWordCount(data), 1);
+	CHECK_INT(checkIfUsed_WordSet(flwg->currWordId, data->wordSet), 1);
+	freeGameComponentsFLWG(flwg);
+
+	/*FLWT*/
+	dirtyTheWordSet(data);
+	struct GameComponentsFLWT* flwt = initFLWT(3, 10, 30, data);
+	CHECK_INT(isStartValidFLWT(flwt), 1);
+	CHECK_INT(usedWordCount(data), 1);
+	CHECK_INT(checkIfUsed_WordSet(flwt->startWordId, data->wordSet), 1);
+	freeGameComponentsFLWT(flwt);
+
+	/*FLWP*/
+	dirtyTheWordSet(data);
+	struct GameComponents* flwp = initiateFLWP(4, 16, 4, 8, 4, 16, data);
+	CHECK_INT(usedWordCount(data), 1);
+	CHECK_INT(checkIfUsed_WordSet(flwp->start, data->wordSet), 1);
+	freeGameComponentsFLWP(flwp, data);
+
+	/*FLWC*/
+	dirtyTheWordSet(data);
+	struct GameComponentsFLWC* flwc = initFLWC(1, 30, goalWords, NO_WORDS,
+		2, 0, 2, 0, 1, 30, 8, data);
+	CHECK_INT(isStartValidFLWC(flwc), 1);
+	CHECK_INT(usedWordCount(data), 1);
+	CHECK_INT(checkIfUsed_WordSet(flwc->wordId, data->wordSet), 1);
+	freeGameComponentsFLWC(flwc);
+
+	/*FLWGP, which builds an FLWC and an FLWP over the same set*/
+	dirtyTheWordSet(data);
+	struct GameComponentsFLWGP* flwgp = initiateFLWGP(1, 30, goalWords, NO_WORDS,
+		2, 0, 2, 0, 1, 30, data);
+	CHECK_NOT_NULL(flwgp->flwpComponents);
+	if(flwgp->flwpComponents != NULL){
+		CHECK_INT(usedWordCount(data), 1);
+		CHECK_INT(checkIfUsed_WordSet(flwgp->flwpComponents->start, data->wordSet), 1);
+	}
+	freeGameComponentsFLWGP(flwgp, data);
+
+	freeDataStructures(data);
+}
+
 void suite_modes(void){
 	printf("\n-- game modes --\n");
 	RUN_TEST(test_flwc_start_word_satisfies_its_parameters);
+	RUN_TEST(test_flwc_traps_the_player_when_the_board_runs_out);
+	RUN_TEST(test_every_mode_starts_from_a_clear_board);
 	RUN_TEST(test_flwc_reports_an_invalid_start_rather_than_failing);
 	RUN_TEST(test_flwc_is_won_by_reaching_a_goal_word);
 	RUN_TEST(test_flwic_is_lost_by_reaching_an_avoid_word);

@@ -275,6 +275,16 @@ struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdj
 
 
 	/*END GET SOLUTION FLWGP*/
+
+	/* The start word goes back on the board.
+	 *
+	 * It was taken off a few lines above so the solution search could set out
+	 * from it: a word already marked is one the search will not leave from. But
+	 * that is a detail of finding the route, not of playing it, and nothing put
+	 * it back - so this was the one mode that began with nothing claimed at all,
+	 * and the only one where a player could walk back onto the word they started
+	 * on. Every other mode marks its start in init and means it. */
+	markUsed_WordSet(flwpComponents->start, dataStructures->wordSet);
 	
 	struct GameComponentsFLWGP* flwgpComponents = malloc(sizeof(struct GameComponentsFLWGP)); 
 	flwgpComponents->flwcComponents = flwcComponents; 
