@@ -83,6 +83,10 @@ int distanceToGoalFLWP(struct GameComponents* gameComponents, struct DataStructu
 
 // flwp-generalized additional functionality 
 struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, int minGoalAdjacencies, int maxGoalAdjacencies, struct DataStructures* dataStructures);
+/*Everything below the start word, for a board whose first word is already
+settled. Shared by initiateFLWGP and by the named-start entry point in
+Debug-API, so both deal the same board from the same word.*/
+struct GameComponentsFLWGP* buildFLWGPFromFLWC(struct GameComponentsFLWC* flwcComponents, int minGoalDistance, struct DataStructures* dataStructures);
 struct GameComponents* getFLWPComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents);
 struct GameComponentsFLWC* getFLWCComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents); 
 void freeGameComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures); 

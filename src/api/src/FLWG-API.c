@@ -281,9 +281,17 @@ void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataSt
 }
 
 
-struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, int minGoalAdjacencies, int maxGoalAdjacencies, struct DataStructures* dataStructures){
 
-	struct GameComponentsFLWC* flwcComponents = initFLWC(minAdjacenciesToStart, maxAdjacenciesToStart, goalWords, avoidWords, minGoalDistance, minAvoidDistance, maxGoalDistance, maxAvoidDistance, minGoalAdjacencies, maxGoalAdjacencies, -1, dataStructures);
+/* The rest of a generalized board, once its first word is settled.
+ *
+ * Everything below the start word is the same work however that word was
+ * arrived at: the path components, the route to the nearest goal, and putting
+ * the start back on the board after the search has finished with it. Split out
+ * so that a board opening on a named word is the same board as one opening on
+ * a word this file picked, rather than a second copy of the setup that has to
+ * be kept in step with this one by hand.
+ */
+struct GameComponentsFLWGP* buildFLWGPFromFLWC(struct GameComponentsFLWC* flwcComponents, int minGoalDistance, struct DataStructures* dataStructures){
 	if(flwcComponents->wordId == -1){
 
 		struct GameComponentsFLWGP* flwgpComponents = malloc(sizeof(struct GameComponentsFLWGP));
@@ -380,6 +388,12 @@ struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdj
 	flwgpComponents->flwpComponents = flwpComponents; 
 	return flwgpComponents; 
 
+}
+
+struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, int minGoalAdjacencies, int maxGoalAdjacencies, struct DataStructures* dataStructures){
+
+	struct GameComponentsFLWC* flwcComponents = initFLWC(minAdjacenciesToStart, maxAdjacenciesToStart, goalWords, avoidWords, minGoalDistance, minAvoidDistance, maxGoalDistance, maxAvoidDistance, minGoalAdjacencies, maxGoalAdjacencies, -1, dataStructures);
+	return buildFLWGPFromFLWC(flwcComponents, minGoalDistance, dataStructures);
 }
 
 void freeGameComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures){

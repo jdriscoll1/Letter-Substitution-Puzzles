@@ -69,6 +69,7 @@ static const char* BRIDGE_FUNCTIONS[] = {
 
 	"initFLWGAtStart", "initFLWPAtStart", "initFLWPBetween",
 	"initFLWPUnreachable", "initFLWCAtStart", "initFLWTAtStart",
+	"initFLWGPAtStart",
 };
 
 #define BRIDGE_COUNT ((int)(sizeof(BRIDGE_FUNCTIONS) / sizeof(BRIDGE_FUNCTIONS[0])))
@@ -600,6 +601,30 @@ void test_bridge_the_named_starts(void){
 		}
 	}
 	freeGameComponentsFLWT(flwt);
+
+	/*The composed board was the one mode that could not be told where to
+	start, so the daily had to let the engine choose for it. Its goal is a rule
+	rather than a word, so a named start settles the whole board.*/
+	char* composedGoals[] = { "cost", NULL };
+	struct GameComponentsFLWGP* flwgp = initFLWGPAtStart("ware", composedGoals, avoids, 1, data);
+	covers("initFLWGPAtStart");
+	CHECK(flwgp != NULL);
+	if(flwgp != NULL && isStartValid_FLWGP(flwgp)){
+		char* word = getStartWordFLWP(getFLWPComponentsFLWGP(flwgp), data);
+		if(word != NULL){
+			CHECK_INT(strcmp(word, "ware"), 0);
+		}
+		/*And it is a board, not merely a seated word: there is a route from it
+		to something the rule accepts*/
+		CHECK(getFLWPComponentsFLWGP(flwgp) != NULL);
+	}
+	freeGameComponentsFLWGP(flwgp, data);
+
+	/*A word the dictionary has never heard of is refused rather than dealt*/
+	struct GameComponentsFLWGP* unknown = initFLWGPAtStart("zzzz", composedGoals, avoids, 1, data);
+	CHECK(unknown != NULL);
+	CHECK_INT(isStartValid_FLWGP(unknown), 0);
+	freeGameComponentsFLWGP(unknown, data);
 
 	freeDataStructures(data);
 }

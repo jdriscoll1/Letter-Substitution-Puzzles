@@ -46,6 +46,12 @@ struct GameComponents* initFLWPUnreachable(int minAdjacencies, int maxAdjacencie
 word. Both lists are NULL-terminated, as initFLWC takes them.*/
 struct GameComponentsFLWC* initFLWCAtStart(char* startWord, char** goalWords, char** avoidWords, struct DataStructures* data);
 
+/*FLWGP - the generalized path game, starting on the named word. The goal is a
+rule rather than a word, so the route is searched for from the named start the
+way it would be from a picked one. isStartValid_FLWGP is false if the word is
+unknown.*/
+struct GameComponentsFLWGP* initFLWGPAtStart(char* startWord, char** goalWords, char** avoidWords, int minGoalDistance, struct DataStructures* data);
+
 /*FLWT - the tutorial: find numTurns distinct adjacencies of the named word.
 There is no maximum to pass: the word's own adjacency count is the ceiling.*/
 struct GameComponentsFLWT* initFLWTAtStart(char* startWord, int numTurns, struct DataStructures* data);

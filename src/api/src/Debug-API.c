@@ -209,6 +209,22 @@ struct GameComponentsFLWC* initFLWCAtStart(char* startWord, char** goalWords, ch
 	return flwcComponents;
 }
 
+/* A generalized path board opening on a word you name.
+ *
+ * The one mode that had no way to be told where to start. Every other mode
+ * could be seated on a word, so the daily could settle its own first word and
+ * be the same board on every build; this one had to let the engine pick, which
+ * left one board in six depending on engine code rather than on the date.
+ *
+ * The goal is still a rule rather than a word, so naming the start settles the
+ * whole board: the route is searched for from the named word the same way it
+ * would be from a picked one.
+ */
+struct GameComponentsFLWGP* initFLWGPAtStart(char* startWord, char** goalWords, char** avoidWords, int minGoalDistance, struct DataStructures* data){
+	struct GameComponentsFLWC* flwcComponents = initFLWCAtStart(startWord, goalWords, avoidWords, data);
+	return buildFLWGPFromFLWC(flwcComponents, minGoalDistance, data);
+}
+
 struct GameComponentsFLWT* initFLWTAtStart(char* startWord, int numTurns, struct DataStructures* data){
 	struct GameComponentsFLWT* flwtComponents = malloc(sizeof(struct GameComponentsFLWT));
 	int start = idOf(startWord, data);
