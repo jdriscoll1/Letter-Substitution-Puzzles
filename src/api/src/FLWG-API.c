@@ -468,8 +468,16 @@ int distanceToGoalFLWP(struct GameComponents* gameComponents, struct DataStructu
 }
 
 int hintGetMinAdjacenciesFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
-	// -1 for a board there is no route through, the same answer distanceToGoalFLWP gives
-	if(gameComponents->solution == NULL){
+	/* -1 for a board there is no route through, the same answer
+	distanceToGoalFLWP gives - and for no board at all.
+
+	The second half of that was missing, and it is the half that crashes: a game
+	whose parameters no word satisfies is never built, so the pointer is null
+	rather than the solution being null, and reading ->solution off it reads
+	address 0x48. The screen asks for this as it opens, before anything has told
+	it the board could not be dealt, so the process was gone before the failure
+	could be reported. */
+	if(gameComponents == NULL || gameComponents->solution == NULL){
 		return -1;
 	}
 	return gameComponents->solution->size - 1; 

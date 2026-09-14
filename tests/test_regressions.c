@@ -275,6 +275,22 @@ static void test_letter_hint_answers_for_a_word_with_no_neighbours(void){
 	freeDataStructures(data);
 }
 
+/* A board that could not be dealt at all.
+ *
+ * The pathfinder's screen asks how long the route is as it opens, which is
+ * before anything has told it the board could not be built - so on a set of
+ * parameters no word satisfies it asks about a game that does not exist. The
+ * null check only covered a built game with no solution in it, so a null game
+ * read its solution field off address nothing and took the process with it.
+ *
+ * Both of these have to answer rather than crash: -1 is "no route", which is
+ * the truth about a board that was never dealt.
+ */
+void test_flwp_hints_survive_a_game_that_was_never_built(void){
+	CHECK_INT(hintGetMinAdjacenciesFLWP(NULL, NULL), -1);
+	CHECK_INT(distanceToGoalFLWP(NULL, NULL), -1);
+}
+
 void suite_regressions(void){
 	printf("\n-- regressions --\n");
 	RUN_TEST(test_init_leaves_the_caller_owning_the_fd);
@@ -287,4 +303,5 @@ void suite_regressions(void){
 	RUN_TEST(test_letter_hint_prefers_a_letter_the_word_does_not_have);
 	RUN_TEST(test_letter_hint_answers_when_every_neighbour_is_spent);
 	RUN_TEST(test_letter_hint_answers_for_a_word_with_no_neighbours);
+	RUN_TEST(test_flwp_hints_survive_a_game_that_was_never_built);
 }
