@@ -8,6 +8,7 @@
 #include "../../algs/includes/TreeStorageNode.h"
 
 #include "../../flwp/includes/UserInput.h"
+#include "../../shared/includes/Log.h"
 
 /*This is the array list class*/
 //Initialize it
@@ -184,7 +185,7 @@ void addString_ArrayList(const char* str, int strLen, struct arrayList* aList){
 
 void removeBackStr_ArrayList(int length, struct arrayList* aList){
 	if((unsigned int)length > aList->currPrecision){
-		printf("Removing Too Much! [removeBackStr_ArrayList]");
+		FLWG_LOG("Removing Too Much! [removeBackStr_ArrayList]");
 		exit(0);  
 	}
 	
@@ -223,25 +224,25 @@ void removeBackStr_ArrayList(int length, struct arrayList* aList){
 void print_ArrayList(struct arrayList* aList, enum alistType type){
 	unsigned int i; 
 	if(type == STR){
-		printf("%s", (char*)aList->list); 
+		FLWG_LOG("%s", (char*)aList->list); 
 	}
 	//If it's not a string, it'll have to loop through all the characters
 	else{
 		for(i = 0; i < aList->currPrecision; i++){
 			if(type == NUM){
-				printf("%d, ", ((int*)(aList->list))[i]); 
+				FLWG_LOG("%d, ", ((int*)(aList->list))[i]); 
 			}
 			else if(type == TSN){
-				printf("%d, ", ((struct TreeStorageNode**)(aList->list))[i]->id); 
+				FLWG_LOG("%d, ", ((struct TreeStorageNode**)(aList->list))[i]->id); 
 			}
 			else if(type == CHARACTER){
-				printf("%c", ((char*)(aList->list))[i]); 
+				FLWG_LOG("%c", ((char*)(aList->list))[i]); 
 			}
 	
 	
 		} 
 	}
-	printf("\n"); 
+	FLWG_LOG("\n"); 
 }
 //This frees the array list
 void free_ArrayList(struct arrayList* aList){

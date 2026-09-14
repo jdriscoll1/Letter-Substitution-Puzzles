@@ -9,6 +9,7 @@
 
 #include "../../structs/includes/WordLinkedList.h"
 #include "../../structs/includes/HashFunctions.h"
+#include "../../shared/includes/Log.h"
 
 /*Private Method, For The Tree Storage Node, Checks if the word has been found or the limit has been reached for finding a word
 @param goal --> The goal word to be found, if null it should check the connection count
@@ -131,20 +132,20 @@ void Print_TreeStorageNode(struct TreeStorageNode *header){
 	int i = 0; 
 	header = header->next; 
 	while(header != NULL){
-		printf("%d", header->id);
+		FLWG_LOG("%d", header->id);
 		struct TreeStorageNode *temp = header; 
 		while(temp->prev != NULL){
 			temp = temp->prev; 
-			printf("->%d", temp->id); 
+			FLWG_LOG("->%d", temp->id); 
 			
 		}
 		if(header->next != NULL){
-			printf("\n"); 
+			FLWG_LOG("\n"); 
 		}
 		header = header->next;  
 		i++; 
 	}
-	printf("\n\n"); 
+	FLWG_LOG("\n\n"); 
 
 
 }
@@ -154,12 +155,12 @@ void Print_TreeStorageReverseConnections(struct TreeStorageNode *End){
 	
  
 	while(End->prev != NULL){
-		printf("%d->", End->id);
+		FLWG_LOG("%d->", End->id);
 		End = End->prev; 
 		 
 		
 	}
-	printf("%d", End->id);
+	FLWG_LOG("%d", End->id);
 	
 }
 void Free_TreeStorageNode(struct TreeStorageNode *header){
@@ -181,7 +182,7 @@ void Remove_TreeStorageNode(int id, struct TreeStorageNode *header, struct WordS
 		
 	}
 	if(header == NULL){
-		//printf("\nWord could not be found. [Remove_TreeStorageNode]");
+		//FLWG_LOG("\nWord could not be found. [Remove_TreeStorageNode]");
 		exit(0); 
 	}
 	//Once it is found
@@ -214,7 +215,7 @@ void RemoveAll_TreeStorageNode(int id, struct TreeStorageNode *header, struct Wo
 		
 	}
 	if(isFound == 0){
-		//printf("Word Could Not Be Found [RemoveAll_TreeStorageNode]"); 
+		//FLWG_LOG("Word Could Not Be Found [RemoveAll_TreeStorageNode]"); 
 		exit(0); 
 	}
 	else{

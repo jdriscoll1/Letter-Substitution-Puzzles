@@ -15,6 +15,7 @@
 
 
 #include <stdint.h>
+#include "../../shared/includes/Log.h"
 
 int GetMinConnections(enum Difficulty difficulty){
 	int easyMin = 2; 
@@ -162,14 +163,14 @@ void AfterGameOutput(int gameEndCondition, struct GameComponents* gc){
 	switch(gameEndCondition){
 	
 		case(0):
-			printf("\nError!\n");
+			FLWG_LOG("\nError!\n");
 			break;
 		case(1):
-			printf("\nCongratulations! You Won! Your Score is: %d%%\n", getScore(gc));
+			FLWG_LOG("\nCongratulations! You Won! Your Score is: %d%%\n", getScore(gc));
 			//Don't forget, when they add a word, add it to the goal hash set
 			break; 
 		case(2):
-			printf("\nBetter Luck Next Time.\n");
+			FLWG_LOG("\nBetter Luck Next Time.\n");
 			break;
 	}
 }
@@ -197,32 +198,32 @@ void ResetUndo(struct GenericLinkedListNode *storageHeader, struct GenericLinked
 }
 
 void Help(char* goal){
-	printf("Welcome to the four letter word pathway!\n");
-	printf("Your goal is to start from the first, and by changing a single letter, turn it into the goal word.\n");
-	printf("\n\nThe current goal word is: %s\n\n", goal);
-	printf("The commands you have at your disposal are:\n");
-	printf(" <Word> --> Adds a word to the list\n");
-	printf(" -<Word> --> Removes a word from the list, and all words that follow it\n");
-	printf(" u --> Undoes a move\n");
-	printf(" r --> Redoes a move\n");
-	printf(" finish or q --> Ends the game before the word is found\n");
-	printf("Good luck!\n");         
-	//printf("\nYour goal is to start off with the start word, and through letter substitution, find your way to teh gaol word!\nThe commands you are allowed are:\n<word>, which adds a word to the list\n-<word> (put a hyphine in front of the word), which removes a word from the list, and all the words after it\nu - which undoes your previous turn.\nq - Which ends the game\nGood Luck, and have a wacky good time!!\n");
+	FLWG_LOG("Welcome to the four letter word pathway!\n");
+	FLWG_LOG("Your goal is to start from the first, and by changing a single letter, turn it into the goal word.\n");
+	FLWG_LOG("\n\nThe current goal word is: %s\n\n", goal);
+	FLWG_LOG("The commands you have at your disposal are:\n");
+	FLWG_LOG(" <Word> --> Adds a word to the list\n");
+	FLWG_LOG(" -<Word> --> Removes a word from the list, and all words that follow it\n");
+	FLWG_LOG(" u --> Undoes a move\n");
+	FLWG_LOG(" r --> Redoes a move\n");
+	FLWG_LOG(" finish or q --> Ends the game before the word is found\n");
+	FLWG_LOG("Good luck!\n");         
+	//FLWG_LOG("\nYour goal is to start off with the start word, and through letter substitution, find your way to teh gaol word!\nThe commands you are allowed are:\n<word>, which adds a word to the list\n-<word> (put a hyphine in front of the word), which removes a word from the list, and all the words after it\nu - which undoes your previous turn.\nq - Which ends the game\nGood Luck, and have a wacky good time!!\n");
 	
 	
 }
 
 void EnterText(){
-	printf("Welcome to the Four Letter Word Game!\n");
-	printf("Your goal is to start off with one word, and through the four letter word game (single letter substitution), make it into a goal word!!\n");
-	printf("The commands you are allowed are:\n");
-	printf("<word>  --> which will add a word to the list\n");
-	printf("-<word> --> which removes a word from the list\n");
-	printf("u --> undoes a move\n");
-	printf("r --> redoes a move\n");       
-	printf("q or finish --> ends game\n\n");
-	printf("If you have any questions, please type h for help\n"); 
-	printf("After typing a command, please press enter\n");
+	FLWG_LOG("Welcome to the Four Letter Word Game!\n");
+	FLWG_LOG("Your goal is to start off with one word, and through the four letter word game (single letter substitution), make it into a goal word!!\n");
+	FLWG_LOG("The commands you are allowed are:\n");
+	FLWG_LOG("<word>  --> which will add a word to the list\n");
+	FLWG_LOG("-<word> --> which removes a word from the list\n");
+	FLWG_LOG("u --> undoes a move\n");
+	FLWG_LOG("r --> redoes a move\n");       
+	FLWG_LOG("q or finish --> ends game\n\n");
+	FLWG_LOG("If you have any questions, please type h for help\n"); 
+	FLWG_LOG("After typing a command, please press enter\n");
 }
 
 
@@ -231,7 +232,7 @@ int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct Data
 	gc->hc->hintPoints = pc->hintPoints; 
 	int endCondition;
 	char* input;  
-	printf("Your goal is to start at %s, and arrive at %s\nYou have %d hint points.\n", Convert_IntToWord(gc->start, data->I2W), Convert_IntToWord(gc->goal, data->I2W), gc->hc->hintPoints); 
+	FLWG_LOG("Your goal is to start at %s, and arrive at %s\nYou have %d hint points.\n", Convert_IntToWord(gc->start, data->I2W), Convert_IntToWord(gc->goal, data->I2W), gc->hc->hintPoints); 
 	//If the user asks to remove a word
 	int isCommand; 
 	int isValid; 
@@ -270,18 +271,18 @@ int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct Data
 					}
 					int inDic = inDictionary(id); 
 					if(inDic == 1){
-						printf("That is a valid word\n"); 
+						FLWG_LOG("That is a valid word\n"); 
 					}
 					else{
-						printf("That is not a valid word\n"); 
+						FLWG_LOG("That is not a valid word\n"); 
 					}
 				}
 				else{
 					if(i < data->I2W->numLetters){
-						printf("That word is too short\n"); 
+						FLWG_LOG("That word is too short\n"); 
 					}
 					else{
-						printf("That word is too long\n"); 
+						FLWG_LOG("That word is too long\n"); 
 					}
 					
 				}
@@ -299,7 +300,7 @@ int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct Data
 				
 			}
 			else if(strcmp(input, "g") == 0){
-				printf("Your goal word is %s\n", Convert_IntToWord(gc->goal, data->I2W)); 
+				FLWG_LOG("Your goal word is %s\n", Convert_IntToWord(gc->goal, data->I2W)); 
 			}
 			//Help command
 			else if(strcmp(input, "h") == 0){
@@ -307,22 +308,22 @@ int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct Data
 			}
 			else if(strcmp(input, "1") == 0){
 				char* output = hint1((uintptr_t)gc); 
-				printf("%s\n", output);
+				FLWG_LOG("%s\n", output);
 				free(output);  
 				
 			}
 			else if(strcmp(input, "2") == 0){
 				char* output = hint2((uintptr_t)gc, data->I2W); 
-				printf("%s\n", output);
+				FLWG_LOG("%s\n", output);
 				free(output);  
 			}
 			else if(strcmp(input, "3") == 0){
 				char* output = hint3((uintptr_t)gc, data->I2W, data->wordSet); 
-				printf("%s\n", output);
+				FLWG_LOG("%s\n", output);
 				free(output);  
 			}
 			else if(strcmp(input, "p") == 0){ 
-				printf("Hint Points Available: %d", gc->hc->hintPoints); 
+				FLWG_LOG("Hint Points Available: %d", gc->hc->hintPoints); 
 		
 		
 			}		
@@ -336,9 +337,9 @@ int round_FLWP(struct GameComponents* gc, struct PathfinderGame *pc, struct Data
 			
 				
 	
-			printf("%s", (char*)gc->aList->list); 
+			FLWG_LOG("%s", (char*)gc->aList->list); 
 			
-			printf("\n"); 
+			FLWG_LOG("\n"); 
 		
 		
 		}

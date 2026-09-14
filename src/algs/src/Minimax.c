@@ -4,6 +4,7 @@
 
 #include "../includes/Minimax.h"
 #include "../../structs/includes/IntLinkedList.h"
+#include "../../shared/includes/Log.h"
 
 
 int TOTAL_MOVES = 0;
@@ -117,10 +118,10 @@ struct minimaxOutput* minimax(int id, int currDepth, int maxDepth, int isMaximiz
 	
 	
 			// Compares the best score to the word being analyzed, if the maximum is better, than it chooses it
-			//printf("Comparing Scores, Is Maximizing Player %d\n", isMaximizingPlayer);
+			//FLWG_LOG("Comparing Scores, Is Maximizing Player %d\n", isMaximizingPlayer);
 			//Print_MinimaxOutput(currScore); 
 			//Print_MinimaxOutput(maxScore); 
-			//printf("Choosing: ");	
+			//FLWG_LOG("Choosing: ");	
 			if(compare_mo(maxScore, currScore, isMaximizingPlayer) == isMaximizingPlayer){
 				
 				//Print_MinimaxOutput(maxScore); 
@@ -385,7 +386,7 @@ struct minimaxOutput* createOutput(int score, double winPercent, int depth, int 
 }
 
 void Print_MinimaxOutput(struct minimaxOutput *mo){
-	printf("%d: {%d, %d%%, %d}\n", 
+	FLWG_LOG("%d: {%d, %d%%, %d}\n", 
 		mo->id, 
 		mo->score, 
 		(int)(mo->winPercent * 100.0), 
@@ -412,7 +413,7 @@ void DFS(int id, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSe
 			DFS(currConnection->data, IntToWord_HashMap, wordSet); 
 			
 		}
-		printf("%d ", currConnection->data);
+		FLWG_LOG("%d ", currConnection->data);
 		currConnection = currConnection->next; 
 		
 		

@@ -16,6 +16,7 @@
 #include "../../flwp/includes/Hints.h"
 #include "../../flwp/includes/UserInput.h"
 #include "../../flwp/includes/GameFunctions.h"
+#include "../../shared/includes/Log.h"
 
 struct BFSComponents* init_BFSComponents(int start, struct WordSet* wordSet){
 
@@ -127,7 +128,7 @@ struct BFSResults BreadthFirstSearch_Distance(int start, int minConnections, str
 int BreadthFirstSearch_Distance_Goal(int start, int minConnections, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 	//If the number of connections is less than 2, it is pointless. 1? pies->ties. 0. pies->pies -1->???
 	if(minConnections < 2){
-		printf("MinConnections < 2 [BFS_Distance]"); 
+		FLWG_LOG("MinConnections < 2 [BFS_Distance]"); 
 		exit(0); 
 	}
 	//This array determines how much an array list should start and grow. [minConnections - 2][0] = initSize [minConnections - 2][1] = move size

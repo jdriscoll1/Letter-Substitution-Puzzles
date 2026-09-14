@@ -6,6 +6,7 @@
 #include "../../algs/includes/TreeStorageNode.h"
 #include "../../flwp/includes/GameFunctions.h"
 #include "../../structs/includes/Queue.h"
+#include "../../shared/includes/Log.h"
 
 void swapAvoidGoal(struct StartWordParametersFLWC* p);
 
@@ -93,7 +94,7 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 
 	// Nothing passed every check - There Are No Valid Words
 	free(candidates);
-	printf("There are no valid words!!!\n");
+	FLWG_LOG("There are no valid words!!!\n");
 	return -1;
 }
 

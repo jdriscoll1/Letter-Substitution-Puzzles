@@ -6,6 +6,7 @@
 #include "../includes/MinimaxTests.h"
 
 #include "../../structs/includes/IntLinkedList.h"
+#include "../../shared/includes/Log.h"
 
 
 /*This is for all of the unofficial minimax algorithms
@@ -38,7 +39,7 @@ Date: May 17th, 2021*/
 
 
 struct minimaxOutput* minimax_CountAtZero(int id, int depth, int maxDepth, int isMaximizingPlayer, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
-	//printf("%d\n", depth); 
+	//FLWG_LOG("%d\n", depth); 
 
 	//First, let's get the list of nodes that we can go to 
 	struct intList* currConnection = getConnections(id, IntToWord_HashMap); 
@@ -82,10 +83,10 @@ struct minimaxOutput* minimaxAlg_CountAtZero(int id, int depth, int maxDepth, in
 				struct minimaxOutput* potential = minimax_CountAtZero(currID, depth - 1, maxDepth, (isMaximizingPlayer == 1) ? 0 : 1, IntToWord_HashMap, wordSet); 
 				
 				winPercent += potential->winPercent; 
-				//printf("\nAt %d: %d or %d (min) Choice: %d\n", id, potential->id, minEval->id, (compareOutput(minEval, potential) == 0) ? potential->id : minEval->id); 
-				//printf("Choose Between: %d %d. Compare Min: %d, %d. Output: %d\n", minEval->id, potential->id, minEval->score, potential->score, compareOutput(minEval, potential));
+				//FLWG_LOG("\nAt %d: %d or %d (min) Choice: %d\n", id, potential->id, minEval->id, (compareOutput(minEval, potential) == 0) ? potential->id : minEval->id); 
+				//FLWG_LOG("Choose Between: %d %d. Compare Min: %d, %d. Output: %d\n", minEval->id, potential->id, minEval->score, potential->score, compareOutput(minEval, potential));
 				//Set the min eval to the min between the algEval or the current minEval
-				//printf("%d -- ", depth); 
+				//FLWG_LOG("%d -- ", depth); 
 	 	
 				
 				//Print_MinimaxOutput(potential, IntToWord_HashMap); 
@@ -123,7 +124,7 @@ struct minimaxOutput* minimaxAlg_CountAtZero(int id, int depth, int maxDepth, in
 	
 	//If the number of connections is none, create the minimaxOutput node
 	if(numConnections == 0){
-		//printf("No Connections\n"); 
+		//FLWG_LOG("No Connections\n"); 
 		free(absEval); 
 		//If there are no connections, the algorithm has, albeit sadly, lost. 
 		if(depth == maxDepth){
@@ -196,7 +197,7 @@ struct minimaxOutput* minimaxAlg_CountAtZero(int id, int depth, int maxDepth, in
 *************************************/
 
 struct minimaxOutput* minimax_FiftyFifty(int id, int depth, int maxDepth, int isMaximizingPlayer, struct wordDataArray* IntToWord_HashMap, struct WordSet* wordSet){
-	//printf("%d\n", depth); 
+	//FLWG_LOG("%d\n", depth); 
 
 	//First, let's get the list of nodes that we can go to 
 	struct intList* currConnection = getConnections(id, IntToWord_HashMap); 
@@ -245,10 +246,10 @@ struct minimaxOutput* minimaxAlg_FiftyFifty(int id, int depth, int maxDepth, int
 			struct minimaxOutput* potential = minimax_FiftyFifty(currID, depth - 1, maxDepth, (isMaximizingPlayer == 1) ? 0 : 1, IntToWord_HashMap, wordSet); 
 			
 			winPercent += potential->winPercent; 
-			//printf("\nAt %d: %d or %d (min) Choice: %d\n", id, potential->id, minEval->id, (compareOutput(minEval, potential) == 0) ? potential->id : minEval->id); 
-			//printf("Choose Between: %d %d. Compare Min: %d, %d. Output: %d\n", minEval->id, potential->id, minEval->score, potential->score, compareOutput(minEval, potential));
+			//FLWG_LOG("\nAt %d: %d or %d (min) Choice: %d\n", id, potential->id, minEval->id, (compareOutput(minEval, potential) == 0) ? potential->id : minEval->id); 
+			//FLWG_LOG("Choose Between: %d %d. Compare Min: %d, %d. Output: %d\n", minEval->id, potential->id, minEval->score, potential->score, compareOutput(minEval, potential));
 			//Set the min eval to the min between the algEval or the current minEval
-			//printf("%d -- ", depth); 
+			//FLWG_LOG("%d -- ", depth); 
 	
 			
 			//Print_MinimaxOutput(potential, IntToWord_HashMap); 
@@ -281,7 +282,7 @@ struct minimaxOutput* minimaxAlg_FiftyFifty(int id, int depth, int maxDepth, int
 	
 	//If the number of connections is none, create the minimaxOutput node
 	if(numConnections == 0){
-		//printf("No Connections\n"); 
+		//FLWG_LOG("No Connections\n"); 
 		free(absEval); 
 		//If there are no connections, the algorithm has, albeit sadly, lost. 
 		if(depth == maxDepth){
@@ -332,7 +333,7 @@ struct minimaxOutput* minimaxAlg_FiftyFifty(int id, int depth, int maxDepth, int
 
 
 struct minimaxOutput* minimax_QuitAtZero(int id, int depth, int maxDepth, int isMaximizingPlayer, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
-	//printf("%d\n", depth); 
+	//FLWG_LOG("%d\n", depth); 
 	if(depth == 0){
 		return createOutput(0, .5, 0, id);  
 	}
@@ -377,10 +378,10 @@ struct minimaxOutput* minimaxAlg_QuitAtZero(int id, int depth, int maxDepth, int
 			struct minimaxOutput* potential = minimax_QuitAtZero(currID, depth - 1, maxDepth, (isMaximizingPlayer == 1) ? 0 : 1, IntToWord_HashMap, wordSet); 
 			
 			winPercent += potential->winPercent; 
-			//printf("\nAt %d: %d or %d (min) Choice: %d\n", id, potential->id, minEval->id, (compareOutput(minEval, potential) == 0) ? potential->id : minEval->id); 
-			//printf("Choose Between: %d %d. Compare Min: %d, %d. Output: %d\n", minEval->id, potential->id, minEval->score, potential->score, compareOutput(minEval, potential));
+			//FLWG_LOG("\nAt %d: %d or %d (min) Choice: %d\n", id, potential->id, minEval->id, (compareOutput(minEval, potential) == 0) ? potential->id : minEval->id); 
+			//FLWG_LOG("Choose Between: %d %d. Compare Min: %d, %d. Output: %d\n", minEval->id, potential->id, minEval->score, potential->score, compareOutput(minEval, potential));
 			//Set the min eval to the min between the algEval or the current minEval
-			//printf("%d -- ", depth); 
+			//FLWG_LOG("%d -- ", depth); 
 	
 			
 				//Print_MinimaxOutput(potential, IntToWord_HashMap); 
@@ -406,7 +407,7 @@ struct minimaxOutput* minimaxAlg_QuitAtZero(int id, int depth, int maxDepth, int
 	
 	//If the number of connections is none, create the minimaxOutput node
 	if(numConnections == 0){
-		//printf("No Connections\n"); 
+		//FLWG_LOG("No Connections\n"); 
 		free(absEval); 
 		//If there are no connections, the algorithm has, albeit sadly, lost. 
 		if(depth == maxDepth){
@@ -616,7 +617,7 @@ struct minimaxOutput* minimaxAlg_ZeroOptions(int id, int depth, int maxDepth, in
 	
 	//If the number of connections is none, create the minimaxOutput node
 	if(numConnections == 0){
-		//printf("No Connections\n"); 
+		//FLWG_LOG("No Connections\n"); 
 		free(absEval); 
 		//If there are no connections, the algorithm has, albeit sadly, lost. 
 		if(depth == maxDepth){
@@ -673,7 +674,7 @@ struct minimaxOutput* minimaxAlg_ZeroOptions(int id, int depth, int maxDepth, in
 
 
 struct minimaxOutput* minimax_NoBeta(int id, int depth, int maxDepth, int isMaximizingPlayer, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
-	//printf("%d\n", depth); 
+	//FLWG_LOG("%d\n", depth); 
 	if(depth == 0){
 		return createOutput(0, .5, 0, id);  
 	}
@@ -718,10 +719,10 @@ struct minimaxOutput* minimaxAlg_NoBeta(int id, int depth, int maxDepth, int isM
 			struct minimaxOutput* potential = minimax_NoBeta(currID, depth - 1, maxDepth, (isMaximizingPlayer == 1) ? 0 : 1, IntToWord_HashMap, wordSet); 
 			
 			winPercent += potential->winPercent; 
-			//printf("\nAt %d: %d or %d (min) Choice: %d\n", id, potential->id, minEval->id, (compareOutput(minEval, potential) == 0) ? potential->id : minEval->id); 
-			//printf("Choose Between: %d %d. Compare Min: %d, %d. Output: %d\n", minEval->id, potential->id, minEval->score, potential->score, compareOutput(minEval, potential));
+			//FLWG_LOG("\nAt %d: %d or %d (min) Choice: %d\n", id, potential->id, minEval->id, (compareOutput(minEval, potential) == 0) ? potential->id : minEval->id); 
+			//FLWG_LOG("Choose Between: %d %d. Compare Min: %d, %d. Output: %d\n", minEval->id, potential->id, minEval->score, potential->score, compareOutput(minEval, potential));
 			//Set the min eval to the min between the algEval or the current minEval
-			//printf("%d -- ", depth); 
+			//FLWG_LOG("%d -- ", depth); 
 	
 			
 				//Print_MinimaxOutput(potential, IntToWord_HashMap); 
@@ -747,7 +748,7 @@ struct minimaxOutput* minimaxAlg_NoBeta(int id, int depth, int maxDepth, int isM
 	
 	//If the number of connections is none, create the minimaxOutput node
 	if(numConnections == 0){
-		//printf("No Connections\n"); 
+		//FLWG_LOG("No Connections\n"); 
 		free(absEval); 
 		//If there are no connections, the algorithm has, albeit sadly, lost. 
 		if(depth == maxDepth){
@@ -836,8 +837,8 @@ struct minimaxOutput* minimax_Unmethodized(int id, int depth, int maxDepth, int 
 				
 				//Set the algorithm evaluation to the minimax, making sure that, when setting the params, the depth goes down by 1, that it is false, and that it is putting in the child ID
 				struct minimaxOutput* potential = minimax_Unmethodized(currID, depth - 1, maxDepth, 0, IntToWord_HashMap, wordSet); 
-				//printf("At %d: %d or %d (max) Choice: %d\n", id, potential->id, maxEval->id, (compareOutput(maxEval, potential) == 1) ? potential->id : maxEval->id); 
-				//printf("Choose Between: %d %d. Compare Max: %d, %d. Output: %d\n", maxEval->id, potential->id, maxEval->score, potential->score, compareOutput(maxEval, potential)); 
+				//FLWG_LOG("At %d: %d or %d (max) Choice: %d\n", id, potential->id, maxEval->id, (compareOutput(maxEval, potential) == 1) ? potential->id : maxEval->id); 
+				//FLWG_LOG("Choose Between: %d %d. Compare Max: %d, %d. Output: %d\n", maxEval->id, potential->id, maxEval->score, potential->score, compareOutput(maxEval, potential)); 
 				//Set the max eval to the max between the algEval or the current maxEval
 				if(compareOutput(maxEval, potential, isMaximizingPlayer) == 1){
 					free(maxEval); 
@@ -858,7 +859,7 @@ struct minimaxOutput* minimax_Unmethodized(int id, int depth, int maxDepth, int 
 		}
 		//If no numbers connect, then we create the node, and set it to the max
 		if(numConnections == 0){
-			//printf("No Connections\n"); 
+			//FLWG_LOG("No Connections\n"); 
 			//We free maxEval to make space for a new one
 			free(maxEval); 
 			//End the game if the algorithm has lost
@@ -907,8 +908,8 @@ struct minimaxOutput* minimax_Unmethodized(int id, int depth, int maxDepth, int 
 				//Set the algorithm evaluation to minimax making usre that when setting the params, the depth goes down by 1, that the isMinimaxPlayer is true, and that it is putting in the child's ID
 				struct minimaxOutput* potential = minimax_Unmethodized(currID, depth - 1, maxDepth, 1, IntToWord_HashMap, wordSet); 
 				winPercent += potential->winPercent; 
-				//printf("\nAt %d: %d or %d (min) Choice: %d\n", id, potential->id, minEval->id, (compareOutput(minEval, potential) == 0) ? potential->id : minEval->id); 
-				//printf("Choose Between: %d %d. Compare Min: %d, %d. Output: %d\n", minEval->id, potential->id, minEval->score, potential->score, compareOutput(minEval, potential));
+				//FLWG_LOG("\nAt %d: %d or %d (min) Choice: %d\n", id, potential->id, minEval->id, (compareOutput(minEval, potential) == 0) ? potential->id : minEval->id); 
+				//FLWG_LOG("Choose Between: %d %d. Compare Min: %d, %d. Output: %d\n", minEval->id, potential->id, minEval->score, potential->score, compareOutput(minEval, potential));
 				//Set the min eval to the min between the algEval or the current minEval
 				if(compareOutput(minEval, potential, isMaximizingPlayer) == 0){
 					free(minEval); 
@@ -932,7 +933,7 @@ struct minimaxOutput* minimax_Unmethodized(int id, int depth, int maxDepth, int 
 		
 		//If the number of connections is none, create the minimaxOutput node
 		if(numConnections == 0){
-			//printf("No Connections\n"); 
+			//FLWG_LOG("No Connections\n"); 
 			free(minEval); 
 			//If there are no connections, the algorithm has, albeit sadly, lost. 
 			if(depth == maxDepth){

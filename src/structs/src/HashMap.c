@@ -10,12 +10,21 @@
 #include "../includes/IntLinkedList.h"
 
 #include "../../flwp/includes/UserInput.h"
+#include "../../shared/includes/Log.h"
 
 
 typedef enum {false, true} bool;
 
 
 int getNumAdjacencies(int id, struct DataStructures* data){
+	/* Convert_IntToWord has always checked this; its neighbours did not.
+	   A word id of -1 is the engine's own way of saying "no word" - it is
+	   what a game whose start could not be chosen carries - and it arrives
+	   here as array[-1], which is not a lookup, it is the process ending. */
+	if(data == NULL || data->I2W == NULL || id < 0 || id >= data->I2W->numWords){
+		return 0;
+	}
+
 
 	return data->I2W->array[id]->numConnections; 
 }
@@ -27,7 +36,7 @@ void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wo
 	int fdCopy = dup(fd); 
 	FILE* wordDoc = (fdCopy == -1) ? NULL : fdopen(fdCopy, "r"); 
 	if(wordDoc == NULL){
-		printf("Could not read file descriptor: %d\n", fd);
+		FLWG_LOG("Could not read file descriptor: %d\n", fd);
 		if(fdCopy != -1){
 			close(fdCopy); 
 		}
@@ -178,12 +187,12 @@ void Print_WordToInt_HashMap(struct DummyHeadNode** *HashMap){
 	int totalVowels = 6; 
 	for(l = 0; l < totalLetters; l++){
 		for(v = 0; v < totalVowels; v++){
-			printf("\n[%c][%c]: ", l + 97, vowels[v]);
+			FLWG_LOG("\n[%c][%c]: ", l + 97, vowels[v]);
 			Print_TreeSet(HashMap[l][v]->start, WORD_STRUCT); 
 		}
-		printf("\n"); 
+		FLWG_LOG("\n"); 
 	}
-	printf("\n"); 
+	FLWG_LOG("\n"); 
 	
 }
 
@@ -191,7 +200,7 @@ void Print_IntToWord_HashMap(struct wordDataArray* HashMap){
 	int i = 0; 
 	for(i = 0; i < HashMap->numWords; i++){
 		Print_WordData(HashMap->array[i]);  
-		printf("\n"); 
+		FLWG_LOG("\n"); 
 	}
 	
 	
@@ -200,11 +209,11 @@ void Print_IntToWord_HashMap(struct wordDataArray* HashMap){
 
 
 void Print_WordStruct(struct wordStruct* wStruct){
-	printf("%s, %d\n", wStruct->word,wStruct->wordID); 
+	FLWG_LOG("%s, %d\n", wStruct->word,wStruct->wordID); 
 	
 }
 void Print_WordData(struct wordData* wData){
-	printf("%s: ", wData->word);
+	FLWG_LOG("%s: ", wData->word);
 	Print_IntLL(wData->connectionHeader);  
 
 }
@@ -326,20 +335,43 @@ char* Convert_IntToWord(int wordID, struct wordDataArray* IntToWord_HashMap){
 	
 }
 
+/* A word with no neighbours at all, handed back for an id that names no word.
+ *
+ * These lists carry a dummy head, so every caller reads ->next and walks from
+ * there. An empty head is therefore the one answer that needs nothing of them:
+ * loops end at once, counts come out nought, and nobody has to remember to
+ * check. Returning NULL instead put the crash one line further down in each of
+ * thirty-one places rather than removing it.
+ *
+ * It is also true. An id of -1 is what a game whose start word could not be
+ * chosen carries, and a word that does not exist has no neighbours.
+ *
+ * Shared and never written to: a connection header belongs to the dictionary,
+ * and no caller owns or alters the one it is given.
+ */
+static struct intList NO_CONNECTIONS = { 0, 0, NULL };
+
 struct intList* getConnections(int id, struct wordDataArray* IntToWord_HashMap){
+	if(IntToWord_HashMap == NULL || id < 0 || id >= IntToWord_HashMap->numWords){
+		return &NO_CONNECTIONS;
+	}
 	return IntToWord_HashMap->array[id]->connectionHeader; 
 };
 
 void printOptions(int id, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
-	struct intList* currOption = IntToWord_HashMap->array[id]->connectionHeader->next;
-	printf("%s Options: ", Convert_IntToWord(id, IntToWord_HashMap));
+	struct intList* header = getConnections(id, IntToWord_HashMap);
+	if(header == NULL){
+		return;
+	}
+	struct intList* currOption = header->next;
+	FLWG_LOG("%s Options: ", Convert_IntToWord(id, IntToWord_HashMap));
 	while(currOption != NULL){
 		if(checkIfUsed_WordSet(currOption->data, wordSet) == 0){
-			printf("%s ", Convert_IntToWord(currOption->data, IntToWord_HashMap));
+			FLWG_LOG("%s ", Convert_IntToWord(currOption->data, IntToWord_HashMap));
 		}
 		currOption = currOption->next;
 	}
-	printf("\n");
+	FLWG_LOG("\n");
 	
 }
 
@@ -349,7 +381,7 @@ FILE *OpenFile(char* path){
 	FILE *flwd = fopen(path, "r"); 
 	
 	if(flwd == NULL){
-		printf("Could not open file: %s\n", path);
+		FLWG_LOG("Could not open file: %s\n", path);
 		exit(1);		
 
 	}
@@ -371,7 +403,7 @@ struct intList *getConnections_Restrictions(int input, int cap, struct wordDataA
 	
 	//If it can't find it, it crashes
 	if(wordOptions == NULL){
-		printf("Error: Can't find word [hashMapOutput]");
+		FLWG_LOG("Error: Can't find word [hashMapOutput]");
 		exit(0);  
 	}
 	

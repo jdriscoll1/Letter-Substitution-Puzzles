@@ -19,6 +19,7 @@ Date: 5/1/21
 
 #include "../../structs/includes/IntLinkedList.h"
 #include "../../structs/includes/WordSet.h"
+#include "../../shared/includes/Log.h"
 
 
 extern int TOTAL_MOVES;
@@ -40,8 +41,8 @@ int FLWG(struct DataStructures* data){
 	while(word >= 0){
 		
 		//Output the current word
-		printf("%s\n", Convert_IntToWord(word, data->I2W)); 
-		//printf("%ld: ", word % (sizeof(unsigned long) * 8));
+		FLWG_LOG("%s\n", Convert_IntToWord(word, data->I2W)); 
+		//FLWG_LOG("%ld: ", word % (sizeof(unsigned long) * 8));
 		if(whoseTurn == 0){
 			word = userPly(word, data);
 		
@@ -59,7 +60,7 @@ int FLWG(struct DataStructures* data){
 		rounds++; 
 		
 	}
-	printf("%c is the Winner!", (winner == 0) ? 'A' : 'B');
+	FLWG_LOG("%c is the Winner!", (winner == 0) ? 'A' : 'B');
 
 
 	return winner; 
@@ -93,13 +94,13 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 		int whoseTurn = 0; 
 
 		while(w >= 0){
-			//printf("%s\n", IntToWord_HashMap->array[w]->word); 
+			//FLWG_LOG("%s\n", IntToWord_HashMap->array[w]->word); 
 			if(whoseTurn == 0){
 				w = weakBotPly(w, IntToWord_HashMap, wordSet);
 				//w = botPly(w, depth, IntToWord_HashMap, wordSet);	
 			}
 			else if(whoseTurn == 1){
-				//printf("List: %s\n", toString_IntLL(IntToWord_HashMap->array[w]->connectionHeader, SEPERATED, IntToWord_HashMap)); 
+				//FLWG_LOG("List: %s\n", toString_IntLL(IntToWord_HashMap->array[w]->connectionHeader, SEPERATED, IntToWord_HashMap)); 
 				w = botPly(w, depth, IntToWord_HashMap, wordSet);
 				
 				//w = mctsBotPly(w, wordSet, IntToWord_HashMap);
@@ -111,14 +112,14 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 				winner = whoseTurn; 
 			}
 			rounds++; 
-			//printf("Round: %d", rounds);
+			//FLWG_LOG("Round: %d", rounds);
 			
 		}
 		totalRounds += rounds; 
-		printf("%s Wins!\n%d Rounds\nRound %d\n", (winner == 0) ? "Bot A" : "Bot B", rounds, i); 
+		FLWG_LOG("%s Wins!\n%d Rounds\nRound %d\n", (winner == 0) ? "Bot A" : "Bot B", rounds, i); 
 
 		
-		//printf("Rounds: %d\n", rounds); 
+		//FLWG_LOG("Rounds: %d\n", rounds); 
 		if(winner == 0){
 			A++; 
 		} 
@@ -127,7 +128,7 @@ void FLWG_Test(struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet)
 		}
 		reset_WordSet(wordSet);
 	}
-	printf("A: %d, B: %d, avg rounds: %d", A, B, totalRounds / (end - start)); 
+	FLWG_LOG("A: %d, B: %d, avg rounds: %d", A, B, totalRounds / (end - start)); 
 
 	
 	
@@ -140,7 +141,7 @@ int Input_FLWG(int prevWord,struct DataStructures* data){
 	char* wordStr; 
 	//Then, the player says a word
 	while(isValid != 1){
-		printf("Choose a word: "); 
+		FLWG_LOG("Choose a word: "); 
 		//Player chooses word 
 		//NOTICE -- DISCREET MALLOC
 		wordStr = toLowerCase(Take_Input_NoSize());  
@@ -160,7 +161,7 @@ int Input_FLWG(int prevWord,struct DataStructures* data){
 			wordID = Convert_WordToInt(wordStr, data);
 			//if the word has been used
 			if(checkIfUsed_WordSet(wordID, data->wordSet) != 0){
-				printf("Word Already Used.\n"); 
+				FLWG_LOG("Word Already Used.\n"); 
 				free(wordStr); 
 				isValid = 0; 
 			}

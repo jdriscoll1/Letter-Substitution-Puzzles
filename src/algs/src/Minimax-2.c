@@ -5,6 +5,7 @@
 #include "../includes/Minimax-2.h"
 #include "../../structs/includes/IntLinkedList.h"
 #include "../../structs/includes/WordSet.h"
+#include "../../shared/includes/Log.h"
 
 /*This is the C file for the minimax algorithm
 
@@ -221,7 +222,7 @@ struct score createScore(int wordId, double score, double winPercentage, int dep
 }
 
 void printScore(struct score s){
-	printf("%d: {%f, %f, %d}\n", s.wordId, s.score, s.winPercentage, s.depth); 
+	FLWG_LOG("%d: {%f, %f, %d}\n", s.wordId, s.score, s.winPercentage, s.depth); 
 }
 
 

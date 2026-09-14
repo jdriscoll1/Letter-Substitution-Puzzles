@@ -12,6 +12,7 @@ Desc: A Hash Set for all words to determine if they are used*/
 #include <limits.h>
 
 #include "../includes/WordSet.h"
+#include "../../shared/includes/Log.h"
 
 struct WordSet* init_WordSet(int totalWords) {
     int bitsPerBlock = sizeof(unsigned long) * CHAR_BIT;
@@ -105,10 +106,10 @@ void reset_WordSet(struct WordSet* wordSet) {
 
 
 void print_WordSet(struct WordSet* wordSet){
-	printf("WordSet:\n");
+	FLWG_LOG("WordSet:\n");
 	unsigned int i; 
 	for(i = 0; i < wordSet->totalWords / (sizeof(unsigned long) * CHAR_BIT); i++){
-		printf("%ld\n", wordSet->words[i]);
+		FLWG_LOG("%ld\n", wordSet->words[i]);
 	}
 	
 }
@@ -125,11 +126,11 @@ void long2binary(unsigned long hash){
         unsigned long f = floor(pow(2, sizeof(unsigned long) * 8) / 2);
         unsigned int i = 0;
         for(i = 0; i < sizeof(unsigned long) * 8; i++){
-                printf("%i", hash & f ? 1 : 0);
+                FLWG_LOG("%i", hash & f ? 1 : 0);
                 f >>= 1;
 
         }
-        printf("\n");
+        FLWG_LOG("\n");
 
 
 

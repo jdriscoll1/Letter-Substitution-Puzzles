@@ -67,16 +67,31 @@ struct GameData* initFLWG(struct DataStructures* dataStructures, int minAdjacenc
 }
 
 char* getCurrWord(struct GameData* gameData, struct DataStructures* dataStructures){
+	/* nothing to work with */
+	if(gameData == NULL){
+		return NULL;
+	}
+
 	int wordId = gameData->currWordId; 
 	char* word = convertIntToWord(wordId, dataStructures);
 	return word; 
 }
 
 void freeGameComponentsFLWG(struct GameData* gameData){
+	/* nothing to work with */
+	if(gameData == NULL){
+		return;
+	}
+
 	free(gameData); 
 }
 
 int botTakesTurn(struct GameData* gameData, struct DataStructures* data, int botType){
+	/* nothing to work with */
+	if(gameData == NULL){
+		return -1;
+	}
+
 	int result = -1;
 	// If the bot type is -1 it is its easiest version
 	if(botType == -2){
@@ -108,6 +123,11 @@ int botTakesTurn(struct GameData* gameData, struct DataStructures* data, int bot
 }
 
 int userTakesTurn(char* userInput, struct GameData* gameData, struct DataStructures* data){
+	/* nothing to work with */
+	if(gameData == NULL){
+		return -1;
+	}
+
 	
 	// Check if the word is valid
 	enum ERROR_CODE result; 
@@ -136,15 +156,30 @@ struct GameComponents* initiateFLWP(int minAdjacenciesToStart, int maxAdjacencie
 }
 
 void ResetFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures){
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return;
+	}
+
 
 	ResetGameComponents(gameComponents, dataStructures->I2W);
 }
 
 int getPrevWordFLWP(struct GameComponents* gameComponents){
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return -1;
+	}
+
     return gameComponents->prevInput;
 
 }
 int userEntersWord_FLWP(char* userInput, struct GameComponents *gameComponents, struct DataStructures* dataStructures){
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return -1;
+	}
+
     return AddWord_Struct(gameComponents, userInput, dataStructures); 
 }
 char* convertIntToWord(int wordId, struct DataStructures* data){
@@ -156,30 +191,65 @@ int convertWordToInt(char* word, struct DataStructures* data){
 }
 
 char* getStartWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return NULL;
+	}
+
     return convertIntToWord(gameComponents->start, dataStructures);
 }
 char* getGoalWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return NULL;
+	}
+
     return convertIntToWord(gameComponents->goal, dataStructures);
 }
 
 void undoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return;
+	}
+
     Undo_Struct(gameComponents, dataStructures->I2W);
 }
 
 
 void redoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return;
+	}
+
     Redo_Struct(gameComponents, dataStructures->I2W);
 }
 
 struct arrayList *getCurrentWordsFLWP(struct GameComponents *gameComponents) {
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return NULL;
+	}
+
     return gameComponents->aList;
 }
 
 int isGameWonFLWP(struct GameComponents *gameComponents) {
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return 0;
+	}
+
     return gameComponents->goal == gameComponents->prevInput;
 }
 
 void removeWord_FLWP(char* word, struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return;
+	}
+
 
     char tempStr[dataStructures->I2W->numLetters + 2];
     tempStr[0] = '-';
@@ -192,10 +262,20 @@ void removeWord_FLWP(char* word, struct GameComponents *gameComponents, struct D
 }
 
 int isStartValid_FLWP(struct GameComponents* gameComponents){
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return 0;
+	}
+
 	return gameComponents->start != -1; 	
 
 }
 void freeGameComponentsFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return;
+	}
+
 	FreeGameComponents(gameComponents, dataStructures->I2W); 
 
 }
@@ -303,6 +383,11 @@ struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdj
 }
 
 void freeGameComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures){
+	/* nothing to work with */
+	if(flwgpComponents == NULL){
+		return;
+	}
+
 	if(flwgpComponents->flwpComponents != NULL){
 		Free_IntLL(flwgpComponents->flwpComponents->userConnections);
 		Free_GenericLinkedList(flwgpComponents->flwpComponents->storageHeader);
@@ -316,14 +401,29 @@ void freeGameComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct
 } 
 
 struct GameComponentsFLWC* getFLWCComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents){
+	/* nothing to work with */
+	if(flwgpComponents == NULL){
+		return NULL;
+	}
+
 	return flwgpComponents->flwcComponents; 
 }
 
 struct GameComponents* getFLWPComponentsFLWGP(struct GameComponentsFLWGP* flwgpComponents){
+	/* nothing to work with */
+	if(flwgpComponents == NULL){
+		return NULL;
+	}
+
 	return flwgpComponents->flwpComponents; 
 }
 
 int userEntersWord_FLWGP(char* userInput, struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures){
+	/* nothing to work with */
+	if(flwgpComponents == NULL){
+		return -1;
+	}
+
 
 	int result = userEntersWord_FLWP(userInput, flwgpComponents->flwpComponents, dataStructures); 
 	if(result == 0){
@@ -337,20 +437,44 @@ int userEntersWord_FLWGP(char* userInput, struct GameComponentsFLWGP* flwgpCompo
 
 
 void undoMoveFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* dataStructures) {
+	/* nothing to work with */
+	if(flwgpComponents == NULL){
+		return;
+	}
+
 	Undo_Struct(flwgpComponents->flwpComponents, dataStructures->I2W);
 	flwgpComponents->flwcComponents->wordId = getPrevWordFLWP(flwgpComponents->flwpComponents); 
 
 }
 
 void redoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStructures* dataStructures) {
+	/* nothing to work with */
+	if(flwgpComponents == NULL){
+		return;
+	}
+
 	Redo_Struct(flwgpComponents->flwpComponents, dataStructures->I2W);
 	flwgpComponents->flwcComponents->wordId = getPrevWordFLWP(flwgpComponents->flwpComponents); 
 }
 int isStartValid_FLWGP(struct GameComponentsFLWGP *flwgpComponents){
+	/* nothing to work with */
+	if(flwgpComponents == NULL){
+		return 0;
+	}
+	if(flwgpComponents->flwcComponents == NULL){
+		return 0;
+	}
+
+
 	return  isStartValidFLWC(flwgpComponents->flwcComponents);
 }
 
 int isStartValidFLWG(struct GameData* gameData){
+	/* nothing to work with */
+	if(gameData == NULL){
+		return 0;
+	}
+
 
 	return gameData->currWordId != -1; 
 
@@ -358,16 +482,31 @@ int isStartValidFLWG(struct GameData* gameData){
 
 
 char hintLetterToConsiderFLWG(struct GameData* flwgComponents, struct DataStructures* data){
+	/* nothing to work with */
+	if(flwgComponents == NULL){
+		return '?';
+	}
+
 	return letterToConsiderHint(flwgComponents->currWordId, data); 
 }
 
 int hintNumOptionsFLWG(struct GameData* flwgComponents, struct DataStructures* data){
+	/* nothing to work with */
+	if(flwgComponents == NULL){
+		return -1;
+	}
+
 	return numOptionsHint(flwgComponents->currWordId, data); 
 }
 
 
 
 char* hintGetHeadAdjacencyFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return NULL;
+	}
+
 	/* A board with no route has no solution to read a word out of. Boards like
 	   that are dealt on purpose now, so every one of these has to say it has
 	   nothing rather than walk a NULL. */
@@ -377,6 +516,11 @@ char* hintGetHeadAdjacencyFLWP(struct GameComponents* gameComponents, struct Dat
 	return Convert_IntToWord(gameComponents->solution->next->next->data, dataStructures->I2W);
 }
 char* hintGetTailAdjacencyFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return NULL;
+	}
+
 	if(gameComponents->solution == NULL || gameComponents->solution->size < 2){
 		return NULL;
 	}
@@ -468,6 +612,11 @@ int distanceToGoalFLWP(struct GameComponents* gameComponents, struct DataStructu
 }
 
 int hintGetMinAdjacenciesFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return -1;
+	}
+
 	/* -1 for a board there is no route through, the same answer
 	distanceToGoalFLWP gives - and for no board at all.
 
@@ -485,13 +634,47 @@ int hintGetMinAdjacenciesFLWP(struct GameComponents* gameComponents, struct Data
 
 }
 
-int hintGetMinAdjacenciesFLWGP(struct GameComponentsFLWGP* flwgpComponents){	
+int hintGetMinAdjacenciesFLWGP(struct GameComponentsFLWGP* flwgpComponents){
+	/* nothing to work with */
+	if(flwgpComponents == NULL){
+		return -1;
+	}
+	/* The composed game holds a pathfinder and a constraint game, and a board
+	   that could not be built leaves one or both of them, or the solution
+	   inside the pathfinder, as nothing. The same answer the plain
+	   pathfinder gives: no route.
+	*/
+	if(flwgpComponents->flwpComponents == NULL || flwgpComponents->flwpComponents->solution == NULL){
+		return -1;
+	}
+
+	
 	 return flwgpComponents->flwpComponents->solution->size - 1; 
 }
 char* hintWordTowardsGoalFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* data){
+	/* nothing to work with */
+	if(flwgpComponents == NULL){
+		return NULL;
+	}
+	if(flwgpComponents->flwpComponents == NULL || flwgpComponents->flwpComponents->solution == NULL
+		|| flwgpComponents->flwpComponents->solution->next == NULL
+		|| flwgpComponents->flwpComponents->solution->next->next == NULL){
+		return NULL;
+	}
+
+
 	return Convert_IntToWord(flwgpComponents->flwpComponents->solution->next->next->data, data->I2W);
 }
 char* hintGetValidGoalWordFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* data){
+	/* nothing to work with */
+	if(flwgpComponents == NULL){
+		return NULL;
+	}
+	if(flwgpComponents->flwpComponents == NULL || flwgpComponents->flwpComponents->solution == NULL){
+		return NULL;
+	}
+
+
 	struct intList* curr = flwgpComponents->flwpComponents->solution; 
 	
 	while(curr->next != NULL){

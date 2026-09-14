@@ -10,6 +10,7 @@ Description: Creating the Max-N: Multiplayer Four Letter Word Game Without Alpha
 
 #include "../includes/MaxN.h"
 #include "../../structs/includes/IntLinkedList.h"
+#include "../../shared/includes/Log.h"
 
 
 #define bool int
@@ -95,7 +96,7 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 			 
 			//The number of found children increases
 	 		numChildren++; 
-	 		//printf("Going Down A Level\n");
+	 		//FLWG_LOG("Going Down A Level\n");
 			//for each child it runs this same function setting the currScore 
 			struct maxnNodeScore* childScore = MaxN(
 				currChild->data, //child word id
@@ -119,13 +120,13 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 			if(childScore->scores[playerID] > bestScore->scores[playerID]){
 				Free_MaxNNodeScore(bestScore, numPlayers); 
 				bestScore = childScore; 
-				//printf("Chose Child Score\n");
+				//FLWG_LOG("Chose Child Score\n");
 				
 			}
 			//If the best score is better than the child score, it will free the child score
 			else{
 				Free_MaxNNodeScore(childScore, numPlayers); 
-				//printf("Chose Current Score\n");
+				//FLWG_LOG("Chose Current Score\n");
 			}
 			
 			
@@ -160,7 +161,7 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 
 		
 		//CASE II: The depth is minimum and it could not find any replacements
-		//printf("This is a bottom move\n");
+		//FLWG_LOG("This is a bottom move\n");
 		//Print_MaxNNodeScore(assignScore(depth, wordID, playerID, numPlayers), numPlayers);
 		if(depth != maxDepth){
 			markUnused_WordSet(wordID, wordSet);
@@ -334,14 +335,14 @@ void Free_MaxNNodeScore(struct maxnNodeScore *node, int numPlayers){
 
 void Print_MaxNNodeScore(struct maxnNodeScore* node, int numPlayers){
 	int p; 
-	printf("MaxN Score %d:\n", node->wordID);
-	printf("Raw Scores: \n");
+	FLWG_LOG("MaxN Score %d:\n", node->wordID);
+	FLWG_LOG("Raw Scores: \n");
 	for(p = 0; p < numPlayers; p++){
 		if(node->rawScores == NULL){
-			printf("%d: %d\n", p, node->scores[p]);
+			FLWG_LOG("%d: %d\n", p, node->scores[p]);
 		}
 		else{
-			printf("%d: {%d, %f, %d}: %d\n", p, node->rawScores[p]->isWinningPosition, node->rawScores[p]->isWinPercent, node->rawScores[p]->depth, node->scores[p]);
+			FLWG_LOG("%d: {%d, %f, %d}: %d\n", p, node->rawScores[p]->isWinningPosition, node->rawScores[p]->isWinPercent, node->rawScores[p]->depth, node->scores[p]);
 		}
 	}	
 	
@@ -357,6 +358,6 @@ struct rawScore* init_RawScore(int isWinningPosition, float isWinPercent, int de
 }
 
 void Print_RawScore(struct rawScore* r){
-	printf("{%d, %f, %d}", r->isWinningPosition, r->isWinPercent, r->depth);
+	FLWG_LOG("{%d, %f, %d}", r->isWinningPosition, r->isWinPercent, r->depth);
 	
 }

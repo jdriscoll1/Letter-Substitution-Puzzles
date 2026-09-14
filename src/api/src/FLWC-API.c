@@ -47,12 +47,22 @@ struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacencie
 
 // Choose a word
 char* getStartWordFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures *data){
+	/* nothing to work with */
+	if(flwcComponents == NULL){
+		return NULL;
+	}
+
 	return Convert_IntToWord(flwcComponents->wordId, data->I2W); 
 
 }
 
 // Allow the user to insert a word 
 int userEntersWordFLWC(char* userInput, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	/* nothing to work with */
+	if(flwcComponents == NULL){
+		return -1;
+	}
+
 	int isValid = Check_Input(flwcComponents->wordId,(const char*)userInput, data); 
 
 	if(isValid == VALID){
@@ -69,6 +79,11 @@ int userEntersWordFLWC(char* userInput, struct GameComponentsFLWC* flwcComponent
 
 // while the result is != +1, the game should continue
 int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents){
+	/* nothing to work with */
+	if(flwcComponents == NULL){
+		return 0;
+	}
+
 	// if the game is tied, it gets set to 0
 	if(flwcComponents->wordId == -1){
 		// tie 
@@ -91,6 +106,11 @@ int isGameWonFLWC(struct GameComponentsFLWC* flwcComponents){
 }
 
 int botTakesTurnFLWC(int botType, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	/* nothing to work with */
+	if(flwcComponents == NULL){
+		return -1;
+	}
+
 	// This is what will be returend.
 	// Started at -1 (no move): an unrecognised bot type used to leave this
 	// uninitialised and then assign the garbage straight into wordId
@@ -125,6 +145,11 @@ int botTakesTurnFLWC(int botType, struct GameComponentsFLWC* flwcComponents, str
 
 
 void freeGameComponentsFLWC(struct GameComponentsFLWC* flwcComponents){
+	/* nothing to work with */
+	if(flwcComponents == NULL){
+		return;
+	}
+
 	free_WordSet(flwcComponents->avoidWords); 
 	free_WordSet(flwcComponents->goalWords); 
 	free(flwcComponents); 
@@ -133,6 +158,11 @@ void freeGameComponentsFLWC(struct GameComponentsFLWC* flwcComponents){
 }
 
 int isStartValidFLWC(struct GameComponentsFLWC* flwcComponents){
+	/* nothing to work with */
+	if(flwcComponents == NULL){
+		return 0;
+	}
+
 	return flwcComponents->wordId != -1;
 }
 char** getAllWords(struct DataStructures* dataStructures){
@@ -147,6 +177,11 @@ char** getAllWords(struct DataStructures* dataStructures){
 
 
 char* hintGoalWordFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	/* nothing to work with */
+	if(flwcComponents == NULL){
+		return NULL;
+	}
+
 	struct StartWordParametersFLWC p = {
 		.goalWords=flwcComponents->goalWords,
 		.avoidWords=flwcComponents->avoidWords,
@@ -179,6 +214,11 @@ char* hintGoalWordFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStr
 	return goalStr; 
 }
 char* hintPathToGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	/* nothing to work with */
+	if(flwcComponents == NULL){
+		return NULL;
+	}
+
 	struct StartWordParametersFLWC p = {
 		.goalWords=flwcComponents->goalWords,
 		.avoidWords=flwcComponents->avoidWords,
@@ -206,6 +246,11 @@ char* hintPathToGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct DataS
 }
 
 char* hintAdjacencyTowardsGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	/* nothing to work with */
+	if(flwcComponents == NULL){
+		return NULL;
+	}
+
 	struct StartWordParametersFLWC p = {
 		.goalWords=flwcComponents->goalWords,
 		.avoidWords=flwcComponents->avoidWords,
@@ -236,6 +281,11 @@ char* hintAdjacencyTowardsGoalFLWC(struct GameComponentsFLWC* flwcComponents, st
 	return goalStr; 
 }
 int hintMinDistanceToGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	/* nothing to work with */
+	if(flwcComponents == NULL){
+		return -1;
+	}
+
 	struct StartWordParametersFLWC p = {
 		.goalWords=flwcComponents->goalWords,
 		.avoidWords=flwcComponents->avoidWords,
@@ -263,6 +313,11 @@ int hintMinDistanceToGoalFLWC(struct GameComponentsFLWC* flwcComponents, struct 
 }
 
 char* hintBestDirectAdjacencyFLWIC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	/* nothing to work with */
+	if(flwcComponents == NULL){
+		return NULL;
+	}
+
 
 	// Given FLWC Components, it runs an FLWC Bot Ply After Switching Avoid & Goal Words
 	int id = botPly_FLWC(flwcComponents->wordId, 5, flwcComponents->goalWords, flwcComponents->avoidWords, data); 
@@ -273,6 +328,11 @@ char* hintBestDirectAdjacencyFLWIC(struct GameComponentsFLWC* flwcComponents, st
 	return NULL; 
 }
 int hintDistanceFromNearestAvoidWordFLWIC(struct GameComponentsFLWC* flwcComponents, struct DataStructures* data){
+	/* nothing to work with */
+	if(flwcComponents == NULL){
+		return -1;
+	}
+
 	struct StartWordParametersFLWC p = {
 		.goalWords=flwcComponents->avoidWords,
 		.avoidWords=flwcComponents->goalWords,

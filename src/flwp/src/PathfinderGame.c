@@ -5,6 +5,7 @@
 #include "../includes/PathfinderGame.h"
 #include "../includes/GameFunctions.h"
 #include "../includes/UserInput.h"
+#include "../../shared/includes/Log.h"
 
 //This will initialize the pathfinder game
 /*
@@ -50,7 +51,7 @@ void Play_FLWP(struct DataStructures *data){
 			//Sets the hint points left 
 		pc->hintPoints = gc->hc->hintPoints; 
 		pc->scores[pc->currRound - 2] = score; 
-		printf("Score: %d", score); 
+		FLWG_LOG("Score: %d", score); 
 		//If quit is equal to 0, the user wants to continue 
 		if(score != -1){
 			
@@ -104,7 +105,7 @@ void Play_FLWP(struct DataStructures *data){
 		//c: Make sure that it won't get caught in an infinite loop 
 		//If the user chooses to quit, it is necessary to free teh components
 			else{
-				printf("Play Again Soon!"); 
+				FLWG_LOG("Play Again Soon!"); 
 				score = 0; 
 				endGame = 1; 
 			}		
@@ -112,7 +113,7 @@ void Play_FLWP(struct DataStructures *data){
 	}
 	
 	FreeGameComponents(gc, data->I2W); 
-	printf("Final Score: %d%%", finalScore(pc)); 	
+	FLWG_LOG("Final Score: %d%%", finalScore(pc)); 	
 
 	free(pc); 
 }

@@ -10,6 +10,7 @@ Description: Multiplayer FLWG with Node Culling, or Alpha-Reduction*/
 #include "../includes/Hypermax.h"
 
 #include "../../structs/includes/IntLinkedList.h"
+#include "../../shared/includes/Log.h"
 
 int Hypermax(int wordID, int playerID, int numPlayers, int depth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 	int* alphas = malloc(sizeof(int) * numPlayers);
@@ -166,7 +167,7 @@ struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int 
 
 		
 		//CASE II: The depth is minimum and it could not find any replacements
-		//printf("This is a bottom move\n");
+		//FLWG_LOG("This is a bottom move\n");
 		//Print_MaxNNodeScore(assignScore(depth, wordID, playerID, numPlayers), numPlayers);
 		if(depth != maxDepth){
 			markUnused_WordSet(wordID, wordSet);

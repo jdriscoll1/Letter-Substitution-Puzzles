@@ -10,6 +10,7 @@
 #include "../../algs/includes/Hypermax.h"
 
 #include "../../flwp/includes/GameFunctions.h"
+#include "../../shared/includes/Log.h"
 
 
 //This allows the four letter word game to be playable with multiple players
@@ -23,7 +24,7 @@ void Multiplayer_FLWG(struct DataStructures *data){
 	markUsed_WordSet(wordID, data->wordSet);
 	
 	int currPlayer = 0;
-	printf("Start: %s\n", Convert_IntToWord(wordID, data->I2W));
+	FLWG_LOG("Start: %s\n", Convert_IntToWord(wordID, data->I2W));
 	while(wordID != -1){
 		
 		switch(currPlayer){
@@ -45,14 +46,14 @@ void Multiplayer_FLWG(struct DataStructures *data){
 		}
 		//if the player quit, let the algorithm know
 		if(wordID != -1){
-			printf("%c) %s\n", (char)((currPlayer) % numPlayers + 65), Convert_IntToWord(wordID, data->I2W));
+			FLWG_LOG("%c) %s\n", (char)((currPlayer) % numPlayers + 65), Convert_IntToWord(wordID, data->I2W));
 			//move to next player
 			currPlayer = (currPlayer + 1) % numPlayers;
 		}
 		
 	}
 	reset_HashSet(data->I2W);
-	printf("Player %c Loses!", (char)(currPlayer + 65));
+	FLWG_LOG("Player %c Loses!", (char)(currPlayer + 65));
 	
 }
 
@@ -74,7 +75,7 @@ void MultiplayerTest(struct wordDataArray *IntToWord_HashMap, struct WordSet* wo
 		
 		int currPlayer = 0;
 		
-		printf("Start: %s\n", Convert_IntToWord(wordID, IntToWord_HashMap));
+		FLWG_LOG("Start: %s\n", Convert_IntToWord(wordID, IntToWord_HashMap));
 		while(wordID != -1){
 			switch(currPlayer){
 			
@@ -98,7 +99,7 @@ void MultiplayerTest(struct wordDataArray *IntToWord_HashMap, struct WordSet* wo
 				
 				
 			}
-			printf("%s\n", Convert_IntToWord(wordID, IntToWord_HashMap));
+			FLWG_LOG("%s\n", Convert_IntToWord(wordID, IntToWord_HashMap));
 			//if the player quit, let the algorithm know
 			if(wordID != -1){
 				//move to next player
@@ -107,7 +108,7 @@ void MultiplayerTest(struct wordDataArray *IntToWord_HashMap, struct WordSet* wo
 			
 		}
 		reset_WordSet(wordSet);
-		printf("%d) Player %c Loses!\n\n\n", i, (char)(currPlayer + 65));
+		FLWG_LOG("%d) Player %c Loses!\n\n\n", i, (char)(currPlayer + 65));
 
 		int j; 
 		for(j = 0; j < numPlayers; j++){
@@ -118,11 +119,11 @@ void MultiplayerTest(struct wordDataArray *IntToWord_HashMap, struct WordSet* wo
 	
 	
 	}
-	printf("{");
+	FLWG_LOG("{");
 	for(i = 0; i < numPlayers; i++){
-		printf("%d%s", wins[i], (i == numPlayers - 1) ? "" : ", ");
+		FLWG_LOG("%d%s", wins[i], (i == numPlayers - 1) ? "" : ", ");
 	}
-	printf("}");
+	FLWG_LOG("}");
 	free(wins);
 }
 

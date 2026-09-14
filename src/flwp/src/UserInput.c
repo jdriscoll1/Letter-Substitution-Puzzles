@@ -6,6 +6,7 @@
 
 #include "../includes/UserInput.h"
 #include "../includes/GameFunctions.h"
+#include "../../shared/includes/Log.h"
 
 
 
@@ -53,7 +54,7 @@ char* Take_Input_NoSize(){
 
 /*This asks the user what they'd like the difficulty to be*/ 
 enum Difficulty ChooseDifficulty(){
-	printf("What would you like the difficulty to be? \n0) Easy\n1) Medium \n2) Hard\n");
+	FLWG_LOG("What would you like the difficulty to be? \n0) Easy\n1) Medium \n2) Hard\n");
 	char* difficulty = Take_Input(2); 
 	if(strcmp(difficulty, "0") == 0){
 		free(difficulty); 
@@ -124,7 +125,7 @@ int Check_Input(int prevWord, const char* currWord, struct DataStructures *data)
 }
 
 int ContinueGames(){
-	printf("\nWould you like to advance??\ny - harder level \nr - equal level\np - easier level\nq - quit\n");
+	FLWG_LOG("\nWould you like to advance??\ny - harder level \nr - equal level\np - easier level\nq - quit\n");
 	
 	char* s = Take_Input_NoSize();
 	//If the user chooses to quit it returns 1
@@ -200,7 +201,7 @@ int safeStrcat(char** dest, const char* src, int destLength, int buff, int start
 	 
 	for(; i < buff + start; i++){
 		if(destLength == i){
-			printf("Error - Safe String Cat: Array Out of Bounds Exception");
+			FLWG_LOG("Error - Safe String Cat: Array Out of Bounds Exception");
 			exit(0); 
 		}		
 		
@@ -219,12 +220,12 @@ int safeStrcat(char** dest, const char* src, int destLength, int buff, int start
 void safeStrcpy(char** dest, const char* src, int minLength, int maxLength){
 	//Makes sure it's not too long
 	if(maxLength >= 4096){
-		printf("Max Length is too Long");
+		FLWG_LOG("Max Length is too Long");
 		exit(0);  
 	}
 	//Make sure the min isn't longer than the max
 	if(minLength > maxLength + 1){
-		printf("Source String Is Too Long");
+		FLWG_LOG("Source String Is Too Long");
 		exit(0);  	
 	}
 	int i; 

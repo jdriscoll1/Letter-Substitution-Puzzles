@@ -7,6 +7,7 @@
 #include "../includes/ArrayList.h"
 
 #include "../../algs/includes/Minimax.h"
+#include "../../shared/includes/Log.h"
 
 /*This actually adds the node into the tree set
 @param data --> The data that is to be added
@@ -95,22 +96,22 @@ struct TreeSetNode* AddNode_TreeSet(void* data, void* pointer, struct TreeSetNod
 void DetermineDepth(struct TreeSetNode *curNode){
 	if(curNode != NULL){
 	
-		//printf("Determine Depth Start: Node: %d, D: %d.\n", *(int*)curNode->data, curNode->depth); 
-		//printf("\nDetermining..\n"); 
+		//FLWG_LOG("Determine Depth Start: Node: %d, D: %d.\n", *(int*)curNode->data, curNode->depth); 
+		//FLWG_LOG("\nDetermining..\n"); 
 		//First, Determine if it has either a greater or smaller, or perhaps both
 		int greater = (curNode->greater != NULL)?1:0; 
 		int smaller = (curNode->smaller != NULL)?1:0; 
 		//if it only has a greater node, its depth should be one larger than that of its child
 		if(greater && !smaller){
 			curNode->depth = curNode->greater->depth + 1; 
-			//printf("Changing Node: %d. New Depth: %d\n", *(int*)curNode->data, curNode->depth);  
+			//FLWG_LOG("Changing Node: %d. New Depth: %d\n", *(int*)curNode->data, curNode->depth);  
 		
 		//if it only has a smaller node, its depth should be one larger than that of its child	
 		}
 		else if(smaller && !greater){
 		
 			curNode->depth = curNode->smaller->depth + 1; 
-			//printf("Changing Node: %d. New Depth: %d\n", *(int*)curNode->data, curNode->depth); 
+			//FLWG_LOG("Changing Node: %d. New Depth: %d\n", *(int*)curNode->data, curNode->depth); 
 		}
 		//if it has both of its nodes, it gets a bit trickier
 		else if(greater && smaller){
@@ -122,19 +123,19 @@ void DetermineDepth(struct TreeSetNode *curNode){
 			if(greaterDepth > smallerDepth){
 				//it gets added one plus the greater depth
 				curNode->depth = greaterDepth + 1;
-				//printf("Changing Node: %d. New Depth: %d\n", *(int*)curNode->data, curNode->depth);  
+				//FLWG_LOG("Changing Node: %d. New Depth: %d\n", *(int*)curNode->data, curNode->depth);  
 			}
 			//if the smaller depth is greater or equal
 			else{
 				curNode->depth = smallerDepth + 1; 
-				//printf("Changing Node: %d. New Depth: %d\n", *(int*)curNode->data, curNode->depth); 
+				//FLWG_LOG("Changing Node: %d. New Depth: %d\n", *(int*)curNode->data, curNode->depth); 
 			}
 		
 		}
 		//if not greater and not smaller
 		else{
 			curNode->depth = 0;
-			//printf("Changing Node: %d. New Depth: %d\n", *(int*)curNode->data, curNode->depth); 
+			//FLWG_LOG("Changing Node: %d. New Depth: %d\n", *(int*)curNode->data, curNode->depth); 
 		}
 	}//End - If CurNode != NULL
 	
@@ -240,7 +241,7 @@ int intCompare(int num1, int num2){
 
 void Print_TreeSet(struct TreeSetNode *header, enum dataType type){
 	if(header == NULL){
-		printf("Empty Tree Set"); 
+		FLWG_LOG("Empty Tree Set"); 
 	}
 	else{
 		
@@ -249,18 +250,18 @@ void Print_TreeSet(struct TreeSetNode *header, enum dataType type){
 			
 		} 
 		if(type == INTEGER){	
-			printf("%d, ", *(int*)header->data); 
+			FLWG_LOG("%d, ", *(int*)header->data); 
 		}
 		if(type == WORD){
-			printf("%s, ", (char*)header->data); 
+			FLWG_LOG("%s, ", (char*)header->data); 
 		}
 		if(type == WORDLL){
-			printf("%s: ", ((struct word*)(header->data))->word); 
+			FLWG_LOG("%s: ", ((struct word*)(header->data))->word); 
 			Print_WordLL(((struct word*)(header->data)), SEPERATED); 
-			printf("\n"); 
+			FLWG_LOG("\n"); 
 		}
 		if(type == WORD_STRUCT){
-			printf("%s ", ((struct wordStruct*)(header->data))->word); 
+			FLWG_LOG("%s ", ((struct wordStruct*)(header->data))->word); 
 			
 		}
 		
@@ -297,7 +298,7 @@ int compare(void* data1, void* data2, enum dataType type, int numLetters){
 		//Either, it is taking a word, and throwing it in, or it is taking a node
 		return stringCompare((char*)data1, ((struct wordStruct*)(data2))->word, numLetters); 
 	}
-	printf("Incorrect Enum [compare]");
+	FLWG_LOG("Incorrect Enum [compare]");
 	exit(0); 
 }
 
@@ -310,7 +311,7 @@ void balance(void* pointer, struct TreeSetNode *header, enum dataType nodeType, 
 	//1) Checks the balance
 
 	 if(header == NULL){
-	 	printf("[Balance_TreeSet]: Empty Set"); 
+	 	FLWG_LOG("[Balance_TreeSet]: Empty Set"); 
 		exit(0); 
 	 }
 
@@ -331,7 +332,7 @@ void leftOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeTyp
 	//I don't think we even need case III anymore... Don't think we ever did 
 	
 	if(header->smaller == NULL){
-		printf("\nIncorrect Offset Calculation [leftOffset]"); 
+		FLWG_LOG("\nIncorrect Offset Calculation [leftOffset]"); 
 		exit(0); 
 	}
 	
@@ -364,7 +365,7 @@ void leftOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeTyp
 void rightOffset(void* pointer, struct TreeSetNode *header, enum dataType nodeType, enum dataType valueType, int numLetters){
 	//So here it is necessary to determine which rotate will be used
 	if(header->greater == NULL){
-		printf("Incorrect Offset Calculation [rightOffset]");
+		FLWG_LOG("Incorrect Offset Calculation [rightOffset]");
 		exit(0);  
 	}
 	//Finds which side is deeper. 
@@ -438,7 +439,7 @@ void reappoint(void* pointer, struct TreeSetNode* node, enum dataType nodeType, 
 		switch(isSmaller){ 
 			//Case -1: They are equal, program failed along the way, crash. 
 			case(-1):
-				printf("Values Are Equal [reappoint]");
+				FLWG_LOG("Values Are Equal [reappoint]");
 				exit(0);  
 				break; 
 		//Case 1: Set it to the smaller
@@ -700,7 +701,7 @@ int checkBalance(struct TreeSetNode *header){
 	int smaller = (header->smaller == NULL)?-1:header->smaller->depth; 
 	 
 	if(header == NULL){
-		printf("Header Null [checkBalance]"); 
+		FLWG_LOG("Header Null [checkBalance]"); 
 		exit(0); 
 	}
 	//if greater is larger than smaller, it is too long on the right
@@ -909,7 +910,7 @@ void preorder_TreeSet(struct TreeSetNode *header){
 
 	if(header!=NULL)
 	{
-		printf("%d(Depth: %d)\n", *(int*)header->data, header->depth);
+		FLWG_LOG("%d(Depth: %d)\n", *(int*)header->data, header->depth);
 		preorder_TreeSet(header->smaller);
 		preorder_TreeSet(header->greater);
 	}
@@ -920,7 +921,7 @@ void postorder_TreeSet(struct TreeSetNode *header){
 	if(header!=NULL)
 	{
 		preorder_TreeSet(header->smaller);
-		printf("%d(Depth: %d)\n", *(int*)header->data, header->depth);
+		FLWG_LOG("%d(Depth: %d)\n", *(int*)header->data, header->depth);
 		preorder_TreeSet(header->greater);
 	}
 	
@@ -1022,7 +1023,7 @@ void AVLTestQuick(int* a, int length, int numLetters){
 
 	struct DummyHeadNode *tree = ConvertArrayToTree(length, (void**)a, INTEGER, numLetters);
 	Print_TreeSet(tree->start, INTEGER); 
-	printf("\n"); 
+	FLWG_LOG("\n"); 
 	preorder_TreeSet(tree->start); 
 	Free_TreeSet(tree->start, INTEGER);
 	free(tree); 	
@@ -1069,7 +1070,7 @@ void permute(int *arr, int l, int r, int numLetters) {
 		i = 8; 
 		Remove_TreeSet((void*)p, t, t->start, DUMMY, INTEGER, numLetters); 
 		Print_TreeSet(t->start, INTEGER);
-		printf("\n");  
+		FLWG_LOG("\n");  
 	}
 	
 	else

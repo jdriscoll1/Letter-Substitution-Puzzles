@@ -1,6 +1,7 @@
 #include <stddef.h>
 
 #include "../includes/Queue.h"
+#include "../../shared/includes/Log.h"
 
 struct Queue* init_Queue(){
 	struct Queue* queue = malloc(sizeof(struct Queue)); 
@@ -70,12 +71,12 @@ struct QueueNode* dequeue(struct Queue* queue){
 
 void print_Queue(struct Queue* queue){
 	if(queue->isEmpty == 1){
-		printf("Queue is Empty");
+		FLWG_LOG("Queue is Empty");
 		return ;
 	}
 	struct QueueNode* q = queue->header; 
 	while(q != NULL){
-		printf("{ID: %d Distance: %d}\n", q->data->id, q->data->distance);
+		FLWG_LOG("{ID: %d Distance: %d}\n", q->data->id, q->data->distance);
 		q = q->next; 
 	}
 
@@ -88,7 +89,7 @@ int isEmpty_Queue(struct Queue* queue){
 
 struct arrayList* getPathToHeader_Queue(struct QueueNode* node){
 	if(node == NULL){
-		printf("Given Input is Null");
+		FLWG_LOG("Given Input is Null");
 	}
 	struct arrayList* pathToHeader = init_ArrayList(10, 10, NUM); 
 	_getPathToHeader_Queue(pathToHeader, node); 

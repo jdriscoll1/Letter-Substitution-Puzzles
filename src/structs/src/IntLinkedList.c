@@ -5,6 +5,7 @@
 #include "../includes/ArrayList.h"
 
 #include "../../flwp/includes/UserInput.h"
+#include "../../shared/includes/Log.h"
 
 struct intList* init_IntLL(){
 	struct intList* header = malloc(sizeof(struct intList)); 
@@ -85,7 +86,7 @@ int RemoveFirst_IntLL(struct intList* header){
 void Print_IntLL(struct intList* header){
 	header = header->next; 
 	while(header != NULL){
-		printf("%d ", header->data); 
+		FLWG_LOG("%d ", header->data); 
 		header = header->next; 
 	}
 	
@@ -94,7 +95,7 @@ void Print_IntLL(struct intList* header){
 void PrintStrings_IntLL(struct intList* header, struct wordDataArray *IntToWord_HashMap){
 	header = header->next; 
 	while(header != NULL){
-		printf("%s ", Convert_IntToWord(header->data, IntToWord_HashMap)); 
+		FLWG_LOG("%s ", Convert_IntToWord(header->data, IntToWord_HashMap)); 
 		header = header->next; 
 	}
 	
@@ -189,7 +190,7 @@ char* toString_IntLL(struct intList *header, enum output o, struct wordDataArray
 		header = header->next; 
 	}
 	if(aList->currPrecision == 0){
-		printf("Linked List Empty [toString_WordLL]"); 
+		FLWG_LOG("Linked List Empty [toString_WordLL]"); 
 		exit(0); 
 	}
 	

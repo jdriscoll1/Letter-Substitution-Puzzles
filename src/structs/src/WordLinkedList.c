@@ -13,6 +13,7 @@
 #include "../../flwp/includes/UserInput.h"
 
 #include "../../structs/includes/ArrayList.h"
+#include "../../shared/includes/Log.h"
 
 
 #define true 1 
@@ -71,7 +72,7 @@ void Remove_WordLL(char* word, struct word *header){
 	
 	
 	//if(isFound == false)
-		//printf("***Word Not Found: %s Remove Word Linked List***\n", word); 
+		//FLWG_LOG("***Word Not Found: %s Remove Word Linked List***\n", word); 
 	//Loop until it finds the loop, saving a previous location
 		//When it finds it, set the previous to the next one and free the current one
 	
@@ -79,7 +80,7 @@ void Remove_WordLL(char* word, struct word *header){
 /*Remove first index*/
 void RemoveFront_WordLL(struct word *header){
 	if(header->size == 0){
-		printf("Cannot Remove From Front"); 
+		FLWG_LOG("Cannot Remove From Front"); 
 	}
 	else{
 	
@@ -153,20 +154,20 @@ void Print_WordLL(struct word *header, enum output o){
 	char* link; 
 	if(o == LINES){
 		link = "\n"; 
-		printf("\n\nList:\n");
+		FLWG_LOG("\n\nList:\n");
 	}
 	else{
 		link = (o == LINKED)?"->":", ";
 	}
 	header = header->next;
 	while(header != NULL){
-		printf("%s", header->word); 
+		FLWG_LOG("%s", header->word); 
 		if(header->next != NULL){
-			printf("%s",link); 
+			FLWG_LOG("%s",link); 
 		}
 		header = header->next; 
 	}
-	printf("\n"); 
+	FLWG_LOG("\n"); 
 	
 }
 
@@ -198,7 +199,7 @@ char* toString_WordLL(struct word *header, enum output o, int numLetters){
 		header = header->next; 
 	}
 	if(aList->currPrecision == 0){
-		printf("Linked List Empty [toString_WordLL]"); 
+		FLWG_LOG("Linked List Empty [toString_WordLL]"); 
 		exit(0); 
 	}
 	

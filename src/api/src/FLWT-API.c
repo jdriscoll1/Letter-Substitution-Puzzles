@@ -22,12 +22,22 @@ struct GameComponentsFLWT* initFLWT(int numTurns, int minAdjacencies, int maxAdj
 
 }
 int isStartValidFLWT(struct GameComponentsFLWT* flwtComponents){
+	/* nothing to work with */
+	if(flwtComponents == NULL){
+		return 0;
+	}
+
 	return flwtComponents->startWordId != -1; 
 
 }
 
 // Choose a word
 char* getStartWordFLWT(struct GameComponentsFLWT* flwtComponents, struct DataStructures *data){
+	/* nothing to work with */
+	if(flwtComponents == NULL){
+		return NULL;
+	}
+
 	return Convert_IntToWord(flwtComponents->startWordId, data->I2W); 
 
 
@@ -35,6 +45,11 @@ char* getStartWordFLWT(struct GameComponentsFLWT* flwtComponents, struct DataStr
 
 // Allow the user to insert a word 
 int userEntersWordFLWT(char* userInput, struct GameComponentsFLWT* flwtComponents,  struct DataStructures* data){
+	/* nothing to work with */
+	if(flwtComponents == NULL){
+		return -1;
+	}
+
 	
 	int isValid = Check_Input(flwtComponents->startWordId,(const char*)userInput, data); 
 
@@ -57,10 +72,20 @@ int userEntersWordFLWT(char* userInput, struct GameComponentsFLWT* flwtComponent
 
 struct arrayList* getCurrentWordsFLWT(struct GameComponentsFLWT* flwtComponents)
 {
+	/* nothing to work with */
+	if(flwtComponents == NULL){
+		return NULL;
+	}
+
 	return flwtComponents->prevWords; 
 }
 
 int isGameWonFLWT(struct GameComponentsFLWT* flwtComponents){
+	/* nothing to work with */
+	if(flwtComponents == NULL){
+		return 0;
+	}
+
 	// Nothing stops the user carrying on once they have found enough, so this
 	// counts from the target upwards. Testing for equality meant a game came
 	// un-won the moment they found one more than they were asked for
@@ -68,17 +93,32 @@ int isGameWonFLWT(struct GameComponentsFLWT* flwtComponents){
 }
 
 void freeGameComponentsFLWT(struct GameComponentsFLWT* flwtComponents){
+	/* nothing to work with */
+	if(flwtComponents == NULL){
+		return;
+	}
+
 	free_ArrayList(flwtComponents->prevWords); 	
 	free(flwtComponents); 
 
 }
 
 char hint_letterToConsiderFLWT(struct GameComponentsFLWT* flwtComponents, struct DataStructures* data){
+	/* nothing to work with */
+	if(flwtComponents == NULL){
+		return '?';
+	}
+
 
 	return letterToConsiderHint(flwtComponents->startWordId, data); 
 }
 
 int hint_numOptionsFLWT(struct GameComponentsFLWT* flwtComponents, struct DataStructures* data){
+	/* nothing to work with */
+	if(flwtComponents == NULL){
+		return -1;
+	}
+
 
 	return numOptionsHint(flwtComponents->startWordId, data); 
 		

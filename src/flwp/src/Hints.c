@@ -9,6 +9,7 @@
 #include "../../algs/includes/BreadthFirstSearch.h"
 
 #include "../../structs/includes/IntLinkedList.h"
+#include "../../shared/includes/Log.h"
 
 #define SIZE 255
 #define NUM_LETTERS 26
@@ -190,7 +191,7 @@ char* hint3(uintptr_t gcLong, struct wordDataArray* IntToWord_HashMap, struct Wo
 			int digs = getDigitQuantity(gc->hc->hintPoints);
 			int size = digs + 27; 
 			start = safeStrcat(&output, (const char*)newPoints, SIZE, size, start);
-			//printf("output: %s",output);  	
+			//FLWG_LOG("output: %s",output);  	
 			free(newPoints); 
 		}
 		else{
@@ -285,7 +286,7 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(int start, int goal, 
 	 
 	//If the start word and goal word are equal, it returns 0
 	if(start == goal){
-		printf("EqualWords_[BreadthFirstSearch_Dest]\n"); 
+		FLWG_LOG("EqualWords_[BreadthFirstSearch_Dest]\n"); 
 		exit(0); 
 	}
 	
@@ -306,7 +307,7 @@ struct arrayList* BreadthFirstSearch_Dest_HintRestrictions(int start, int goal, 
 
 		
 		if(bc->prevConnection == NULL){			  
-			printf("\n%s cannot connect with %s\n", Convert_IntToWord(start, IntToWord_HashMap), Convert_IntToWord(goal, IntToWord_HashMap));
+			FLWG_LOG("\n%s cannot connect with %s\n", Convert_IntToWord(start, IntToWord_HashMap), Convert_IntToWord(goal, IntToWord_HashMap));
 			goalFound = false;
 		}
 		

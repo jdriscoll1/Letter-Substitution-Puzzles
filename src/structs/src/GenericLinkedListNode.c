@@ -9,6 +9,7 @@
 #include "../includes/ArrayList.h"
 
 #include "../../flwp/includes/Hints.h"
+#include "../../shared/includes/Log.h"
 
 //Add one
 void Add_GenericLinkedListNode(struct GenericLinkedListNode *header, const enum listType type){
@@ -35,7 +36,7 @@ void Print_GenericLinkedList(struct GenericLinkedListNode *header){
 		
 		header = header->next; 
 	}
-	printf("\n"); 
+	FLWG_LOG("\n"); 
 }
 
 
@@ -112,7 +113,7 @@ void AddToFront_GenericLinkedListNode(struct GenericLinkedListNode *header, cons
 struct GenericLinkedListNode *ReturnIndex_GenericLinkedListNode(const int index, struct GenericLinkedListNode *header){
 	int i;
 	if(index < 0){
-		printf("Index can't be less than 0 [Return Index]"); 
+		FLWG_LOG("Index can't be less than 0 [Return Index]"); 
 		exit(0);
 	} 
 	header = header->next; 
@@ -121,7 +122,7 @@ struct GenericLinkedListNode *ReturnIndex_GenericLinkedListNode(const int index,
 
 	}
 	if(header == NULL){
-		printf("Out of Bounds [Return Index]");
+		FLWG_LOG("Out of Bounds [Return Index]");
 		exit(0);  
 	}
 	return header; 

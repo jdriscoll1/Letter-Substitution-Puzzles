@@ -9,6 +9,7 @@
 #include "../includes/BreadthFirstSearch_FLWP.h"
 
 #include "../../structs/includes/GenericLinkedListNode.h"
+#include "../../shared/includes/Log.h"
 
 
 struct GameComponents *InitializeGameComponents(int minAdjacenciesToStart, int maxAdjacenciesToStart, int minDistance, int maxDistance, int minAdjacenciesToGoal, int maxAdjacenciesToGoal, struct DataStructures* data){
@@ -129,11 +130,11 @@ char* RemoveWord_Struct(struct GameComponents* gc, char* input, int freeInput, s
 	//First we have to remove the -
 	char* word = substr(input, 1, data->I2W->numLetters + 1, freeInput);
 	if(safeStrLen(word) > data->I2W->numLetters){
-		printf("Word is too long\n"); 
+		FLWG_LOG("Word is too long\n"); 
 		return word; 
 	}
 	else if(safeStrLen(word) < data->I2W->numLetters){
-		printf("Word is too short\n"); 
+		FLWG_LOG("Word is too short\n"); 
 		return word; 
 	}
 	int wordID = Convert_WordToInt(word, data); 
@@ -161,9 +162,15 @@ int inDictionary(int word){
 
 
 void Undo_Struct(struct GameComponents* gc, struct wordDataArray* IntToWord_HashMap){
+	/* The composed pathfinder hands its inner game straight through, and a
+	   board that could not be built has none. */
+	if(gc == NULL){
+		return;
+	}
+
 	
 	if(gc->numMoves == 0){
-		//printf("No move to return to.\n");
+		//FLWG_LOG("No move to return to.\n");
 	}
 	else{
 		//There has been an undo
@@ -180,9 +187,15 @@ void Undo_Struct(struct GameComponents* gc, struct wordDataArray* IntToWord_Hash
 	}
 }
 void Redo_Struct(struct GameComponents* gc, struct wordDataArray* IntToWord_HashMap){
+	/* The composed pathfinder hands its inner game straight through, and a
+	   board that could not be built has none. */
+	if(gc == NULL){
+		return;
+	}
+
 	/*if it is even possible for a user to redo a move*/
 	if(gc->undoCalls == 0){
-		printf("No move to be redone\n"); 
+		FLWG_LOG("No move to be redone\n"); 
 	}
 	else{
 		//Undoes an undo

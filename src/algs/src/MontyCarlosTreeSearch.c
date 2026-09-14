@@ -16,6 +16,7 @@ Description: Applies MCTS to the FLWG
 #include "../includes/MinimaxTests.h"
 
 #include "../../structs/includes/IntLinkedList.h"
+#include "../../shared/includes/Log.h"
 
 
 
@@ -82,13 +83,13 @@ int montyCarlosTreeSearch_Multiplayer(int wordID, int numPlayers, struct WordSet
 
 	/*Run the simulation*/
 	while(s < numRuns) {
-		//printf("Run: %d\n", s);
+		//FLWG_LOG("Run: %d\n", s);
 		/*1) Find an unexplored node starting at the root*/
 		struct mctsStruct* unexploredNode = traverse(root, s, numPlayers, pool, wordSet, IntToWord_HashMap);
-		//printf("Unexplored Node: %d\n", unexploredNode->wordID);
+		//FLWG_LOG("Unexplored Node: %d\n", unexploredNode->wordID);
 		/*2) Go down a whole bunch of nodes until there is a word that has no connections, or it reaches max depth*/
 		int stuckPlayer = rollout(unexploredNode->wordID, depth, unexploredNode->player, numPlayers, wordSet, IntToWord_HashMap);
-		//printf("Stranded Player: %d", stuckPlayer);
+		//FLWG_LOG("Stranded Player: %d", stuckPlayer);
 		
 		/*3) Send the result up starting at the unexplored node*/
 		backpropogate(unexploredNode, stuckPlayer, wordSet);
@@ -177,7 +178,7 @@ struct mctsStruct* traverse(struct mctsStruct *node, int simulations, int numPla
 			//The current child being considered
 			struct mctsStruct* currChild =  parent->children[i]; 
 
-			//printf("Curr Child: %s\n", Convert_IntToWord(currChild->wordID, IntToWord_HashMap));
+			//FLWG_LOG("Curr Child: %s\n", Convert_IntToWord(currChild->wordID, IntToWord_HashMap));
 			
 			int childIsExplored = currChild->visits > 0; 
 			
@@ -185,7 +186,7 @@ struct mctsStruct* traverse(struct mctsStruct *node, int simulations, int numPla
 			
 			//if the current child has not been explored yet 
 			if(!childIsExplored){
-				//printf("Child Not Explored\n");
+				//FLWG_LOG("Child Not Explored\n");
 				//Visits the current child, and fills it out 
 				visit_mctsStruct(currChild->wordID, currChild, numPlayers, pool, wordSet, IntToWord_HashMap);
 				
@@ -337,7 +338,7 @@ int rollout(int id, int depth, int playerToMove, int numPlayers, struct WordSet*
 	}
 
 	id = chooseRandom(id, IntToWord_HashMap, wordSet);
-	//printf("ID: %d, To Move: %d\n", id, playerToMove);
+	//FLWG_LOG("ID: %d, To Move: %d\n", id, playerToMove);
 	//Whoever is on turn has nowhere left to go, so they are the one who loses
 	if(id == -1){
 		return playerToMove;
@@ -384,28 +385,28 @@ double calculate_mctsScore(struct mctsStruct* m, int simulations){
 }
 
 void print_mctsStruct(struct mctsStruct* m){
-	printf("<%d> {\n", m->wordID);
-	printf("\tplayer: %d\n", m->player);
-	printf("\tvisits: %d\n", m->visits);
-	printf("\tnumChildren: %d\n", m->numChildren);
+	FLWG_LOG("<%d> {\n", m->wordID);
+	FLWG_LOG("\tplayer: %d\n", m->player);
+	FLWG_LOG("\tvisits: %d\n", m->visits);
+	FLWG_LOG("\tnumChildren: %d\n", m->numChildren);
 	if(m->numChildren > 0){
 		int c; 
-		printf("\tchildren: ");
+		FLWG_LOG("\tchildren: ");
 		for(c = 0; c < m->numChildren; c++){
-			printf("%d ", m->children[c]->wordID); 
+			FLWG_LOG("%d ", m->children[c]->wordID); 
 			
 		}
-		printf("\n");
+		FLWG_LOG("\n");
 		
 	}
-	printf("\tscore: %f\n", m->score);
+	FLWG_LOG("\tscore: %f\n", m->score);
 	if(m->parent != NULL){
-		printf("\tparent: %d\n", m->parent->wordID); 	
+		FLWG_LOG("\tparent: %d\n", m->parent->wordID); 	
 	}
 	else{
-		printf("\tparent: NULL\n");
+		FLWG_LOG("\tparent: NULL\n");
 	}
-	printf("}\n\n");
+	FLWG_LOG("}\n\n");
 	
 	
 }
@@ -475,7 +476,7 @@ int getOutput(struct mctsStruct* root){
 	int i;  
 	for(i = 0; i < n; i++){
 		struct mctsStruct* currChild = root->children[i]; 
-		//printf("%d) ID: %d, Visits: %d, Score: %d\n", i, currChild->wordID, currChild->visits, currChild->numWins);
+		//FLWG_LOG("%d) ID: %d, Visits: %d, Score: %d\n", i, currChild->wordID, currChild->visits, currChild->numWins);
 		if(currChild->numWins > maxScore){
 			maxScore = currChild->numWins; 
 			maxNode = currChild->wordID; 

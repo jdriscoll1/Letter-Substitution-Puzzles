@@ -13,6 +13,8 @@ after every load, because initDataStructures reseeds from the clock itself.
 
 #include "test_framework.h"
 
+void suite_api_surface(void);
+
 int main(void){
 	/*Fixed seed: the game APIs pick start words with rand()*/
 	srand(TEST_SEED);
@@ -28,6 +30,7 @@ int main(void){
 	suite_modes();
 	suite_debug();
 	suite_regressions();
+	suite_api_surface();
 
 	return test_summary();
 }

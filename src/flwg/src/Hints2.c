@@ -9,8 +9,13 @@ int directAdjacencyHint(int wordId, struct DataStructures* data){
 		return -1; 
 	}
 	// 2) Look at all of the valid words
-	int n = data->I2W->array[wordId]->numConnections;
-	struct intList* conn = getConnections(wordId, data->I2W);  
+	struct intList* conn = getConnections(wordId, data->I2W);
+	/* A game that never got a start word carries an id of -1, and the
+	   accessor answers that with nothing rather than reading array[-1]. */
+	if(conn == NULL){
+		return -1;
+	}
+	int n = getNumAdjacencies(wordId, data);
 	struct arrayList* alist = init_ArrayList(n, 5, NUM); 
 	while(conn->next != NULL){
 		conn = conn->next; 
@@ -67,6 +72,9 @@ char letterToConsiderHint(int id, struct DataStructures* data){
 	}
 
 	struct intList* c = getConnections(id, data->I2W);
+	if(c == NULL){
+		return hint;
+	}
 	c = c->next;
 	// Loop through the num adjacenceis
 	while(c != NULL){
@@ -102,8 +110,11 @@ char letterToConsiderHint(int id, struct DataStructures* data){
 int numOptionsHint(int id, struct DataStructures* data){
 	// Take the start word ID
 	int numOptions = 0;
-	struct intList* c = getConnections(id, data->I2W); 
-	c = c->next; 
+	struct intList* c = getConnections(id, data->I2W);
+	if(c == NULL){
+		return 0;
+	}
+	c = c->next;
 	// Loop through the num adjacenceis
 	while(c != NULL){
 		int c_id = c->data; 
