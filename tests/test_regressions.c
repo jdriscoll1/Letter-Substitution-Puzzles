@@ -17,6 +17,7 @@ two memory-safety bugs are gone.
 #include "../src/api/includes/FLWC-API.h"
 #include "../src/flwc/includes/Challenges.h"
 #include "../src/flwg/includes/FLWGGame.h"
+#include "../src/flwg/includes/Hints2.h"
 #include "../src/flwp/includes/GameFunctions.h"
 #include "../src/flwp/includes/UserInput.h"
 #include "../src/structs/includes/HashMap.h"
@@ -188,6 +189,92 @@ static void test_remove_word_rewinds_the_path(void){
 	freeDataStructures(data);
 }
 
+/*The letter hint took the first unused neighbour and named whatever letter it
+substituted in, without asking whether the word already had one. About one
+three-letter word in twenty was answered with a letter sitting in front of the
+player -- "try a P" on PIG*/
+static void test_letter_hint_prefers_a_letter_the_word_does_not_have(void){
+	struct DataStructures* data = open_dictionary("docs/3.txt", 3);
+	int i;
+	int checked = 0;
+
+	for(i = 0; i < data->I2W->numWords; i++){
+		char* word = Convert_IntToWord(i, data->I2W);
+		struct intList* c;
+		int aFreshLetterExists = 0;
+		char hinted;
+
+		/*Only words that have a better answer available can demand one*/
+		for(c = getConnections(i, data->I2W)->next; c != NULL; c = c->next){
+			char* neighbour = Convert_IntToWord(c->data, data->I2W);
+			int k;
+			for(k = 0; k < 3; k++){
+				if(neighbour[k] != word[k]){
+					if(strchr(word, neighbour[k]) == NULL){
+						aFreshLetterExists = 1;
+					}
+					break;
+				}
+			}
+		}
+		if(!aFreshLetterExists){
+			continue;
+		}
+
+		hinted = letterToConsiderHint(i, data);
+		checked++;
+		CHECK(hinted != '?');
+		CHECK(strchr(word, hinted) == NULL);
+	}
+
+	/*A sweep that looked at nothing would pass for the wrong reason*/
+	CHECK(checked > 400);
+
+	freeDataStructures(data);
+}
+
+/*With every neighbour spent the hint kept a word id of -1, and
+Convert_IntToWord hands back NULL for a negative id -- which the letter
+comparison then read through, one character at a time*/
+static void test_letter_hint_answers_when_every_neighbour_is_spent(void){
+	struct DataStructures* data = open_dictionary("docs/3.txt", 3);
+	int start = Convert_WordToInt("bag", data);
+	int i;
+
+	for(i = 0; i < data->I2W->numWords; i++){
+		markUsed_WordSet(i, data->wordSet);
+	}
+	CHECK_INT(letterToConsiderHint(start, data), '?');
+
+	/*and with the board cleared it has something to say again*/
+	reset_WordSet(data->wordSet);
+	markUsed_WordSet(start, data->wordSet);
+	CHECK(letterToConsiderHint(start, data) != '?');
+
+	freeDataStructures(data);
+}
+
+/*The same null, reached the other way: a word the dictionary gives no
+neighbours at all*/
+static void test_letter_hint_answers_for_a_word_with_no_neighbours(void){
+	struct DataStructures* data = open_dictionary("docs/3.txt", 3);
+	int i;
+	int lonely = -1;
+
+	for(i = 0; i < data->I2W->numWords && lonely == -1; i++){
+		if(data->I2W->array[i]->numConnections == 0){
+			lonely = i;
+		}
+	}
+
+	CHECK(lonely != -1);
+	if(lonely != -1){
+		CHECK_INT(letterToConsiderHint(lonely, data), '?');
+	}
+
+	freeDataStructures(data);
+}
+
 void suite_regressions(void){
 	printf("\n-- regressions --\n");
 	RUN_TEST(test_init_leaves_the_caller_owning_the_fd);
@@ -197,4 +284,7 @@ void suite_regressions(void){
 	RUN_TEST(test_botply_gives_up_when_every_word_is_used);
 	RUN_TEST(test_duplicate_keys_do_not_break_the_map);
 	RUN_TEST(test_remove_word_rewinds_the_path);
+	RUN_TEST(test_letter_hint_prefers_a_letter_the_word_does_not_have);
+	RUN_TEST(test_letter_hint_answers_when_every_neighbour_is_spent);
+	RUN_TEST(test_letter_hint_answers_for_a_word_with_no_neighbours);
 }
