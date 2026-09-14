@@ -19,6 +19,15 @@ Purpose: A library to encapsulate & organize the code into an API
 #include "../../flwc/includes/FLWC.h"
 #include "../../flwg/includes/Hints2.h"
 
+/* Every random choice the engine makes runs off rand(), which initDataStructures
+seeds from the clock once at startup. Seeding it again by hand makes everything
+after it repeatable: which word a game starts on, which word the bot answers
+with, which letter a hint offers. That is what a daily puzzle needs - not a
+board of the same shape for everyone, but the same board. */
+void seedGameRandom(unsigned int seed){
+	srand(seed);
+}
+
 // Creating and destroying data structures
 struct DataStructures* initDataStructures(int fd, int numLetters){
 

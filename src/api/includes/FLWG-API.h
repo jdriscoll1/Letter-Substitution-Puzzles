@@ -42,7 +42,12 @@ struct GameComponentsFLWGP{
 }; 
 
 // Shared behavior
-struct DataStructures* initDataStructures(int fd, int numLetters); 
+struct DataStructures* initDataStructures(int fd, int numLetters);
+/*Fix the sequence of random choices, so the same seed deals the same board.
+initDataStructures seeds from the clock once at startup; this overrides that
+from the point it is called, which is what lets a puzzle be the same puzzle for
+everybody on a given day - the start word, the bot's replies and all.*/
+void seedGameRandom(unsigned int seed); 
 
 // flwg behavior
 void freeDataStructures(struct DataStructures* dataStructures); 
