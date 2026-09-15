@@ -130,18 +130,27 @@ void test_every_call_survives_a_game_that_is_not_there(void){
 	freeDataStructures(data);
 }
 
-/* --------------------------------------------------- a board nobody can deal */
+/* ------------------------------------------ a board nobody asked for exactly */
 
-/* The case the app actually met. Each of these asks for a board on bounds no
-   word satisfies, and then does to it exactly what the screen does: asks it
-   everything, before anything has established that there is nothing there. */
+/* The case the app actually met, and what the engine now does about it.
+ *
+ * Each of these asks for a board on bounds no word in the dictionary satisfies.
+ * That used to come back undealt - wordId -1, isStartValid 0 - and the app threw
+ * it away and asked again from the same table, which is a loop rather than a
+ * retry. The bounds are preferences now, so the search gives them up a little
+ * at a time and deals the nearest board that does exist.
+ *
+ * So each of these asserts a real board came back, and then does to it exactly
+ * what the screen does: asks it everything, straight away. Both halves matter.
+ * A board that is dealt but answers nothing is no better than one that was
+ * never dealt. */
 
-void test_the_pathfinder_survives_a_board_that_cannot_be_dealt(void){
+void test_the_pathfinder_deals_a_board_on_bounds_nothing_satisfies(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
 	struct GameComponents* game = initiateFLWP(IMPOSSIBLE_MIN, IMPOSSIBLE_MAX,
 		1, 2, IMPOSSIBLE_MIN, IMPOSSIBLE_MAX, data);
 
-	CHECK_INT(isStartValid_FLWP(game), 0);
+	CHECK_INT(isStartValid_FLWP(game), 1);
 	/* Every one of these is asked by the screen as it opens */
 	getStartWordFLWP(game, data);
 	getGoalWordFLWP(game, data);
@@ -158,11 +167,11 @@ void test_the_pathfinder_survives_a_board_that_cannot_be_dealt(void){
 	freeDataStructures(data);
 }
 
-void test_the_adversarial_game_survives_a_board_that_cannot_be_dealt(void){
+void test_the_adversarial_game_deals_a_board_on_bounds_nothing_satisfies(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
 	struct GameData* game = initFLWG(data, IMPOSSIBLE_MIN, IMPOSSIBLE_MAX);
 
-	CHECK_INT(isStartValidFLWG(game), 0);
+	CHECK_INT(isStartValidFLWG(game), 1);
 	getCurrWord(game, data);
 	hintLetterToConsiderFLWG(game, data);
 	hintNumOptionsFLWG(game, data);
@@ -172,11 +181,11 @@ void test_the_adversarial_game_survives_a_board_that_cannot_be_dealt(void){
 	freeDataStructures(data);
 }
 
-void test_the_turns_game_survives_a_board_that_cannot_be_dealt(void){
+void test_the_turns_game_deals_a_board_on_bounds_nothing_satisfies(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
 	struct GameComponentsFLWT* game = initFLWT(3, IMPOSSIBLE_MIN, IMPOSSIBLE_MAX, data);
 
-	CHECK_INT(isStartValidFLWT(game), 0);
+	CHECK_INT(isStartValidFLWT(game), 1);
 	getStartWordFLWT(game, data);
 	getCurrentWordsFLWT(game);
 	isGameWonFLWT(game);
@@ -187,12 +196,12 @@ void test_the_turns_game_survives_a_board_that_cannot_be_dealt(void){
 	freeDataStructures(data);
 }
 
-void test_the_constraint_game_survives_a_board_that_cannot_be_dealt(void){
+void test_the_constraint_game_deals_a_board_on_bounds_nothing_satisfies(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
 	struct GameComponentsFLWC* game = initFLWC(IMPOSSIBLE_MIN, IMPOSSIBLE_MAX,
 		GOALS, AVOIDS, 1, 0, 2, 0, IMPOSSIBLE_MIN, IMPOSSIBLE_MAX, 3, data);
 
-	CHECK_INT(isStartValidFLWC(game), 0);
+	CHECK_INT(isStartValidFLWC(game), 1);
 	getStartWordFLWC(game, data);
 	isGameWonFLWC(game);
 	hintGoalWordFLWC(game, data);
@@ -207,12 +216,12 @@ void test_the_constraint_game_survives_a_board_that_cannot_be_dealt(void){
 	freeDataStructures(data);
 }
 
-void test_the_composed_pathfinder_survives_a_board_that_cannot_be_dealt(void){
+void test_the_composed_pathfinder_deals_a_board_on_bounds_nothing_satisfies(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
 	struct GameComponentsFLWGP* game = initiateFLWGP(IMPOSSIBLE_MIN, IMPOSSIBLE_MAX,
 		GOALS, AVOIDS, 1, 0, 2, 0, IMPOSSIBLE_MIN, IMPOSSIBLE_MAX, data);
 
-	CHECK_INT(isStartValid_FLWGP(game), 0);
+	CHECK_INT(isStartValid_FLWGP(game), 1);
 	getFLWPComponentsFLWGP(game);
 	getFLWCComponentsFLWGP(game);
 	hintGetMinAdjacenciesFLWGP(game);
@@ -222,6 +231,148 @@ void test_the_composed_pathfinder_survives_a_board_that_cannot_be_dealt(void){
 	redoMoveFLWGP(game, data);
 
 	freeGameComponentsFLWGP(game, data);
+	freeDataStructures(data);
+}
+
+/* ---------------------------------------------- whatever it is asked for --- */
+
+/* The claim, swept rather than sampled.
+ *
+ * The app draws a board's numbers from tables and hands them over without
+ * anybody having checked the dictionary has a word to match. Whether it does
+ * is not something the app can know - only the dictionary knows which boards
+ * exist - so the engine's job is to answer with a board whatever it is asked
+ * for, and the point of this is that there is no request that gets a hole back.
+ *
+ * Every combination below describes a board that does not exist: adjacencies
+ * past the densest word in the dictionary, distances past its diameter, bands
+ * inverted so that no number at all falls inside them. Each one still has to
+ * come back playable.
+ */
+
+static const int NOWHERE_NEAR[][2] = {
+	{ 900, 999 },   /* far more neighbours than any word has */
+	{ 25, 40 },     /* just past the densest word in a four letter dictionary */
+	{ 30, 10 },     /* inverted, so nothing is inside it */
+	{ -5, -1 },     /* below the floor */
+	{ 24, 24 },     /* a band of one, at the very top */
+};
+#define NOWHERE_NEAR_COUNT ((int)(sizeof(NOWHERE_NEAR) / sizeof(NOWHERE_NEAR[0])))
+
+static void test_the_adversarial_game_always_deals_something(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+
+	for(int i = 0; i < NOWHERE_NEAR_COUNT; i++){
+		struct GameData* game = initFLWG(data, NOWHERE_NEAR[i][0], NOWHERE_NEAR[i][1]);
+		CHECK_INT(isStartValidFLWG(game), 1);
+		CHECK(getCurrWord(game, data) != NULL);
+		freeGameComponentsFLWG(game);
+	}
+
+	freeDataStructures(data);
+}
+
+static void test_the_turns_game_always_deals_something(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+
+	for(int i = 0; i < NOWHERE_NEAR_COUNT; i++){
+		struct GameComponentsFLWT* game = initFLWT(3, NOWHERE_NEAR[i][0], NOWHERE_NEAR[i][1], data);
+		CHECK_INT(isStartValidFLWT(game), 1);
+		CHECK(getStartWordFLWT(game, data) != NULL);
+		freeGameComponentsFLWT(game);
+	}
+
+	freeDataStructures(data);
+}
+
+static void test_the_pathfinder_always_deals_something(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+
+	for(int i = 0; i < NOWHERE_NEAR_COUNT; i++){
+		/* The route length is asked for out of reach as well, so both the word
+		   and the distance between the two words have to be given up. */
+		struct GameComponents* game = initiateFLWP(NOWHERE_NEAR[i][0], NOWHERE_NEAR[i][1],
+			40, 60, NOWHERE_NEAR[i][0], NOWHERE_NEAR[i][1], data);
+
+		CHECK_INT(isStartValid_FLWP(game), 1);
+		CHECK(getStartWordFLWP(game, data) != NULL);
+		CHECK(getGoalWordFLWP(game, data) != NULL);
+		/* And the two are different words with a route between them, which is
+		   the one thing a pathfinder cannot do without. Read through the same
+		   calls the screen uses, since the components are opaque here. */
+		CHECK(strcmp(getStartWordFLWP(game, data), getGoalWordFLWP(game, data)) != 0);
+		CHECK(distanceToGoalFLWP(game, data) > 0);
+
+		freeGameComponentsFLWP(game, data);
+	}
+
+	freeDataStructures(data);
+}
+
+static void test_the_constraint_game_always_deals_something(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+
+	for(int i = 0; i < NOWHERE_NEAR_COUNT; i++){
+		struct GameComponentsFLWC* game = initFLWC(NOWHERE_NEAR[i][0], NOWHERE_NEAR[i][1],
+			GOALS, AVOIDS, 40, 0, 60, 0, NOWHERE_NEAR[i][0], NOWHERE_NEAR[i][1], 3, data);
+
+		CHECK_INT(isStartValidFLWC(game), 1);
+		CHECK(getStartWordFLWC(game, data) != NULL);
+		/* Not already over: what is never given up is that the board opens on a
+		   word which is neither a goal nor forbidden. */
+		CHECK_INT(isGameWonFLWC(game), -1);
+		CHECK_INT(checkIfUsed_WordSet(game->wordId, game->goalWords), 0);
+		CHECK_INT(checkIfUsed_WordSet(game->wordId, game->avoidWords), 0);
+
+		freeGameComponentsFLWC(game);
+	}
+
+	freeDataStructures(data);
+}
+
+/* Keep away, which is the mode that went wrong: no goal words at all, and a
+   rule that forbids a share of the board. */
+static void test_the_keep_away_game_always_deals_something(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	static char* forbidden[] = { "care", "ware", "bare", "hare", "mare", NULL };
+	static char* nothing[] = { NULL };
+
+	for(int i = 0; i < NOWHERE_NEAR_COUNT; i++){
+		struct GameComponentsFLWC* game = initFLWC(NOWHERE_NEAR[i][0], NOWHERE_NEAR[i][1],
+			nothing, forbidden, 0, 1, 0, 6, NOWHERE_NEAR[i][0], NOWHERE_NEAR[i][1], 3, data);
+
+		CHECK_INT(isStartValidFLWC(game), 1);
+		CHECK(getStartWordFLWC(game, data) != NULL);
+		CHECK_INT(checkIfUsed_WordSet(game->wordId, game->avoidWords), 0);
+
+		freeGameComponentsFLWC(game);
+	}
+
+	freeDataStructures(data);
+}
+
+/* And that giving up is the last resort rather than the first: a board that can
+   be dealt exactly as described still is. Otherwise the tables the app tunes
+   its difficulty with would stop meaning anything. */
+static void test_a_board_that_exists_is_dealt_as_asked(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+
+	for(int attempt = 0; attempt < 25; attempt++){
+		struct GameData* game = initFLWG(data, 6, 9);
+		CHECK_INT(isStartValidFLWG(game), 1);
+		CHECK(getNumAdjacencies(game->currWordId, data) >= 6);
+		CHECK(getNumAdjacencies(game->currWordId, data) <= 9);
+		freeGameComponentsFLWG(game);
+	}
+
+	for(int attempt = 0; attempt < 25; attempt++){
+		struct GameComponentsFLWT* game = initFLWT(3, 10, 14, data);
+		CHECK_INT(isStartValidFLWT(game), 1);
+		CHECK(getNumAdjacencies(game->startWordId, data) >= 10);
+		CHECK(getNumAdjacencies(game->startWordId, data) <= 14);
+		freeGameComponentsFLWT(game);
+	}
+
 	freeDataStructures(data);
 }
 
@@ -307,11 +458,17 @@ void test_a_whole_adversarial_game_start_to_finish(void){
 void suite_api_surface(void){
 	printf("\n-- every entry point, holding nothing --\n");
 	RUN_TEST(test_every_call_survives_a_game_that_is_not_there);
-	RUN_TEST(test_the_pathfinder_survives_a_board_that_cannot_be_dealt);
-	RUN_TEST(test_the_adversarial_game_survives_a_board_that_cannot_be_dealt);
-	RUN_TEST(test_the_turns_game_survives_a_board_that_cannot_be_dealt);
-	RUN_TEST(test_the_constraint_game_survives_a_board_that_cannot_be_dealt);
-	RUN_TEST(test_the_composed_pathfinder_survives_a_board_that_cannot_be_dealt);
+	RUN_TEST(test_the_pathfinder_deals_a_board_on_bounds_nothing_satisfies);
+	RUN_TEST(test_the_adversarial_game_deals_a_board_on_bounds_nothing_satisfies);
+	RUN_TEST(test_the_turns_game_deals_a_board_on_bounds_nothing_satisfies);
+	RUN_TEST(test_the_constraint_game_deals_a_board_on_bounds_nothing_satisfies);
+	RUN_TEST(test_the_composed_pathfinder_deals_a_board_on_bounds_nothing_satisfies);
+	RUN_TEST(test_the_adversarial_game_always_deals_something);
+	RUN_TEST(test_the_turns_game_always_deals_something);
+	RUN_TEST(test_the_pathfinder_always_deals_something);
+	RUN_TEST(test_the_constraint_game_always_deals_something);
+	RUN_TEST(test_the_keep_away_game_always_deals_something);
+	RUN_TEST(test_a_board_that_exists_is_dealt_as_asked);
 	RUN_TEST(test_a_whole_pathfinder_game_start_to_finish);
 	RUN_TEST(test_a_whole_turns_game_start_to_finish);
 	RUN_TEST(test_a_whole_adversarial_game_start_to_finish);

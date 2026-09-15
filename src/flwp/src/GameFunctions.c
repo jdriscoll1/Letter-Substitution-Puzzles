@@ -16,6 +16,7 @@
 
 #include <stdint.h>
 #include "../../shared/includes/Log.h"
+#include "../../shared/includes/Relax.h"
 
 int GetMinConnections(enum Difficulty difficulty){
 	int easyMin = 2; 
@@ -36,20 +37,42 @@ int GetMinConnections(enum Difficulty difficulty){
 	
 }
 
+/* A word to open on, with about this many neighbours.
+ *
+ * "About", because the count is a preference. A band the dictionary cannot
+ * fill used to come back as -1 and the whole board was thrown away and asked
+ * for again from the same table, which is a loop rather than a retry. The
+ * band is widened instead until the dictionary has something in it, and the
+ * last round takes any word at all - so this answers with a word whenever
+ * there is one to answer with, which is whenever the dictionary is not empty.
+ */
 int getWordWithNumberOfConnections(int minConnections, int maxConnections, struct DataStructures* data){
-	int wordsWithinRange[data->I2W->numWords]; 
-	int numWordsWithinRange = 0; 
-	for(int i  = 0; i < data->I2W->numWords; i++){
-		int adj = getNumAdjacencies(i, data); 
-		if(adj >= minConnections && adj <= maxConnections){
-			wordsWithinRange[numWordsWithinRange++]	= i; 
+	struct Band asked = { minConnections, maxConnections };
+
+	for(int round = 0; round < RELAXATION_ROUNDS; round++){
+		struct Band band = loosen(asked, round);
+
+		int wordsWithinRange[data->I2W->numWords];
+		int numWordsWithinRange = 0;
+		for(int i  = 0; i < data->I2W->numWords; i++){
+			int adj = getNumAdjacencies(i, data);
+			if(adj >= band.min && adj <= band.max){
+				wordsWithinRange[numWordsWithinRange++]	= i;
+			}
+		}
+
+		if(numWordsWithinRange > 0){
+			if(round > 0){
+				FLWG_LOG("No word had %d-%d neighbours; opened on one with %d-%d instead\n",
+					minConnections, maxConnections, band.min, band.max);
+			}
+			return wordsWithinRange[rand() % numWordsWithinRange];
 		}
 	}
-	if(numWordsWithinRange == 0){
-		return -1; 
-	}
-	return wordsWithinRange[rand() % numWordsWithinRange]; 
 
+	/* Only reachable from an empty dictionary: the last round takes anything. */
+	FLWG_LOG("There is no word to open on at all!\n");
+	return -1;
 }
 
 void Shuffle_IntArray(int* values, int count){
@@ -62,50 +85,52 @@ void Shuffle_IntArray(int* values, int count){
 	}
 }
 
+/* Where an adversarial game opens, with about this many ways out.
+ *
+ * About, for the same reason as the turns game: the count is what makes the
+ * board easy or hard, not what makes it a board. A band nothing in the
+ * dictionary fills is widened until something does, rather than handed back as
+ * -1 for the app to throw the board away and ask again from the same table.
+ */
 int ChooseStart_Range(struct wordDataArray* IntToWord_HashMap, int minAdjacencies, int maxAdjacencies){
-   
-	struct arrayList *aList = init_ArrayList(10, 5, NUM);
+	struct Band asked = { minAdjacencies, maxAdjacencies };
 
-	// Create a list of words that have n-adjacencies
-	for(int i = 0; i < IntToWord_HashMap->numWords; i++){
+	for(int round = 0; round < RELAXATION_ROUNDS; round++){
+		struct Band band = loosen(asked, round);
 
-		// If the word is in the range of valid adjacencies
-		if( IntToWord_HashMap->array[i]->numConnections >= minAdjacencies && IntToWord_HashMap->array[i]->numConnections <= maxAdjacencies ){
-		    add_ArrayList((void*)(&i), aList, NUM);
-
+		struct arrayList *aList = init_ArrayList(10, 5, NUM);
+		for(int i = 0; i < IntToWord_HashMap->numWords; i++){
+			int adj = IntToWord_HashMap->array[i]->numConnections;
+			if(adj >= band.min && adj <= band.max){
+				add_ArrayList((void*)(&i), aList, NUM);
+			}
 		}
-	}
-	// If the length of the list is 0 -- return err (-1)
-	if(aList->currPrecision == 0){
+
+		if(aList->currPrecision > 0){
+			int id = ((int*)(aList)->list)[rand() % aList->currPrecision];
+			free_ArrayList(aList);
+			if(round > 0){
+				FLWG_LOG("No word had %d-%d neighbours; opened on one with %d-%d instead\n",
+					minAdjacencies, maxAdjacencies, band.min, band.max);
+			}
+			return id;
+		}
+
 		free_ArrayList(aList);
-		return -1; 
 	}
-	int id = ((int*)(aList)->list)[rand() % aList->currPrecision];
-	free_ArrayList(aList);
-	return id;
+
+	/* Only reachable from an empty dictionary: the last round takes anything. */
+	FLWG_LOG("There is no word to open on at all!\n");
+	return -1;
 }
 
 /*Randomly chooses a word based on an index*/ 
+/* A word with exactly this many neighbours, or as near as the dictionary has.
+ *
+ * A band of one, which is the narrowest request there is and the likeliest to
+ * match nothing - so it is asked for as a band and widened the same way. */
 int ChooseStart(struct wordDataArray* IntToWord_HashMap, int numAdjacencies){
-   
-	struct arrayList *aList = init_ArrayList(10, 5, NUM);
-
-	// Create a list of words that have n-adjacencies
-	for(int i = 0; i < IntToWord_HashMap->numWords; i++){
-
-		if(IntToWord_HashMap->array[i]->numConnections == numAdjacencies){
-		    add_ArrayList((void*)(&i), aList, NUM);
-
-		}
-	}
-	// If the length of the list is 0 -- return err (-1)
-	if(aList->currPrecision == 0){
-		free_ArrayList(aList);
-		return -1; 
-	}
-	int id = ((int*)(aList)->list)[rand() % aList->currPrecision];
-	free_ArrayList(aList);
-	return id;
+	return ChooseStart_Range(IntToWord_HashMap, numAdjacencies, numAdjacencies);
 }
 
 

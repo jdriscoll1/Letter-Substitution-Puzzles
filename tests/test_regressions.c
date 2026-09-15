@@ -104,24 +104,43 @@ static void test_flwc_hints_still_answer_a_reachable_goal(void){
 	freeDataStructures(data);
 }
 
-/*Both start pickers leaked their array list on this path*/
-static void test_choose_start_reports_no_match(void){
+/*Both start pickers leaked their array list on this path. They no longer take
+it: an adjacency count is a preference, so a count nothing has is widened until
+something does rather than handed back as -1*/
+static void test_choose_start_widens_rather_than_reporting_no_match(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
 
-	/*No word has anywhere near this many adjacencies*/
-	CHECK_INT(ChooseStart_Range(data->I2W, 999, 1000), -1);
-	CHECK_INT(ChooseStart(data->I2W, 999), -1);
+	/*No word has anywhere near this many adjacencies, so both give the count up
+	and answer with a word that exists*/
+	int stretched = ChooseStart_Range(data->I2W, 999, 1000);
+	CHECK(stretched != -1);
+	CHECK(getNumAdjacencies(stretched, data) > 0);
 
-	/*A range that does match still returns a word inside it*/
-	int chosen = ChooseStart_Range(data->I2W, 4, 4);
-	CHECK(chosen != -1);
-	if(chosen != -1){
-		CHECK_INT(getNumAdjacencies(chosen, data), 4);
+	int exact = ChooseStart(data->I2W, 999);
+	CHECK(exact != -1);
+	CHECK(getNumAdjacencies(exact, data) > 0);
+
+	/*A range that does match is honoured exactly - widening is the last resort,
+	not the first*/
+	for(int attempt = 0; attempt < 20; attempt++){
+		int chosen = ChooseStart_Range(data->I2W, 4, 4);
+		CHECK(chosen != -1);
+		if(chosen != -1){
+			CHECK_INT(getNumAdjacencies(chosen, data), 4);
+		}
+	}
+
+	/*And an exact count that exists comes back exactly*/
+	for(int attempt = 0; attempt < 20; attempt++){
+		int chosen = ChooseStart(data->I2W, 6);
+		CHECK(chosen != -1);
+		if(chosen != -1){
+			CHECK_INT(getNumAdjacencies(chosen, data), 6);
+		}
 	}
 
 	freeDataStructures(data);
 }
-
 /*botPly returned -1 before freeing its three minimax nodes*/
 static void test_botply_gives_up_when_every_word_is_used(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
@@ -296,7 +315,7 @@ void suite_regressions(void){
 	RUN_TEST(test_init_leaves_the_caller_owning_the_fd);
 	RUN_TEST(test_flwc_hints_handle_an_unreachable_goal);
 	RUN_TEST(test_flwc_hints_still_answer_a_reachable_goal);
-	RUN_TEST(test_choose_start_reports_no_match);
+	RUN_TEST(test_choose_start_widens_rather_than_reporting_no_match);
 	RUN_TEST(test_botply_gives_up_when_every_word_is_used);
 	RUN_TEST(test_duplicate_keys_do_not_break_the_map);
 	RUN_TEST(test_remove_word_rewinds_the_path);

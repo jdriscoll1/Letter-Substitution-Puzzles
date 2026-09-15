@@ -2,37 +2,76 @@
 #include "../includes/BreadthFirstSearch_FLWP.h"
 #include "../includes/GameFunctions.h"
 #include "../../structs/includes/Queue.h"
+#include "../../shared/includes/Relax.h"
+#include "../../shared/includes/Log.h"
 #include "../../structs/includes/IntLinkedList.h"
 
+/* A start and a goal with a route between them.
+ *
+ * Three preferences - how well connected the start is, how far the goal sits
+ * from it, how well connected the goal is - and one condition, which is that a
+ * route exists at all. The BFS below is both: it only ever offers a goal it
+ * has actually walked to, so a start that comes back with one is a start with
+ * a route.
+ *
+ * The preferences are asked for and then given up a little at a time, because
+ * the dictionary may have nothing that far out and asking again would produce
+ * the same three numbers. The condition is not given up, because a board whose
+ * goal cannot be reached is not a puzzle.
+ */
 struct GameComponents *findFLWPStartAndGoal(int minAdjacenciesToStart, int maxAdjacenciesToStart, int minDistance, int maxDistance, int minAdjacenciesToGoal, int maxAdjacenciesToGoal, struct DataStructures* data){
 	struct GameComponents *gc = malloc(sizeof(struct GameComponents));
 
-	// Every word whose own adjacency count is in range, which is the cheap half of the test
-	int candidates[data->I2W->numWords];
-	int numCandidates = 0;
+	struct Band startAsked = { minAdjacenciesToStart, maxAdjacenciesToStart };
+	struct Band distanceAsked = { minDistance, maxDistance };
+	struct Band goalAsked = { minAdjacenciesToGoal, maxAdjacenciesToGoal };
 
 	int start = -1;
 	int goal = -1;
 
-	for(int id = 0; id < data->I2W->numWords; id++){
-		int adj = getNumAdjacencies(id, data);
-		if(adj >= minAdjacenciesToStart && adj <= maxAdjacenciesToStart){
-			candidates[numCandidates++] = id;
-		}
-	}
+	for(int round = 0; round < RELAXATION_ROUNDS && start == -1; round++){
+		struct Band startBand = loosen(startAsked, round);
+		struct Band goalBand = loosen(goalAsked, round);
 
-	// Walk the candidates in random order and keep the first one that can reach a goal.
-	// Taking the first hit out of a shuffled list picks uniformly among the words that
-	// qualify, exactly as scoring every word and then choosing one at random did, but
-	// it runs a search per attempt instead of a search per word in the dictionary.
-	// The goal search doubles as the validity test, so a start can no longer be accepted
-	// and then fail to produce a goal.
-	Shuffle_IntArray(candidates, numCandidates);
-	for(int i = 0; i < numCandidates && start == -1; i++){
-		int candidateGoal = chooseGoalBFS_FLWP(candidates[i], minDistance, maxDistance, minAdjacenciesToGoal, maxAdjacenciesToGoal, data);
-		if(candidateGoal != -1){
-			start = candidates[i];
-			goal = candidateGoal;
+		/* Distance is how far the BFS walks, so its ceiling cannot be handed
+		   INT_MAX - that is the loop's bound, not a sentinel. Given up, it
+		   becomes "anywhere at least one move away", which is the whole graph
+		   and still a real puzzle. */
+		struct Band distance = isAnything(round)
+			? (struct Band){ 1, data->I2W->numWords }
+			: loosen(distanceAsked, round);
+		if(distance.min < 1){
+			distance.min = 1;
+		}
+
+		// Every word whose own adjacency count is in range, which is the cheap half of the test
+		int candidates[data->I2W->numWords];
+		int numCandidates = 0;
+
+		for(int id = 0; id < data->I2W->numWords; id++){
+			int adj = getNumAdjacencies(id, data);
+			if(adj >= startBand.min && adj <= startBand.max){
+				candidates[numCandidates++] = id;
+			}
+		}
+
+		// Walk the candidates in random order and keep the first one that can reach a goal.
+		// Taking the first hit out of a shuffled list picks uniformly among the words that
+		// qualify, exactly as scoring every word and then choosing one at random did, but
+		// it runs a search per attempt instead of a search per word in the dictionary.
+		// The goal search doubles as the validity test, so a start can no longer be accepted
+		// and then fail to produce a goal.
+		Shuffle_IntArray(candidates, numCandidates);
+		for(int i = 0; i < numCandidates && start == -1; i++){
+			int candidateGoal = chooseGoalBFS_FLWP(candidates[i], distance.min, distance.max, goalBand.min, goalBand.max, data);
+			if(candidateGoal != -1){
+				start = candidates[i];
+				goal = candidateGoal;
+			}
+		}
+
+		if(start != -1 && round > 0){
+			FLWG_LOG("No route fit the board as asked; dealt one %d round(s) looser\n", round);
 		}
 	}
 
@@ -41,8 +80,10 @@ struct GameComponents *findFLWPStartAndGoal(int minAdjacenciesToStart, int maxAd
 	gc->minConnections = 4;
 	gc->solution = NULL;
 
-	// No word in the dictionary can host these parameters -- isStartValid_FLWP reports it
+	/* Only reachable when no word in the dictionary has a neighbour at all: the
+	   last round asks for any start and any goal one move away. */
 	if(start == -1){
+		FLWG_LOG("There is no route to deal at all!\n");
 		return gc;
 	}
 

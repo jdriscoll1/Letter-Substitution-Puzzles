@@ -102,23 +102,26 @@ static void test_flwc_start_word_satisfies_its_parameters(void){
 	freeDataStructures(data);
 }
 
-static void test_flwc_reports_an_invalid_start_rather_than_failing(void){
+static void test_flwc_deals_a_board_when_the_distances_asked_for_do_not_exist(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
 	/*No word in a 4 letter dictionary is 90 substitutions from anything, so the
-	search cannot succeed. Init still has to hand back something checkable*/
+	board as described does not exist. The distances are a preference, so the
+	search gives them up and deals the nearest board that does*/
 	struct GameComponentsFLWC* flwc = initFLWC(1, 30, DEMO_GOAL_WORDS, NO_WORDS,
 		90, 0, 99, 0, 1, 30, 8, data);
 
 	CHECK_NOT_NULL(flwc);
-	CHECK_INT(flwc->wordId, -1);
-	CHECK_INT(isStartValidFLWC(flwc), 0);
-	/*A game with no start word counts as a tie, not a win or a loss*/
-	CHECK_INT(isGameWonFLWC(flwc), 0);
+	CHECK(flwc->wordId != -1);
+	CHECK_INT(isStartValidFLWC(flwc), 1);
+	/*And it is a game: not already won, and the start is claimed*/
+	CHECK_INT(isGameWonFLWC(flwc), -1);
+	CHECK_INT(checkIfUsed_WordSet(flwc->wordId, data->wordSet) != 0, 1);
+	/*What is never given up: the word it opens on is not itself a goal*/
+	CHECK_INT(checkIfUsed_WordSet(flwc->wordId, flwc->goalWords), 0);
 
 	freeGameComponentsFLWC(flwc);
 	freeDataStructures(data);
 }
-
 static void test_flwc_is_won_by_reaching_a_goal_word(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
 	char* goalWords[] = {"care", NULL};
@@ -456,19 +459,21 @@ static void test_flwg_minimax_bot_plays_a_legal_move(void){
 	freeDataStructures(data);
 }
 
-static void test_flwg_reports_an_impossible_start(void){
+static void test_flwg_deals_a_board_when_the_adjacencies_asked_for_do_not_exist(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
-	/*Nothing in the dictionary has this many neighbours*/
+	/*Nothing in the dictionary has this many neighbours, so the count is given
+	up and the game opens on a word that exists instead of on nothing*/
 	struct GameData* gameData = initFLWG(data, 5000, 6000);
 
 	CHECK_NOT_NULL(gameData);
-	CHECK_INT(gameData->currWordId, -1);
-	CHECK_INT(isStartValidFLWG(gameData), 0);
+	CHECK(gameData->currWordId != -1);
+	CHECK_INT(isStartValidFLWG(gameData), 1);
+	/*A real word, playable from: it has somewhere to go*/
+	CHECK(getNumAdjacencies(gameData->currWordId, data) > 0);
 
 	freeGameComponentsFLWG(gameData);
 	freeDataStructures(data);
 }
-
 /* ----------------------------------------------------------------- FLWP --- */
 
 static void test_flwp_walking_the_solution_wins_the_game(void){
@@ -893,7 +898,7 @@ void suite_modes(void){
 	RUN_TEST(test_flwp_distance_reports_no_way_through);
 	RUN_TEST(test_flwp_deals_a_board_with_no_way_through);
 	RUN_TEST(test_flwp_unreachable_goal_is_truly_unreachable);
-	RUN_TEST(test_flwc_reports_an_invalid_start_rather_than_failing);
+	RUN_TEST(test_flwc_deals_a_board_when_the_distances_asked_for_do_not_exist);
 	RUN_TEST(test_flwc_is_won_by_reaching_a_goal_word);
 	RUN_TEST(test_flwic_is_lost_by_reaching_an_avoid_word);
 	RUN_TEST(test_flwc_refuses_an_illegal_word_without_moving);
@@ -905,7 +910,7 @@ void suite_modes(void){
 	RUN_TEST(test_flwgp_undo_and_redo_keep_both_halves_in_step);
 	RUN_TEST(test_flwg_bot_types_each_play_their_own_way);
 	RUN_TEST(test_flwg_minimax_bot_plays_a_legal_move);
-	RUN_TEST(test_flwg_reports_an_impossible_start);
+	RUN_TEST(test_flwg_deals_a_board_when_the_adjacencies_asked_for_do_not_exist);
 	RUN_TEST(test_flwp_walking_the_solution_wins_the_game);
 	RUN_TEST(test_flwp_reset_returns_the_game_to_its_start);
 	RUN_TEST(test_flwp_head_and_tail_hints_bracket_the_solution);
