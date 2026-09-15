@@ -80,6 +80,10 @@ int hintGetMinAdjacenciesFLWP(struct GameComponents* gameComponents, struct Data
 /*Distance from the word the player is on to the goal, around spent words; -1 if there is no way*/
 int distanceToGoalFLWP(struct GameComponents* gameComponents, struct DataStructures* data);
 
+/* The route still open from where the player stands to the goal, as one line
+   of words, or NULL when there is none. Freed by the caller. */
+char* routeToGoalFLWP(struct GameComponents* gameComponents, struct DataStructures* data);
+
 // flwp-generalized additional functionality 
 struct GameComponentsFLWGP* initiateFLWGP(int minAdjacenciesToStart,  int maxAdjacenciesToStart, char** goalWords, char** avoidWords, int minGoalDistance, int minAvoidDistance, int maxGoalDistance, int maxAvoidDistance, int minGoalAdjacencies, int maxGoalAdjacencies, struct DataStructures* dataStructures);
 /*Everything below the start word, for a board whose first word is already

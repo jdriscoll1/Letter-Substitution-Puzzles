@@ -50,7 +50,8 @@ static const char* BRIDGE_FUNCTIONS[] = {
 	"userEntersWord_FLWP", "removeWord_FLWP", "ResetFLWP", "undoMoveFLWP",
 	"redoMoveFLWP", "getCurrentWordsFLWP", "getPrevWordFLWP", "isGameWonFLWP",
 	"hintGetHeadAdjacencyFLWP", "hintGetTailAdjacencyFLWP",
-	"hintGetMinAdjacenciesFLWP", "distanceToGoalFLWP", "freeGameComponentsFLWP",
+	"hintGetMinAdjacenciesFLWP", "distanceToGoalFLWP", "routeToGoalFLWP",
+	"freeGameComponentsFLWP",
 
 	"initiateFLWGP", "isStartValid_FLWGP", "getFLWPComponentsFLWGP",
 	"getFLWCComponentsFLWGP", "userEntersWord_FLWGP", "undoMoveFLWGP",
@@ -270,6 +271,19 @@ void test_bridge_the_pathfinder(void){
 	Before a move those are the same number.*/
 	int shortest = hintGetMinAdjacenciesFLWP(game, data);
 	int fromHere = distanceToGoalFLWP(game, data);
+
+	/* And the road itself, which the loss screen offers to show. It is the same
+	   search keeping its trail, so it has to agree with the distance: one word
+	   for every step, plus the one being stood on. */
+	char* road = routeToGoalFLWP(game, data);
+	covers("routeToGoalFLWP");
+	CHECK_NOT_NULL(road);
+	if(road != NULL){
+		int spaces = 0;
+		for(int i = 0; road[i] != 0; i++){ if(road[i] == ' '){ spaces++; } }
+		CHECK_INT(spaces, fromHere + 1);
+		free(road);
+	}
 	covers("hintGetMinAdjacenciesFLWP");
 	covers("distanceToGoalFLWP");
 	CHECK(shortest >= 2);

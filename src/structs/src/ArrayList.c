@@ -263,7 +263,14 @@ char* idArrayListToString(struct arrayList* aList, struct DataStructures* data){
 		for(int j = 0; j < data->I2W->numLetters; j++){
 			result[i * (data->I2W->numLetters + 1) + j] = Convert_IntToWord(((int*)(aList->list))[i], data->I2W)[j]; 
 		}
-		result[i * (data->I2W->numLetters + 1) + 4] = ' ';
+		/* The separator goes after the word, wherever the word ends.
+		   It was written at four regardless, which is the right place only for a
+		   four letter dictionary. On the three letter one the stride is four, so
+		   this wrote over the first letter of the next word instead of the gap
+		   after this one - and the gap it should have filled was left as whatever
+		   malloc handed back. Nothing had shown it yet because the one caller is
+		   a constraint board and every one of those is four letters. */
+		result[i * (data->I2W->numLetters + 1) + data->I2W->numLetters] = ' ';
 	}	
 	result[resultSize - 1] = '\0'; 
 	return result; 	

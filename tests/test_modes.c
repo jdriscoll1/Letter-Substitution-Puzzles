@@ -871,6 +871,80 @@ static void test_flwc_never_deals_a_board_won_in_one_move(void){
 
 	freeDataStructures(data);
 }
+/* The road the loss screen offers to show.
+ *
+ * From where the player is standing rather than from the opening word: they
+ * have usually moved, and a route from somewhere they are not explains
+ * nothing. It walks around the words they have spent for the same reason the
+ * distance does - a route through one is not a route they have.
+ */
+static void test_flwp_hands_back_the_road_from_here(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	struct GameComponents* gc = initFLWPAtStart("ware", 4, 8, 1, 30, data);
+	char* road;
+	int steps;
+
+	/* Standing on the opening word, the road is as long as the distance says,
+		counting the word being stood on as well as the goal. */
+	road = routeToGoalFLWP(gc, data);
+	CHECK_NOT_NULL(road);
+	if(road != NULL){
+		steps = 0;
+		for(int i = 0; road[i] != 0; i++){ if(road[i] == 32){ steps++; } }
+		CHECK_INT(steps, distanceToGoalFLWP(gc, data) + 1);
+		/* It starts where the player is and ends on the goal. */
+		CHECK_INT(strncmp(road, "ware", 4), 0);
+		free(road);
+	}
+
+	/* A step along it shortens it by exactly one. */
+	CHECK_INT(userEntersWord_FLWP(Convert_IntToWord(nth_entry(gc->solution, 1), data->I2W), gc, data), VALID);
+	road = routeToGoalFLWP(gc, data);
+	CHECK_NOT_NULL(road);
+	if(road != NULL){
+		steps = 0;
+		for(int i = 0; road[i] != 0; i++){ if(road[i] == 32){ steps++; } }
+		CHECK_INT(steps, distanceToGoalFLWP(gc, data) + 1);
+		free(road);
+	}
+
+	freeGameComponentsFLWP(gc, data);
+	freeDataStructures(data);
+}
+
+/* And on the three letter dictionary, where the word and the gap after it are
+ * not the same width as they are on the four. */
+static void test_flwp_road_reads_on_three_letter_boards(void){
+	struct DataStructures* data = open_dictionary("docs/3.txt", 3);
+	struct GameComponents* gc = initiateFLWP(3, 12, 3, 5, 3, 12, data);
+	char* road = routeToGoalFLWP(gc, data);
+
+	CHECK_NOT_NULL(road);
+	if(road != NULL){
+		int steps = 0;
+		int i;
+		/* As many words as the distance says, and every character a letter or a
+			single separating space.
+			
+			The separator used to be written four along whatever the word length,
+			so on a three letter board it landed on the first letter of the next
+			word and the gap it should have filled was left as whatever malloc
+			had returned. Checking only that each character is a letter does not
+			catch it: that memory comes back zeroed often enough that the string
+			simply ends after the first word, and one word is all letters. It is
+			the count that tells. */
+		for(i = 0; road[i] != 0; i++){
+			CHECK(road[i] == 32 || (road[i] >= 97 && road[i] <= 122));
+			if(road[i] == 32){ steps++; }
+		}
+		CHECK_INT(steps, distanceToGoalFLWP(gc, data) + 1);
+		CHECK_INT(i, steps * 4);
+		free(road);
+	}
+
+	freeGameComponentsFLWP(gc, data);
+	freeDataStructures(data);
+}
 /* The number the pathfinder's bound is made of.
  *
  * Asked again after every move, so it has to answer from where the player is
@@ -1004,6 +1078,8 @@ void suite_modes(void){
 	RUN_TEST(test_flwc_traps_the_player_when_the_board_runs_out);
 	RUN_TEST(test_every_mode_starts_from_a_clear_board);
 	RUN_TEST(test_flwc_never_deals_a_board_won_in_one_move);
+	RUN_TEST(test_flwp_hands_back_the_road_from_here);
+	RUN_TEST(test_flwp_road_reads_on_three_letter_boards);
 	RUN_TEST(test_flwp_distance_answers_from_where_the_player_is);
 	RUN_TEST(test_flwp_distance_reports_no_way_through);
 	RUN_TEST(test_flwp_deals_a_board_with_no_way_through);

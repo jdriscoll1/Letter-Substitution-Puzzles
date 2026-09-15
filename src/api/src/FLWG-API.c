@@ -625,6 +625,114 @@ int distanceToGoalFLWP(struct GameComponents* gameComponents, struct DataStructu
 	return answer;
 }
 
+/* The route still open from where the player is standing to the goal.
+ *
+ * distanceToGoalFLWP already answers how far, by the same search and with the
+ * same rule - a word already spent is walked around rather than through,
+ * because a route through one is not a route the player has. This is that
+ * search keeping the trail it walked so the road itself can be handed back
+ * rather than only its length.
+ *
+ * Asked for once, when a board has been lost, so the loss screen can offer to
+ * show it. Not the solution the board was dealt with: that one starts at the
+ * opening word and the player has usually moved, and a route from somewhere
+ * they are not is not an explanation of anything.
+ *
+ * NULL when there is no way through from here, which is a real answer on a
+ * board that has been played into a corner - the loss screen offers nothing
+ * rather than an empty box.
+ */
+char* routeToGoalFLWP(struct GameComponents* gameComponents, struct DataStructures* data){
+	if(gameComponents == NULL || data == NULL || data->I2W == NULL){
+		return NULL;
+	}
+
+	int numWords = data->I2W->numWords;
+	int start = gameComponents->prevInput;
+	int goal = gameComponents->goal;
+
+	if(start < 0 || goal < 0 || start >= numWords || goal >= numWords){
+		return NULL;
+	}
+
+	int* queue = malloc(sizeof(int) * numWords);
+	int* cameFrom = malloc(sizeof(int) * numWords);
+	if(queue == NULL || cameFrom == NULL){
+		free(queue);
+		free(cameFrom);
+		return NULL;
+	}
+	for(int i = 0; i < numWords; i++){
+		cameFrom[i] = -2;
+	}
+
+	int head = 0;
+	int tail = 0;
+	queue[tail++] = start;
+	cameFrom[start] = -1;
+	int found = (start == goal);
+
+	while(head < tail && !found){
+		int curr = queue[head++];
+		struct intList* c = getConnections(curr, data->I2W);
+		for(c = c->next; c != NULL; c = c->next){
+			int next = c->data;
+			if(cameFrom[next] != -2){
+				continue;
+			}
+			/* Spent words are walked around, not through - the same rule the
+			   distance uses, and for the same reason. The goal itself is never
+			   one of them, so it is reached before this can refuse it. */
+			if(next != goal && checkIfUsed_WordSet(next, data->wordSet)){
+				continue;
+			}
+			cameFrom[next] = curr;
+			if(next == goal){
+				found = 1;
+				break;
+			}
+			queue[tail++] = next;
+		}
+	}
+
+	if(!found){
+		free(queue);
+		free(cameFrom);
+		return NULL;
+	}
+
+	/* Walked back from the goal and then turned round, so the road reads the
+	   way it would be travelled. */
+	int length = 0;
+	for(int at = goal; at != -1; at = cameFrom[at]){
+		length++;
+	}
+	int* forwards = malloc(sizeof(int) * length);
+	if(forwards == NULL){
+		free(queue);
+		free(cameFrom);
+		return NULL;
+	}
+	int at = goal;
+	for(int i = length - 1; i >= 0; i--){
+		forwards[i] = at;
+		at = cameFrom[at];
+	}
+
+	struct arrayList* route = init_ArrayList(length, length, NUM);
+	for(int i = 0; i < length; i++){
+		add_ArrayList(&forwards[i], route, NUM);
+	}
+
+	char* result = idArrayListToString(route, data);
+
+	free_ArrayList(route);
+	free(forwards);
+	free(queue);
+	free(cameFrom);
+	return result;
+}
+
 int hintGetMinAdjacenciesFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){
 	/* nothing to work with */
 	if(gameComponents == NULL){
