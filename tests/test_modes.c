@@ -762,6 +762,115 @@ static void test_every_mode_starts_from_a_clear_board(void){
 	freeDataStructures(data);
 }
 
+/* A board that can be won in one move is not a board.
+ *
+ * A constraint game is dealt by looking for a goal word a given distance off,
+ * but the player does not win by reaching that word - they win by reaching any
+ * word the rule admits. When the rule is a common one there is very often a
+ * nearer one, and the board is over in a move whatever distance it was dealt
+ * at. Asking for a word containing J, Q, X or Z three to five moves away dealt
+ * VEAL, which is one letter from ZEAL.
+ *
+ * So the floor is asked of the nearest winning word rather than of the chosen
+ * one, and it is never relaxed - the search may give up on how far a goal is
+ * allowed to be, never on how near.
+ */
+static int nearestGoalDistance(int id, struct WordSet* goals, struct DataStructures* data){
+	int frontier[4096];
+	int distance[4096];
+	int head = 0, tail = 0, i;
+	struct WordSet* seen = init_WordSet(data->I2W->numWords);
+	int answer = -1;
+
+	markUsed_WordSet(id, seen);
+	frontier[tail] = id; distance[tail] = 0; tail++;
+
+	while(head < tail && answer < 0){
+		int curr = frontier[head];
+		int d = distance[head];
+		struct intList* conn;
+		head++;
+		if(d > 0 && checkIfUsed_WordSet(curr, goals)){
+			answer = d;
+			break;
+		}
+		if(d >= 6 || tail >= 4000){
+			continue;
+		}
+		conn = getConnections(curr, data->I2W);
+		while(conn->next != NULL){
+			conn = conn->next;
+			if(checkIfUsed_WordSet(conn->data, seen)){
+				continue;
+			}
+			markUsed_WordSet(conn->data, seen);
+			frontier[tail] = conn->data; distance[tail] = d + 1; tail++;
+		}
+	}
+	free_WordSet(seen);
+	(void)i;
+	return answer;
+}
+
+static void test_flwc_never_deals_a_board_won_in_one_move(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	/* Every word that starts and ends with the same letter - the campaign's own
+		level 28, and the rule that was a one move board in thirty-seven per cent
+		of its openings. */
+	char* goalWords[512];
+	int numGoals = 0;
+	int deal, nearest, dealt = 0;
+
+	for(int i = 0; i < data->I2W->numWords && numGoals < 511; i++){
+		char* w = Convert_IntToWord(i, data->I2W);
+		if(w != NULL && w[0] == w[3]){
+			goalWords[numGoals++] = w;
+		}
+	}
+	goalWords[numGoals] = NULL;
+	CHECK(numGoals > 20);
+
+	/* Dealt many times over, because the fault was a minority of openings rather
+		than all of them, and because the search gives up on its preferences a
+		round at a time - it was the third round of giving up that used to let a
+		neighbour through. */
+	for(deal = 0; deal < 40; deal++){
+		struct GameComponentsFLWC* flwc = initFLWC(12, 20, goalWords, NO_WORDS,
+			2, 0, 3, 0, 1, 30, 7, data);
+		if(flwc == NULL || flwc->wordId < 0){
+			if(flwc != NULL){ freeGameComponentsFLWC(flwc); }
+			continue;
+		}
+		dealt++;
+		nearest = nearestGoalDistance(flwc->wordId, flwc->goalWords, data);
+		/* -1 is no winning word within six moves, which is far enough. */
+		CHECK(nearest < 0 || nearest >= 2);
+		freeGameComponentsFLWC(flwc);
+	}
+	CHECK(dealt > 30);
+
+	/* The round the fault actually lived in.
+	 *
+	 * Nothing in this dictionary has a word of this rule five moves off, so the
+	 * search cannot have what it asked for and gives its preferences up a round
+	 * at a time - and the band it is giving up walks its own floor down with it:
+	 * five, then four, then three, then two, then one. It was that round that
+	 * dealt VEAL next to ZEAL. Asking for the impossible must still not produce
+	 * a board that is over in a move. */
+	for(deal = 0; deal < 20; deal++){
+		struct GameComponentsFLWC* flwc = initFLWC(12, 20, goalWords, NO_WORDS,
+			5, 0, 6, 0, 1, 30, 7, data);
+		if(flwc == NULL || flwc->wordId < 0){
+			if(flwc != NULL){ freeGameComponentsFLWC(flwc); }
+			continue;
+		}
+		nearest = nearestGoalDistance(flwc->wordId, flwc->goalWords, data);
+		CHECK(nearest < 0 || nearest >= 2);
+		freeGameComponentsFLWC(flwc);
+	}
+
+	freeDataStructures(data);
+}
 /* The number the pathfinder's bound is made of.
  *
  * Asked again after every move, so it has to answer from where the player is
@@ -894,6 +1003,7 @@ void suite_modes(void){
 	RUN_TEST(test_flwc_start_word_satisfies_its_parameters);
 	RUN_TEST(test_flwc_traps_the_player_when_the_board_runs_out);
 	RUN_TEST(test_every_mode_starts_from_a_clear_board);
+	RUN_TEST(test_flwc_never_deals_a_board_won_in_one_move);
 	RUN_TEST(test_flwp_distance_answers_from_where_the_player_is);
 	RUN_TEST(test_flwp_distance_reports_no_way_through);
 	RUN_TEST(test_flwp_deals_a_board_with_no_way_through);

@@ -22,11 +22,27 @@ struct GameComponentsFLWC* initFLWC(int minAdjacenciesToStart, int maxAdjacencie
 	flwcComponents->avoidWords = convertCharPtrPtrToWordSet(avoidWords, dataStructures); 
 
 	
+	/* A floor under what a caller may ask for, as well as under what the
+	 * search is allowed to relax to.
+	 *
+	 * A level naming a minimum of nought or one is describing a board that
+	 * can be won in a single move, which is not a board - so the ask is
+	 * raised to the floor here and held there by the search.
+	 *
+	 * Left alone when the caller is not asking about goals at all. Nought
+	 * and nought together mean do not look, which is what an avoid board
+	 * hands in, and putting a floor under a band nobody reads would turn it
+	 * into a demand that a goal word exist. */
+	int goalFloor = minGoalDistance;
+	if(maxGoalDistance > 0 && goalFloor < NEAREST_GOAL_ALLOWED){
+		goalFloor = NEAREST_GOAL_ALLOWED;
+	}
+
 	struct StartWordParametersFLWC params = {
 	    .goalWords = flwcComponents->goalWords,
 	    .avoidWords = flwcComponents->avoidWords,
 		// adding + 1 to each to account for the initial word pins->pies is counted as 2, but it is thought of as one adjacency away
-	    .minGoalDistance = minGoalDistance,
+	    .minGoalDistance = goalFloor,
 		// for max same applies: pies->tins is pies->ties->tins. It's counted as 3. but because it's > 2 it would not be allowed
 	    .maxGoalDistance = maxGoalDistance,
 	    .minAvoidDistance = minAvoidDistance,

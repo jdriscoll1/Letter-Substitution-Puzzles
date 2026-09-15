@@ -102,21 +102,37 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 		for(int c = 0; c < numCandidates; c++){
 			int i = candidates[c];
 
-			// CHECK #2: If there exists a goal word < the minimum distance, continue
-			// CHECK #3: If there are no goal words < the maximum distance, continue
+			/* CHECK #2: Nothing the rule admits sits nearer than two moves.
+			 *
+			 * Never relaxed, unlike the band below it. The band is a
+			 * description of the board somebody wants and the dictionary may
+			 * not have one; this is the difference between a board and no
+			 * board at all, so giving up on it hands back something that
+			 * cannot be played rather than something that was not asked for.
+			 *
+			 * It is also the only one of these that asks about the nearest
+			 * winning word rather than about the goal word the board is dealt
+			 * against, which is the distinction the band below silently got
+			 * wrong for as long as it existed. */
+			if(!nearestGoalIsFarEnough(i, NEAREST_GOAL_ALLOWED, p.goalWords, p.avoidWords, data)){
+				continue;
+			}
+
+			// CHECK #3: If there exists a goal word < the minimum distance, continue
+			// CHECK #4: If there are no goal words < the maximum distance, continue
 			if(!all_words_are_greater_than_min_distance_and_there_exists_a_word_less_than_max_distance(i, goal.min, goal.max, p.goalWords, p.avoidWords, data)){
 				continue;
 
 			}
 
-			// CHECK #4: If there exists an avoid word < the minimum distance, continue
-			// CHECK #5: If there are no avoid words < the maximum distance, continue
+			// CHECK #5: If there exists an avoid word < the minimum distance, continue
+			// CHECK #6: If there are no avoid words < the maximum distance, continue
 			if(!all_words_are_greater_than_min_distance_and_there_exists_a_word_less_than_max_distance(i, avoid.min, avoid.max, p.avoidWords, p.goalWords, data)){
 				continue;
 			}
 
 
-			// CHECK #6: If the user cannot force a win, continue
+			// CHECK #7: If the user cannot force a win, continue
 			// Never relaxed either: a board the player cannot win is not a board.
 			// num turns does not apply to FLWGP therefore
 			if(p.numTurns != -1){
@@ -150,6 +166,63 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 
 
 
+
+/* See Challenges.h. Breadth first from the start, and the moment anything the
+ * rule admits turns up inside the floor the board is thrown back.
+ *
+ * Forbidden words are not walked through, matching the search below it: a route
+ * that runs through a word the player must not make is not a route they have.
+ */
+int nearestGoalIsFarEnough(int id, int least, struct WordSet* goalWords, struct WordSet* avoidWords, struct DataStructures* data){
+
+	/* Nothing asked, or a mode with no rule to reach - the avoid boards hand
+	   in an empty goal set and mean it. */
+	if(least <= 0 || goalWords == NULL){
+		return 1;
+	}
+
+	struct Queue* q = init_Queue();
+	struct WordSet* seen = init_WordSet(data->I2W->numWords);
+	markUsed_WordSet(id, seen);
+	enqueue(id, 0, NULL, q);
+
+	int farEnough = 1;
+
+	while(!isEmpty_Queue(q)){
+		struct QueueNode* parent = dequeue(q);
+		int distance = parent->data->distance;
+		int currId = parent->data->id;
+
+		/* Breadth first hands nodes back in order of distance, so once the
+		   floor is reached everything still to come is at or beyond it and
+		   there is nothing left to find. */
+		if(distance >= least){
+			break;
+		}
+
+		/* The start itself is somebody else's check - a board that opens on a
+		   goal is rejected before this is ever asked. */
+		if(distance > 0 && checkIfUsed_WordSet(currId, goalWords)){
+			farEnough = 0;
+			break;
+		}
+
+		struct intList* conn = getConnections(currId, data->I2W);
+		while(conn->next != NULL){
+			conn = conn->next;
+			int next = conn->data;
+			if(checkIfUsed_WordSet(next, seen) || checkIfUsed_WordSet(next, avoidWords)){
+				continue;
+			}
+			enqueue(next, distance + 1, parent, q);
+			markUsed_WordSet(next, seen);
+		}
+	}
+
+	free_Queue(q);
+	free_WordSet(seen);
+	return farEnough;
+}
 
 // If there exists a goal word that's less than teh minimum distance, return true
 int all_words_are_greater_than_min_distance_and_there_exists_a_word_less_than_max_distance(int id, int minDistance, int maxDistance, struct WordSet* goalWords, struct WordSet *avoidWords, struct DataStructures* data){

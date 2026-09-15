@@ -31,6 +31,31 @@ struct StartWordParametersFLWC{
 	int numTurns; 
 }; 
 
+/* How near the nearest winning word may ever be dealt.
+ *
+ * Two, because one is not a board. A constraint game is dealt by looking for a
+ * goal word a given distance off and opening on something that far from it -
+ * but a player does not win by reaching that word. They win by reaching any
+ * word the rule admits, and when the rule is a common one there is very often
+ * a different one much nearer. The board is then over in a single move
+ * whatever distance it was dealt at.
+ *
+ * Not a hypothetical. Asking for a word containing J, Q, X or Z three to five
+ * moves away dealt VEAL, which is one letter from ZEAL; a third of the
+ * openings that rule allowed had a winner one move off. The campaign's own
+ * level 28 - reach a word that starts and ends with the same letter - was a
+ * one move board in thirty-seven per cent of its openings.
+ */
+#define NEAREST_GOAL_ALLOWED 2
+
+/* Whether the nearest word the rule admits is at least `least` moves off.
+ *
+ * Asked of every candidate and never relaxed, because this belongs with "the
+ * word it opens on is not already a goal" rather than with the preferences: a
+ * board won in one move is not a looser version of the board that was asked
+ * for, it is not a board. */
+int nearestGoalIsFarEnough(int id, int least, struct WordSet* goalWords, struct WordSet* avoidWords, struct DataStructures* data);
+
 struct WordSet* convertCharPtrPtrToWordSet(char** words, struct DataStructures* data);
 int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data);
 // put a given word and all of its adjacencies (up to distance) into word set
