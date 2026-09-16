@@ -83,6 +83,14 @@ struct StartWordParametersFLWC{
  * for, it is not a board. */
 int nearestGoalIsFarEnough(int id, int least, struct WordSet* goalWords, struct WordSet* avoidWords, struct DataStructures* data);
 
+/* The two halves of a board's distance rule, which are not asked of the same
+   graph - see the comment above them in Challenges.c. The floor is measured
+   over the whole dictionary and the ceiling over the words the board deals,
+   and that asymmetry is the whole point, so both are reachable from a test
+   that says so rather than left to be inferred from a board. */
+int nothingInSetIsNearerThan(int id, int least, struct WordSet* set, struct WordSet* forbidden, struct DataStructures* data);
+int somethingInSetIsWithin(int id, int most, struct WordSet* set, struct WordSet* forbidden, struct DataStructures* data);
+
 struct WordSet* convertCharPtrPtrToWordSet(char** words, struct DataStructures* data);
 int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameComponentsFLWC* flwcComponents, struct DataStructures* data);
 // put a given word and all of its adjacencies (up to distance) into word set

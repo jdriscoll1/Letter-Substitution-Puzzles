@@ -29,7 +29,12 @@ struct GameComponents *findFLWPStartAndGoal(int minAdjacenciesToStart, int maxAd
 	int start = -1;
 	int goal = -1;
 
-	for(int round = 0; round < RELAXATION_ROUNDS && start == -1; round++){
+	/* One round past the last, and it is the one that used to be the last.
+	   Every round before it refuses to open on a word this board may not use
+	   and confines the route to those words; the extra round drops both, so
+	   nothing that could be dealt before can fail to be dealt now. */
+	for(int round = 0; round <= RELAXATION_ROUNDS && start == -1; round++){
+		int takeAnythingPlayable = (round == RELAXATION_ROUNDS);
 		struct Band startBand = loosen(startAsked, round);
 		struct Band goalBand = loosen(goalAsked, round);
 
@@ -50,7 +55,12 @@ struct GameComponents *findFLWPStartAndGoal(int minAdjacenciesToStart, int maxAd
 
 		for(int id = 0; id < data->I2W->numWords; id++){
 			int adj = getNumAdjacencies(id, data);
-			if(adj >= startBand.min && adj <= startBand.max){
+			/* The cap is not a preference the way the bands are: a walk that
+			   opens on a word nobody has heard of is the fault it exists to
+			   stop, so it is refused every round rather than widened along
+			   with them. */
+			if(adj >= startBand.min && adj <= startBand.max
+				&& (takeAnythingPlayable || !isTooObscure(id, data))){
 				candidates[numCandidates++] = id;
 			}
 		}
@@ -63,7 +73,7 @@ struct GameComponents *findFLWPStartAndGoal(int minAdjacenciesToStart, int maxAd
 		// and then fail to produce a goal.
 		Shuffle_IntArray(candidates, numCandidates);
 		for(int i = 0; i < numCandidates && start == -1; i++){
-			int candidateGoal = chooseGoalBFS_FLWP(candidates[i], distance.min, distance.max, goalBand.min, goalBand.max, data);
+			int candidateGoal = chooseGoalBFS_FLWP(candidates[i], distance.min, distance.max, goalBand.min, goalBand.max, !takeAnythingPlayable, data);
 			if(candidateGoal != -1){
 				start = candidates[i];
 				goal = candidateGoal;
@@ -139,7 +149,7 @@ int BFS_IsFLWPStartValid(int id, int minDistance, int maxDistance, int minAdjace
 }
 
 
-int chooseGoalBFS_FLWP(int id, int minDistance, int maxDistance, int minAdjacenciesToGoal, int maxAdjacenciesToGoal, struct DataStructures* data) {
+int chooseGoalBFS_FLWP(int id, int minDistance, int maxDistance, int minAdjacenciesToGoal, int maxAdjacenciesToGoal, int withinTier, struct DataStructures* data) {
 	// Initialize the array of valid goals
 	int validGoals[data->I2W->numWords]; 
 	int numGoals = 0; 
@@ -168,6 +178,17 @@ int chooseGoalBFS_FLWP(int id, int minDistance, int maxDistance, int minAdjacenc
 		while (c != NULL) {
 			int c_id = c->data;
 			int childDistance = distance + 1;
+
+			/* A word this board may not use is neither offered as a goal nor
+			   walked through on the way to one, so the goal and the road to it
+			   are both made of the words the board would deal. Narrowing a
+			   graph only ever makes distances longer, so what comes back is a
+			   goal at least as far out as the band asked for - never one that
+			   is secretly nearer by a route through a word nobody knows. */
+			if (withinTier && isTooObscure(c_id, data)) {
+				c = c->next;
+				continue;
+			}
 
 			if (checkIfUsed_WordSet(c_id, x) == 0) {
 				enqueue(c_id, childDistance, parent, q);
@@ -202,14 +223,27 @@ int chooseGoalBFS_FLWP(int id, int minDistance, int maxDistance, int minAdjacenc
 }
 
 
-void getSolution_FLWP(int id, int goalId, struct GameComponents* gc, struct DataStructures* data) {
+/* The route the board is dealt with, and the number the game then quotes.
+ *
+ * gc->minConnections comes out of this, and that number is not private: the
+ * score is figured against it and the first hint reads it out as the number of
+ * moves the puzzle takes. So it has to be a distance the player can actually
+ * walk. A route that runs through a word nobody has heard of makes the quoted
+ * number true of the dictionary and false of the person holding the phone.
+ *
+ * The two ends are never tested. The start is where the player already is and
+ * the goal is what they have been told to reach - refusing either would be
+ * refusing the board rather than routing around a word. Only what lies between
+ * is this function's to choose.
+ */
+static int solve_FLWP(int id, int goalId, struct GameComponents* gc, int withinTier, struct DataStructures* data) {
 
 	// Initialize the Queue of explored words
 	struct Queue* q = init_Queue();
 
-	struct intList* solution = malloc(sizeof(struct intList)); 
-	solution->size = 0; 
-	solution->next = NULL; 
+	struct intList* solution = malloc(sizeof(struct intList));
+	solution->size = 0;
+	solution->next = NULL;
 
 	enqueue(id, 0, NULL, q);
 
@@ -220,28 +254,34 @@ void getSolution_FLWP(int id, int goalId, struct GameComponents* gc, struct Data
 	while (!isEmpty_Queue(q)) {
 		struct QueueNode* parent = dequeue(q);
 		int currId = parent->data->id;
-	
+
 		if(currId == goalId){
-			int goalDistance = 0; 
+			int goalDistance = 0;
 			while(parent != NULL){
-				goalDistance++; 	
-				AddToFront_IntLL(parent->data->id, solution); 
-				parent = parent->parent; 
+				goalDistance++;
+				AddToFront_IntLL(parent->data->id, solution);
+				parent = parent->parent;
 			}
-			gc->solution = solution; 
-			gc->minConnections = goalDistance; 	
+			gc->solution = solution;
+			gc->minConnections = goalDistance;
 			free_Queue(q);
-			free_WordSet(x); 
-			return; 
+			free_WordSet(x);
+			return 1;
 		}
 		int distance = parent->data->distance;
 
 		// Explore neighbors
 		struct intList* c = getConnections(currId, data->I2W);
-		c = c->next; 
+		c = c->next;
 		while (c != NULL) {
 			int c_id = c->data;
 			int childDistance = distance + 1;
+
+			/* The goal is exempt because it is an end and not a step. */
+			if (withinTier && c_id != goalId && isTooObscure(c_id, data)) {
+				c = c->next;
+				continue;
+			}
 
 			if (checkIfUsed_WordSet(c_id, x) == 0) {
 				enqueue(c_id, childDistance, parent, q);
@@ -249,18 +289,30 @@ void getSolution_FLWP(int id, int goalId, struct GameComponents* gc, struct Data
 
 			}
 
-			// Check if this child meets goal criteria
-			
 			c = c->next;
 		}
 	}
 
-	// The goal was never reached, so there is no solution to hand back 
-	Free_IntLL(solution); 
-	gc->solution = NULL; 	
+	// The goal was never reached, so there is no solution to hand back
+	Free_IntLL(solution);
+	gc->solution = NULL;
 
 	// Cleanup BFS structures
 	free_Queue(q);
 	free_WordSet(x);
+	return 0;
 }
 
+/* The board's own words first, and the rest of the dictionary only if there is
+ * no route at all through them. A walk with a longer honest route is still a
+ * walk; a walk with no route is not one, and refusing to deal it would be a
+ * worse answer than quoting a number that needs a word off the list.
+ */
+void getSolution_FLWP(int id, int goalId, struct GameComponents* gc, struct DataStructures* data) {
+	if(solve_FLWP(id, goalId, gc, 1, data)){
+		return;
+	}
+
+	FLWG_LOG("No route to the goal through the words this board deals; measuring through the whole dictionary instead\n");
+	solve_FLWP(id, goalId, gc, 0, data);
+}

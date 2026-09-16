@@ -939,11 +939,15 @@ static void test_a_board_is_dealt_on_a_word_the_tier_allows(void){
 	Load_Obscurity(data->I2W, "docs/4ranks.txt");
 	setObscurityCap(data, 2000);
 
-	/* Both of the pickers a board can be dealt by. There are three in the engine
-	and they do not share a path: the adversarial game opens through
-	ChooseStart_Range, the pathfinder through getWordWithNumberOfConnections, and
-	the constraint game through its own chooser, which its own tests cover.
-	Capping one and not the others is how level 4 came to open on GIBS. */
+	/* Two of the pickers a board can be dealt by. There are FOUR in the engine
+	and they share no path: the turns game opens through
+	getWordWithNumberOfConnections, the adversarial game through
+	ChooseStart_Range, the constraint game through its own chooser, and the walk
+	through findFLWPStartAndGoal - which this comment used to credit to
+	getWordWithNumberOfConnections, and which was therefore the one left
+	ungated longest. The other two are covered by
+	test_a_walk_is_routed_through_the_words_the_board_allows and by the FLWC
+	tests. Capping one and not the others is how level 4 came to open on GIBS. */
 	for(i = 0; i < 60; i++){
 		int id = getWordWithNumberOfConnections(10, 20, data);
 		if(id != -1){
@@ -975,6 +979,118 @@ static void test_a_board_is_dealt_on_a_word_the_tier_allows(void){
 	}
 	CHECK(dealt > 50);
 
+	freeDataStructures(data);
+}
+
+/* And the road between the two ends, not just the ends.
+ *
+ * A walk is dealt a start and a goal and then quotes a number of moves. That
+ * number is not private: the score is figured against it and the first hint
+ * reads it out. If the route behind it runs through a word nobody has heard of,
+ * the number is true of the dictionary and false of the person holding the
+ * phone - the board promises a four move walk that only a four move walk
+ * through ZOUK can keep.
+ */
+static void test_a_walk_is_routed_through_the_words_the_board_allows(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	int i, dealt = 0, endsPastCap = 0, stepsPastCap = 0;
+
+	Load_Obscurity(data->I2W, "docs/4ranks.txt");
+	setObscurityCap(data, 2000);
+
+	for(i = 0; i < 20; i++){
+		struct GameComponents* gc = initiateFLWP(8, 20, 3, 6, 4, 20, data);
+		struct intList* step;
+
+		if(gc == NULL || gc->start == -1 || gc->solution == NULL){
+			continue;
+		}
+		dealt++;
+
+		if(isTooObscure(gc->start, data) || isTooObscure(gc->goal, data)){
+			endsPastCap++;
+		}
+
+		for(step = gc->solution->next; step != NULL; step = step->next){
+			if(isTooObscure(step->data, data)){
+				stepsPastCap++;
+			}
+		}
+
+		freeGameComponentsFLWP(gc, data);
+	}
+
+	CHECK(dealt > 15);
+	CHECK_INT(endsPastCap, 0);
+	CHECK_INT(stepsPastCap, 0);
+
+	freeDataStructures(data);
+}
+
+/* A board's floor and its ceiling are not measured on the same graph.
+ *
+ * "Nothing the rule admits is nearer than three moves" guards against a board
+ * that is over before it starts, and the player may type anything in the
+ * dictionary - so it has to look at the whole of it. "Something the rule admits
+ * is within three moves" promises the board can be finished, and a goal that
+ * can only be got at through words nobody says is not within reach - so it has
+ * to look only at the words the board deals.
+ *
+ * Narrowing a graph only ever makes distances longer, which is what makes both
+ * of those the strict reading rather than a preference.
+ */
+static void test_a_board_measures_its_floor_and_its_ceiling_differently(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	struct WordSet* goals = init_WordSet(data->I2W->numWords);
+	struct WordSet* nothingForbidden = init_WordSet(data->I2W->numWords);
+	int i, floorMoved = 0, ceilingLoosened = 0, ceilingTightened = 0;
+
+	Load_Obscurity(data->I2W, "docs/4ranks.txt");
+
+	/*A rule that admits only words nobody says, which is the case the two
+	halves of the check have to disagree about*/
+	for(i = 0; i < data->I2W->numWords; i++){
+		if(data->I2W->array[i]->obscurity > 20000){
+			markUsed_WordSet(i, goals);
+		}
+	}
+
+	for(i = 0; i < data->I2W->numWords; i += 11){
+		int floorOpen, ceilingOpen, floorCapped, ceilingCapped;
+
+		setObscurityCap(data, OBSCURITY_UNKNOWN);
+		floorOpen = nothingInSetIsNearerThan(i, 3, goals, nothingForbidden, data);
+		ceilingOpen = somethingInSetIsWithin(i, 3, goals, nothingForbidden, data);
+
+		setObscurityCap(data, 2000);
+		floorCapped = nothingInSetIsNearerThan(i, 3, goals, nothingForbidden, data);
+		ceilingCapped = somethingInSetIsWithin(i, 3, goals, nothingForbidden, data);
+
+		if(floorOpen != floorCapped){
+			floorMoved++;
+		}
+		if(ceilingCapped && !ceilingOpen){
+			ceilingLoosened++;
+		}
+		if(ceilingOpen && !ceilingCapped){
+			ceilingTightened++;
+		}
+	}
+
+	/*The floor asks what the PLAYER could reach, so the board's cap is none of
+	its business and must never move it*/
+	CHECK_INT(floorMoved, 0);
+
+	/*The ceiling only ever gets stricter. Nothing can be brought closer by
+	taking words out of the graph*/
+	CHECK_INT(ceilingLoosened, 0);
+
+	/*And it genuinely bites, or the two checks above are passing for saying
+	nothing at all*/
+	CHECK(ceilingTightened > 0);
+
+	free_WordSet(goals);
+	free_WordSet(nothingForbidden);
 	freeDataStructures(data);
 }
 
@@ -1333,6 +1449,8 @@ void suite_modes(void){
 	RUN_TEST(test_flwc_traps_the_player_when_the_board_runs_out);
 	RUN_TEST(test_every_mode_starts_from_a_clear_board);
 	RUN_TEST(test_a_board_is_dealt_on_a_word_the_tier_allows);
+	RUN_TEST(test_a_walk_is_routed_through_the_words_the_board_allows);
+	RUN_TEST(test_a_board_measures_its_floor_and_its_ceiling_differently);
 	RUN_TEST(test_the_bots_keep_to_the_words_the_board_allows);
 	RUN_TEST(test_an_uncapped_board_may_use_any_word);
 	RUN_TEST(test_flwc_never_deals_a_board_won_in_one_move);

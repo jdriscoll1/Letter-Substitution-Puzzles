@@ -247,78 +247,138 @@ int nearestGoalIsFarEnough(int id, int least, struct WordSet* goalWords, struct 
 	return farEnough;
 }
 
-// If there exists a goal word that's less than teh minimum distance, return true
-int all_words_are_greater_than_min_distance_and_there_exists_a_word_less_than_max_distance(int id, int minDistance, int maxDistance, struct WordSet* goalWords, struct WordSet *avoidWords, struct DataStructures* data){
+/* Two questions, and they are deliberately not asked of the same graph.
+ *
+ * "Nothing the rule admits sits nearer than minDistance" is a guard - the board
+ * is spoiled if something is too close. "Something the rule admits sits within
+ * maxDistance" is a promise - the board is only playable if it can be reached.
+ *
+ * Narrowing a graph only ever makes distances longer, so the strict reading of
+ * each one is a different graph:
+ *
+ *   The floor is measured over the WHOLE DICTIONARY, because the player may
+ *   type anything in it. Measuring it among the board's own words would report
+ *   a goal as three moves off when somebody who knows one odd word can be there
+ *   in one, and hand back a board that is over before it starts.
+ *
+ *   The ceiling is measured over THE WORDS THIS BOARD DEALS, because a goal
+ *   that can only be got at through words nobody has heard of is not within
+ *   reach in any sense the player would recognise.
+ *
+ * Both are the conservative reading. The two searches together cost less than
+ * the winnability search this sits in front of, and the first one usually stops
+ * within a move or two.
+ */
+int nothingInSetIsNearerThan(int id, int least, struct WordSet* set, struct WordSet* forbidden, struct DataStructures* data){
+	if(least <= 0 || set == NULL){
+		return 1;
+	}
 
+	struct Queue* q = init_Queue();
+	struct WordSet* seen = init_WordSet(data->I2W->numWords);
+	markUsed_WordSet(id, seen);
+	enqueue(id, 0, NULL, q);
+
+	int farEnough = 1;
+
+	while(!isEmpty_Queue(q)){
+		struct QueueNode* parent = dequeue(q);
+		int distance = parent->data->distance;
+		int currId = parent->data->id;
+
+		/* Breadth first hands nodes back in order of distance, so once the
+		   floor is reached there is nothing nearer left to find. */
+		if(distance >= least){
+			break;
+		}
+		if(checkIfUsed_WordSet(currId, set)){
+			farEnough = 0;
+			break;
+		}
+
+		struct intList* conn = getConnections(currId, data->I2W);
+		while(conn->next != NULL){
+			conn = conn->next;
+			int next = conn->data;
+			if(checkIfUsed_WordSet(next, seen) || checkIfUsed_WordSet(next, forbidden)){
+				continue;
+			}
+			enqueue(next, distance + 1, parent, q);
+			markUsed_WordSet(next, seen);
+		}
+	}
+
+	free_Queue(q);
+	free_WordSet(seen);
+	return farEnough;
+}
+
+int somethingInSetIsWithin(int id, int most, struct WordSet* set, struct WordSet* forbidden, struct DataStructures* data){
+	if(set == NULL){
+		return 0;
+	}
+
+	struct Queue* q = init_Queue();
+	struct WordSet* seen = init_WordSet(data->I2W->numWords);
+	markUsed_WordSet(id, seen);
+	enqueue(id, 0, NULL, q);
+
+	int found = 0;
+
+	while(!isEmpty_Queue(q)){
+		struct QueueNode* parent = dequeue(q);
+		int distance = parent->data->distance;
+		int currId = parent->data->id;
+
+		if(checkIfUsed_WordSet(currId, set)){
+			found = 1;
+			break;
+		}
+		if(distance >= most){
+			continue;
+		}
+
+		struct intList* conn = getConnections(currId, data->I2W);
+		while(conn->next != NULL){
+			conn = conn->next;
+			int next = conn->data;
+			if(checkIfUsed_WordSet(next, seen) || checkIfUsed_WordSet(next, forbidden)){
+				continue;
+			}
+			/* The road, not the destination. What the rule names as a goal is
+			   the rule's business and is reached whatever it costs; which words
+			   the walk passes through on the way is this board's business, and
+			   it does not deal in ones nobody knows. */
+			if(!checkIfUsed_WordSet(next, set) && isTooObscure(next, data)){
+				continue;
+			}
+			enqueue(next, distance + 1, parent, q);
+			markUsed_WordSet(next, seen);
+		}
+	}
+
+	free_Queue(q);
+	free_WordSet(seen);
+	return found;
+}
+
+/* The board's distance rule: nothing the rule admits is nearer than the floor,
+   and something it admits is within the ceiling. The two are measured on
+   different graphs - see the comment above the pair of searches. */
+int all_words_are_greater_than_min_distance_and_there_exists_a_word_less_than_max_distance(int id, int minDistance, int maxDistance, struct WordSet* goalWords, struct WordSet *avoidWords, struct DataStructures* data){
 
 	// if the min distance and max distance are both 0, return false
 	if(minDistance == 0 && maxDistance == 0){
-		return 1; 
+		return 1;
 	}
-	// Intitiate a Queue
-	struct Queue* q = init_Queue(); 
-	struct WordSet* exploredNodes = init_WordSet(data->I2W->numWords); 
-	markUsed_WordSet(id, exploredNodes); 
 
-	// Get Options
-	enqueue(id, 0, NULL, q); 
-	// there_exists_a_word_in_the_wordset_that_is_less_than_the_min_distance SUCCESS ON FALSE
-	int min_distance_constraint = 0; 
-	//bool there_exists_a_word_in_the_wordset_that_is_less_than_the_max_distance = false; SUCCESS ON TRUE 
-	int max_distance_constraint = 0;
-	
-
-	while(!isEmpty_Queue(q)){
-		
-		// We get the parent node on a dequeue
-		struct QueueNode* parent = dequeue(q); 
-		// We get the parent's distance
-		int distance = parent->data->distance; 
-
-		// The current node's distance is an increment of the parent's distance
-		int childDistance = distance + 1; 
-
-		// we're viewing the parent's node
-		int currId = parent->data->id; 
-		int wordInSet = checkIfUsed_WordSet(currId, goalWords); 
-		if(wordInSet){
-			if(distance < minDistance){
-				min_distance_constraint = 1; //true
-				break; 
-			}
-			if(distance <= maxDistance){
-				max_distance_constraint = 1; //true
-				// The answer is settled here. A breadth first search hands back
-				// nodes in order of distance, so having got this far without a
-				// word closer than the minimum, there is no longer one to find --
-				// and one word inside the maximum is all the second half asks
-				// for. Carrying on would expand the rest of the ball of radius
-				// maxDistance to learn nothing
-				break; 
-			}
-		}
-		if(distance >= maxDistance){
-			continue;  	
-		}
-		struct intList* conn = getConnections(currId, data->I2W); 
-		while(conn->next != NULL){
-			conn = conn->next; 
-			int currConnId = conn->data; 
-			int isCurrConnExplored = checkIfUsed_WordSet(currConnId, exploredNodes);
-			int isCurrConnInAvoidWords = checkIfUsed_WordSet(currConnId, avoidWords);
-			if(isCurrConnExplored || isCurrConnInAvoidWords){
-				continue; 
-			}
-			enqueue(currConnId, childDistance, parent, q); 
-			markUsed_WordSet(currConnId, exploredNodes); 
-		}
+	if(!nothingInSetIsNearerThan(id, minDistance, goalWords, avoidWords, data)){
+		return 0;
 	}
-	free_Queue(q); 
-	free_WordSet(exploredNodes); 
-	return !min_distance_constraint && max_distance_constraint;
 
-
+	return somethingInSetIsWithin(id, maxDistance, goalWords, avoidWords, data);
 }
+
 
 
 

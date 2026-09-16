@@ -69,7 +69,7 @@ struct GameComponents* initFLWPAtStart(char* startWord, int minDistance, int max
 	int goal = -1;
 
 	if(start != -1){
-		goal = chooseGoalBFS_FLWP(start, minDistance, maxDistance, minAdjacenciesToGoal, maxAdjacenciesToGoal, data);
+		goal = chooseGoalBFS_FLWP(start, minDistance, maxDistance, minAdjacenciesToGoal, maxAdjacenciesToGoal, 1, data);
 	}
 	return pathGameBetween(start, goal, data);
 }
