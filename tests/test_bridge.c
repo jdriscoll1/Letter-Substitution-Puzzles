@@ -41,7 +41,8 @@ int letters_that_differ(const char* a, const char* b, int numLetters);
 /* ------------------------------------------------------------ the ratchet */
 
 static const char* BRIDGE_FUNCTIONS[] = {
-	"initDataStructures", "Load_Obscurity_fd", "seedGameRandom", "getAllWords",
+	"initDataStructures", "Load_Obscurity_fd", "setObscurityCap",
+	"seedGameRandom", "getAllWords",
 	"convertIntToWord", "convertWordToInt", "directAdjacencyHint",
 
 	"initFLWG", "isStartValidFLWG", "getCurrWord", "userTakesTurn",
@@ -111,6 +112,15 @@ void test_bridge_loads_and_converts_the_dictionary(void){
 		if(rankFd != -1){
 			Load_Obscurity_fd(data->I2W, rankFd);
 			covers("Load_Obscurity_fd");
+
+			/*And the cap a board sets over it, which is what decides whether a
+			word is one the game may use. ZOUK is legal to type and must never be
+			dealt or played on calm water.*/
+			setObscurityCap(data, 2000);
+			covers("setObscurityCap");
+			CHECK_INT(isTooObscure(Convert_WordToInt("zouk", data), data), 1);
+			setObscurityCap(data, OBSCURITY_UNKNOWN);
+			CHECK_INT(isTooObscure(Convert_WordToInt("zouk", data), data), 0);
 			close(rankFd);
 			/*CARE is an ordinary word, so it came back ranked*/
 			CHECK(getObscurity(Convert_WordToInt("care", data), data) < OBSCURITY_UNKNOWN);
