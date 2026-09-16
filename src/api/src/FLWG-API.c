@@ -39,8 +39,24 @@ struct DataStructures* initDataStructures(int fd, int numLetters){
 	data->W2I = Allocate_WordToInt(); 	
 	data->I2W = Allocate_IntToWordStruct(); 	
 	Initialize_HashMaps_fd(data->W2I, data->I2W, fd, numLetters); 
-	data->wordSet = init_WordSet(data->I2W->numWords); 
-	return data; 
+	data->wordSet = init_WordSet(data->I2W->numWords);
+	/*Everything is fair game until a board says otherwise*/
+	data->obscurityCap = OBSCURITY_UNKNOWN;
+	return data;
+}
+
+void setObscurityCap(struct DataStructures* data, int cap){
+	if(data == NULL){
+		return;
+	}
+	data->obscurityCap = cap;
+}
+
+int isTooObscure(int id, struct DataStructures* data){
+	if(data == NULL){
+		return 0;
+	}
+	return getObscurity(id, data) > data->obscurityCap;
 }
 
 void freeDataStructures(struct DataStructures* data){

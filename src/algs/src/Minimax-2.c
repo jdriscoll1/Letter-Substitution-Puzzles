@@ -260,8 +260,11 @@ int choose_random_word(int id, struct DataStructures* data){
 	// Loop through the words and derive the number of words that have not been used
 	while(conn != NULL){
 
-		// if there is a single word that is not used 
-		if(! checkIfUsed_WordSet(conn->data, data->wordSet)){
+		/* A word the board may not use is not an option, the same way a word
+		already spent is not one. This is the bot choosing for itself - what the
+		player may type is not decided here. */
+		if(! checkIfUsed_WordSet(conn->data, data->wordSet)
+			&& ! isTooObscure(conn->data, data)){
 			numOptions++; 
 		}
 		conn = conn->next; 	
@@ -282,8 +285,11 @@ int choose_random_word(int id, struct DataStructures* data){
 	// While the word has not been chosen 
 	while(choiceId == -1){
 		
-		// Check if the current word is used
-		while(checkIfUsed_WordSet(conn->data, data->wordSet)){
+		/* Skip anything the board may not use, on the same terms the count
+		above used - the two walks have to agree about what an option is or the
+		n-th option is not the one that was counted. */
+		while(checkIfUsed_WordSet(conn->data, data->wordSet)
+			|| isTooObscure(conn->data, data)){
 			
 			// If it is go to the next word
 			conn = conn->next; 

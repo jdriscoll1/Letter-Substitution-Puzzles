@@ -25,7 +25,16 @@ struct DataStructures {
 	// The Int to Word Map
 	struct wordDataArray* I2W; 
 	// The Word Set
-	struct WordSet* wordSet; 
+	struct WordSet* wordSet;
+	/* How obscure a word the engine may DEAL OR PLAY on this board - see
+	wordData.obscurity. A word past this is still perfectly legal for the player
+	to type; it is the game that must not use it, because being beaten by a word
+	nobody has heard of is not being beaten.
+
+	OBSCURITY_UNKNOWN means no restriction, which is what every caller gets
+	until it says otherwise - so a dictionary loaded and left alone behaves
+	exactly as it did before any of this existed. */
+	int obscurityCap;
 }; 
 
 struct GameData {
@@ -43,6 +52,15 @@ struct GameComponentsFLWGP{
 
 // Shared behavior
 struct DataStructures* initDataStructures(int fd, int numLetters);
+
+/*The hardest word the engine may use from here on. Set once as a board is
+built, the way the adjacency bounds are. Anything at or below the cap may be
+dealt and played; anything above it belongs to the player alone.*/
+void setObscurityCap(struct DataStructures* data, int cap);
+
+/*Whether a word is past that line. Asked wherever the engine is choosing a word
+for itself - never where it is judging one the player typed.*/
+int isTooObscure(int id, struct DataStructures* data);
 /*Fix the sequence of random choices, so the same seed deals the same board.
 initDataStructures seeds from the clock once at startup; this overrides that
 from the point it is called, which is what lets a puzzle be the same puzzle for

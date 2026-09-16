@@ -915,6 +915,84 @@ static void test_flwc_always_deals_a_board_with_somewhere_to_go(void){
 	freeDataStructures(data);
 }
 
+/*What the bots are allowed to answer with.
+ *
+ * The dictionary is the Scrabble list, so a bot walking the neighbours of a
+ * word will happily find ZOUK or PRIG. Being beaten by a word nobody has heard
+ * of is not being beaten, so a board carries a cap and anything past it is the
+ * player's alone - still legal to type, never played by the game.
+ *
+ * The cap is off by default, which is what keeps every existing caller behaving
+ * exactly as it did.
+ */
+static void test_the_bots_keep_to_the_words_the_board_allows(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	int tried = 0, played = 0, tooObscure = 0;
+	int i;
+
+	Load_Obscurity(data->I2W, "docs/4ranks.txt");
+
+	/*Off by default: a dictionary nobody has capped behaves as it always did*/
+	CHECK_INT(isTooObscure(Convert_WordToInt("zouk", data), data), 0);
+
+	/*Calm water - the easy tier's cap, from WordObscurity.ts*/
+	setObscurityCap(data, 2000);
+	CHECK_INT(isTooObscure(Convert_WordToInt("zouk", data), data), 1);
+	CHECK_INT(isTooObscure(Convert_WordToInt("that", data), data), 0);
+
+	/*Walked over many different words rather than one, so the answer does not
+	depend on which corner of the graph the board happens to open in*/
+	for(i = 0; i < data->I2W->numWords && tried < 200; i += 7){
+		int from = i;
+		int by;
+		if(getNumAdjacencies(from, data) < 6){
+			continue;
+		}
+		tried++;
+
+		by = botPly_MaxAdjacencies(from, NULL, data);
+		if(by != -1){
+			played++;
+			if(isTooObscure(by, data)){
+				tooObscure++;
+			}
+		}
+
+		by = botPly_Random(from, data);
+		if(by != -1){
+			played++;
+			if(isTooObscure(by, data)){
+				tooObscure++;
+			}
+		}
+	}
+
+	/*It has to have actually played, or this proves nothing*/
+	CHECK(tried > 50);
+	CHECK(played > 50);
+	CHECK_INT(tooObscure, 0);
+
+	freeDataStructures(data);
+}
+
+/*And lifting the cap gives the whole list back, so this is a restriction the
+ * board applies rather than words being lost.*/
+static void test_an_uncapped_board_may_use_any_word(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	int zouk;
+
+	Load_Obscurity(data->I2W, "docs/4ranks.txt");
+	zouk = Convert_WordToInt("zouk", data);
+
+	setObscurityCap(data, 2000);
+	CHECK_INT(isTooObscure(zouk, data), 1);
+
+	setObscurityCap(data, OBSCURITY_UNKNOWN);
+	CHECK_INT(isTooObscure(zouk, data), 0);
+
+	freeDataStructures(data);
+}
+
 static void test_flwc_never_deals_a_board_won_in_one_move(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
 	/* Every word that starts and ends with the same letter - the campaign's own
@@ -1180,6 +1258,8 @@ void suite_modes(void){
 	RUN_TEST(test_flwc_start_word_satisfies_its_parameters);
 	RUN_TEST(test_flwc_traps_the_player_when_the_board_runs_out);
 	RUN_TEST(test_every_mode_starts_from_a_clear_board);
+	RUN_TEST(test_the_bots_keep_to_the_words_the_board_allows);
+	RUN_TEST(test_an_uncapped_board_may_use_any_word);
 	RUN_TEST(test_flwc_never_deals_a_board_won_in_one_move);
 	RUN_TEST(test_flwc_always_deals_a_board_with_somewhere_to_go);
 	RUN_TEST(test_flwp_hands_back_the_road_from_here);
