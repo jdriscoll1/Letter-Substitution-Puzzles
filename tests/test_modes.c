@@ -812,6 +812,80 @@ static int nearestGoalDistance(int id, struct WordSet* goals, struct DataStructu
 	return answer;
 }
 
+/* A board is always a choice.
+ *
+ * The adjacency band is a preference and is given up when the dictionary has
+ * nothing like what was asked for, which is right. The last round used to give
+ * it up altogether, and that is worse than it sounds, because the checks that
+ * are never relaxed all get easier the fewer moves a word has: a winner cannot
+ * be dealt within two moves of a word if almost nothing is within two moves of
+ * it, and a player cannot be forced onto a forbidden word if there is nowhere
+ * to force them. So once adjacency stopped counting, the dead ends of the
+ * graph were not merely allowed - they were the best candidates in it.
+ *
+ * DEMO is what came out, over and over. Its only neighbour in the four letter
+ * dictionary is MEMO, and MEMO's only neighbour is DEMO: a two word island
+ * where nothing the rule forbids can be reached at all. Every never-relaxed
+ * check passed and the board had exactly one move in it.
+ */
+static void test_flwc_always_deals_a_board_with_somewhere_to_go(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	/* Keep me off words ending in CK - the campaign's own level 23. */
+	char* avoidWords[512];
+	int numAvoid = 0;
+	int deal, dealt = 0, thinnest = 1000;
+	int seenWords[64];
+	int numSeen = 0;
+
+	for(int i = 0; i < data->I2W->numWords && numAvoid < 511; i++){
+		char* w = Convert_IntToWord(i, data->I2W);
+		if(w != NULL && w[2] == 'c' && w[3] == 'k'){
+			avoidWords[numAvoid++] = w;
+		}
+	}
+	avoidWords[numAvoid] = NULL;
+	CHECK(numAvoid > 10);
+
+	/* Asked for a board eight or nine moves from anything ending in CK, which
+		this dictionary does not contain, so the search must give every
+		preference up in turn and arrive at the round that used to accept
+		anything at all. That is the round DEMO came from. */
+	for(deal = 0; deal < 30; deal++){
+		struct GameComponentsFLWC* flwc = initFLWC(15, 24, NO_WORDS, avoidWords,
+			0, 8, 0, 9, 0, 0, 4, data);
+		if(flwc == NULL || flwc->wordId < 0){
+			if(flwc != NULL){ freeGameComponentsFLWC(flwc); }
+			continue;
+		}
+		dealt++;
+		int waysOut = data->I2W->array[flwc->wordId]->numConnections;
+		if(waysOut < thinnest){ thinnest = waysOut; }
+		CHECK(waysOut >= FEWEST_WAYS_OUT);
+
+		/* And how many different boards came out of thirty deals. The fault was
+			noticed as repetition before it was noticed as a dead end - the same
+			word over and over - because the words that passed every other check
+			were a tiny set. */
+		int already = 0;
+		for(int s = 0; s < numSeen; s++){
+			if(seenWords[s] == flwc->wordId){ already = 1; break; }
+		}
+		if(!already && numSeen < 64){ seenWords[numSeen++] = flwc->wordId; }
+		freeGameComponentsFLWC(flwc);
+	}
+
+	/* And it still deals a board. The floor is only worth having if giving the
+		player somewhere to go did not cost them the game entirely. */
+	CHECK(dealt > 20);
+	CHECK(thinnest >= FEWEST_WAYS_OUT);
+	/* Ten different openings out of thirty deals. Not a demand for thirty - the
+		rule genuinely narrows the field and a repeat is fair - but one or two
+		words answering for every board is the thing that was wrong. */
+	CHECK(numSeen >= 10);
+
+	freeDataStructures(data);
+}
+
 static void test_flwc_never_deals_a_board_won_in_one_move(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
 	/* Every word that starts and ends with the same letter - the campaign's own
@@ -1078,6 +1152,7 @@ void suite_modes(void){
 	RUN_TEST(test_flwc_traps_the_player_when_the_board_runs_out);
 	RUN_TEST(test_every_mode_starts_from_a_clear_board);
 	RUN_TEST(test_flwc_never_deals_a_board_won_in_one_move);
+	RUN_TEST(test_flwc_always_deals_a_board_with_somewhere_to_go);
 	RUN_TEST(test_flwp_hands_back_the_road_from_here);
 	RUN_TEST(test_flwp_road_reads_on_three_letter_boards);
 	RUN_TEST(test_flwp_distance_answers_from_where_the_player_is);

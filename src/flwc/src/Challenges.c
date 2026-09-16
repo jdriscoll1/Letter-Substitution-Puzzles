@@ -63,8 +63,23 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 	// The words that pass the two cheap checks, which is as far as most words get
 	int* candidates = malloc(sizeof(int) * data->I2W->numWords);
 
-	for(int round = 0; round < RELAXATION_ROUNDS; round++){
+	/* One round past the last, and it is the one that used to be the last.
+	 *
+	 * Every round including the give-up round now keeps a floor under how many
+	 * ways out the board has, because a board with one move is not a looser
+	 * version of the board that was asked for - it is not a choice. This extra
+	 * round drops even that, and exists only so that nothing this function
+	 * could answer before it can fail to answer now: if the dictionary really
+	 * has no playable word with eight ways out under these rules, the old
+	 * behaviour is still there underneath rather than a -1 and a mode that
+	 * asks again for ever. */
+	for(int round = 0; round <= RELAXATION_ROUNDS; round++){
+		int takeAnythingPlayable = (round == RELAXATION_ROUNDS);
 		struct Band adjacency = loosen(adjacencyAsked, round);
+
+		if(!takeAnythingPlayable && adjacency.min < FEWEST_WAYS_OUT){
+			adjacency.min = FEWEST_WAYS_OUT;
+		}
 
 		/* A distance band nobody is asking about is written 0,0 here, and the
 		   check reads that as "do not look" rather than as "look everywhere".

@@ -48,6 +48,33 @@ struct StartWordParametersFLWC{
  */
 #define NEAREST_GOAL_ALLOWED 2
 
+/* The fewest ways out a board may ever be opened on.
+ *
+ * The adjacency band is a preference and is given up a little at a time when
+ * the dictionary has nothing like it, which is right - but the last round used
+ * to give it up altogether, and a word with one neighbour then satisfied it as
+ * well as a word with twenty.
+ *
+ * That is not a rare accident, it is what the remaining checks select for. The
+ * two that are never relaxed both get easier the fewer moves a word has: a
+ * board cannot deal a winner within two moves if almost nothing is within two
+ * moves, and the player cannot be forced onto a forbidden word if there is
+ * nowhere to be forced. So once adjacency stopped counting, the dead ends of
+ * the graph were not merely allowed, they were the best candidates in it.
+ *
+ * DEMO is the example. Its only neighbour in the whole four letter dictionary
+ * is MEMO, and MEMO's only neighbour is DEMO - a two word island where nothing
+ * the rule forbids can be reached at all. Every never-relaxed check passes,
+ * and the board it opens has exactly one move in it.
+ *
+ * Eight, because it is the lowest floor any board in the game deliberately
+ * asks for - the arcade's rough seas - so this never argues with a request
+ * that could have been met. It leaves 953 of the 1952 four letter words and
+ * 348 of the 495 three letter ones to choose from, which is a wide enough pool
+ * that boards stop repeating as well.
+ */
+#define FEWEST_WAYS_OUT 8
+
 /* Whether the nearest word the rule admits is at least `least` moves off.
  *
  * Asked of every candidate and never relaxed, because this belongs with "the
