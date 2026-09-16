@@ -1094,6 +1094,185 @@ static void test_a_board_measures_its_floor_and_its_ceiling_differently(void){
 	freeDataStructures(data);
 }
 
+/* THE RATCHET.
+ *
+ * Everything above proves one thing at one cap. This deals whole boards, in
+ * every mode and at both word lengths it can reach, at caps spanning the whole
+ * campaign, and asserts that every word THE GAME CHOSE is a word that board was
+ * allowed to use.
+ *
+ * Where that line falls is the point of the test, and it is drawn deliberately:
+ *
+ *   IN  - the word a board opens on, the goal it names, every step of the route
+ *         it measures itself by, and every word a bot answers with. The game
+ *         picks these, so the game is answerable for them.
+ *
+ *   OUT - hints. They are ORDERED, not capped: a hint hands over the commonest
+ *         word available and would rather offer an odd word than nothing at
+ *         all, because the player has paid for it. A ratchet demanding hints
+ *         sit inside the cap would assert the opposite of what was built.
+ *
+ *   OUT - how many ways out a player has, for the same reason. That is a count
+ *         of what the PLAYER may legally type, and they may type anything.
+ *
+ *   OUT - an FLWC board's goal words, which come from a rule written in JS over
+ *         the whole word list. The road is the board's business; the
+ *         destination is the rule's.
+ *
+ * The caps are swept ACROSS the campaign's range rather than read out of it.
+ * Which caps the campaign uses is JS's business and is tested there, in
+ * WordObscurity-test.ts. That the engine deals a clean board at whatever cap it
+ * is handed is this test's.
+ */
+static int RAMP[] = { 800, 1444, 3022, 6325, 13235, 27000, 50000 };
+#define RAMP_STEPS ((int)(sizeof(RAMP) / sizeof(RAMP[0])))
+
+/* The three boards that are dealt the same way whatever length the words are.
+ * Counts are accumulated through pointers rather than checked in here, so the
+ * caller can insist each word length pulled its weight instead of letting one
+ * of them hide behind the other.
+ */
+static void sweepBoards(struct DataStructures* data, int* boards, int* words,
+	int* pastCap, int* botWords){
+	int c, attempt;
+
+	for(c = 0; c < RAMP_STEPS; c++){
+		setObscurityCap(data, RAMP[c]);
+
+		for(attempt = 0; attempt < 5; attempt++){
+			struct GameData* flwg;
+			struct GameComponentsFLWT* flwt;
+			struct GameComponents* flwp;
+
+			/*The adversarial board, and what the bots answer on it*/
+			flwg = initFLWG(data, 8, 14);
+			if(flwg != NULL && flwg->currWordId != -1){
+				int by;
+				(*boards)++;
+				(*words)++;
+				if(isTooObscure(flwg->currWordId, data)){ (*pastCap)++; }
+
+				by = botPly_MaxAdjacencies(flwg->currWordId, NULL, data);
+				if(by != -1){
+					(*words)++; (*botWords)++;
+					if(isTooObscure(by, data)){ (*pastCap)++; }
+				}
+				by = botPly_Random(flwg->currWordId, data);
+				if(by != -1){
+					(*words)++; (*botWords)++;
+					if(isTooObscure(by, data)){ (*pastCap)++; }
+				}
+				by = botPly(flwg->currWordId, 2, data->I2W, data->wordSet);
+				if(by != -1){
+					(*words)++; (*botWords)++;
+					if(isTooObscure(by, data)){ (*pastCap)++; }
+				}
+			}
+			if(flwg != NULL){ freeGameComponentsFLWG(flwg); }
+			reset_WordSet(data->wordSet);
+
+			/*The turns board*/
+			flwt = initFLWT(3, 8, 14, data);
+			if(flwt != NULL && flwt->startWordId != -1){
+				(*boards)++;
+				(*words)++;
+				if(isTooObscure(flwt->startWordId, data)){ (*pastCap)++; }
+			}
+			if(flwt != NULL){ freeGameComponentsFLWT(flwt); }
+			reset_WordSet(data->wordSet);
+
+			/*The walk - both ends AND every step of the road between them*/
+			flwp = initiateFLWP(8, 16, 3, 6, 4, 20, data);
+			if(flwp != NULL && flwp->start != -1){
+				(*boards)++;
+				*words += 2;
+				if(isTooObscure(flwp->start, data)){ (*pastCap)++; }
+				if(isTooObscure(flwp->goal, data)){ (*pastCap)++; }
+
+				if(flwp->solution != NULL){
+					struct intList* step;
+					for(step = flwp->solution->next; step != NULL; step = step->next){
+						(*words)++;
+						if(isTooObscure(step->data, data)){ (*pastCap)++; }
+					}
+				}
+			}
+			if(flwp != NULL){ freeGameComponentsFLWP(flwp, data); }
+			reset_WordSet(data->wordSet);
+		}
+	}
+}
+
+static void test_every_board_is_dealt_inside_its_cap(void){
+	struct DataStructures* four = open_dictionary("docs/4.txt", 4);
+	struct DataStructures* three = open_dictionary("docs/3.txt", 3);
+	int c, attempt;
+	int boards = 0, words = 0, pastCap = 0, botWords = 0, constraintBoards = 0;
+	int atFour, atThree;
+
+	Load_Obscurity(four->I2W, "docs/4ranks.txt");
+	Load_Obscurity(three->I2W, "docs/3ranks.txt");
+
+	/*Both word lengths the campaign deals. A cap carves a differently shaped
+	graph out of each - 182 of the 1,015 three letter words are unranked
+	against 1,601 of the 4,030 four letter ones - so one of them passing is not
+	evidence about the other.*/
+	sweepBoards(four, &boards, &words, &pastCap, &botWords);
+	atFour = boards;
+	sweepBoards(three, &boards, &words, &pastCap, &botWords);
+	atThree = boards - atFour;
+
+	/*The constraint board costs a game search for every candidate it considers,
+	so it is dealt twice rather than seventy times, and only at four letters
+	where there are goal words to hand. The composed board is not dealt at all:
+	it is built out of an FLWC and an FLWP, and both of those are here.*/
+	for(c = 0; c < RAMP_STEPS; c += (RAMP_STEPS - 1)){
+		struct GameComponentsFLWC* flwc;
+		setObscurityCap(four, RAMP[c]);
+		flwc = initFLWC(1, 30, DEMO_GOAL_WORDS, NO_WORDS, 2, 0, 6, 0, 1, 30, 8, four);
+		if(flwc != NULL && flwc->wordId >= 0){
+			boards++;
+			constraintBoards++;
+			words++;
+			if(isTooObscure(flwc->wordId, four)){ pastCap++; }
+		}
+		if(flwc != NULL){ freeGameComponentsFLWC(flwc); }
+		reset_WordSet(four->wordSet);
+	}
+
+	/*Neither word length may be quietly contributing nothing*/
+	CHECK(atFour > 90);
+	CHECK(atThree > 90);
+	CHECK(words > 600);
+	CHECK(botWords > 100);
+	/*Counted on its own too: the other modes alone clear the board count, so
+	without this the constraint game could be silently absent*/
+	CHECK_INT(constraintBoards, 2);
+
+	CHECK_INT(pastCap, 0);
+
+	/*And it would notice. Lift the cap and these same bands deal plenty that
+	the tightest of them would have refused - so the sweep above is not passing
+	because the boards it asks for happen to avoid obscure words anyway.*/
+	{
+		int wouldHaveFailed = 0;
+		setObscurityCap(four, OBSCURITY_UNKNOWN);
+		for(attempt = 0; attempt < 40; attempt++){
+			struct GameData* flwg = initFLWG(four, 8, 14);
+			if(flwg != NULL && flwg->currWordId != -1
+				&& getObscurity(flwg->currWordId, four) > RAMP[0]){
+				wouldHaveFailed++;
+			}
+			if(flwg != NULL){ freeGameComponentsFLWG(flwg); }
+			reset_WordSet(four->wordSet);
+		}
+		CHECK(wouldHaveFailed > 5);
+	}
+
+	freeDataStructures(four);
+	freeDataStructures(three);
+}
+
 static void test_the_bots_keep_to_the_words_the_board_allows(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
 	int tried = 0, played = 0, tooObscure = 0;
@@ -1452,6 +1631,7 @@ void suite_modes(void){
 	RUN_TEST(test_a_walk_is_routed_through_the_words_the_board_allows);
 	RUN_TEST(test_a_board_measures_its_floor_and_its_ceiling_differently);
 	RUN_TEST(test_the_bots_keep_to_the_words_the_board_allows);
+	RUN_TEST(test_every_board_is_dealt_inside_its_cap);
 	RUN_TEST(test_an_uncapped_board_may_use_any_word);
 	RUN_TEST(test_flwc_never_deals_a_board_won_in_one_move);
 	RUN_TEST(test_flwc_always_deals_a_board_with_somewhere_to_go);
