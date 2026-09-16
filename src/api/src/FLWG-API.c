@@ -40,23 +40,22 @@ struct DataStructures* initDataStructures(int fd, int numLetters){
 	data->I2W = Allocate_IntToWordStruct(); 	
 	Initialize_HashMaps_fd(data->W2I, data->I2W, fd, numLetters); 
 	data->wordSet = init_WordSet(data->I2W->numWords);
-	/*Everything is fair game until a board says otherwise*/
-	data->obscurityCap = OBSCURITY_UNKNOWN;
 	return data;
 }
 
 void setObscurityCap(struct DataStructures* data, int cap){
-	if(data == NULL){
+	if(data == NULL || data->I2W == NULL){
 		return;
 	}
-	data->obscurityCap = cap;
+	/*Kept on the word map, which is what the searches are handed*/
+	data->I2W->obscurityCap = cap;
 }
 
 int isTooObscure(int id, struct DataStructures* data){
 	if(data == NULL){
 		return 0;
 	}
-	return getObscurity(id, data) > data->obscurityCap;
+	return isTooObscureForGraph(id, data->I2W);
 }
 
 void freeDataStructures(struct DataStructures* data){

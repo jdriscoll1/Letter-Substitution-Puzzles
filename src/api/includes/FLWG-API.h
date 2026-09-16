@@ -26,15 +26,6 @@ struct DataStructures {
 	struct wordDataArray* I2W; 
 	// The Word Set
 	struct WordSet* wordSet;
-	/* How obscure a word the engine may DEAL OR PLAY on this board - see
-	wordData.obscurity. A word past this is still perfectly legal for the player
-	to type; it is the game that must not use it, because being beaten by a word
-	nobody has heard of is not being beaten.
-
-	OBSCURITY_UNKNOWN means no restriction, which is what every caller gets
-	until it says otherwise - so a dictionary loaded and left alone behaves
-	exactly as it did before any of this existed. */
-	int obscurityCap;
 }; 
 
 struct GameData {

@@ -182,6 +182,21 @@ struct score minimax2(int id, int remainingDepth, int isMaximizingPlayer, struct
 			continue; 	
 		} 			
 
+		/* And, at the root, that it is a word this board lets the bot play.
+		   The root is the only ply whose move is actually made, so gating it
+		   is what keeps an obscure word off the board.
+
+		   Deliberately the root and not every maximizing ply: this search
+		   recurses with isMaximizingPlayer - 1 from 1, so it runs 1, 0, -1,
+		   -2, and everything from the second ply down reads as truthy. There
+		   is no honest way to ask whose turn it is deeper in until that is
+		   fixed, and guessing would have the bot searching a game neither
+		   player is in. */
+		if(remainingDepth == parameters.startDepth
+			&& isTooObscure(conn->data, data)){
+			continue;
+		}
+
 		numConnections++; 
 
 		// Rerun the minimax algorithm with the current child as the node being scored

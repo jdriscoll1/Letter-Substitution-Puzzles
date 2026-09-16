@@ -57,16 +57,29 @@ struct wordStruct{
 };
 
 struct wordDataArray{
-	int numWords; 
-	int numLetters; 
-	struct wordData** array; 
-	
+	int numWords;
+	int numLetters;
+	struct wordData** array;
+	/*The hardest word the engine may deal or play from this dictionary - see
+	wordData.obscurity. It lives here rather than beside the game because the
+	searches that choose words are handed the word map and nothing else:
+	minimax takes a wordDataArray, not a DataStructures, and threading one
+	through the recursion to answer a question about a word would be the tail
+	wagging the dog.
+
+	OBSCURITY_UNKNOWN is no restriction, which is what a dictionary has until a
+	board says otherwise.*/
+	int obscurityCap;
+
 };
 
 int getNumAdjacencies(int id, struct DataStructures* data);
 /*How obscure a word is - see wordData.obscurity. An id nothing knows about
 answers OBSCURITY_UNKNOWN rather than reading off the end of the array.*/
-int getObscurity(int id, struct DataStructures* data); 
+int getObscurity(int id, struct DataStructures* data);
+/*Whether a word is past what this dictionary is currently allowed to use. The
+form the searches ask, because they hold the word map rather than the game.*/
+int isTooObscureForGraph(int id, struct wordDataArray* graph); 
 void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, int fd, int numLetters);
 
 void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, char* path, int numLetters);

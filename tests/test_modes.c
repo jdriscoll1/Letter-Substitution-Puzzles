@@ -967,6 +967,27 @@ static void test_the_bots_keep_to_the_words_the_board_allows(void){
 		}
 	}
 
+	/*And the searching bot, which does not pick from a list but explores. Fewer
+	starting words because each call is a game tree rather than a walk.*/
+	{
+		int searched = 0;
+		for(i = 0; i < data->I2W->numWords && searched < 30; i += 37){
+			int by;
+			if(getNumAdjacencies(i, data) < 6){
+				continue;
+			}
+			searched++;
+			by = botPly(i, 2, data->I2W, data->wordSet);
+			if(by != -1){
+				played++;
+				if(isTooObscure(by, data)){
+					tooObscure++;
+				}
+			}
+		}
+		CHECK(searched > 10);
+	}
+
 	/*It has to have actually played, or this proves nothing*/
 	CHECK(tried > 50);
 	CHECK(played > 50);

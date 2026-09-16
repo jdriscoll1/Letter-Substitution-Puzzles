@@ -32,6 +32,16 @@ int getNumAdjacencies(int id, struct DataStructures* data){
 /*See HashMap.h. Bounds checked the same way its neighbour above is, and for the
 same reason: -1 is the engine's way of saying "no word" and it arrives here as
 array[-1].*/
+int isTooObscureForGraph(int id, struct wordDataArray* graph){
+	if(graph == NULL || id < 0 || id >= graph->numWords){
+		return 0;
+	}
+	if(graph->array[id] == NULL){
+		return 0;
+	}
+	return graph->array[id]->obscurity > graph->obscurityCap;
+}
+
 int getObscurity(int id, struct DataStructures* data){
 	if(data == NULL || data->I2W == NULL || id < 0 || id >= data->I2W->numWords){
 		return OBSCURITY_UNKNOWN;
@@ -101,8 +111,10 @@ struct DummyHeadNode** *Allocate_WordToInt(){
 void Allocate_IntToWord(struct wordDataArray* IntToWord_HashMap, int numWords, int numLetters){
 	struct wordData** array = calloc(numWords, sizeof(struct wordData*)); 
 	IntToWord_HashMap->array = array; 
-	IntToWord_HashMap->numWords = numWords; 
-	IntToWord_HashMap->numLetters = numLetters; 
+	IntToWord_HashMap->numWords = numWords;
+	IntToWord_HashMap->numLetters = numLetters;
+	/*Everything is fair game until a board says otherwise*/
+	IntToWord_HashMap->obscurityCap = OBSCURITY_UNKNOWN; 
 
 
 

@@ -73,8 +73,17 @@ struct minimaxOutput* minimax(int id, int currDepth, int maxDepth, int isMaximiz
 		// The current word being checked
 		int currID = currConnection->data; 
 		
-		// Verify that the word has not already been found in the hash set
-		if(checkIfUsed_WordSet(currID, wordSet) == 0){
+		/* Verify that the word has not already been found in the hash set,
+		   and - on the bot's own turn - that it is a word this board lets it
+		   play.
+
+		   Only on its own turn. The player may type anything in the dictionary,
+		   so the plies where they move have to be searched with the whole graph
+		   or the bot is working from a picture of a game it is not in. Reading
+		   the player as restricted too would make it believe it was safer than
+		   it is. */
+		if(checkIfUsed_WordSet(currID, wordSet) == 0
+			&& !(isMaximizingPlayer == 1 && isTooObscureForGraph(currID, wordGraph))){
 			
 			// Increment the parent's words number of connections
 			numConnections++; 
