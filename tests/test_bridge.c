@@ -19,6 +19,8 @@ added to the bridge and left untested fails the build rather than going quiet.
 A JS test in the app repository checks the list itself still matches what the
 bridge calls, which is the half of it that C cannot see.
 */
+#include <fcntl.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,7 +41,7 @@ int letters_that_differ(const char* a, const char* b, int numLetters);
 /* ------------------------------------------------------------ the ratchet */
 
 static const char* BRIDGE_FUNCTIONS[] = {
-	"initDataStructures", "seedGameRandom", "getAllWords",
+	"initDataStructures", "Load_Obscurity_fd", "seedGameRandom", "getAllWords",
 	"convertIntToWord", "convertWordToInt", "directAdjacencyHint",
 
 	"initFLWG", "isStartValidFLWG", "getCurrWord", "userTakesTurn",
@@ -98,6 +100,22 @@ void test_bridge_loads_and_converts_the_dictionary(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
 	covers("initDataStructures");
 	CHECK(data != NULL);
+
+	/*And how obscure each of those words is, which the app loads from a second
+	asset straight after the dictionary. Over a descriptor here because that is
+	how the app has it: assets live packed inside the APK rather than on the
+	filesystem, so there is no path for it to open.*/
+	{
+		int rankFd = open("docs/4ranks.txt", O_RDONLY);
+		CHECK(rankFd != -1);
+		if(rankFd != -1){
+			Load_Obscurity_fd(data->I2W, rankFd);
+			covers("Load_Obscurity_fd");
+			close(rankFd);
+			/*CARE is an ordinary word, so it came back ranked*/
+			CHECK(getObscurity(Convert_WordToInt("care", data), data) < OBSCURITY_UNKNOWN);
+		}
+	}
 
 	/*Every word round trips through both conversions, which everything
 	downstream depends on since the engine works in ids and the app in words*/

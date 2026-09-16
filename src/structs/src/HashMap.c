@@ -29,6 +29,19 @@ int getNumAdjacencies(int id, struct DataStructures* data){
 	return data->I2W->array[id]->numConnections; 
 }
 
+/*See HashMap.h. Bounds checked the same way its neighbour above is, and for the
+same reason: -1 is the engine's way of saying "no word" and it arrives here as
+array[-1].*/
+int getObscurity(int id, struct DataStructures* data){
+	if(data == NULL || data->I2W == NULL || id < 0 || id >= data->I2W->numWords){
+		return OBSCURITY_UNKNOWN;
+	}
+	if(data->I2W->array[id] == NULL){
+		return OBSCURITY_UNKNOWN;
+	}
+	return data->I2W->array[id]->obscurity;
+}
+
 void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, int fd, int numLetters){
 	//Open up the file 
 	//The descriptor is duplicated because the fclose() below closes whatever fdopen()
@@ -264,6 +277,8 @@ struct wordData* Create_WordData(char* word){
 	wordData->hintFound = 0;
 	wordData->numConnections = 0;
 	wordData->prevID = -1;
+	/*Until a ranks file says otherwise. Every dictionary loads without one.*/
+	wordData->obscurity = OBSCURITY_UNKNOWN;
 	return wordData;
 } 
 
@@ -474,4 +489,64 @@ int getNumOptions(int id, struct DataStructures* data){
 		options = options->next; 
 	}
 	return numOptions; 
+}
+
+/*See HashMap.h. Reads a count and then one rank per line, in the same order as
+the words, and refuses to apply a file whose count disagrees with the dictionary
+it is being read over - a ranks file that has drifted out of step with its word
+list would silently give every word somebody else's rank, which is worse than
+having no ranks at all.*/
+void Fill_Obscurity(FILE* rankDoc, struct wordDataArray* IntToWord_HashMap){
+	char line[BUFSIZ];
+	int claimed = 0;
+	int i;
+
+	if(rankDoc == NULL || IntToWord_HashMap == NULL){
+		return;
+	}
+	if(fgets(line, BUFSIZ, rankDoc) == NULL){
+		return;
+	}
+	claimed = (int)strtol(line, NULL, 10);
+	if(claimed != IntToWord_HashMap->numWords){
+		FLWG_LOG("Ranks file is for %d words, dictionary holds %d - ignoring it\n",
+			claimed, IntToWord_HashMap->numWords);
+		return;
+	}
+
+	for(i = 0; i < IntToWord_HashMap->numWords; i++){
+		if(fgets(line, BUFSIZ, rankDoc) == NULL){
+			return;
+		}
+		if(IntToWord_HashMap->array[i] != NULL){
+			IntToWord_HashMap->array[i]->obscurity = (int)strtol(line, NULL, 10);
+		}
+	}
+}
+
+void Load_Obscurity_fd(struct wordDataArray* IntToWord_HashMap, int fd){
+	/*Duplicated for the same reason the dictionary's is: fclose closes whatever
+	fdopen was handed, and the caller keeps what it passed in.*/
+	int fdCopy = (fd < 0) ? -1 : dup(fd);
+	FILE* rankDoc = (fdCopy == -1) ? NULL : fdopen(fdCopy, "r");
+	if(rankDoc == NULL){
+		if(fdCopy != -1){
+			close(fdCopy);
+		}
+		FLWG_LOG("No ranks file on descriptor %d; every word stays unranked\n", fd);
+		return;
+	}
+	Fill_Obscurity(rankDoc, IntToWord_HashMap);
+	fclose(rankDoc);
+}
+
+void Load_Obscurity(struct wordDataArray* IntToWord_HashMap, const char* path){
+	FILE* rankDoc = (path == NULL) ? NULL : fopen(path, "r");
+	if(rankDoc == NULL){
+		FLWG_LOG("No ranks file at %s; every word stays unranked\n",
+			(path == NULL) ? "(null)" : path);
+		return;
+	}
+	Fill_Obscurity(rankDoc, IntToWord_HashMap);
+	fclose(rankDoc);
 }

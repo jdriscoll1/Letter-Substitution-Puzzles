@@ -26,7 +26,14 @@ void test_fail(const char* file, int line, const char* what);
 /*Prints the totals. Returns the process exit code: 0 when everything passed*/
 int test_summary(void);
 
-#define RUN_TEST(fn) do { test_start(#fn); fn(); test_end(); } while(0)
+/*Run one test, or only the ones whose name contains the filter given on the
+command line. The whole suite is eleven thousand checks against a four thousand
+word dictionary, which is a slow way to ask about one test while fixing it:
+	./flwo_tests traps_the_player
+Without an argument everything runs, which is what CI and `make test` do.*/
+extern const char* test_filter;
+
+#define RUN_TEST(fn) do { 	if(test_filter == NULL || strstr(#fn, test_filter) != NULL){ 		test_start(#fn); fn(); test_end(); 	} } while(0)
 
 #define CHECK(cond) do { \
 	checks_run++; \
@@ -97,5 +104,9 @@ here, which also asserts that initDataStructures does not take it over*/
 struct DataStructures* open_dictionary(const char* path, int numLetters);
 /*Number of positions at which two equal-length words differ*/
 int letters_that_differ(const char* a, const char* b, int numLetters);
+/*The count on the first line of a dictionary file. Tests ask the file how many
+words it holds rather than carrying the number themselves - the word list grows,
+and a test that hardcodes 1952 fails for the one reason that is not a fault.*/
+int declared_word_count(const char* path);
 
 #endif

@@ -12,6 +12,7 @@ Description: The harness itself plus the helpers the suites share.
 
 #include "../src/api/includes/FLWG-API.h"
 
+const char* test_filter = NULL;
 int tests_run = 0;
 int tests_failed = 0;
 int checks_run = 0;
@@ -65,6 +66,19 @@ struct DataStructures* open_dictionary(const char* path, int numLetters){
 	put back afterwards or the tests would differ from run to run*/
 	srand(TEST_SEED);
 	return data;
+}
+
+int declared_word_count(const char* path){
+	FILE* f = fopen(path, "r");
+	int count = -1;
+	if(f == NULL){
+		return -1;
+	}
+	if(fscanf(f, "%d", &count) != 1){
+		count = -1;
+	}
+	fclose(f);
+	return count;
 }
 
 int letters_that_differ(const char* a, const char* b, int numLetters){

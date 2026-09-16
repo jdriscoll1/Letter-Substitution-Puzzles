@@ -655,10 +655,39 @@ static void test_flwc_traps_the_player_when_the_board_runs_out(void){
 	CHECK_INT(isStartValidFLWC(flwc), 1);
 	CHECK_STR(getStartWordFLWC(flwc, data), "free");
 
-	/*Spend the other two ways out of TREE, so TREK is the bot's only legal
-	move whatever kind of bot it is*/
-	markUsed_WordSet(Convert_WordToInt("thee", data), data->wordSet);
-	markUsed_WordSet(Convert_WordToInt("true", data), data->wordSet);
+	/*Spend every other way out of TREE, so TREK is the bot's only legal move
+	whatever kind of bot it is.
+
+	Counted off the dictionary rather than named. TREE had three neighbours when
+	this was written - THEE, TRUE, TREK - and has fourteen now that the word list
+	is the Scrabble one, so naming them tested the word list rather than the
+	trap.*/
+	{
+		int treeId = Convert_WordToInt("tree", data);
+		int trekId = Convert_WordToInt("trek", data);
+		struct intList* ways = NULL;
+		CHECK(treeId != -1);
+		CHECK(trekId != -1);
+		ways = getConnections(treeId, data->I2W);
+		while(ways != NULL && ways->next != NULL){
+			ways = ways->next;
+			if(ways->data != trekId){
+				markUsed_WordSet(ways->data, data->wordSet);
+			}
+		}
+
+		/*And every way out of TREK except back to TREE, or the bot playing TREK
+		is not a trap at all - the player just answers it. TREK keeps DREK, which
+		is not a neighbour of TREE and so is not spent by the loop above: that is
+		the whole difference between this dictionary and the old one.*/
+		ways = getConnections(trekId, data->I2W);
+		while(ways != NULL && ways->next != NULL){
+			ways = ways->next;
+			if(ways->data != treeId){
+				markUsed_WordSet(ways->data, data->wordSet);
+			}
+		}
+	}
 
 	CHECK_INT(userEntersWordFLWC("tree", flwc, data), VALID);
 	CHECK_INT(isGameWonFLWC(flwc), -1);

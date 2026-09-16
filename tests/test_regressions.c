@@ -40,7 +40,7 @@ static void test_init_leaves_the_caller_owning_the_fd(void){
 	CHECK_INT(closeResult, 0);
 
 	/*and closing it does not disturb the structures that were built from it*/
-	CHECK_INT(data->I2W->numWords, 29);
+	CHECK_INT(data->I2W->numWords, declared_word_count("docs/2.txt"));
 	CHECK_NOT_NULL(Convert_IntToWord(0, data->I2W));
 
 	freeDataStructures(data);
@@ -174,17 +174,22 @@ static void test_duplicate_keys_do_not_break_the_map(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 3);
 	int id;
 
-	/*Every word is truncated to three letters*/
-	CHECK_INT(data->I2W->numWords, 1952);
+	/*Every word is truncated to three letters, which is the point: a four letter
+	list read as three letters is full of duplicates by construction*/
+	const char* first;
+	CHECK_INT(data->I2W->numWords, declared_word_count("docs/4.txt"));
 	CHECK_INT(data->I2W->numLetters, 3);
-	CHECK_INT((int)strlen(Convert_IntToWord(0, data->I2W)), 3);
-	CHECK_STR(Convert_IntToWord(0, data->I2W), "war");
+	first = Convert_IntToWord(0, data->I2W);
+	CHECK_NOT_NULL(first);
+	CHECK_INT((int)strlen(first), 3);
 
-	/*The first of the duplicates is the one the tree kept, and it still resolves*/
-	id = Convert_WordToInt("war", data);
+	/*The first of the duplicates is the one the tree kept, and it still resolves.
+	Read back rather than named: which word lands at index nought is whichever
+	has the most connections, and that moves when the word list does*/
+	id = Convert_WordToInt(first, data);
 	CHECK(id != -1);
 	if(id != -1){
-		CHECK_STR(Convert_IntToWord(id, data->I2W), "war");
+		CHECK_STR(Convert_IntToWord(id, data->I2W), first);
 	}
 
 	freeDataStructures(data);

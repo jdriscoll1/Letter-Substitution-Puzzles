@@ -16,7 +16,11 @@ after every load, because initDataStructures reseeds from the clock itself.
 void suite_api_surface(void);
 void suite_bridge(void);
 
-int main(void){
+int main(int argc, char** argv){
+	/*An optional substring: only tests whose name contains it are run*/
+	if(argc > 1){
+		test_filter = argv[1];
+	}
 	/*Fixed seed: the game APIs pick start words with rand()*/
 	srand(TEST_SEED);
 

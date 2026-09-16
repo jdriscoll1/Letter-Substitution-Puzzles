@@ -1,29 +1,101 @@
-am
-an
-as
-at
-be
-by
-do
-go
-he
-hi
-if
-in
-is
-it
-ma
-me
-my
-no
-of
-on
-or
-ox
-pa
-pi
-so
-to
-up
-us
-we
+aa 12212
+ab 13836
+ad 3474
+ae 11409
+ag 19409
+ah 325
+ai 7955
+al 1784
+am 130
+an 81
+ar 9324
+as 68
+at 53
+aw 1516
+ax 10128
+ay 4678
+ba 6010
+be 29
+bi 11429
+bo 3879
+by 106
+de 1149
+do 24
+ed 1811
+ef 43836
+eh 749
+el 2983
+em 542
+en 4481
+er 1115
+es 6087
+et 4592
+ex 3565
+fa 8448
+fe 12478
+go 47
+ha 591
+he 18
+hi 255
+hm 2109
+ho 1623
+id 2557
+if 48
+in 13
+is 12
+it 7
+jo 2793
+ka 10666
+ki 10495
+la 1024
+li 3772
+lo 4635
+ma 571
+me 16
+mi 4245
+mm 948
+mo 4181
+mu 11208
+my 20
+na 3431
+ne 7215
+no 27
+nu 16530
+od 14578
+oe 38256
+of 11
+oh 56
+oi 3575
+om 11521
+on 21
+op 9243
+or 93
+os 18905
+ow 1142
+ox 8497
+oy 10268
+pa 2703
+pe 16084
+pi 10478
+qi 11215
+re 1963
+sh 7449
+si 4686
+so 38
+ta 5829
+ti 12581
+to 4
+uh 153
+um 330
+un 4843
+up 52
+us 85
+ut 22235
+we 15
+wo 8164
+xi 12570
+xu 14375
+ya 740
+ye 3674
+yo 1118
+za 28903

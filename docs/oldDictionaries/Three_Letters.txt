@@ -1,495 +1,1015 @@
-ace
-act
-add
-ado
-aft
-age
-ago
-aha
-aid
-ail
-aim
-air
-ale
-all
-alp
-amp
-and
-ant
-any
-ape
-apt
-arc
-are
-ark
-arm
-art
-ash
-ask
-asp
-ate
-awe
-axe
-aye
-baa
-bad
-bag
-bah
-ban
-bap
-bar
-bat
-bay
-bed
-bee
-beg
-bet
-bib
-bid
-big
-bin
-bit
-boa
-bob
-bog
-boo
-bop
-bow
-box
-boy
-bub
-bud
-bug
-bum
-bun
-bur
-bus
-but
-buy
-bye
-cab
-cad
-cam
-can
-cap
-car
-cat
-caw
-cob
-cod
-cog
-con
-coo
-cop
-cot
-cow
-coy
-cry
-cub
-cud
-cue
-cup
-cur
-cut
-dab
-dad
-dam
-day
-den
-dew
-did
-die
-dig
-dim
-din
-dip
-doe
-dog
-doh
-don
-dot
-dry
-dub
-dud
-due
-dug
-duo
-dye
-ear
-eat
-ebb
-eel
-egg
-ego
-eke
-elf
-elk
-elm
-els
-emu
-end
-eon
-era
-err
-eta
-eve
-ewe
-eye
-fad
-fan
-far
-fat
-fax
-fed
-fee
-few
-fib
-fig
-fin
-fir
-fit
-fix
-fly
-fob
-foe
-fog
-for
-fox
-fro
-fry
-fun
-fur
-gab
-gag
-gal
-gap
-gas
-gel
-gem
-get
-gig
-gin
-gnu
-god
-goo
-got
-gum
-gun
-gut
-guy
-gym
-had
-hag
-ham
-has
-hat
-hay
-hem
-hen
-her
-hex
-hey
-hic
-hid
-him
-hip
-his
-hit
-hob
-hod
-hoe
-hog
-hop
-hot
-how
-hub
-hue
-hug
-huh
-hum
-hut
-ice
-icy
-ids
-ifs
-ill
-imp
-ink
-inn
-ins
-ion
-ire
-irk
-its
-ivy
-jab
-jag
-jam
-jar
-jaw
-jay
-jet
-job
-jog
-jot
-joy
-jug
-jut
-keg
-key
-kid
-kin
-kit
-lab
-lad
-lag
-lam
-lap
-law
-lax
-lay
-led
-leg
-let
-lid
-lie
-lip
-lit
-lob
-log
-loo
-lop
-lot
-low
-lug
-mad
-man
-map
-mar
-mas
-mat
-maw
-may
-men
-met
-mew
-mid
-mix
-mob
-mod
-mom
-moo
-mop
-mow
-mrs
-mud
-mug
-mum
-nab
-nag
-nap
-nay
-net
-new
-nib
-nil
-nip
-nod
-nor
-not
-now
-nun
-nut
-oaf
-oak
-oar
-oat
-odd
-ode
-off
-oft
-ohm
-oil
-old
-one
-ooh
-opt
-orb
-ore
-our
-out
-owe
-owl
-own
-pad
-pal
-pan
-par
-pat
-paw
-pay
-pea
-peg
-pen
-pep
-per
-pet
-pew
-pie
-pig
-pin
-pip
-pit
-ply
-pod
-pop
-pot
-pox
-pro
-pry
-pub
-pug
-pun
-pup
-put
-rad
-rag
-ram
-ran
-rap
-rat
-raw
-ray
-red
-rev
-rho
-rib
-rid
-rig
-rim
-rip
-rob
-rod
-roe
-rot
-row
-rub
-rue
-rug
-rum
-run
-rut
-rye
-sac
-sad
-sag
-sap
-sat
-saw
-say
-sea
-see
-set
-sew
-she
-shy
-sin
-sip
-sir
-sit
-six
-ski
-sky
-sly
-sob
-sod
-son
-sop
-sow
-soy
-spa
-spy
-sty
-sub
-sud
-sue
-sum
-sun
-tab
-tag
-tan
-tap
-tar
-tau
-tax
-tea
-ted
-tee
-ten
-the
-thy
-tic
-tie
-tin
-tip
-toe
-ton
-too
-top
-tot
-tow
-toy
-try
-tub
-tug
-two
-ups
-urn
-use
-van
-vat
-veg
-vet
-vex
-via
-vie
-vim
-vow
-wad
-wag
-war
-was
-wax
-way
-web
-wed
-wee
-wet
-who
-why
-wig
-win
-wit
-woe
-wok
-won
-woo
-wow
-wry
-yak
-yam
-yap
-yaw
-yea
-yen
-yep
-yes
-yet
-yew
-yip
-you
-zag
-zap
-zig
-zip
-zoo
+aah 1128
+aal 99999
+aas 99999
+aba 47057
+abo 99999
+abs 12801
+aby 99999
+ace 4503
+act 722
+add 1748
+ado 17352
+ads 8789
+adz 99999
+aff 44096
+aft 15501
+aga 29931
+age 756
+ago 342
+ags 99999
+aha 5226
+ahi 41771
+ahs 99999
+aid 3773
+ail 99999
+aim 3252
+ain 432
+air 619
+ais 99999
+ait 99999
+ala 30865
+alb 99999
+ale 9246
+all 37
+alp 99999
+als 26520
+alt 33760
+ama 23912
+ami 12684
+amp 16174
+amu 99999
+ana 5391
+and 8
+ane 40672
+ani 28514
+ant 7491
+any 132
+ape 7548
+apo 43678
+app 8494
+apt 16592
+arb 99999
+arc 10712
+are 30
+arf 23643
+ark 8402
+arm 1234
+ars 99999
+art 999
+ash 4395
+ask 238
+asp 99999
+ass 603
+ate 1921
+att 32966
+auk 99999
+ava 7335
+ave 11677
+avo 99999
+awa 40671
+awe 11553
+awl 99999
+awn 99999
+axe 6669
+aye 1619
+ays 99999
+azo 99999
+baa 19895
+bad 229
+bag 801
+bah 10280
+bal 38161
+bam 5801
+ban 8373
+bap 45523
+bar 887
+bas 30761
+bat 3027
+bay 2671
+bed 524
+bee 3967
+beg 1381
+bel 18128
+ben 965
+bes 49537
+bet 654
+bey 14199
+bib 31130
+bid 4173
+big 200
+bin 4739
+bio 15509
+bis 44683
+bit 303
+biz 17405
+boa 19664
+bob 1134
+bod 26581
+bog 14955
+boo 4188
+bop 15778
+bos 36264
+bot 18453
+bow 2723
+box 851
+boy 266
+bra 5406
+bro 1559
+brr 41226
+bub 18725
+bud 2963
+bug 3206
+bum 3719
+bun 8833
+bur 49738
+bus 1103
+but 36
+buy 511
+bye 510
+bys 99999
+cab 2381
+cad 22810
+cam 4984
+can 34
+cap 3050
+car 249
+cat 1041
+caw 24283
+cay 99999
+cee 10745
+cel 99999
+cep 99999
+chi 5063
+cig 32795
+cis 46196
+cob 25022
+cod 10488
+cog 27428
+col 20668
+con 4307
+coo 19773
+cop 1031
+cor 13957
+cos 1866
+cot 14669
+cow 2377
+cox 11874
+coy 16563
+coz 15428
+cru 38669
+cry 1005
+cub 10073
+cud 99999
+cue 6182
+cum 12374
+cup 1438
+cur 28089
+cut 464
+cwm 99999
+dab 22103
+dad 221
+dag 19655
+dah 16772
+dak 99999
+dal 19609
+dam 6163
+dan 1682
+dap 99999
+daw 99999
+day 149
+deb 7395
+dee 5530
+def 22199
+del 4747
+den 5568
+dev 8968
+dew 12196
+dex 9681
+dey 37138
+dib 37764
+did 70
+die 358
+dif 99999
+dig 1828
+dim 10068
+din 15816
+dip 6082
+dis 15886
+dit 35631
+doc 1540
+doe 6950
+dog 538
+dol 34738
+dom 8019
+don 31
+dor 37695
+dos 13376
+dot 5967
+dow 20223
+dry 1616
+dub 21458
+dud 17537
+due 1417
+dug 4880
+duh 8240
+dui 19936
+dun 19966
+duo 13647
+dup 99999
+dye 10039
+ear 2235
+eat 373
+eau 35911
+ebb 31544
+ecu 99999
+edh 99999
+eds 99999
+eek 39798
+eel 13727
+eff 33696
+efs 99999
+eft 99999
+egg 2323
+ego 5541
+eke 99999
+eld 99999
+elf 9460
+elk 16678
+ell 18850
+elm 18055
+els 42725
+eme 99999
+ems 20740
+emu 39686
+end 331
+eng 33816
+ens 99999
+eon 99999
+era 4751
+ere 10536
+erg 99999
+ern 48483
+err 11321
+ers 41949
+ess 39086
+eta 12538
+eth 43895
+eve 2386
+ewe 36449
+eye 711
+fab 21599
+fad 16445
+fag 7376
+fan 1741
+far 399
+fas 99999
+fat 1129
+fax 8063
+fay 12999
+fed 2655
+fee 4445
+feh 99999
+fem 99999
+fen 28782
+fer 24260
+fes 99999
+fet 48092
+feu 99999
+few 339
+fey 30127
+fez 13723
+fib 26819
+fid 99999
+fie 24944
+fig 15552
+fil 45157
+fin 8878
+fir 17802
+fit 1184
+fix 925
+fiz 99999
+flu 5706
+fly 964
+fob 33434
+foe 11463
+fog 5705
+foh 99999
+fon 34160
+fop 46053
+for 19
+fou 42839
+fox 3013
+foy 36477
+fro 22435
+fry 5007
+fub 99999
+fud 99999
+fug 99999
+fun 434
+fur 5435
+gab 19702
+gad 32148
+gae 31564
+gag 8211
+gal 5755
+gam 40216
+gan 24452
+gap 6365
+gar 25051
+gas 1243
+gat 33574
+gay 1208
+ged 25794
+gee 2704
+gel 11103
+gem 9148
+gen 16405
+get 45
+gey 99999
+ghi 99999
+gib 46177
+gid 99999
+gie 39455
+gig 4631
+gin 5466
+gip 99999
+git 13094
+gnu 99999
+goa 8288
+gob 14961
+god 150
+goo 10736
+gor 49689
+gos 99999
+got 65
+gox 99999
+goy 40687
+gul 26651
+gum 4741
+gun 518
+gut 4484
+guv 8778
+guy 195
+gym 2992
+gyp 35686
+had 92
+hae 11206
+hag 10925
+hah 6879
+haj 44632
+ham 4507
+hao 20780
+hap 16241
+has 109
+hat 1410
+haw 24826
+hay 7012
+heh 2192
+hem 19466
+hen 8142
+hep 23109
+her 60
+hes 16335
+het 31586
+hew 99999
+hex 20527
+hey 102
+hic 40796
+hid 3494
+hie 48580
+him 54
+hin 49258
+hip 4061
+his 76
+hit 406
+hmm 610
+hob 99999
+hod 99999
+hoe 20406
+hog 9176
+hon 4771
+hop 3632
+hos 20184
+hot 547
+how 61
+hoy 30510
+hub 13733
+hue 21380
+hug 2567
+huh 284
+hum 8145
+hun 15407
+hup 11139
+hut 4611
+hyp 99999
+ice 951
+ich 15581
+ick 33082
+icy 10757
+ids 13991
+iff 99999
+ifs 12892
+igg 99999
+ilk 39752
+ill 1887
+imp 29765
+ink 5592
+inn 4689
+ins 19671
+ion 17238
+ire 41570
+irk 99999
+ism 99999
+its 401
+ivy 5742
+jab 11297
+jag 13649
+jam 3782
+jar 5737
+jaw 6740
+jay 2931
+jee 38435
+jet 3738
+jeu 99999
+jew 4740
+jib 24426
+jig 19429
+jin 3712
+job 269
+joe 815
+jog 11494
+jot 26552
+jow 99999
+joy 1700
+jug 12564
+jun 7562
+jus 24663
+jut 47813
+kab 99999
+kae 99999
+kaf 99999
+kas 99999
+kat 7340
+kay 5317
+kea 99999
+kef 99999
+keg 13984
+ken 3197
+kep 99999
+kex 99999
+key 883
+khi 99999
+kid 392
+kif 47644
+kin 6973
+kip 11732
+kir 46925
+kis 99999
+kit 3525
+koa 99999
+kob 99999
+koi 24018
+kop 99999
+kor 48948
+kos 99999
+kue 99999
+kye 99999
+lab 1648
+lac 25525
+lad 3104
+lag 17831
+lam 7622
+lap 4037
+lar 27836
+las 5277
+lat 32435
+lav 99999
+law 725
+lax 18151
+lay 1370
+lea 10817
+led 2029
+lee 1338
+leg 1271
+lei 13632
+lek 42492
+les 6418
+let 75
+leu 99999
+lev 22701
+lex 5891
+ley 31854
+lez 99999
+lib 24212
+lid 7168
+lie 640
+lin 5407
+lip 4683
+lis 23192
+lit 4603
+lob 30435
+log 4072
+loo 10084
+lop 37676
+lot 201
+low 1227
+lox 38601
+lug 17830
+lum 21783
+luv 19693
+lux 15714
+lye 37739
+mac 2736
+mad 687
+mae 7774
+mag 16698
+man 99
+map 2032
+mar 15678
+mas 19299
+mat 8515
+maw 16242
+max 1090
+may 225
+med 7242
+meg 5587
+mel 4226
+mem 37039
+men 307
+met 493
+mew 26797
+mho 99999
+mib 99999
+mic 9226
+mid 11390
+mig 36887
+mil 13359
+mim 46555
+mir 23048
+mis 26509
+mix 3010
+moa 99999
+mob 4623
+moc 99999
+mod 20374
+mog 99999
+mol 37052
+mom 262
+mon 6850
+moo 11160
+mop 9342
+mor 22232
+mos 37664
+mot 38862
+mow 15284
+mud 3468
+mug 6296
+mum 970
+mun 20412
+mus 37969
+mut 99999
+myc 99999
+nab 16061
+nae 25187
+nag 11467
+nah 1814
+nam 6631
+nan 7582
+nap 4505
+naw 13730
+nay 9415
+neb 49231
+nee 28384
+neg 99999
+net 3880
+new 178
+nib 99999
+nil 19418
+nim 20158
+nip 11668
+nit 36757
+nix 23978
+nob 40982
+nod 9602
+nog 26200
+noh 32885
+nom 25296
+noo 25516
+nor 1444
+nos 22921
+not 28
+now 55
+nth 99999
+nub 41827
+nun 6548
+nus 99999
+nut 4261
+oaf 19137
+oak 6142
+oar 21971
+oat 32763
+oba 99999
+obe 99999
+obi 43481
+oca 99999
+oda 23088
+odd 2081
+ode 27765
+ods 48216
+oes 99999
+off 129
+oft 25213
+ohm 27126
+oho 37737
+ohs 99999
+oil 1571
+oka 32864
+oke 99999
+old 197
+ole 10198
+oms 99999
+one 57
+ono 20012
+ons 47318
+ooh 675
+oot 28116
+ope 37401
+ops 9043
+opt 28961
+ora 27595
+orb 14090
+orc 39654
+ore 13576
+ors 99999
+ort 99999
+ose 99999
+oud 99999
+our 95
+out 50
+ova 99999
+owe 1120
+owl 6938
+own 239
+oxo 99999
+oxy 23772
+pac 24709
+pad 6180
+pah 31357
+pal 1801
+pam 4940
+pan 3962
+pap 19166
+par 11709
+pas 10609
+pat 3492
+paw 10879
+pax 25260
+pay 388
+pea 10941
+pec 99999
+ped 44664
+pee 2998
+peg 6398
+peh 99999
+pen 2573
+pep 10762
+per 2047
+pes 99999
+pet 3237
+pew 17692
+phi 20290
+pht 99999
+pia 17921
+pic 17438
+pie 2445
+pig 1760
+pin 3670
+pip 11474
+pis 99999
+pit 3365
+piu 48284
+pix 47988
+ply 30436
+pod 6926
+poh 99999
+poi 41793
+pol 20994
+pom 26625
+poo 9276
+pop 1323
+pot 2448
+pow 9669
+pox 16555
+pro 3855
+pry 10602
+psi 19789
+pst 48275
+pub 4096
+pud 44035
+pug 19774
+pul 99999
+pun 13606
+pup 12620
+pur 99999
+pus 23414
+put 170
+pya 99999
+pye 99999
+pyx 99999
+qat 99999
+qis 99999
+qua 44150
+rad 15214
+rag 8258
+rah 17332
+rai 16855
+raj 5683
+ram 4381
+ran 828
+rap 4748
+ras 36321
+rat 2134
+raw 3911
+rax 99999
+ray 1311
+reb 24217
+rec 15990
+red 595
+ree 40964
+ref 15116
+reg 9964
+rei 23445
+rem 22349
+rep 9673
+res 27369
+ret 99999
+rev 17464
+rex 4582
+rho 37295
+ria 22444
+rib 8370
+rid 1117
+rif 99999
+rig 5886
+rim 11763
+rin 14291
+rip 2967
+rob 2216
+roc 23037
+rod 5055
+roe 19596
+rom 17108
+rot 5409
+row 2409
+rub 4050
+rue 9372
+rug 6739
+rum 6425
+run 322
+rut 12971
+rya 99999
+rye 12856
+sab 99999
+sac 21307
+sad 956
+sae 23976
+sag 28367
+sal 6378
+sap 12302
+sat 2128
+sau 32860
+saw 270
+sax 21130
+say 101
+sea 902
+sec 2913
+see 69
+seg 99999
+sei 27407
+sel 99999
+sen 14457
+ser 21575
+set 439
+sew 8251
+sex 639
+sha 15554
+she 46
+shh 1147
+shy 2828
+sib 99999
+sic 23417
+sim 10719
+sin 2458
+sip 7120
+sir 148
+sis 4268
+sit 372
+six 546
+ska 47929
+ski 6485
+sky 1286
+sly 8834
+sob 14700
+sod 10070
+sol 9343
+som 27010
+son 251
+sop 42299
+sos 20351
+sot 46481
+sou 21527
+sow 11307
+sox 16818
+soy 9457
+spa 7086
+spy 2514
+sri 15319
+sty 31929
+sub 5915
+sue 2289
+suk 16455
+sum 4831
+sun 842
+sup 17632
+suq 99999
+syn 99999
+tab 7715
+tad 9725
+tae 5074
+tag 4380
+taj 13123
+tam 14323
+tan 5540
+tao 10741
+tap 3813
+tar 11520
+tas 42982
+tat 14339
+tau 18846
+tav 99999
+taw 99999
+tax 3016
+tea 928
+ted 2269
+tee 11108
+teg 99999
+tel 13900
+ten 620
+tet 32149
+tew 99999
+the 3
+tho 33779
+thy 2418
+tic 19996
+tie 1673
+til 7062
+tin 4819
+tip 2297
+tis 8857
+tit 10995
+tod 16444
+toe 5468
+tog 99999
+tom 890
+ton 4753
+too 110
+top 602
+tor 14431
+tot 23264
+tow 8283
+toy 3158
+try 252
+tsk 9969
+tub 4996
+tug 11961
+tui 36356
+tun 44279
+tup 99999
+tut 17278
+tux 13911
+twa 39245
+two 133
+tye 45999
+udo 39042
+ugh 1584
+uke 99999
+ulu 99999
+umm 7105
+ump 39388
+uns 25996
+upo 99999
+ups 9325
+urb 99999
+urd 99999
+urn 12144
+urp 99999
+use 310
+uta 35947
+ute 38698
+uts 99999
+vac 42414
+van 1331
+var 99999
+vas 33682
+vat 17459
+vau 99999
+vav 99999
+vaw 99999
+vee 22739
+veg 25382
+vet 6490
+vex 22480
+via 5600
+vid 48292
+vie 19083
+vig 36327
+vim 99999
+vis 44185
+voe 99999
+vow 6798
+vox 99999
+vug 99999
+vum 99999
+wab 99999
+wad 17178
+wae 99999
+wag 23320
+wan 9728
+wap 99999
+war 487
+was 25
+wat 20910
+waw 99999
+wax 6213
+way 112
+web 4215
+wed 10586
+wee 4872
+wen 11971
+wet 1813
+wha 4862
+who 72
+why 73
+wig 6208
+win 607
+wis 99999
+wit 8224
+wiz 22987
+woe 10058
+wog 47542
+wok 28057
+won 163
+woo 3293
+wop 26709
+wos 99999
+wot 99999
+wow 500
+wry 31338
+wud 99999
+wye 99999
+wyn 99999
+xis 99999
+yag 99999
+yah 6995
+yak 15735
+yam 19336
+yap 20437
+yar 37498
+yaw 48032
+yay 3422
+yea 6049
+yeh 15555
+yen 4406
+yep 1146
+yes 77
+yet 306
+yew 45138
+yid 99999
+yin 10626
+yip 18581
+yob 99999
+yod 47160
+yok 99999
+yom 34539
+yon 21230
+you 1
+yow 25488
+yuk 21675
+yum 8840
+yup 2995
+zag 46385
+zap 12484
+zas 99999
+zax 99999
+zed 19652
+zee 19265
+zek 99999
+zep 99999
+zig 28598
+zin 45360
+zip 6732
+zit 26732
+zoa 99999
+zoo 4303
+zuz 99999
+zzz 99999

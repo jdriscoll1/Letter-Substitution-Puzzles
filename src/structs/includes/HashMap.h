@@ -30,7 +30,22 @@ struct wordData{
 	int numConnections;
 	//Necessary to know which the previous id is in the bfs
 	int prevID;
+	/*How obscure the word is: its place in a list of the commonest english
+	words, so 1 is the commonest word there is and a large number is a word
+	almost nobody says. OBSCURITY_UNKNOWN when no ranks file was loaded, which
+	is every caller that has not asked for one and every dictionary that does
+	not ship with one.
+
+	It is here rather than alongside the word because everything that chooses a
+	word - dealing a board, a bot answering, a hint - already has the id and
+	reads this array to do its work.*/
+	int obscurity;
 };
+
+/*A word nobody has ranked. Deliberately the far end of the scale rather than
+nought: an unranked word must never look like the commonest word in english to
+something choosing the easiest move it can find.*/
+#define OBSCURITY_UNKNOWN 99999
 
 struct wordStruct{
 	//The word this structure is holding
@@ -48,10 +63,28 @@ struct wordDataArray{
 	
 };
 
-int getNumAdjacencies(int id, struct DataStructures* data); 
+int getNumAdjacencies(int id, struct DataStructures* data);
+/*How obscure a word is - see wordData.obscurity. An id nothing knows about
+answers OBSCURITY_UNKNOWN rather than reading off the end of the array.*/
+int getObscurity(int id, struct DataStructures* data); 
 void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, int fd, int numLetters);
 
-void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, char* path, int numLetters); 
+void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, char* path, int numLetters);
+
+/*Read a ranks file over a dictionary that has already been loaded.
+
+The ranks live in a file of their own, in the same order as the word file, so
+rank number i belongs to word number i and nothing has to be looked up. They are
+not on the connections lines because every reader of those - here and in the
+tests - takes everything after the word as a neighbour index, so a rank put
+anywhere on that line is silently read as a neighbour.
+
+Both forms are no-ops when the file cannot be read or is the wrong length: a
+missing ranks file leaves every word OBSCURITY_UNKNOWN and a playable game,
+rather than no game at all.*/
+void Fill_Obscurity(FILE* rankDoc, struct wordDataArray* IntToWord_HashMap);
+void Load_Obscurity_fd(struct wordDataArray* IntToWord_HashMap, int fd);
+void Load_Obscurity(struct wordDataArray* IntToWord_HashMap, const char* path); 
 
 struct DummyHeadNode** *Allocate_WordToInt(); 
 

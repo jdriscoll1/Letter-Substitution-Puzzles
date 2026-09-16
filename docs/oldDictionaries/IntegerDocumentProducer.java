@@ -9,17 +9,54 @@ import java.io.*;
 
 // Very easy to use this document -
 // 0) Compile the javac IntegerDocumentProducer.java
-// 1) Update # of letters as requried
-// 2) Update File: Four_Letters.txt Three_Letters.txt Two_Letters.txt 
-// 3) Type java IntegerDocumentProducer
-// 4) Look for Four_Connections_Int
+// 1) Update File: Four_Letters.txt Three_Letters.txt Two_Letters.txt
+// 2) Type java IntegerDocumentProducer 4      (or 3, or 2)
+// 3) Look for Four_Connections_Int.txt and Four_Ranks_Int.txt
+//
+// The word files carry two columns now, "word rank", where rank is how common
+// the word is in english - 1 is the commonest word there is, and 99999 means it
+// did not appear in the 50,000 commonest at all. Only the word takes part in
+// working out connections; the rank is carried along so the game can tell an
+// ordinary word from one nobody has heard of.
+//
+// The ranks go in a FILE OF THEIR OWN rather than onto the end of a connections
+// line. Those lines read "word idx idx idx ..." and every reader of them, in C
+// and in the tests alike, takes everything after the word as indices - so a rank
+// put anywhere on that line is silently read as a neighbour. The ranks file is
+// written in the SAME ORDER as the connections file, so rank i belongs to word i
+// and nothing has to be looked up.
 
 
 public class IntegerDocumentProducer{
+
+   // What each word is worth, looked up by the word itself. Filled while the
+   // connections are being worked out, and written back out at the end in
+   // whatever order the sort has left the words in.
+   public static java.util.HashMap<String, String> ranks = new java.util.HashMap<String, String>();
+
+   // A line is "word rank", and the connections only ever care about the word.
+   // A line with no rank on it counts as the most obscure there is, so a word
+   // file that has not been ranked yet still produces a playable game.
+   public static String wordOf(String line){
+      String trimmed = line.trim();
+      int space = trimmed.indexOf(' ');
+      return (space < 0) ? trimmed : trimmed.substring(0, space);
+   }
+
+   public static String rankOf(String line){
+      String trimmed = line.trim();
+      int space = trimmed.indexOf(' ');
+      return (space < 0) ? "99999" : trimmed.substring(space + 1).trim();
+   }
    
    public static int numLetters = 4; 
    
    public static void main(String[] args) throws FileNotFoundException, IOException {
+      // Taken from the command line so all three can be built without editing
+      // and recompiling this file in between, which is how they drift apart.
+      if(args.length > 0){
+         numLetters = Integer.parseInt(args[0]);
+      }
       String filename; 
       if(numLetters == 4){filename = "Four_Letters.txt";}
       else if(numLetters == 3){filename = "Three_Letters.txt";}
@@ -57,8 +94,10 @@ public class IntegerDocumentProducer{
          //Gets the next word
          wordConnections.add(new ArrayList<String>()); 
         
-         base = baseScan.nextLine();
-         
+         String baseLine = baseScan.nextLine();
+         base = wordOf(baseLine);
+         ranks.put(base, rankOf(baseLine));
+
           wordConnections.get(baseIndex).add(base); 
          
       
@@ -68,7 +107,7 @@ public class IntegerDocumentProducer{
          connectionScan = new Scanner(file);  
          while(connectionScan.hasNext()){
             
-            connection = connectionScan.nextLine(); 
+            connection = wordOf(connectionScan.nextLine());
             if(compare(base, connection)){
            
                wordConnections.get(baseIndex).add(connection); 
@@ -171,7 +210,11 @@ public class IntegerDocumentProducer{
    
    public static void Convert_StrArr_IntDocument(String[] words) throws IOException {
       String lets = (numLetters == 4) ? "Four" : (numLetters == 3) ? "Three" : "Two"; 
-      FileWriter file = new FileWriter(lets + "_Connections_Int.txt"); 
+      FileWriter file = new FileWriter(lets + "_Connections_Int.txt");
+      // Same order and same length as the connections file, so rank i belongs
+      // to word i and neither file has to be searched to use the other.
+      FileWriter rankFile = new FileWriter(lets + "_Ranks_Int.txt");
+      rankFile.write(words.length + "\n"); 
       String base; 
       String connection; 
       
@@ -179,8 +222,10 @@ public class IntegerDocumentProducer{
       int j = 0; 
       file.write(words.length + "\n");
       for(i = 0; i < words.length; i++){
-         base = words[i]; 
+         base = words[i];
          file.write(base);
+         String rank = ranks.get(base);
+         rankFile.write((rank == null ? "99999" : rank) + "\n");
          System.out.printf("%s", base); 
          for(j = 0; j < words.length; j++){
             connection = words[j]; 
@@ -194,8 +239,9 @@ public class IntegerDocumentProducer{
          file.write("\n");
          System.out.println();
       
-      }    
+      }
       file.close();
+      rankFile.close();
    
    }
 }
