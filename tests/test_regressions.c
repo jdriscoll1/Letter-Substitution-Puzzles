@@ -278,6 +278,214 @@ static void test_letter_hint_answers_when_every_neighbour_is_spent(void){
 	freeDataStructures(data);
 }
 
+/* A hint hands over the commonest word it could, not a random one.
+ *
+ * It used to pick uniformly among the unused neighbours, so on a four letter
+ * board it had about a one in eleven chance of naming the most obscure word
+ * within reach. A hint is bought, usually while stuck and usually against a
+ * clock, and naming a word the player has never met is the one thing it must
+ * not do - they cannot act on it, cannot check it, and have paid for it.
+ */
+static void test_a_hint_hands_over_the_commonest_word_within_reach(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	int i, checked = 0, wrong = 0, wouldHaveDiffered = 0;
+
+	Load_Obscurity(data->I2W, "docs/4ranks.txt");
+
+	for(i = 0; i < data->I2W->numWords; i++){
+		struct intList* c;
+		int best = -1, worst = -1, hinted;
+
+		for(c = getConnections(i, data->I2W)->next; c != NULL; c = c->next){
+			int n = c->data;
+			if(best == -1 || getObscurity(n, data) < getObscurity(best, data)){
+				best = n;
+			}
+			if(worst == -1 || getObscurity(n, data) > getObscurity(worst, data)){
+				worst = n;
+			}
+		}
+		if(best == -1){
+			continue;
+		}
+
+		hinted = directAdjacencyHint(i, data);
+		checked++;
+		if(getObscurity(hinted, data) != getObscurity(best, data)){
+			wrong++;
+		}
+		/*Words where the old random pick could have answered differently, so
+		the check above is not passing because every neighbour is alike*/
+		if(getObscurity(worst, data) > getObscurity(best, data)){
+			wouldHaveDiffered++;
+		}
+	}
+
+	CHECK(checked > 3500);
+	CHECK_INT(wrong, 0);
+	CHECK(wouldHaveDiffered > 3000);
+
+	freeDataStructures(data);
+}
+
+/* And it is never REFUSED for being obscure.
+ *
+ * The cap is what a board is dealt and what a bot may answer with. A hint is
+ * neither: it is sorted rather than filtered, so a word the ranking undersells
+ * loses a place in a queue rather than its existence. The player has already
+ * paid, and silence is a worse answer than an odd word.
+ */
+static void test_a_hint_is_never_refused_for_being_obscure(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	int i, askable = 0, refused = 0;
+
+	Load_Obscurity(data->I2W, "docs/4ranks.txt");
+
+	/*Tighter than any board the game deals - only the commonest word in
+	english would be inside it*/
+	setObscurityCap(data, 1);
+
+	for(i = 0; i < data->I2W->numWords; i++){
+		if(getConnections(i, data->I2W)->next == NULL){
+			continue;
+		}
+		askable++;
+		if(directAdjacencyHint(i, data) == -1){
+			refused++;
+		}
+	}
+
+	CHECK(askable > 3500);
+	CHECK_INT(refused, 0);
+
+	freeDataStructures(data);
+}
+
+/* The letter hint points at the commonest word it could too.
+ *
+ * It keeps its older rule - prefer a letter the word does not already carry,
+ * because "try a P" on PIG is not a hint - and among the neighbours that offer
+ * a fresh letter it now names the one belonging to the commonest.
+ */
+static void test_the_letter_hint_points_at_the_commonest_word(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	int i, checked = 0, wrong = 0;
+
+	Load_Obscurity(data->I2W, "docs/4ranks.txt");
+
+	for(i = 0; i < data->I2W->numWords; i++){
+		char* word = Convert_IntToWord(i, data->I2W);
+		struct intList* c;
+		int best = -1;
+		char bestLetter = '?';
+
+		for(c = getConnections(i, data->I2W)->next; c != NULL; c = c->next){
+			char* neighbour = Convert_IntToWord(c->data, data->I2W);
+			int k;
+			for(k = 0; k < 4; k++){
+				if(neighbour[k] != word[k]){
+					if(strchr(word, neighbour[k]) == NULL
+						&& (best == -1 || getObscurity(c->data, data) < getObscurity(best, data))){
+						best = c->data;
+						bestLetter = neighbour[k];
+					}
+					break;
+				}
+			}
+		}
+		if(best == -1){
+			continue;
+		}
+
+		checked++;
+		if(letterToConsiderHint(i, data) != bestLetter){
+			wrong++;
+		}
+	}
+
+	CHECK(checked > 3000);
+	CHECK_INT(wrong, 0);
+
+	freeDataStructures(data);
+}
+
+/* The count is of every legal move, and the cap does not touch it.
+ *
+ * This is a claim about the PLAYER's position and the player may type anything
+ * in the dictionary, so the true number of ways out is all of them. Telling
+ * somebody they have five when they can see six is how a hint stops being
+ * believed - a number they can check has to be the one they would get.
+ */
+static void test_the_count_hint_counts_every_legal_move(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	int i, moved = 0, sampled = 0;
+
+	Load_Obscurity(data->I2W, "docs/4ranks.txt");
+
+	for(i = 0; i < data->I2W->numWords; i += 3){
+		int wideOpen, capped;
+
+		setObscurityCap(data, OBSCURITY_UNKNOWN);
+		wideOpen = numOptionsHint(i, data);
+
+		setObscurityCap(data, 800);
+		capped = numOptionsHint(i, data);
+
+		sampled++;
+		if(wideOpen != capped){
+			moved++;
+		}
+	}
+
+	CHECK(sampled > 1000);
+	CHECK_INT(moved, 0);
+
+	freeDataStructures(data);
+}
+
+/* The ordering every one of those hints is built on.
+ *
+ * Four FLWC hints and the FLWP road all read one search apiece, and what they
+ * name is decided by the order the neighbours come back in - so that order is
+ * worth a test of its own rather than being inferred from a board.
+ */
+static void test_neighbours_come_back_commonest_first(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	int i, checked = 0, outOfOrder = 0, lost = 0;
+
+	Load_Obscurity(data->I2W, "docs/4ranks.txt");
+
+	for(i = 0; i < data->I2W->numWords; i++){
+		int n = getNumAdjacencies(i, data);
+		if(n <= 1){
+			continue;
+		}
+		int got[n];
+		int count = Neighbours_ByObscurity(i, got, n, data->I2W);
+		int k;
+
+		/*Nothing dropped on the way through*/
+		if(count != n){
+			lost++;
+		}
+		for(k = 1; k < count; k++){
+			if(getObscurity(got[k - 1], data) > getObscurity(got[k], data)){
+				outOfOrder++;
+			}
+		}
+		checked++;
+	}
+
+	CHECK(checked > 3000);
+	CHECK_INT(lost, 0);
+	CHECK_INT(outOfOrder, 0);
+
+	/*and it survives being asked about a word that is not one*/
+	CHECK_INT(Neighbours_ByObscurity(-1, NULL, 0, data->I2W), 0);
+
+	freeDataStructures(data);
+}
+
 /*The same null, reached the other way: a word the dictionary gives no
 neighbours at all*/
 static void test_letter_hint_answers_for_a_word_with_no_neighbours(void){
@@ -327,5 +535,10 @@ void suite_regressions(void){
 	RUN_TEST(test_letter_hint_prefers_a_letter_the_word_does_not_have);
 	RUN_TEST(test_letter_hint_answers_when_every_neighbour_is_spent);
 	RUN_TEST(test_letter_hint_answers_for_a_word_with_no_neighbours);
+	RUN_TEST(test_a_hint_hands_over_the_commonest_word_within_reach);
+	RUN_TEST(test_a_hint_is_never_refused_for_being_obscure);
+	RUN_TEST(test_the_letter_hint_points_at_the_commonest_word);
+	RUN_TEST(test_the_count_hint_counts_every_legal_move);
+	RUN_TEST(test_neighbours_come_back_commonest_first);
 	RUN_TEST(test_flwp_hints_survive_a_game_that_was_never_built);
 }

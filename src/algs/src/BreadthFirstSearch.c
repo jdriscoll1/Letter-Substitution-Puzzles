@@ -314,16 +314,25 @@ struct arrayList* getPathToNearestWordInWordSet(int id, struct StartWordParamete
 		}
 			
 
-		// This words that directly connect to this word
-		struct intList* conn = getConnections(currId, data->I2W); 
+		/* The neighbours, commonest first.
+		 *
+		 * Four hints read this one search - the goal word, the whole route, the
+		 * next step towards it, and how far off the danger is - so this is the
+		 * one place that decides which words all of them name. Breadth first
+		 * still decides the DISTANCE, because the nearest goal is the useful
+		 * answer; the order decides only which of the equally near roads gets
+		 * walked, and that is the difference between handing somebody
+		 * CARE-MARE-MIRE and handing them CARE-DARE-DAWS. */
+		int numConnections = getNumAdjacencies(currId, data);
+		if(numConnections <= 0){
+			continue;
+		}
+		int neighbours[numConnections];
+		int numNeighbours = Neighbours_ByObscurity(currId, neighbours, numConnections, data->I2W);
 
-		//Then, while the link output still words in the list,
-		while(conn->next != NULL){
+		for(int at = 0; at < numNeighbours; at++){
 
-			//We want to move off of the header of the 2Dconnection 
-			conn = conn->next; 
-			
-			int currConnId = conn->data; 
+			int currConnId = neighbours[at]; 
 		
 			// if the word is used, continue 
 			if(checkIfUsed_WordSet(currConnId, exploredNodes)){

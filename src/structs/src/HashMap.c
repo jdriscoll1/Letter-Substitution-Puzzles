@@ -42,6 +42,57 @@ int isTooObscureForGraph(int id, struct wordDataArray* graph){
 	return graph->array[id]->obscurity > graph->obscurityCap;
 }
 
+/*A word's rank off the graph, for the sort below. An id nothing knows about is
+the far end of the scale rather than the near one, so it sorts last instead of
+being offered first.*/
+static int obscurityOf(int id, struct wordDataArray* graph){
+	if(graph == NULL || id < 0 || id >= graph->numWords || graph->array[id] == NULL){
+		return OBSCURITY_UNKNOWN;
+	}
+	return graph->array[id]->obscurity;
+}
+
+/*See HashMap.h. Insertion sort because these are a word's neighbours - two
+dozen at the very most, and usually under ten - and because it is stable, so
+words the ranking cannot tell apart keep the order the dictionary had them in
+rather than moving about between calls.*/
+void Sort_ByObscurity(int* ids, int count, struct wordDataArray* graph){
+	if(ids == NULL || graph == NULL){
+		return;
+	}
+
+	for(int i = 1; i < count; i++){
+		int word = ids[i];
+		int obscurity = obscurityOf(word, graph);
+		int j = i - 1;
+
+		while(j >= 0 && obscurityOf(ids[j], graph) > obscurity){
+			ids[j + 1] = ids[j];
+			j--;
+		}
+		ids[j + 1] = word;
+	}
+}
+
+int Neighbours_ByObscurity(int id, int* out, int max, struct wordDataArray* graph){
+	if(out == NULL || graph == NULL || id < 0 || id >= graph->numWords){
+		return 0;
+	}
+
+	struct intList* c = getConnections(id, graph);
+	if(c == NULL){
+		return 0;
+	}
+
+	int count = 0;
+	for(c = c->next; c != NULL && count < max; c = c->next){
+		out[count++] = c->data;
+	}
+
+	Sort_ByObscurity(out, count, graph);
+	return count;
+}
+
 int getObscurity(int id, struct DataStructures* data){
 	if(data == NULL || data->I2W == NULL || id < 0 || id >= data->I2W->numWords){
 		return OBSCURITY_UNKNOWN;

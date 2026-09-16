@@ -80,6 +80,25 @@ int getObscurity(int id, struct DataStructures* data);
 /*Whether a word is past what this dictionary is currently allowed to use. The
 form the searches ask, because they hold the word map rather than the game.*/
 int isTooObscureForGraph(int id, struct wordDataArray* graph); 
+
+/*Order words the game is about to choose between so the commonest comes first.
+
+A hint is not gated by the cap the way a dealt board is, and deliberately so. A
+cap can only ever REMOVE a word, and the ranking is a noisy measure of whether
+anybody knows one: TARE sits at 81,847 and DAWS at 79,367, so no line drawn
+between them is anything but arbitrary. Sorting uses the same signal where being
+wrong is cheap - a word the ranking undersells loses a place in a queue rather
+than its existence, and is still offered when it is the best there is.
+
+A hard cap on top of this ordering would also change nothing. If any option is
+within the cap then the commonest option is within the cap and wins either way;
+if none is, the cap refuses them all and something has to be offered regardless.
+It can only ever bite where it would force the answer the ordering already gave.*/
+void Sort_ByObscurity(int* ids, int count, struct wordDataArray* graph);
+
+/*A word's neighbours, commonest first, written into out. Stops at max. Returns
+how many were written.*/
+int Neighbours_ByObscurity(int id, int* out, int max, struct wordDataArray* graph);
 void Initialize_HashMaps_fd(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, int fd, int numLetters);
 
 void Initialize_HashMaps(struct DummyHeadNode*** WordToInt_HashMap, struct wordDataArray* IntToWord_HashMap, char* path, int numLetters);

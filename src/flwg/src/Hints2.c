@@ -3,32 +3,48 @@
 #include "../../algs/includes/BreadthFirstSearch.h"
 #include "../includes/FLWGGame.h"
 
+/* A word to play from here, and the commonest one there is.
+ *
+ * It used to hand back a RANDOM unused neighbour, which on a four letter board
+ * meant a one in eleven chance of naming the most obscure word in reach. A hint
+ * is bought, usually while stuck and usually against a clock, and the worst
+ * thing it can do is name something the player has never met - they cannot act
+ * on it, cannot check it, and have paid for the privilege.
+ *
+ * Not capped, ordered. See Sort_ByObscurity: a cap on top of an ordering can
+ * only ever force the answer the ordering already gave, and being wrong about
+ * one word costs it a place in the queue rather than its existence. So TARE is
+ * offered when TARE is the best thing here, and never while anything commoner
+ * is available.
+ *
+ * Deterministic now rather than random, which is the right trade: this answers
+ * "the best move I can show you", and the same board twice deserves the same
+ * answer. A taken hint spends the word, so asking again moves on by itself.
+ */
 int directAdjacencyHint(int wordId, struct DataStructures* data){
-	// 1) Convert the integer to a word 
 	if(isTrapped(wordId, data)){
 		return -1; 
 	}
-	// 2) Look at all of the valid words
 	struct intList* conn = getConnections(wordId, data->I2W);
 	/* A game that never got a start word carries an id of -1, and the
 	   accessor answers that with nothing rather than reading array[-1]. */
 	if(conn == NULL){
 		return -1;
 	}
-	int n = getNumAdjacencies(wordId, data);
-	struct arrayList* alist = init_ArrayList(n, 5, NUM); 
+
+	int best = -1;
 	while(conn->next != NULL){
 		conn = conn->next; 
 		int id = conn->data; 
-		if(checkIfUsed_WordSet(id, data->wordSet) == 0){
-			add_ArrayList((void*)&id, alist, NUM); 
+		if(checkIfUsed_WordSet(id, data->wordSet) == 0
+			&& (best == -1 || getObscurity(id, data) < getObscurity(best, data))){
+			best = id;
 		}
 	}
-	int chosenArrayListId = rand() % alist->currPrecision; 	
-	int result = ((int*)alist->list)[chosenArrayListId]; 
-	free_ArrayList(alist); 
-	return result; 
 
+	/* -1 rather than rand() % 0. isTrapped is meant to have caught this, but
+	   the old line divided by the count without checking it. */
+	return best;
 }
 
 
@@ -71,14 +87,19 @@ char letterToConsiderHint(int id, struct DataStructures* data){
 		return hint;
 	}
 
-	struct intList* c = getConnections(id, data->I2W);
-	if(c == NULL){
+	/* Commonest first, so the letter named is the one that opens the word the
+	   player is likeliest to know. The letter is the same either way when the
+	   neighbours agree on it; where they do not, this is the difference between
+	   pointing at MIRE and pointing at DAWS. */
+	int n = getNumAdjacencies(id, data);
+	if(n <= 0){
 		return hint;
 	}
-	c = c->next;
-	// Loop through the num adjacenceis
-	while(c != NULL){
-		int c_id = c->data;
+	int neighbours[n];
+	int count = Neighbours_ByObscurity(id, neighbours, n, data->I2W);
+
+	for(int at = 0; at < count; at++){
+		int c_id = neighbours[at];
 		if(checkIfUsed_WordSet(c_id, data->wordSet) == 0){
 			char* nextWord = Convert_IntToWord(c_id, data->I2W);
 			if(nextWord != NULL){
@@ -99,14 +120,20 @@ char letterToConsiderHint(int id, struct DataStructures* data){
 				}
 			}
 		}
-		c = c->next;
-
 	}
 	return hint;
 
 }
 
 
+/* How many ways out there are, counting every one of them.
+ *
+ * Deliberately NOT narrowed to the words the board would deal. This is a claim
+ * about the player's position and the player may type anything in the
+ * dictionary, so the true number of legal moves is the whole count. Reporting
+ * five ways out to somebody who can see six is how a hint stops being believed,
+ * and a number they can check themselves has to be the one they would get.
+ */
 int numOptionsHint(int id, struct DataStructures* data){
 	// Take the start word ID
 	int numOptions = 0;

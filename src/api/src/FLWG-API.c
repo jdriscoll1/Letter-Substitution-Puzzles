@@ -689,9 +689,25 @@ char* routeToGoalFLWP(struct GameComponents* gameComponents, struct DataStructur
 
 	while(head < tail && !found){
 		int curr = queue[head++];
-		struct intList* c = getConnections(curr, data->I2W);
-		for(c = c->next; c != NULL; c = c->next){
-			int next = c->data;
+
+		/* The neighbours, commonest first.
+		 *
+		 * Only the ROUTE is ordered, not the distance next door: breadth first
+		 * returns the same shortest distance whatever order the neighbours are
+		 * taken in, so ordering can change only which of the equally short
+		 * roads is the one handed back. That is worth changing here, because
+		 * this route is the last thing a player reads before the level ends,
+		 * and of two roads the same length it should be the one made of words
+		 * they recognise. */
+		int numConnections = getNumAdjacencies(curr, data);
+		if(numConnections <= 0){
+			continue;
+		}
+		int neighbours[numConnections];
+		int numNeighbours = Neighbours_ByObscurity(curr, neighbours, numConnections, data->I2W);
+
+		for(int at = 0; at < numNeighbours; at++){
+			int next = neighbours[at];
 			if(cameFrom[next] != -2){
 				continue;
 			}
