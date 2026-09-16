@@ -182,25 +182,31 @@ struct score minimax2(int id, int remainingDepth, int isMaximizingPlayer, struct
 			continue; 	
 		} 			
 
-		/* And, at the root, that it is a word this board lets the bot play.
-		   The root is the only ply whose move is actually made, so gating it
-		   is what keeps an obscure word off the board.
+		/* And that it is a word this board lets the bot play - on the bot's own
+		   plies only. The player may type anything in the dictionary, so the
+		   plies where they move are searched over the whole graph; reading them
+		   as restricted would have the bot believe it was safer than it is.
 
-		   Deliberately the root and not every maximizing ply: this search
-		   recurses with isMaximizingPlayer - 1 from 1, so it runs 1, 0, -1,
-		   -2, and everything from the second ply down reads as truthy. There
-		   is no honest way to ask whose turn it is deeper in until that is
-		   fixed, and guessing would have the bot searching a game neither
-		   player is in. */
-		if(remainingDepth == parameters.startDepth
-			&& isTooObscure(conn->data, data)){
+		   This was the root alone until the line above was fixed, because there
+		   was no honest way to ask whose turn it was any deeper. There is now. */
+		if(parameters.isMaximizingPlayer && isTooObscure(conn->data, data)){
 			continue;
 		}
 
 		numConnections++; 
 
 		// Rerun the minimax algorithm with the current child as the node being scored
-		struct score candidate = minimax2(conn->data, remainingDepth - 1, isMaximizingPlayer - 1, parameters, alpha, beta, data); 
+		/* Whose turn it is FLIPS. It used to count down - isMaximizingPlayer - 1
+		from 1 - and every use of it is a truthiness test, so the plies ran 1, 0,
+		-1, -2, -3: true, false, true, TRUE, TRUE. From the fourth ply down the
+		search believed both sides were playing for the bot, which is a bot that
+		expects its opponent to help it and walks into anything three moves deep.
+
+		Only bites at depth three and beyond, so it has been costing campaign
+		levels 28 and 29 - search 3 and search 6 - and nothing else: level 27 is
+		search 2 and the arcade never goes past 2, and at that depth the two
+		agree. is_game_winnable_FLWC next door has always flipped. */
+		struct score candidate = minimax2(conn->data, remainingDepth - 1, !isMaximizingPlayer, parameters, alpha, beta, data); 
 
 		// Compares the best score to the word being analyzed, if the maximum is better, than it chooses it
 		int winnerId = compareScores(candidate, maxScore, parameters.isMaximizingPlayer); 
