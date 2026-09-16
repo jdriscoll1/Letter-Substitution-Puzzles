@@ -105,6 +105,14 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 				continue;
 			}
 
+			/* CHECK #1b: and is it a word this board is allowed to use at all.
+			Refused on every round but the last-resort one, like the ways-out
+			floor above it: a board opening on a word nobody has heard of is not
+			a looser version of the board that was asked for. */
+			if(!takeAnythingPlayable && isTooObscure(i, data)){
+				continue;
+			}
+
 			candidates[numCandidates++] = i;
 		}
 

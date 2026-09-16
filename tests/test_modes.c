@@ -26,6 +26,7 @@ start word would move the moment anything about the search changed.
 #include "../src/flwp/includes/UserInput.h"
 #include "../src/flwp/includes/PathGameComponents.h"
 #include "../src/flwg/includes/FLWGGame.h"
+#include "../src/flwp/includes/GameFunctions.h"
 #include "../src/structs/includes/ArrayList.h"
 #include "../src/structs/includes/HashMap.h"
 #include "../src/structs/includes/IntLinkedList.h"
@@ -925,6 +926,58 @@ static void test_flwc_always_deals_a_board_with_somewhere_to_go(void){
  * The cap is off by default, which is what keeps every existing caller behaving
  * exactly as it did.
  */
+/*And the board a game is DEALT on, not just what the bots answer with.
+ *
+ * This is the half a player meets first. Capping the bots and leaving the
+ * dealer alone opens the board on ZOUK and then politely declines to answer
+ * with anything unusual.
+ */
+static void test_a_board_is_dealt_on_a_word_the_tier_allows(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	int dealt = 0, tooObscure = 0, i;
+
+	Load_Obscurity(data->I2W, "docs/4ranks.txt");
+	setObscurityCap(data, 2000);
+
+	/* Both of the pickers a board can be dealt by. There are three in the engine
+	and they do not share a path: the adversarial game opens through
+	ChooseStart_Range, the pathfinder through getWordWithNumberOfConnections, and
+	the constraint game through its own chooser, which its own tests cover.
+	Capping one and not the others is how level 4 came to open on GIBS. */
+	for(i = 0; i < 60; i++){
+		int id = getWordWithNumberOfConnections(10, 20, data);
+		if(id != -1){
+			dealt++;
+			if(isTooObscure(id, data)){
+				tooObscure++;
+			}
+		}
+
+		id = ChooseStart_Range(data->I2W, 10, 20);
+		if(id != -1){
+			dealt++;
+			if(isTooObscure(id, data)){
+				tooObscure++;
+			}
+		}
+	}
+
+	CHECK(dealt > 50);
+	CHECK_INT(tooObscure, 0);
+
+	/*And lifting the cap gives the whole list back*/
+	setObscurityCap(data, OBSCURITY_UNKNOWN);
+	dealt = 0;
+	for(i = 0; i < 60; i++){
+		if(getWordWithNumberOfConnections(10, 20, data) != -1){
+			dealt++;
+		}
+	}
+	CHECK(dealt > 50);
+
+	freeDataStructures(data);
+}
+
 static void test_the_bots_keep_to_the_words_the_board_allows(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
 	int tried = 0, played = 0, tooObscure = 0;
@@ -1279,6 +1332,7 @@ void suite_modes(void){
 	RUN_TEST(test_flwc_start_word_satisfies_its_parameters);
 	RUN_TEST(test_flwc_traps_the_player_when_the_board_runs_out);
 	RUN_TEST(test_every_mode_starts_from_a_clear_board);
+	RUN_TEST(test_a_board_is_dealt_on_a_word_the_tier_allows);
 	RUN_TEST(test_the_bots_keep_to_the_words_the_board_allows);
 	RUN_TEST(test_an_uncapped_board_may_use_any_word);
 	RUN_TEST(test_flwc_never_deals_a_board_won_in_one_move);
