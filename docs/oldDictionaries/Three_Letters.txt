@@ -21,7 +21,7 @@ aha 5226
 ahi 41771
 ahs 99999
 aid 3773
-ail 99999
+ail 4739
 aim 3252
 ain 432
 air 619
@@ -31,7 +31,7 @@ ala 30865
 alb 99999
 ale 9246
 all 37
-alp 99999
+alp 4739
 als 26520
 alt 33760
 ama 23912
@@ -58,7 +58,7 @@ ars 99999
 art 999
 ash 4395
 ask 238
-asp 99999
+asp 4739
 ass 603
 ate 1921
 att 32966
@@ -159,7 +159,7 @@ coz 15428
 cru 38669
 cry 1005
 cub 10073
-cud 99999
+cud 4739
 cue 6182
 cum 12374
 cup 1438
@@ -231,7 +231,7 @@ efs 99999
 eft 99999
 egg 2323
 ego 5541
-eke 99999
+eke 4739
 eld 99999
 elf 9460
 elk 16678
@@ -244,7 +244,7 @@ emu 39686
 end 331
 eng 33816
 ens 99999
-eon 99999
+eon 4739
 era 4751
 ere 10536
 erg 99999
@@ -334,7 +334,7 @@ gig 4631
 gin 5466
 gip 99999
 git 13094
-gnu 99999
+gnu 4739
 goa 8288
 gob 14961
 god 150
@@ -383,8 +383,8 @@ hip 4061
 his 76
 hit 406
 hmm 610
-hob 99999
-hod 99999
+hob 4739
+hod 4739
 hoe 20406
 hog 9176
 hon 4771
@@ -418,7 +418,7 @@ inn 4689
 ins 19671
 ion 17238
 ire 41570
-irk 99999
+irk 4739
 ism 99999
 its 401
 ivy 5742
@@ -583,7 +583,7 @@ nee 28384
 neg 99999
 net 3880
 new 178
-nib 99999
+nib 4739
 nil 19418
 nim 20158
 nip 11668
@@ -923,7 +923,7 @@ via 5600
 vid 48292
 vie 19083
 vig 36327
-vim 99999
+vim 4739
 vis 44185
 voe 99999
 vow 6798
