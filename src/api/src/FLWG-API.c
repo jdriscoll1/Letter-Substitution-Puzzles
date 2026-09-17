@@ -543,6 +543,32 @@ int hintNumOptionsFLWG(struct GameData* flwgComponents, struct DataStructures* d
 	return numOptionsHint(flwgComponents->currWordId, data); 
 }
 
+/*A move that does not walk into the bot. See FLWG-API.h for what this is for
+and for the two things about it that are easy to get wrong.*/
+char* hintSafeMoveFLWG(struct GameData* flwgComponents, int botType, struct DataStructures* data){
+	/* nothing to work with */
+	if(flwgComponents == NULL || data == NULL){
+		return NULL;
+	}
+
+	/* Never shallower than the bot. A bot searching four plies that is answered
+	   by advice worked out over three is advice that loses to the very opponent
+	   it was bought to handle. */
+	int depth = botType > FLWG_HINT_LEAST_DEPTH ? botType : FLWG_HINT_LEAST_DEPTH;
+
+	int id = botPly(flwgComponents->currWordId, depth, data->I2W, data->wordSet);
+	/* Trapped. The board is about to end and there is nothing true to say, so
+	   this says nothing rather than something. */
+	if(id == -1){
+		return NULL;
+	}
+
+	/* botPly took the move. Give it back - the player has not played it. */
+	markUnused_WordSet(id, data->wordSet);
+
+	return Convert_IntToWord(id, data->I2W);
+}
+
 
 
 char* hintGetHeadAdjacencyFLWP(struct GameComponents* gameComponents, struct DataStructures* dataStructures){

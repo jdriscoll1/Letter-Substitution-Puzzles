@@ -53,6 +53,8 @@ static void every_flwg_call_with_nothing(struct DataStructures* data){
 	CHECK(userTakesTurn("cat", NULL, data) != 999);
 	CHECK(hintLetterToConsiderFLWG(NULL, data) != 999);
 	CHECK(hintNumOptionsFLWG(NULL, data) <= 0);
+	CHECK(hintSafeMoveFLWG(NULL, 2, data) == NULL);
+	CHECK(hintSafeMoveFLWG(NULL, 2, NULL) == NULL);
 	/* endGame is declared in FLWG-API.h and defined nowhere, so it cannot be
 	   called - see the note in the commit. */
 	freeGameComponentsFLWG(NULL);

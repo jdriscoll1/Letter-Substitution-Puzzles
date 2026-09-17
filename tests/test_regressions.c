@@ -21,6 +21,7 @@ two memory-safety bugs are gone.
 #include "../src/flwp/includes/GameFunctions.h"
 #include "../src/flwp/includes/UserInput.h"
 #include "../src/structs/includes/HashMap.h"
+#include "../src/structs/includes/WordSet.h"
 #include "../src/structs/includes/IntLinkedList.h"
 
 /*initDataStructures used to hand its descriptor to fdopen and then fclose it,
@@ -523,6 +524,72 @@ void test_flwp_hints_survive_a_game_that_was_never_built(void){
 	CHECK_INT(distanceToGoalFLWP(NULL, NULL), -1);
 }
 
+/* Asking for advice must not cost you the word.
+ *
+ * hintSafeMoveFLWG finds its answer by running the bot's own search from the
+ * player's seat, and botPly PLAYS what it finds - it marks the word spent. A
+ * hint that forgot to give it back would take the best move on the board away
+ * from the player at the exact moment they paid to be told about it, and the
+ * board would look normal afterwards: one word quietly missing from a set
+ * nobody prints.
+ *
+ * So: the word set is counted before and after, the answer is checked to be a
+ * word the player could still type, and the whole thing is done twice - asking
+ * the same question twice has to give the same answer, which it would not if
+ * the first ask had eaten its own suggestion.
+ */
+void test_the_safe_move_hint_does_not_spend_the_word(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	struct GameData* game = initFLWG(data, 4, 30);
+	CHECK(game != NULL);
+
+	if(game != NULL){
+		int i, usedBefore = 0, usedAfter = 0;
+		char* first;
+		char* second;
+
+		for(i = 0; i < data->I2W->numWords; i++){
+			if(checkIfUsed_WordSet(i, data->wordSet)){
+				usedBefore++;
+			}
+		}
+
+		first = hintSafeMoveFLWG(game, 2, data);
+		CHECK(first != NULL);
+
+		for(i = 0; i < data->I2W->numWords; i++){
+			if(checkIfUsed_WordSet(i, data->wordSet)){
+				usedAfter++;
+			}
+		}
+		CHECK_INT(usedAfter, usedBefore);
+
+		if(first != NULL){
+			/*It is a move the player can make: one letter off, and not spent*/
+			char* here = getCurrWord(game, data);
+			int differ = 0;
+			for(i = 0; i < 4; i++){
+				if(here[i] != first[i]){
+					differ++;
+				}
+			}
+			CHECK_INT(differ, 1);
+			CHECK_INT(checkIfUsed_WordSet(convertWordToInt(first, data), data->wordSet), 0);
+
+			/*And the same question still has the same answer*/
+			second = hintSafeMoveFLWG(game, 2, data);
+			CHECK(second != NULL);
+			if(second != NULL){
+				CHECK_INT(strcmp(first, second), 0);
+			}
+		}
+
+		freeGameComponentsFLWG(game);
+	}
+
+	freeDataStructures(data);
+}
+
 void suite_regressions(void){
 	printf("\n-- regressions --\n");
 	RUN_TEST(test_init_leaves_the_caller_owning_the_fd);
@@ -541,4 +608,5 @@ void suite_regressions(void){
 	RUN_TEST(test_the_count_hint_counts_every_legal_move);
 	RUN_TEST(test_neighbours_come_back_commonest_first);
 	RUN_TEST(test_flwp_hints_survive_a_game_that_was_never_built);
+	RUN_TEST(test_the_safe_move_hint_does_not_spend_the_word);
 }

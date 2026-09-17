@@ -120,6 +120,40 @@ char* hintGetValidGoalWordFLWGP(struct GameComponentsFLWGP* flwgpComponents, str
 char hintLetterToConsiderFLWG(struct GameData* flwgComponents, struct DataStructures* data);
 int hintNumOptionsFLWG(struct GameData* flwgComponents, struct DataStructures* data);
 
+/*How deep the safe-move hint looks when the board's own bot does not search.
+
+A board whose bot is random or picks the widest word has no plan to see, so
+there is no depth to match. Advice worked out against an opponent that does
+plan is only ever too careful, never wrong, and being too careful for three
+plies costs nothing a player would notice.*/
+#define FLWG_HINT_LEAST_DEPTH 3
+
+/*A move that does not walk into the bot, as a word, or NULL when there is no
+move left at all.
+
+The other two FLWG hints answer about the position: which letter leads
+somewhere, how many ways out there are. Both are about what is LEGAL, and on a
+board with an opponent legal is not the question - the move that loses you the
+game is legal right up until it is played. This is the one hint on this mode
+that knows there is a bot: it runs the same search the bot runs, from the seat
+the player is sitting in, and hands back what it would do.
+
+Two things about that are worth knowing before changing it.
+
+It is ADVICE, NOT A TURN. botPly plays the move it finds - it marks the word
+spent - so this puts it straight back. The player still has to type it, and may
+well type something else.
+
+The obscurity cap swaps sides, and that is correct. Inside the search the cap
+falls on whoever is to move, which is normally the bot; here it is the player
+being advised, so what comes back is never a word the board would not have
+dealt. The BOT's replies are then searched over the whole graph, which reads it
+as able to answer with anything - so the advice is a little pessimistic about
+what it can do. That is the right way round: the hint picks the move that is
+hardest to punish rather than one that is only safe while the bot stays
+inside its vocabulary.*/
+char* hintSafeMoveFLWG(struct GameData* flwgComponents, int botType, struct DataStructures* data);
+
 // Test Functionality  
 char* convertIntToWord(int wordId, struct DataStructures* dataStructures); 
 int convertWordToInt(char* word, struct DataStructures* dataStructures); 

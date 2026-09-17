@@ -48,7 +48,7 @@ static const char* BRIDGE_FUNCTIONS[] = {
 
 	"initFLWG", "isStartValidFLWG", "getCurrWord", "userTakesTurn",
 	"botTakesTurn", "hintLetterToConsiderFLWG", "hintNumOptionsFLWG",
-	"freeGameComponentsFLWG",
+	"hintSafeMoveFLWG", "freeGameComponentsFLWG",
 
 	"initiateFLWP", "isStartValid_FLWP", "getStartWordFLWP", "getGoalWordFLWP",
 	"userEntersWord_FLWP", "removeWord_FLWP", "ResetFLWP", "undoMoveFLWP",
@@ -276,6 +276,20 @@ void test_bridge_the_adversarial_game(void){
 	int options = hintNumOptionsFLWG(game, data);
 	covers("hintNumOptionsFLWG");
 	CHECK(options >= 0);
+
+	/*And the one hint that knows there is an opponent hands back a word the
+	  player could actually type - a legal neighbour, not yet spent - and leaves
+	  the board exactly as it found it. It plays the move internally to find it,
+	  so a hint that forgot to put it back would quietly cost the player their
+	  best word.*/
+	char* here = getCurrWord(game, data);
+	char* safe = hintSafeMoveFLWG(game, 0, data);
+	covers("hintSafeMoveFLWG");
+	if(safe != NULL){
+		CHECK_INT((int)strlen(safe), 4);
+		CHECK_INT(letters_that_differ(here, safe, 4), 1);
+		CHECK_INT(userTakesTurn(safe, game, data), 0);
+	}
 
 	/*And the bot answers with a word, or -1 when it is trapped*/
 	int botMove = botTakesTurn(game, data, 0);
