@@ -35,6 +35,7 @@ bridge calls, which is the half of it that C cannot see.
 #include "../src/structs/includes/HashMap.h"
 #include "../src/flwg/includes/Hints2.h"
 #include "../src/flwgt/includes/FLWGT.h"
+#include "../src/flwpn/includes/FLWPN.h"
 
 struct DataStructures* open_dictionary(const char* path, int numLetters);
 int letters_that_differ(const char* a, const char* b, int numLetters);
@@ -73,6 +74,11 @@ static const char* BRIDGE_FUNCTIONS[] = {
 	"hintAdjacencyTowardsGoalFLWC", "hintPathToGoalFLWC",
 	"hintBestDirectAdjacencyFLWIC", "hintDistanceFromNearestAvoidWordFLWIC",
 	"freeGameComponentsFLWC",
+
+	"initiateFLWPN", "getFLWPComponentsFLWPN", "isStartValidFLWPN",
+	"userEntersWordFLWPN", "currentGoalFLWPN", "legsDoneFLWPN", "legsTotalFLWPN",
+	"shortestRouteFLWPN", "isGameWonFLWPN", "undoMoveFLWPN", "redoMoveFLWPN",
+	"resetFLWPN", "freeGameComponentsFLWPN",
 
 	"initFLWGT", "isSolvableFLWGT", "userEntersWordFLWGT", "distanceOfWordFLWGT",
 	"isGameWonFLWGT", "wordsFoundFLWGT", "wordsWantedFLWGT", "answersLeftFLWGT",
@@ -304,6 +310,79 @@ void test_bridge_the_adversarial_game(void){
 
 	freeGameComponentsFLWG(game);
 	covers("freeGameComponentsFLWG");
+	freeDataStructures(data);
+}
+
+/* ------------------------------------------------------------------ FLWPN */
+
+/* A whole chain, played through: deal it, walk to the first port, take the
+   move back, put it back, and hand it over. The rule this mode adds - a word
+   touched is spent, and a port cannot be touched early - is what the checks
+   below are actually about; the walking itself is the pathfinder's and is
+   tested with the pathfinder. */
+void test_bridge_the_walk_with_more_than_one_port(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	seedGameRandom(7);
+
+	struct GameComponentsFLWPN* game = initiateFLWPN(8, 30, 2, 3, 1, 30, 3, data);
+	covers("initiateFLWPN");
+	CHECK(game != NULL);
+
+	if(game != NULL){
+		CHECK_INT(isStartValidFLWPN(game), 1);
+		covers("isStartValidFLWPN");
+
+		/*the walk it holds is what every pathfinder call on the bridge uses*/
+		struct GameComponents* walk = getFLWPComponentsFLWPN(game);
+		covers("getFLWPComponentsFLWPN");
+		CHECK(walk != NULL);
+
+		CHECK_INT(legsTotalFLWPN(game), 3);
+		covers("legsTotalFLWPN");
+		CHECK_INT(legsDoneFLWPN(game), 0);
+		covers("legsDoneFLWPN");
+		CHECK(shortestRouteFLWPN(game) >= 3);
+		covers("shortestRouteFLWPN");
+		CHECK_INT(isGameWonFLWPN(game), 0);
+		covers("isGameWonFLWPN");
+
+		/*the port being sailed for is the first one*/
+		CHECK_INT(currentGoalFLWPN(game), game->goals[0]);
+		covers("currentGoalFLWPN");
+
+		/*one move along the route it worked out*/
+		struct intList* step = walk->solution->next;
+		CHECK(step != NULL && step->next != NULL);
+		if(step != NULL && step->next != NULL){
+			int first = step->next->data;
+			CHECK_INT(userEntersWordFLWPN(convertIntToWord(first, data), game, data), 0);
+			covers("userEntersWordFLWPN");
+
+			/*touched, therefore spent*/
+			CHECK_INT((int)checkIfUsed_WordSet(first, data->wordSet), 1);
+			/*and refused a second time, which the walk alone would allow*/
+			CHECK(userEntersWordFLWPN(convertIntToWord(first, data), game, data) != 0);
+
+			/*taken back, and given back*/
+			undoMoveFLWPN(game, data);
+			covers("undoMoveFLWPN");
+			CHECK_INT((int)checkIfUsed_WordSet(first, data->wordSet), 0);
+
+			redoMoveFLWPN(game, data);
+			covers("redoMoveFLWPN");
+			CHECK_INT((int)checkIfUsed_WordSet(first, data->wordSet), 1);
+		}
+
+		/*and back to the top*/
+		resetFLWPN(game, data);
+		covers("resetFLWPN");
+		CHECK_INT(legsDoneFLWPN(game), 0);
+		CHECK_INT(currentGoalFLWPN(game), game->goals[0]);
+
+		freeGameComponentsFLWPN(game, data);
+		covers("freeGameComponentsFLWPN");
+	}
+
 	freeDataStructures(data);
 }
 
@@ -810,6 +889,7 @@ void suite_bridge(void){
 	RUN_TEST(test_bridge_the_seed_decides_the_board);
 	RUN_TEST(test_bridge_the_direct_adjacency_hint_names_a_neighbour);
 	RUN_TEST(test_bridge_the_adversarial_game);
+	RUN_TEST(test_bridge_the_walk_with_more_than_one_port);
 	RUN_TEST(test_bridge_the_generalized_turns_game);
 	RUN_TEST(test_bridge_the_pathfinder);
 	RUN_TEST(test_bridge_the_composed_pathfinder);
