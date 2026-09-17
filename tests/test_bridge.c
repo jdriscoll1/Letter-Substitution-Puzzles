@@ -36,6 +36,7 @@ bridge calls, which is the half of it that C cannot see.
 #include "../src/flwg/includes/Hints2.h"
 #include "../src/flwgt/includes/FLWGT.h"
 #include "../src/flwpn/includes/FLWPN.h"
+#include "../src/flwgpn/includes/FLWGPN.h"
 
 struct DataStructures* open_dictionary(const char* path, int numLetters);
 int letters_that_differ(const char* a, const char* b, int numLetters);
@@ -79,6 +80,12 @@ static const char* BRIDGE_FUNCTIONS[] = {
 	"userEntersWordFLWPN", "currentGoalFLWPN", "legsDoneFLWPN", "legsTotalFLWPN",
 	"shortestRouteFLWPN", "isGameWonFLWPN", "undoMoveFLWPN", "redoMoveFLWPN",
 	"resetFLWPN", "freeGameComponentsFLWPN",
+
+	"initiateFLWGPN", "getFLWPComponentsFLWGPN", "isStartValidFLWGPN",
+	"userEntersWordFLWGPN", "currentGoalFLWGPN",
+	"legsDoneFLWGPN", "legsTotalFLWGPN", "shortestRouteFLWGPN",
+	"isGameWonFLWGPN", "undoMoveFLWGPN", "redoMoveFLWGPN", "resetFLWGPN",
+	"freeGameComponentsFLWGPN",
 
 	"initFLWGT", "isSolvableFLWGT", "userEntersWordFLWGT", "distanceOfWordFLWGT",
 	"isGameWonFLWGT", "wordsFoundFLWGT", "wordsWantedFLWGT", "answersLeftFLWGT",
@@ -383,6 +390,98 @@ void test_bridge_the_walk_with_more_than_one_port(void){
 		covers("freeGameComponentsFLWPN");
 	}
 
+	freeDataStructures(data);
+}
+
+/* ----------------------------------------------------------------- FLWGPN */
+
+/* The chain with its ports described instead of named. Same errand as the one
+   above: every call the app can make, made once, on a board built from rules
+   the app supplies as word lists - which is how FLWC's goal sets already cross
+   this bridge. */
+void test_bridge_the_walk_whose_ports_are_rules(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	seedGameRandom(19);
+
+	/*two rules the app could state in words: starts with B, ends with S*/
+	int total = data->I2W->numWords;
+	char** startsWithB = malloc(sizeof(char*) * (total + 1));
+	char** endsWithS = malloc(sizeof(char*) * (total + 1));
+	int i, b = 0, s = 0;
+	for(i = 0; i < total; i++){
+		char* word = convertIntToWord(i, data);
+		if(word == NULL){
+			continue;
+		}
+		if(word[0] == 'b'){ startsWithB[b++] = word; }
+		if(word[3] == 's'){ endsWithS[s++] = word; }
+	}
+	startsWithB[b] = NULL;
+	endsWithS[s] = NULL;
+	char** sets[2] = { startsWithB, endsWithS };
+
+	struct GameComponentsFLWGPN* game = initiateFLWGPN(8, 30, sets, 2, 2, 4, 1, 30, data);
+	covers("initiateFLWGPN");
+	CHECK(game != NULL);
+
+	if(game != NULL){
+		CHECK_INT(isStartValidFLWGPN(game), 1);
+		covers("isStartValidFLWGPN");
+
+		/*the walk it holds is what every pathfinder call on the bridge uses*/
+		struct GameComponents* walk = getFLWPComponentsFLWGPN(game);
+		covers("getFLWPComponentsFLWGPN");
+		CHECK(walk != NULL);
+
+		CHECK_INT(legsTotalFLWGPN(game), 2);
+		covers("legsTotalFLWGPN");
+		CHECK_INT(legsDoneFLWGPN(game), 0);
+		covers("legsDoneFLWGPN");
+		CHECK(shortestRouteFLWGPN(game) >= 2);
+		covers("shortestRouteFLWGPN");
+		CHECK_INT(isGameWonFLWGPN(game), 0);
+		covers("isGameWonFLWGPN");
+
+		/*it aims at a word the first rule admits, and says so*/
+		int aim = currentGoalFLWGPN(game);
+		covers("currentGoalFLWGPN");
+		CHECK(aim >= 0);
+		/* Asked of the module directly rather than covered as a bridge call:
+		   the app never needs it - the board says which rule is due in words -
+		   so putting it on the bridge would have been an entry point nobody
+		   calls, which the JS half of this ratchet exists to catch. */
+		CHECK_INT(satisfiesCurrentRuleFLWGPN(aim, game), 1);
+		CHECK(convertIntToWord(aim, data)[0] == 'b');
+
+		/*one move along the route it worked out*/
+		struct intList* step = walk->solution->next;
+		CHECK(step != NULL && step->next != NULL);
+		if(step != NULL && step->next != NULL){
+			int first = step->next->data;
+			CHECK_INT(userEntersWordFLWGPN(convertIntToWord(first, data), game, data), 0);
+			covers("userEntersWordFLWGPN");
+
+			undoMoveFLWGPN(game, data);
+			covers("undoMoveFLWGPN");
+			CHECK_INT(walk->prevInput, walk->start);
+
+			redoMoveFLWGPN(game, data);
+			covers("redoMoveFLWGPN");
+			CHECK_INT(walk->prevInput, first);
+		}
+
+		/*and back to the top*/
+		resetFLWGPN(game, data);
+		covers("resetFLWGPN");
+		CHECK_INT(legsDoneFLWGPN(game), 0);
+		CHECK_INT(walk->prevInput, walk->start);
+
+		freeGameComponentsFLWGPN(game, data);
+		covers("freeGameComponentsFLWGPN");
+	}
+
+	free(startsWithB);
+	free(endsWithS);
 	freeDataStructures(data);
 }
 
@@ -890,6 +989,7 @@ void suite_bridge(void){
 	RUN_TEST(test_bridge_the_direct_adjacency_hint_names_a_neighbour);
 	RUN_TEST(test_bridge_the_adversarial_game);
 	RUN_TEST(test_bridge_the_walk_with_more_than_one_port);
+	RUN_TEST(test_bridge_the_walk_whose_ports_are_rules);
 	RUN_TEST(test_bridge_the_generalized_turns_game);
 	RUN_TEST(test_bridge_the_pathfinder);
 	RUN_TEST(test_bridge_the_composed_pathfinder);

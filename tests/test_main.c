@@ -17,6 +17,7 @@ void suite_api_surface(void);
 void suite_bridge(void);
 void suite_flwgt(void);
 void suite_flwpn(void);
+void suite_flwgpn(void);
 
 int main(int argc, char** argv){
 	/*An optional substring: only tests whose name contains it are run*/
@@ -40,6 +41,7 @@ int main(int argc, char** argv){
 	suite_api_surface();
 	suite_flwgt();
 	suite_flwpn();
+	suite_flwgpn();
 	suite_bridge();
 
 	return test_summary();
