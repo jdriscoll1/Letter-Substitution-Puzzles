@@ -42,7 +42,13 @@ enum ERROR_CODE{
 		  for. It is a separate code because the board says the number out loud
 		  - "BEST is 1 away, not 2" - and "wrong" would only teach that you were
 		  wrong.*/
-		WRONG_DISTANCE=10
+		WRONG_DISTANCE=10,
+		/*Somebody else's move. THREE SEATS ONLY: with two at the table the
+		  caller alternates by choosing which function to call and the question
+		  cannot come up, but a table of three has two seats the player is not
+		  sitting in, and typing into one of them has to be refused as its own
+		  thing rather than as a bad word.*/
+		NOT_YOUR_TURN=12
 };
 /*This method checks gitthe input to make sure that it is valid
 @param prevWord --> The previous word, the word it is checking the current characters against

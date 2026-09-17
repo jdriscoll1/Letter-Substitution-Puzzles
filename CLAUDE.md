@@ -131,6 +131,18 @@ headers.
 
 - **FLWG** (`src/flwg`) — two-player substitution game, last player who can move wins.
   `struct GameData`. Start word chosen by adjacency count range.
+- **FLWG3** (`src/flwg3`) — the same rule round a bigger table.
+  `struct GameComponentsFLWG3`. What it adds to FLWG is the SEATING and nothing
+  else: `whoseTurn`, an `enginePlays` seat mask, and `strandedSeat` — the seat
+  that could not move, because with three at the table "somebody is stuck" no
+  longer says who won. `struct GameData` could not carry any of that (its
+  `numPlayers` field was written twice and never read), and the two-handed API
+  is stateless about turns — the caller alternates by choosing which function to
+  call, which works exactly as long as there are two of them. `isGameWonFLWG3`
+  answers from seat zero's side: 0 playing, 1 somebody else ran aground, 2 you
+  did. The bot is `Hypermax`, which measured under 10ms at every shape the
+  campaign deals — see `tests/test_flwg3_timing.c`, which is a bench rather
+  than a test and prints the numbers the depths were chosen from.
 - **FLWP** (`src/flwp`) — pathfinder: get from start to goal. `struct GameComponents` carries
   the user's current path (`userConnections`), full undo/redo history (`storage`,
   `undoCalls`), and the BFS-computed `solution`.
@@ -219,6 +231,16 @@ obscure than ZOUK. It is 9,999,999 now, against a deepest real rank of ~1.65M.
   experimental variants (`minimax_CountAtZero`, `_FiftyFifty`, `_QuitAtZero`, `_NoBeta`,
   `_ZeroOptions`), kept for comparison against the current engine — not unit tests.
 - `MaxN.h` / `Hypermax.h` for more than two players; `TreeStorageNode.h` is the BFS/MCTS node.
+  Both take an **`enginePlays` seat mask** — one bit per seat, saying which of
+  them the engine is playing. `engineWouldNotSay` applies the obscurity cap and
+  the off-limits list on those plies and on no others, which is the line
+  `Minimax.c` has drawn since it was written (`isMaximizingPlayer`, and nothing
+  else). It matters because these two searches had **no caller, no test and no
+  cap** until FLWG3: a three-handed bot without it reaches straight past the
+  level's vocabulary, and `test_flwg3_the_search_will_not_reach_past_the_cap`
+  is the one that bites — it corners the search so every way out is obscure and
+  asks twice, once with the mask and once without. Passing 0 is what every
+  caller before FLWG3 passed and leaves the search exactly as it was.
 - `MontyCarlosTreeSearch.h` is the MCTS alternative to minimax: 50,000 simulations of
   select (`traverse`, UCT) -> expand (`visit_mctsStruct`) -> play out (`rollout`) -> record
   (`backpropogate`). It borrows the shared `wordSet`, marking words as it descends and

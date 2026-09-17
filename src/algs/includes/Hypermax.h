@@ -4,12 +4,18 @@ Author: Jordan Driscoll
 Date: 9.20.21
 Description: Multiplayer FLWG with Node Culling, or Alpha-Reduction*/
 
+/* GUARDED, which it was not. It was the only header in this directory without
+   one, so including it twice in one translation unit redeclared everything in
+   it. */
+#ifndef seenHypermax
+#define seenHypermax
+
 #include "MaxN.h"
 
 #include "../../structs/includes/WordSet.h"
 
 
-int Hypermax(int wordID, int playerID, int numPlayers, int depth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet);
+int Hypermax(int wordID, int playerID, int numPlayers, int enginePlays, int depth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet);
 
 /*Hypermax is "Max-N with alpha beta pruning"
 @param wordID --> The word who is at the top of the tree, the root word
@@ -21,4 +27,6 @@ int Hypermax(int wordID, int playerID, int numPlayers, int depth, struct wordDat
 	@note: The alpha beta scores are only the number representation of the scores, the raw score and wordID is unnecessary 
 @return --> The variable that was deemed best
 */
-struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int depth, int maxDepth, int* alphas, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet);
+struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int enginePlays, int depth, int maxDepth, int* alphas, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet);
+
+#endif

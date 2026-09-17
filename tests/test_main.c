@@ -19,6 +19,8 @@ void suite_flwgt(void);
 void suite_flwpn(void);
 void suite_flwgpn(void);
 void suite_off_limits(void);
+void suite_flwg3(void);
+void suite_flwg3_timing(void);
 
 int main(int argc, char** argv){
 	/*An optional substring: only tests whose name contains it are run*/
@@ -44,6 +46,8 @@ int main(int argc, char** argv){
 	suite_flwpn();
 	suite_flwgpn();
 	suite_off_limits();
+	suite_flwg3();
+	suite_flwg3_timing();
 	suite_bridge();
 
 	return test_summary();

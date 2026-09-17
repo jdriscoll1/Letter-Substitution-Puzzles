@@ -23,7 +23,28 @@ Description: Creating the Max-N: Multiplayer Four Letter Word Game Without Alpha
 //Beginning the function, it takes:
 //the current node it is on - the word it is on (wordID)
 //the current player whose turn it is (playerID)
-struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, int maxDepth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+/* A WORD THE ENGINE WOULD NEVER SAY, on a ply the engine is the one playing.
+ *
+ * TWO LISTS AND THEY ARE NOT THE SAME LIST. The obscurity cap is what this
+ * level may deal - a word past it is a word the player has never heard of, and
+ * losing to one is not being beaten, it is being told a fact. The off-limits
+ * list is what the engine will not say at all, at any cap, on any level.
+ *
+ * ASKED ONLY OF THE SEATS THE ENGINE PLAYS, which is the whole reason the mask
+ * exists. A search that applied the cap to every seat would be modelling the
+ * player as unable to type a word they are perfectly free to type, and would
+ * walk into it. The two handed search has drawn the same line since it was
+ * written - Minimax.c gates on isMaximizingPlayer and nothing else.
+ */
+int engineWouldNotSay(int id, int playerID, int enginePlays, struct wordDataArray* graph){
+	if(playerID < 0 || ((enginePlays >> playerID) & 1) == 0){
+		/* somebody else's move. They may say anything in the dictionary. */
+		return 0;
+	}
+	return isTooObscureForGraph(id, graph) || isOffLimitsForGraph(id, graph);
+}
+
+struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int enginePlays, int depth, int maxDepth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 
 	
 	/**********INITIALIZE IMPORTANT VARIABLES*************************/	
@@ -84,8 +105,10 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 	/*******************STARTS TO LOOP THROUGH CHILD NODES*******************/
 	//it loops through each individual child of the current node
 	while(currChild != NULL){
-		//it makes sure that this particular word has not been used
-		if(checkIfUsed_WordSet(currChild->data, wordSet) == 0){
+		//it makes sure that this particular word has not been used, and that it
+		//is one the seat to move is allowed to say
+		if(checkIfUsed_WordSet(currChild->data, wordSet) == 0
+		   && engineWouldNotSay(currChild->data, playerID, enginePlays, IntToWord_HashMap) == 0){
 			 //if it is a leaf node with ? children
 			 //Return an unknown outcome
 			 if(depth == 0){
@@ -102,6 +125,7 @@ struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, 
 				currChild->data, //child word id
 				(playerID + 1) % numPlayers, //playerID
 				numPlayers, //number of players
+				enginePlays, //which seats the engine is playing
 				depth - 1, //curr depth
 				maxDepth, //maximum depth
 				IntToWord_HashMap, //Hash Map for Information about child node

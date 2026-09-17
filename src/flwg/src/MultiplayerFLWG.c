@@ -39,7 +39,7 @@ void Multiplayer_FLWG(struct DataStructures *data){
 
 			
 			case 2:
-				wordID = multiBotPly(wordID, currPlayer, numPlayers, depth, data->I2W, data->wordSet);
+				wordID = multiBotPly(wordID, currPlayer, numPlayers, 1 << 2, depth, data->I2W, data->wordSet);
 				break;
 			
 
@@ -80,7 +80,7 @@ void MultiplayerTest(struct wordDataArray *IntToWord_HashMap, struct WordSet* wo
 			switch(currPlayer){
 			
 				case 0:
-					wordID = Hypermax(wordID, currPlayer, numPlayers, depth, IntToWord_HashMap, wordSet);
+					wordID = Hypermax(wordID, currPlayer, numPlayers, 1 << 0, depth, IntToWord_HashMap, wordSet);
 					break;
 				
 				case 1:
@@ -127,8 +127,8 @@ void MultiplayerTest(struct wordDataArray *IntToWord_HashMap, struct WordSet* wo
 	free(wins);
 }
 
-int multiBotPly(int wordID, int playerID, int numPlayers, int depth, struct wordDataArray *IntToWord_HashMap, struct WordSet* wordSet){
-	struct maxnNodeScore* output = MaxN(wordID, playerID, numPlayers, depth, depth, IntToWord_HashMap, wordSet);
+int multiBotPly(int wordID, int playerID, int numPlayers, int enginePlays, int depth, struct wordDataArray *IntToWord_HashMap, struct WordSet* wordSet){
+	struct maxnNodeScore* output = MaxN(wordID, playerID, numPlayers, enginePlays, depth, depth, IntToWord_HashMap, wordSet);
 	int newWordID = output->wordID;
 	Free_MaxNNodeScore(output, numPlayers);
 	if(newWordID == -1){

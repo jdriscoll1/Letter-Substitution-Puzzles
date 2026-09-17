@@ -11,6 +11,18 @@ Description: Multiplayer Algorithm Headers for the FLWG
 #include "../../structs/includes/HashMap.h"
 #include "../../structs/includes/WordSet.h"
 
+/*WHICH SEATS THE ENGINE IS PLAYING, one bit per seat: bit 0 for player 0, bit
+1 for player 1, and so on. Nought means the engine is playing none of them,
+which is what every caller before the three player game passed and what leaves
+the search exactly as it was.
+
+WHY A MASK AND NOT A FLAG. The two handed search has one bot and one human, so
+"is this the bot's move" is a single int and Minimax calls it isMaximizingPlayer.
+Three seats can be one human and two bots, or - in the arcade - two humans and
+one bot, and the rule below has to be applied to some plies and not others, so
+the search has to be told which is which rather than work it out.*/
+int engineWouldNotSay(int id, int playerID, int enginePlays, struct wordDataArray* graph);
+
 struct rawScore{
 	//Is this a winning or a losing move?:
 		//+1 = winning position
@@ -46,7 +58,7 @@ struct maxnNodeScore{
 
 struct maxnNodeScore* init_MaxNNodeScore(int numPlayers); 
 
-struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int depth, int maxDepth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet);
+struct maxnNodeScore* MaxN(int wordID, int playerID, int numPlayers, int enginePlays, int depth, int maxDepth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet);
 
 /*Convert an array to Zero-Sum*/
 void Int2ZeroSum_Array(int* scores, int numPlayers); 

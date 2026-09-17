@@ -18,7 +18,7 @@ void Multiplayer_FLWG(struct DataStructures *data);
 
 void MultiplayerTest(struct wordDataArray *IntToWord_HashMap, struct WordSet* wordSet);
 
-int multiBotPly(int wordID, int playerID, int numPlayers, int depth, struct wordDataArray *IntToWord_HashMap, struct WordSet* wordSet);
+int multiBotPly(int wordID, int playerID, int numPlayers, int enginePlays, int depth, struct wordDataArray *IntToWord_HashMap, struct WordSet* wordSet);
 
 
 

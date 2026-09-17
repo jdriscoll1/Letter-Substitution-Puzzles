@@ -12,7 +12,7 @@ Description: Multiplayer FLWG with Node Culling, or Alpha-Reduction*/
 #include "../../structs/includes/IntLinkedList.h"
 #include "../../shared/includes/Log.h"
 
-int Hypermax(int wordID, int playerID, int numPlayers, int depth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+int Hypermax(int wordID, int playerID, int numPlayers, int enginePlays, int depth, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 	int* alphas = malloc(sizeof(int) * numPlayers);
 	int i = 0; 
 	//Initialize alphas to -infinity equivilent
@@ -20,7 +20,7 @@ int Hypermax(int wordID, int playerID, int numPlayers, int depth, struct wordDat
 		//-2,000,000,000
 		alphas[i] = -2000000000;
 	}
-	struct maxnNodeScore* bestScore = HypermaxAlg(wordID, playerID, numPlayers, depth, depth, alphas, IntToWord_HashMap, wordSet);
+	struct maxnNodeScore* bestScore = HypermaxAlg(wordID, playerID, numPlayers, enginePlays, depth, depth, alphas, IntToWord_HashMap, wordSet);
 	free(alphas);
 	int outputWord = bestScore->wordID;
 	Free_MaxNNodeScore(bestScore, numPlayers);
@@ -28,7 +28,7 @@ int Hypermax(int wordID, int playerID, int numPlayers, int depth, struct wordDat
 	
 }
 
-struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int depth, int maxDepth, int* alphas, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
+struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int enginePlays, int depth, int maxDepth, int* alphas, struct wordDataArray* IntToWord_HashMap, struct WordSet *wordSet){
 	
 	
 	/**********INITIALIZE IMPORTANT VARIABLES************/	
@@ -79,7 +79,8 @@ struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int 
 	//it loops through each individual child of the current node
 	while(currChild != NULL){
 		//it makes sure that this particular word has not been used
-		if(checkIfUsed_WordSet(currChild->data, wordSet) == 0){
+		if(checkIfUsed_WordSet(currChild->data, wordSet) == 0
+		   && engineWouldNotSay(currChild->data, playerID, enginePlays, IntToWord_HashMap) == 0){
 			if(depth == 0){
 				
 				free(currAlphas);
@@ -87,7 +88,7 @@ struct maxnNodeScore* HypermaxAlg(int wordID, int playerID, int numPlayers, int 
 			 	return unknownOutcome(wordID, numPlayers);
 			}
 			//gets the child node
-			struct maxnNodeScore* childScore = HypermaxAlg(currChild->data, (playerID + 1) % numPlayers, numPlayers, depth - 1, maxDepth, currAlphas, IntToWord_HashMap, wordSet);
+			struct maxnNodeScore* childScore = HypermaxAlg(currChild->data, (playerID + 1) % numPlayers, numPlayers, enginePlays, depth - 1, maxDepth, currAlphas, IntToWord_HashMap, wordSet);
 			for(p = 0; p < numPlayers; p++){
 				betaScores[p] += childScore->rawScores[p]->isWinPercent; 
 			}
