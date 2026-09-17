@@ -54,6 +54,20 @@ A word's integer id is its 0-based position in the file after the count line. **
 downstream operates on int ids, not strings**; the adjacency lists are precomputed here, not
 at runtime, so a word is "adjacent" exactly when the file says so.
 
+`docs/{2,3,4}ranks.txt` sit beside them and are read by `Load_Obscurity`. Same shape: a count
+line, then one number per line, in **the same order as the connections file**, so rank *i*
+belongs to word *i* and nothing is looked up. A ranks file whose count disagrees with the
+dictionary is refused whole rather than applied crookedly. The number is the word's place in a
+list of the commonest English words, so smaller is commoner.
+
+They are produced together by `docs/oldDictionaries/IntegerDocumentProducer.java` from
+`Four_Letters.txt` / `Three_Letters.txt` / `Two_Letters.txt`, each line `word rank`. **The ranks
+in those input files are not purely corpus frequency** — words the game shipped with before the
+Scrabble list are given a rank whatever the corpus said, because frequency undersells short
+concrete words (DAWS scores better than TARE in every corpus tried). Regenerating those ranks
+from a frequency list alone silently drops 158 ordinary words back out of play;
+`WordObscurity-test.ts` is the ratchet on that.
+
 `initDataStructures(fd, numLetters)` takes `numLetters` as a separate argument from the file
 descriptor — it must match the word length in the file being opened. Several demos in
 `main.c` pass a mismatched value; copying one of those blindly produces silent corruption.
@@ -130,6 +144,57 @@ to select from an identical valid set — but it costs one search instead of one
 the dictionary. Do not "fix" this back into a full scan: that was a 40x slowdown on every
 game start. For FLWP the goal search doubles as the validity test, so a start can no longer
 be accepted and then fail to produce a goal.
+
+### Which words the game may use
+
+A word being **legal to play** and a word being one **the game deals or a bot answers with** are
+different questions, and keeping them apart is what lets the dictionary be the Scrabble list
+without the game being unfair. `takeUserInput` never asks how obscure a word is. Everything that
+picks a word *for* the engine does.
+
+`setObscurityCap(data, cap)` puts a ceiling on the word map (`wordDataArray.obscurityCap`), and
+`isTooObscure(id, data)` / `isTooObscureForGraph(id, graph)` read it. A board sets its cap as it
+is built, before the start word is chosen — after is too late.
+
+What has to respect it, and each was missed once:
+
+- **Four dealers**, sharing no code path: `ChooseStart_Range` (adversarial),
+  `getWordWithNumberOfConnections` (turns), `chooseStartWord_FLWCGeneral` (constraint), and
+  `findFLWPStartAndGoal` (the walk). The last was ungated for three commits because a test
+  comment credited the walk to the turns game's picker.
+- **Every bot ply the bot chooses**, but *not* the plies where the player moves — reading the
+  player as restricted has the bot believing itself safer than it is. `botPly_Mirror` chooses
+  nothing and needs no cap.
+- **Routes**, not just their ends. A walk quotes `gc->minConnections` as the number of moves it
+  takes, and the score and the first hint both read it, so the route behind that number must be
+  walkable in the words the board deals. `getSolution_FLWP` measures inside the tier and falls
+  back to the whole dictionary only when there is no route at all.
+
+Two rules that are easy to get backwards:
+
+- **The cap is not a preference.** Bands (adjacency, distance) are asked for and then widened
+  when the dictionary has nothing like them — see `Relax.h`. The cap is refused on *every*
+  relaxation round, and there is one extra round underneath that drops it, so nothing that could
+  be dealt before can fail to be dealt now.
+- **A floor and a ceiling are not measured on the same graph.** In
+  `all_words_are_greater_than_min_distance_and_...`, "nothing the rule admits is nearer than N"
+  is measured over the **whole dictionary** (the player may type anything, so a guard must
+  assume they will), while "something is within N" is measured over **the board's own words** (a
+  goal reachable only through words nobody says is not reachable). Narrowing a graph only ever
+  makes distances longer, so both of those are the conservative reading.
+
+**Hints sort rather than filter.** `Sort_ByObscurity` / `Neighbours_ByObscurity` order the
+options so the commonest is offered first, and no cap is applied. A cap on top of an ordering is
+provably inert — if any option is within it the commonest option is, and if none is, something
+must still be offered — and being wrong about one word then costs it a place in a queue rather
+than its existence. Counts (`numOptionsHint`) are deliberately uncapped too: they are claims
+about the *player's* position, and a number they can check has to be the one they would get.
+
+`OBSCURITY_UNKNOWN` does two jobs — "nothing has ranked this word", and, as the default cap, "no
+limit at all". **It must therefore sit above every rank a word can actually have.** It was 99,999
+while ranks came from a list truncated at fifty thousand; when the ranks went deeper that
+silently stopped meaning "no cap", and the most obscure word in the dictionary sorted as less
+obscure than ZOUK. It is 9,999,999 now, against a deepest real rank of ~1.65M.
 
 ### Algorithms (`src/algs`)
 
