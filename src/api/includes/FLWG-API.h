@@ -52,6 +52,13 @@ void setObscurityCap(struct DataStructures* data, int cap);
 /*Whether a word is past that line. Asked wherever the engine is choosing a word
 for itself - never where it is judging one the player typed.*/
 int isTooObscure(int id, struct DataStructures* data);
+
+/*How obscure a word is, by the word. The opposite errand to isTooObscure: this
+is for judging a word the PLAYER has already played, so the app can tell them
+they found a good one. A word the dictionary does not know answers
+OBSCURITY_UNKNOWN, which is what the rest of the engine already means by
+"nothing has ever ranked this".*/
+int obscurityOfWord(char* word, struct DataStructures* data);
 /*Fix the sequence of random choices, so the same seed deals the same board.
 initDataStructures seeds from the clock once at startup; this overrides that
 from the point it is called, which is what lets a puzzle be the same puzzle for

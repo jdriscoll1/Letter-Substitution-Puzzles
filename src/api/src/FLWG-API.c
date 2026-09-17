@@ -58,6 +58,21 @@ int isTooObscure(int id, struct DataStructures* data){
 	return isTooObscureForGraph(id, data->I2W);
 }
 
+/* See FLWG-API.h. Asked by the word rather than by its id, because the caller
+   is the app holding a word the player just typed, and making it convert first
+   would be two trips across the bridge to answer one question. */
+int obscurityOfWord(char* word, struct DataStructures* data){
+	int id;
+	if(word == NULL || data == NULL){
+		return OBSCURITY_UNKNOWN;
+	}
+	id = Convert_WordToInt(word, data);
+	if(id < 0){
+		return OBSCURITY_UNKNOWN;
+	}
+	return getObscurity(id, data);
+}
+
 void freeDataStructures(struct DataStructures* data){
 	free_WordSet(data->wordSet); 
 	Free_HashMaps(data->W2I, data->I2W); 

@@ -42,6 +42,7 @@ int letters_that_differ(const char* a, const char* b, int numLetters);
 
 static const char* BRIDGE_FUNCTIONS[] = {
 	"initDataStructures", "Load_Obscurity_fd", "setObscurityCap",
+	"obscurityOfWord",
 	"seedGameRandom", "getAllWords",
 	"convertIntToWord", "convertWordToInt", "directAdjacencyHint",
 
@@ -124,6 +125,18 @@ void test_bridge_loads_and_converts_the_dictionary(void){
 			close(rankFd);
 			/*CARE is an ordinary word, so it came back ranked*/
 			CHECK(getObscurity(Convert_WordToInt("care", data), data) < OBSCURITY_UNKNOWN);
+
+			/*And the same question asked by the word, which is how the app asks
+			it: it holds a word the player just typed, not an id. This is the
+			opposite errand to the cap above - that decides what the game may
+			DEAL, this judges what the player already PLAYED, so the app can
+			tell them they found a good one.*/
+			covers("obscurityOfWord");
+			CHECK_INT(obscurityOfWord("care", data), getObscurity(Convert_WordToInt("care", data), data));
+			CHECK(obscurityOfWord("zouk", data) > obscurityOfWord("care", data));
+			/*A word the dictionary has never heard of, and no word at all*/
+			CHECK_INT(obscurityOfWord("qqqq", data), OBSCURITY_UNKNOWN);
+			CHECK_INT(obscurityOfWord(NULL, data), OBSCURITY_UNKNOWN);
 		}
 	}
 
