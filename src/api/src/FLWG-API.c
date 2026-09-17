@@ -274,6 +274,28 @@ int isGameWonFLWP(struct GameComponents *gameComponents) {
     return gameComponents->goal == gameComponents->prevInput;
 }
 
+/*Whether there is a move to take back. See FLWG-API.h for why both of these
+are asked rather than worked out on the other side of the bridge.*/
+int canUndoFLWP(struct GameComponents *gameComponents) {
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return 0;
+	}
+
+	return gameComponents->numMoves > 0;
+}
+
+/*And whether there is one to put back. This is the one JS cannot know: the
+redo stack is cleared by any new word, and by removing one.*/
+int canRedoFLWP(struct GameComponents *gameComponents) {
+	/* nothing to work with */
+	if(gameComponents == NULL){
+		return 0;
+	}
+
+	return gameComponents->undoCalls > 0;
+}
+
 void removeWord_FLWP(char* word, struct GameComponents *gameComponents, struct DataStructures* dataStructures) {
 	/* nothing to work with */
 	if(gameComponents == NULL){

@@ -86,6 +86,22 @@ char* getStartWordFLWP(struct GameComponents *gameComponents, struct DataStructu
 char* getGoalWordFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
 int getPrevWordFLWP(struct GameComponents* gameComponents);
 int isGameWonFLWP(struct GameComponents *gameComponents);
+
+/*Whether there is a move to take back, and whether there is one to put back.
+
+Asked so the two buttons can be greyed out rather than sit there looking
+pressable and do nothing. Undo and Redo both already refuse quietly when there
+is nothing to do, which is correct and is also invisible: a control that looks
+alive and answers a press with no change reads as the game being broken.
+
+They are asked rather than counted in JS because the second one cannot be
+counted there. Taking a move back is just "have you made one", but putting one
+back depends on a redo stack that AddWord_Struct and RemoveWord_Struct both
+silently clear - so a copy of it kept on the other side of the bridge would be
+right until the player typed a different word after an undo, and wrong from
+then on with nothing to say so.*/
+int canUndoFLWP(struct GameComponents *gameComponents);
+int canRedoFLWP(struct GameComponents *gameComponents);
 void undoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
 void redoMoveFLWP(struct GameComponents *gameComponents, struct DataStructures* dataStructures);
 struct arrayList *getCurrentWordsFLWP(struct GameComponents *gameComponents);

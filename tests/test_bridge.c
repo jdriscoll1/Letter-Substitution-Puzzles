@@ -53,6 +53,7 @@ static const char* BRIDGE_FUNCTIONS[] = {
 	"initiateFLWP", "isStartValid_FLWP", "getStartWordFLWP", "getGoalWordFLWP",
 	"userEntersWord_FLWP", "removeWord_FLWP", "ResetFLWP", "undoMoveFLWP",
 	"redoMoveFLWP", "getCurrentWordsFLWP", "getPrevWordFLWP", "isGameWonFLWP",
+	"canUndoFLWP", "canRedoFLWP",
 	"hintGetHeadAdjacencyFLWP", "hintGetTailAdjacencyFLWP",
 	"hintGetMinAdjacenciesFLWP", "distanceToGoalFLWP", "routeToGoalFLWP",
 	"freeGameComponentsFLWP",
@@ -374,17 +375,32 @@ void test_bridge_the_pathfinder(void){
 	/*Walking one step towards the goal shortens the distance by one, and
 	winding it back lengthens it again - which is the whole of what undo means*/
 	if(fromStart != NULL){
+		/*Nothing has been walked yet, so neither button has anything to do*/
+		CHECK_INT(canUndoFLWP(game), 0);
+		covers("canUndoFLWP");
+		CHECK_INT(canRedoFLWP(game), 0);
+		covers("canRedoFLWP");
+
 		CHECK_INT(userEntersWord_FLWP(fromStart, game, data), 0);
 		covers("userEntersWord_FLWP");
 		CHECK_INT(distanceToGoalFLWP(game, data), shortest - 1);
+
+		/*A move to take back, and still nothing to put back*/
+		CHECK_INT(canUndoFLWP(game), 1);
+		CHECK_INT(canRedoFLWP(game), 0);
 
 		undoMoveFLWP(game, data);
 		covers("undoMoveFLWP");
 		CHECK_INT(distanceToGoalFLWP(game, data), shortest);
 
+		/*And now the other way round*/
+		CHECK_INT(canUndoFLWP(game), 0);
+		CHECK_INT(canRedoFLWP(game), 1);
+
 		redoMoveFLWP(game, data);
 		covers("redoMoveFLWP");
 		CHECK_INT(distanceToGoalFLWP(game, data), shortest - 1);
+		CHECK_INT(canRedoFLWP(game), 0);
 
 		removeWord_FLWP(fromStart, game, data);
 		covers("removeWord_FLWP");

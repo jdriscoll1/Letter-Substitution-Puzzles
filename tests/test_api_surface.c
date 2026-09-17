@@ -65,6 +65,8 @@ static void every_flwp_call_with_nothing(struct DataStructures* data){
 	CHECK(getStartWordFLWP(NULL, data) == NULL);
 	CHECK(getGoalWordFLWP(NULL, data) == NULL);
 	CHECK(getPrevWordFLWP(NULL) <= 0);
+	CHECK_INT(canUndoFLWP(NULL), 0);
+	CHECK_INT(canRedoFLWP(NULL), 0);
 	CHECK_INT(isGameWonFLWP(NULL), 0);
 	CHECK(getCurrentWordsFLWP(NULL) == NULL);
 	CHECK(userEntersWord_FLWP("cat", NULL, data) != 999);
