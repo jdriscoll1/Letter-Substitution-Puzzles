@@ -27,6 +27,18 @@ Makefile globs `tests/*.c`. Leaks are invisible to plain `make test`, so run
 choose start words with `rand()`; `open_dictionary` re-applies the seed after every load
 since `initDataStructures` reseeds from the clock itself.
 
+**A full run is around five minutes, and one test is most of it.**
+`test_dictionaries_load_every_word` walks every word in every dictionary and is about
+8,000 of the ~11,400 checks. It is not wasteful - it is slow because of what it proves -
+but a filtered run needs a timeout to match, and a test that takes minutes looks exactly
+like a hang under a forty second limit. One was mistaken for one in exactly that way.
+
+`test_mcts_wins_a_three_player_game` is **parked** - see the commented-out RUN_TEST at the
+bottom of `tests/test_mcts.c`. It took 237 seconds by itself, about two fifths of the
+suite. Read that comment before assuming the search is covered: the other MCTS tests hold
+the cheap properties, and none of them can see a search that plays legally but badly, which
+is the fault the parked one exists to catch.
+
 The sources use POSIX headers (`unistd.h`, `fcntl.h`) and `open()`/`close()` for dictionary
 files, so they assume a POSIX-ish toolchain.
 
@@ -222,7 +234,9 @@ obscure than ZOUK. It is 9,999,999 now, against a deepest real rank of ~1.65M.
   only ever proves *who was left without a move*, and how many seats sit between this move
   and that one decides whether that is a win. Told two when there are three, the search
   credits most of its playouts to the wrong player and plays worse than random —
-  `test_mcts_wins_a_three_player_game` is what holds that down.
+  `test_mcts_wins_a_three_player_game` is what caught that, and it is **parked** for
+  cost, so nothing currently holds it down. If you touch the seat arithmetic,
+  uncomment its RUN_TEST at the bottom of `tests/test_mcts.c`.
 - `BreadthFirstSearch.h` does distance-constrained search — it both validates/chooses
   start-goal pairs and backs the "how far am I from the goal" and "show me a path" hints.
 
