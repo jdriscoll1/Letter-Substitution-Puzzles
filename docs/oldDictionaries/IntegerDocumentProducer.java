@@ -14,7 +14,7 @@ import java.io.*;
 // 3) Look for Four_Connections_Int.txt and Four_Ranks_Int.txt
 //
 // The word files carry two columns now, "word rank", where rank is how common
-// the word is in english - 1 is the commonest word there is, and 99999 means it
+// the word is in english - 1 is the commonest word there is, and 9999999 means it
 // did not appear in the 50,000 commonest at all. Only the word takes part in
 // working out connections; the rank is carried along so the game can tell an
 // ordinary word from one nobody has heard of.
@@ -46,7 +46,7 @@ public class IntegerDocumentProducer{
    public static String rankOf(String line){
       String trimmed = line.trim();
       int space = trimmed.indexOf(' ');
-      return (space < 0) ? "99999" : trimmed.substring(space + 1).trim();
+      return (space < 0) ? "9999999" : trimmed.substring(space + 1).trim();
    }
    
    public static int numLetters = 4; 
@@ -225,7 +225,7 @@ public class IntegerDocumentProducer{
          base = words[i];
          file.write(base);
          String rank = ranks.get(base);
-         rankFile.write((rank == null ? "99999" : rank) + "\n");
+         rankFile.write((rank == null ? "9999999" : rank) + "\n");
          System.out.printf("%s", base); 
          for(j = 0; j < words.length; j++){
             connection = words[j]; 

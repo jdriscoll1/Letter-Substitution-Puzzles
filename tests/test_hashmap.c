@@ -233,7 +233,13 @@ static void test_obscurity_is_read_from_the_ranks_file(void){
 	word's place in a list of the commonest english words, so smaller is more
 	common; what matters here is the gap between them.*/
 	CHECK(getObscurity(care, data) < 5000);
-	CHECK_INT(getObscurity(adze, data), OBSCURITY_UNKNOWN);
+	/*ADZE carries a real rank rather than the unranked sentinel: the ranks go
+	deeper than the fifty thousand commonest words now, so a word being rare and
+	a word being unheard of are different things. The sentinel is kept for the
+	second, and it sits above every rank a word can actually have. What this is
+	reading is the gap, which is what the comment above always said.*/
+	CHECK(getObscurity(adze, data) > 50000);
+	CHECK(getObscurity(adze, data) < OBSCURITY_UNKNOWN);
 	CHECK(getObscurity(care, data) < getObscurity(adze, data));
 
 	/*An id nothing knows about is not a lookup off the end of the array*/

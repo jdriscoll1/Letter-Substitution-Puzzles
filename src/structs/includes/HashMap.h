@@ -45,7 +45,14 @@ struct wordData{
 /*A word nobody has ranked. Deliberately the far end of the scale rather than
 nought: an unranked word must never look like the commonest word in english to
 something choosing the easiest move it can find.*/
-#define OBSCURITY_UNKNOWN 99999
+/* Bigger than any rank a word can actually have, which is the whole point of
+it. It was 99,999 while the ranks came from a list truncated at fifty thousand,
+and that worked until the ranks went deeper: ZOUK is 130,566 now, so a cap of
+99,999 stopped meaning "no cap" and started quietly excluding words - and WABS,
+which appears nowhere in 1.66M words and is the most obscure thing in the
+dictionary, sorted as LESS obscure than ZOUK. A sentinel has to sit outside the
+range it is a sentinel for. */
+#define OBSCURITY_UNKNOWN 9999999
 
 struct wordStruct{
 	//The word this structure is holding
