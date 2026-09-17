@@ -330,7 +330,27 @@ int somethingInSetIsWithin(int id, int most, struct WordSet* set, struct WordSet
 		int distance = parent->data->distance;
 		int currId = parent->data->id;
 
-		if(checkIfUsed_WordSet(currId, set)){
+		/* THE DESTINATION AS WELL AS THE ROAD.
+		 *
+		 * This used to take any word the rule admits, however obscure, and only
+		 * the words on the way had to be ones the board deals. That made the
+		 * promise this check exists to make - "the board can be finished" -
+		 * true of a board whose only finish was a word nobody says. The level
+		 * would then be asking for something outside its own vocabulary while
+		 * every word it dealt was inside it.
+		 *
+		 * It stays the strict reading: taking words out of the graph only ever
+		 * makes distances longer, so a ceiling measured this way can only get
+		 * harder to satisfy, never easier. And the floor below it is measured
+		 * over the whole dictionary still, because that one asks what the
+		 * PLAYER could stumble into and they may type anything.
+		 *
+		 * Said twice on purpose. The queueing rule below no longer lets an
+		 * obscure goal word into the search at all, so this arrival check is
+		 * already true by the time it is reached - it is here to say the rule
+		 * out loud at the place a reader looks for it, and to still hold if
+		 * somebody ever lets goal words back past the queue. */
+		if(checkIfUsed_WordSet(currId, set) && !isTooObscure(currId, data)){
 			found = 1;
 			break;
 		}
@@ -345,11 +365,11 @@ int somethingInSetIsWithin(int id, int most, struct WordSet* set, struct WordSet
 			if(checkIfUsed_WordSet(next, seen) || checkIfUsed_WordSet(next, forbidden)){
 				continue;
 			}
-			/* The road, not the destination. What the rule names as a goal is
-			   the rule's business and is reached whatever it costs; which words
-			   the walk passes through on the way is this board's business, and
-			   it does not deal in ones nobody knows. */
-			if(!checkIfUsed_WordSet(next, set) && isTooObscure(next, data)){
+			/* The road AND the destination, both in the words this board
+			   deals - see the note at the arrival above. A goal word that is
+			   too obscure is no longer worth walking to, so it is no longer
+			   worth queueing either. */
+			if(isTooObscure(next, data)){
 				continue;
 			}
 			enqueue(next, distance + 1, parent, q);

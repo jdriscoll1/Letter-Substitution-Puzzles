@@ -272,7 +272,39 @@ void Free_BFSResults(struct BFSResults results, struct WordSet* wordSet){
 }
 
 
+/* Declared here because the public one below calls it twice - see the note
+   there for why twice. */
+static struct arrayList* pathToNearestInSet(int id, struct StartWordParametersFLWC p,
+	int withinTier, struct DataStructures* data);
+
+/* The way to the nearest word the rule admits.
+ *
+ * FOUR HINTS AND THE DEALER READ THIS ONE SEARCH, so it is the one place that
+ * decides which word the game points a player at.
+ *
+ * IT LOOKS FOR ONE IN THE LEVEL'S OWN VOCABULARY FIRST. A hint that answers
+ * ZOUK, or a board built around reaching it, is the game asking for a word it
+ * would never itself deal - and the player has no way of knowing the rule they
+ * were given was meant to be satisfied by something else.
+ *
+ * AND FALLS BACK TO ANY OF THEM, because there is no relaxation round out here
+ * the way there is in the dealer. A hint has already been paid for by the time
+ * it is worked out, so it has to answer with something; and a board whose only
+ * winning word is an obscure one is still a board that can be won, so refusing
+ * to describe it would be worse than describing it honestly.
+ */
 struct arrayList* getPathToNearestWordInWordSet(int id, struct StartWordParametersFLWC p, struct DataStructures* data){
+	struct arrayList* inTheLevelsWords = pathToNearestInSet(id, p, 1, data);
+	if(inTheLevelsWords != NULL && inTheLevelsWords->currPrecision > 0){
+		return inTheLevelsWords;
+	}
+
+	free_ArrayList(inTheLevelsWords);
+	return pathToNearestInSet(id, p, 0, data);
+}
+
+static struct arrayList* pathToNearestInSet(int id, struct StartWordParametersFLWC p,
+	int withinTier, struct DataStructures* data){
 
 	// Initalize the Queue 
 	struct Queue* q = init_Queue(); 		
@@ -305,7 +337,8 @@ struct arrayList* getPathToNearestWordInWordSet(int id, struct StartWordParamete
 		// If the goal is too close or too far away, then we mark defeat
 
 		// If the Current Word That We're Looking at is In The Goal Set
-		int currIsGoal = checkIfUsed_WordSet(currId, p.goalWords);
+		int currIsGoal = checkIfUsed_WordSet(currId, p.goalWords)
+			&& (!withinTier || !isTooObscure(currId, data));
 		if (currIsGoal) {
 			free_ArrayList(pathToNearestWord); 
 			pathToNearestWord = getPathToHeader_Queue(parent); 	

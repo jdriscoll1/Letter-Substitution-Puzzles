@@ -86,7 +86,7 @@ static int nearestInSet(int from, struct WordSet* set, int atLeast, int atMost,
 	depth[from] = 0;
 	queue[tail++] = from;
 
-	if(atLeast <= 0 && checkIfUsed_WordSet(from, set)){
+	if(atLeast <= 0 && checkIfUsed_WordSet(from, set) && !isTooObscure(from, data)){
 		found = from;
 	}
 
@@ -103,6 +103,16 @@ static int nearestInSet(int from, struct WordSet* set, int atLeast, int atMost,
 			}
 			seen[next] = 1;
 			depth[next] = depth[curr] + 1;
+			/* IN THE LEVEL'S OWN VOCABULARY, both what is walked through and
+			   what is arrived at. The rule admits every word in the dictionary
+			   that fits it - that is what the PLAYER is judged against and it
+			   never narrows - but what the board aims at, measures itself by
+			   and hints towards has to be a word this level would deal. A board
+			   that says "get to a word with OO" and means ZOOT is asking for
+			   something outside its own reach. */
+			if(isTooObscure(next, data)){
+				continue;
+			}
 			if(depth[next] >= atLeast && checkIfUsed_WordSet(next, set)){
 				found = next;
 				break;

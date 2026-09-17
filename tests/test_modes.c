@@ -1039,6 +1039,112 @@ static void test_a_walk_is_routed_through_the_words_the_board_allows(void){
  * Narrowing a graph only ever makes distances longer, which is what makes both
  * of those the strict reading rather than a preference.
  */
+/* The word a board asks you to REACH is one the board would deal.
+ *
+ * The ceiling has always narrowed the ROAD to the words a level uses. The
+ * destination was exempt - "what the rule names as a goal is the rule's
+ * business and is reached whatever it costs" - and that made the promise the
+ * ceiling exists to make true of a board whose only finish was a word nobody
+ * says. A level would then be asking for something outside the vocabulary it
+ * deals in, with no way for the player to know the rule was not meant to be
+ * satisfied by the word they could actually think of.
+ *
+ * THE ROAD CANNOT SHOW THIS, which is why the test next door does not. Narrow
+ * the graph and a long route through obscure words disappears either way. So
+ * this puts the obscure goal ONE MOVE AWAY, where there is no road to narrow
+ * and the only thing left that can answer is the destination rule.
+ */
+static void test_a_board_will_not_ask_for_a_word_it_would_not_deal(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	struct WordSet* nothingForbidden = init_WordSet(data->I2W->numWords);
+	int i, tested = 0;
+
+	Load_Obscurity(data->I2W, "docs/4ranks.txt");
+
+	for(i = 0; i < data->I2W->numWords && tested < 30; i++){
+		/*a neighbour nobody says, so the goal is one move off and obscure*/
+		struct intList* c = getConnections(i, data->I2W);
+		int obscureNeighbour = -1;
+		for(c = c == NULL ? NULL : c->next; c != NULL && obscureNeighbour == -1; c = c->next){
+			if(data->I2W->array[c->data]->obscurity > 200000){
+				obscureNeighbour = c->data;
+			}
+		}
+		if(obscureNeighbour == -1){
+			continue;
+		}
+
+		struct WordSet* goals = init_WordSet(data->I2W->numWords);
+		markUsed_WordSet(obscureNeighbour, goals);
+
+		/*with no cap it is one move away and the board may be built on it*/
+		setObscurityCap(data, OBSCURITY_UNKNOWN);
+		CHECK_INT(somethingInSetIsWithin(i, 1, goals, nothingForbidden, data), 1);
+
+		/*with the level's own cap it is not a word this board asks for*/
+		setObscurityCap(data, 2000);
+		CHECK_INT(somethingInSetIsWithin(i, 1, goals, nothingForbidden, data), 0);
+
+		free_WordSet(goals);
+		tested++;
+	}
+
+	/*and the case exists at all, or the two checks above never ran*/
+	CHECK(tested >= 5);
+
+	setObscurityCap(data, OBSCURITY_UNKNOWN);
+	free_WordSet(nothingForbidden);
+	freeDataStructures(data);
+}
+
+/* THE CAP NARROWS WHAT THE GAME POINTS AT, NEVER WHAT IT ACCEPTS.
+ *
+ * The other half of the same rule, and the half that would be a real injustice
+ * to get wrong: a player who finds an obscure word the rule admits has
+ * satisfied the rule. The floor says so too - it is measured over the whole
+ * dictionary precisely because the player may type anything.
+ */
+static void test_the_cap_never_narrows_what_the_player_may_satisfy(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+	struct WordSet* nothingForbidden = init_WordSet(data->I2W->numWords);
+	int i, tested = 0;
+
+	Load_Obscurity(data->I2W, "docs/4ranks.txt");
+
+	for(i = 0; i < data->I2W->numWords && tested < 30; i++){
+		struct intList* c = getConnections(i, data->I2W);
+		int obscureNeighbour = -1;
+		for(c = c == NULL ? NULL : c->next; c != NULL && obscureNeighbour == -1; c = c->next){
+			if(data->I2W->array[c->data]->obscurity > 200000){
+				obscureNeighbour = c->data;
+			}
+		}
+		if(obscureNeighbour == -1){
+			continue;
+		}
+
+		struct WordSet* goals = init_WordSet(data->I2W->numWords);
+		markUsed_WordSet(obscureNeighbour, goals);
+
+		setObscurityCap(data, 2000);
+
+		/*the word is still in the set, which is what winning is decided on*/
+		CHECK_INT((int)checkIfUsed_WordSet(obscureNeighbour, goals), 1);
+
+		/*and the floor still sees it, because the player may walk into it*/
+		CHECK_INT(nothingInSetIsNearerThan(i, 2, goals, nothingForbidden, data), 0);
+
+		free_WordSet(goals);
+		tested++;
+	}
+
+	CHECK(tested >= 5);
+
+	setObscurityCap(data, OBSCURITY_UNKNOWN);
+	free_WordSet(nothingForbidden);
+	freeDataStructures(data);
+}
+
 static void test_a_board_measures_its_floor_and_its_ceiling_differently(void){
 	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
 	struct WordSet* goals = init_WordSet(data->I2W->numWords);
@@ -1630,6 +1736,8 @@ void suite_modes(void){
 	RUN_TEST(test_a_board_is_dealt_on_a_word_the_tier_allows);
 	RUN_TEST(test_a_walk_is_routed_through_the_words_the_board_allows);
 	RUN_TEST(test_a_board_measures_its_floor_and_its_ceiling_differently);
+	RUN_TEST(test_a_board_will_not_ask_for_a_word_it_would_not_deal);
+	RUN_TEST(test_the_cap_never_narrows_what_the_player_may_satisfy);
 	RUN_TEST(test_the_bots_keep_to_the_words_the_board_allows);
 	RUN_TEST(test_every_board_is_dealt_inside_its_cap);
 	RUN_TEST(test_an_uncapped_board_may_use_any_word);
