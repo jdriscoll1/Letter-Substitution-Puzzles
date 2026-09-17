@@ -31,6 +31,154 @@ static int alreadyAPort(int id, const int* goals, int found){
 	return 0;
 }
 
+/* The path as it stands right now.
+ *
+ * NOT userConnections, which is the obvious place and is wrong after an undo.
+ * Undo_Struct steps the storage back and rebuilds what is drawn from the
+ * snapshot at the front of it; it never shortens userConnections, so that list
+ * still holds the move that was just taken back. Reading it made undo appear to
+ * do nothing at all here - the word stayed spent and the port stayed called at.
+ *
+ * This is the same place CopyWordLLOntoArrayList reads, which is what puts the
+ * route on the board, so what is spent always agrees with what the player can
+ * see. */
+static struct intList* currentPath(struct GameComponentsFLWPN* gc){
+	return (struct intList*)gc->walk->storage->next->listHeader;
+}
+
+/* The rule, applied to the path as it now stands.
+ *
+ * Every word on the path is spent and nothing else is. Rebuilt from scratch
+ * rather than adjusted, so that undo, redo, a rewind to a word in the middle,
+ * and a reset all come out right without any of them knowing this exists - the
+ * pathfinder's undo rebuilds the path and has never heard of a word set.
+ *
+ * Resetting the whole set is safe because only one game is ever live: the module
+ * that owns these pointers frees every other mode before it builds one.
+ */
+static void spendExactlyThePath(struct GameComponentsFLWPN* gc, struct DataStructures* data){
+	resetWordSet(data);
+
+	struct intList* w = currentPath(gc);
+	for(w = w->next; w != NULL; w = w->next){
+		markUsed_WordSet(w->data, data->wordSet);
+	}
+}
+
+/* How many ports have been called at, read off the path in order.
+ *
+ * Derived for the same reason the word set is: an undo that steps back over an
+ * arrival has to un-call that port, and a counter bumped on the way past would
+ * have to be decremented by something that knows an arrival happened. The path
+ * already says.
+ */
+static int portsCalledAt(struct GameComponentsFLWPN* gc){
+	int reached = 0;
+	struct intList* w = currentPath(gc);
+
+	for(w = w->next; w != NULL && reached < gc->numLegs; w = w->next){
+		if(w->data == gc->goals[reached]){
+			reached++;
+		}
+	}
+	return reached;
+}
+
+/*Defined below; named here because taking a move uses it before then*/
+static void relayTheGoal(struct GameComponentsFLWPN* gc, struct DataStructures* data);
+
+/*Whether this word is a port that is not the one being sailed for*/
+static int isAPortNotYetDue(int id, struct GameComponentsFLWPN* gc){
+	int i;
+	for(i = gc->legsDone + 1; i < gc->numLegs; i++){
+		if(gc->goals[i] == id){
+			return 1;
+		}
+	}
+	return 0;
+}
+
+/* Whether the whole chain can actually be walked under this mode's rule, which
+ * is stricter than the graph's.
+ *
+ * A leg has to be walkable without touching a later port and without reusing a
+ * word already spent on an earlier leg. Neither the dealer nor chooseGoalBFS
+ * knows that - they measure distance through the open graph - so a chain that
+ * looks fine can have a leg whose only routes run through a port that is not
+ * due yet. Walking it here is the difference between refusing such a board and
+ * dealing one that cannot be finished.
+ */
+static int chainCanBeWalked(const int* goals, int numLegs, int start,
+	struct DataStructures* data){
+	int total = data->I2W->numWords;
+	int* spent = calloc(total, sizeof(int));
+	int* seen = malloc(sizeof(int) * total);
+	int* queue = malloc(sizeof(int) * total);
+	int* cameFrom = malloc(sizeof(int) * total);
+	if(spent == NULL || seen == NULL || queue == NULL || cameFrom == NULL){
+		free(spent); free(seen); free(queue); free(cameFrom);
+		return 0;
+	}
+
+	spent[start] = 1;
+	int from = start, leg, ok = 1;
+
+	for(leg = 0; leg < numLegs && ok; leg++){
+		int to = goals[leg];
+		int i, head = 0, tail = 0;
+		for(i = 0; i < total; i++){
+			seen[i] = 0;
+			cameFrom[i] = -1;
+		}
+		seen[from] = 1;
+		queue[tail++] = from;
+		int found = 0;
+
+		while(head < tail && !found){
+			int curr = queue[head++];
+			struct intList* c = getConnections(curr, data->I2W);
+			for(c = c->next; c != NULL; c = c->next){
+				int next = c->data;
+				if(seen[next]){
+					continue;
+				}
+				/*a word already spent on an earlier leg is gone for good*/
+				if(spent[next] && next != to){
+					continue;
+				}
+				/*and a port that is not due may not be touched at all*/
+				int laterPort = 0, j;
+				for(j = leg + 1; j < numLegs; j++){
+					if(goals[j] == next){ laterPort = 1; break; }
+				}
+				if(laterPort){
+					continue;
+				}
+				seen[next] = 1;
+				cameFrom[next] = curr;
+				if(next == to){ found = 1; break; }
+				queue[tail++] = next;
+			}
+		}
+
+		if(!found){
+			ok = 0;
+			break;
+		}
+
+		/*spend the route this leg took, so the next leg has to go around it*/
+		int at = to;
+		while(at != -1){
+			spent[at] = 1;
+			at = cameFrom[at];
+		}
+		from = to;
+	}
+
+	free(spent); free(seen); free(queue); free(cameFrom);
+	return ok;
+}
+
 /*How long the shortest route from one word to another is, in moves*/
 static int legLength(int from, int to, struct GameComponents* walk, struct DataStructures* data){
 	getSolution_FLWP(from, to, walk, data);
@@ -116,6 +264,16 @@ struct GameComponentsFLWPN* initiateFLWPN(int minAdjacenciesToStart, int maxAdja
 		found++;
 	}
 
+	/* Walkable under THIS mode's rule, not just connected in the graph. A chain
+	   whose second leg can only be reached through its third port is a board
+	   that cannot be finished, and nothing before this point would have noticed.
+	   Given up rather than dealt; the caller deals another. */
+	if(!chainCanBeWalked(goals, numLegs, walk->start, data)){
+		free(goals);
+		freeGameComponentsFLWP(walk, data);
+		return NULL;
+	}
+
 	struct GameComponentsFLWPN* gc = malloc(sizeof(struct GameComponentsFLWPN));
 	if(gc == NULL){
 		free(goals);
@@ -134,6 +292,7 @@ struct GameComponentsFLWPN* initiateFLWPN(int minAdjacenciesToStart, int maxAdja
 	walk->goal = goals[0];
 	getSolution_FLWP(walk->start, goals[0], walk, data);
 
+	spendExactlyThePath(gc, data);
 	return gc;
 }
 
@@ -183,22 +342,59 @@ int userEntersWordFLWPN(char* userInput, struct GameComponentsFLWPN* gc,
 		return -1;
 	}
 
+	/* A port that is not the one being sailed for is refused before the walk
+	   ever sees it. Touching it would spend it - see the note in FLWPN.h - and
+	   the board would be dead while looking perfectly healthy. */
+	int asked = convertWordToInt(userInput, data);
+	if(asked >= 0 && isAPortNotYetDue(asked, gc)){
+		return PORT_NOT_DUE;
+	}
+
 	int result = userEntersWord_FLWP(userInput, gc->walk, data);
 	if(result != VALID){
 		return result;
 	}
 
-	/* Arrived. The goal moves on rather than the game ending, until there is
-	   nowhere left to move it to. */
-	if(gc->walk->prevInput == gc->walk->goal && gc->legsDone < gc->numLegs){
-		gc->legsDone++;
-		if(gc->legsDone < gc->numLegs){
-			gc->walk->goal = gc->goals[gc->legsDone];
-			getSolution_FLWP(gc->walk->prevInput, gc->walk->goal, gc->walk, data);
-		}
+	/* Both read off the path rather than counted, so that undo and redo need
+	   know nothing about either. */
+	spendExactlyThePath(gc, data);
+	relayTheGoal(gc, data);
+	return VALID;
+}
+
+/* Put the goal wherever the path says it should be, and work out the route to
+   it again. Called after anything that can change the path. */
+static void relayTheGoal(struct GameComponentsFLWPN* gc, struct DataStructures* data){
+	gc->legsDone = portsCalledAt(gc);
+	if(gc->legsDone < gc->numLegs){
+		gc->walk->goal = gc->goals[gc->legsDone];
+		getSolution_FLWP(gc->walk->prevInput, gc->walk->goal, gc->walk, data);
+	}
+}
+
+/* Take a move back, and put everything the rule depends on back with it. The
+   pathfinder's own undo is what moves the path; this is what makes the word set
+   and the leg count agree with it again. */
+void undoMoveFLWPN(struct GameComponentsFLWPN* gc, struct DataStructures* data){
+	/* nothing to work with */
+	if(gc == NULL || gc->walk == NULL){
+		return;
 	}
 
-	return VALID;
+	undoMoveFLWP(gc->walk, data);
+	spendExactlyThePath(gc, data);
+	relayTheGoal(gc, data);
+}
+
+void redoMoveFLWPN(struct GameComponentsFLWPN* gc, struct DataStructures* data){
+	/* nothing to work with */
+	if(gc == NULL || gc->walk == NULL){
+		return;
+	}
+
+	redoMoveFLWP(gc->walk, data);
+	spendExactlyThePath(gc, data);
+	relayTheGoal(gc, data);
 }
 
 int isGameWonFLWPN(struct GameComponentsFLWPN* gc){
@@ -220,6 +416,7 @@ void resetFLWPN(struct GameComponentsFLWPN* gc, struct DataStructures* data){
 	gc->legsDone = 0;
 	gc->walk->goal = gc->goals[0];
 	getSolution_FLWP(gc->walk->start, gc->goals[0], gc->walk, data);
+	spendExactlyThePath(gc, data);
 }
 
 void freeGameComponentsFLWPN(struct GameComponentsFLWPN* gc, struct DataStructures* data){

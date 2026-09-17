@@ -31,6 +31,12 @@ enum ERROR_CODE{
                 WRONG_ORDER = 7,
                 UNKNOWN_ERROR = 8,
 		TOO_MANY_LETTERS_IN_COMMON=9,
+		/*A port of call that is not the one being sailed for. FLWPN only: a
+		  walk that touches a word may never touch it again, so landing on a
+		  later port early would spend it and leave the board unwinnable. It is
+		  refused with its own code so the board can say WHICH port is due
+		  rather than just saying no.*/
+		PORT_NOT_DUE=11,
 		/*The generalized turns game's only rule: the word exists and is spelled
 		  fine, it is just not the distance from the seed set the level asked
 		  for. It is a separate code because the board says the number out loud
