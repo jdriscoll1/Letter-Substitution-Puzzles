@@ -876,6 +876,84 @@ int hintGetMinAdjacenciesFLWGP(struct GameComponentsFLWGP* flwgpComponents){
 	
 	 return flwgpComponents->flwpComponents->solution->size - 1; 
 }
+int distanceToGoalFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* data){
+	if(flwgpComponents == NULL || data == NULL || data->I2W == NULL){
+		return -1;
+	}
+
+	struct GameComponents* walk = flwgpComponents->flwpComponents;
+	struct GameComponentsFLWC* rule = flwgpComponents->flwcComponents;
+	/* A board that could not be built has one or both of these as nothing, and
+	   the answer is the same one the plain pathfinder gives: no route. */
+	if(walk == NULL || rule == NULL || rule->goalWords == NULL){
+		return -1;
+	}
+
+	int numWords = data->I2W->numWords;
+	int start = walk->prevInput;
+
+	if(start < 0 || start >= numWords){
+		return -1;
+	}
+	/* Standing on one already. The board is won rather than nearly won, but
+	   nought is the truthful distance and the screen reads it the same way. */
+	if(checkIfUsed_WordSet(start, rule->goalWords)){
+		return 0;
+	}
+
+	int* queue = malloc(sizeof(int) * numWords);
+	int* depth = malloc(sizeof(int) * numWords);
+	if(queue == NULL || depth == NULL){
+		free(queue);
+		free(depth);
+		return -1;
+	}
+	for(int i = 0; i < numWords; i++){
+		depth[i] = -1;
+	}
+
+	int head = 0;
+	int tail = 0;
+	int answer = -1;
+	queue[tail++] = start;
+	depth[start] = 0;
+
+	while(head < tail && answer == -1){
+		int curr = queue[head++];
+		struct intList* c = getConnections(curr, data->I2W);
+		for(c = c->next; c != NULL; c = c->next){
+			int next = c->data;
+			if(checkIfUsed_WordSet(next, rule->goalWords)){
+				answer = depth[curr] + 1;
+				break;
+			}
+			if(depth[next] != -1){
+				continue;
+			}
+			/* TWO KINDS OF WORD THE ROAD DOES NOT GO THROUGH, and they are not
+			   the same kind. A SPENT word is one the player has already stood
+			   on and may not stand on twice, so a route through it is not a
+			   route they have - the plain pathfinder walks around those too. A
+			   ROCK is one the board forbade outright; stepping on it does not
+			   lengthen the walk, it ends it. Either way the search goes round
+			   rather than through, or the number it hands back is for a road
+			   nobody can take. */
+			if(rule->avoidWords != NULL && checkIfUsed_WordSet(next, rule->avoidWords)){
+				continue;
+			}
+			if(checkIfUsed_WordSet(next, data->wordSet)){
+				continue;
+			}
+			depth[next] = depth[curr] + 1;
+			queue[tail++] = next;
+		}
+	}
+
+	free(queue);
+	free(depth);
+	return answer;
+}
+
 char* hintWordTowardsGoalFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* data){
 	/* nothing to work with */
 	if(flwgpComponents == NULL){

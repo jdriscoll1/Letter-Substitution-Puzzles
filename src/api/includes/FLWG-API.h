@@ -141,7 +141,20 @@ int userEntersWord_FLWGP(char* userInput, struct GameComponentsFLWGP* flwgpCompo
 void undoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStructures* dataStructures);
 void redoMoveFLWGP(struct GameComponentsFLWGP *flwgpComponents, struct DataStructures* dataStructures);
 int isStartValid_FLWGP(struct GameComponentsFLWGP* flwgpComponents); 
-int hintGetMinAdjacenciesFLWGP(struct GameComponentsFLWGP* flwgpComponents); 
+int hintGetMinAdjacenciesFLWGP(struct GameComponentsFLWGP* flwgpComponents);
+/*How far the nearest word the rule admits is from where the player is standing,
+around the words they have spent and the words they may not stand on.
+
+THE COMPOSED BOARD COULD NOT ANSWER THIS, and the plain pathfinder's answer is
+not a substitute for two reasons. It measures to ONE word, and this board has a
+set; and it is asked of the walk, which on a composed board is borrowed and
+carries no goal at all - so it answered -1 for every position of every such
+board. A level that hangs a move limit off the distance was therefore told the
+goal was unreachable from the opening word.
+
+hintGetMinAdjacenciesFLWGP is not it either: that is the route the board was
+DEALT with, measured from the first word, and the player has usually moved.*/
+int distanceToGoalFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* data); 
 char* hintWordTowardsGoalFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* data); 
 char* hintGetValidGoalWordFLWGP(struct GameComponentsFLWGP* flwgpComponents, struct DataStructures* data); 
 
