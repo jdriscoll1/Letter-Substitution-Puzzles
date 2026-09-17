@@ -189,7 +189,8 @@ struct score minimax2(int id, int remainingDepth, int isMaximizingPlayer, struct
 
 		   This was the root alone until the line above was fixed, because there
 		   was no honest way to ask whose turn it was any deeper. There is now. */
-		if(parameters.isMaximizingPlayer && isTooObscure(conn->data, data)){
+		if(parameters.isMaximizingPlayer
+			&& (isTooObscure(conn->data, data) || isOffLimits(conn->data, data))){
 			continue;
 		}
 
@@ -285,7 +286,7 @@ int choose_random_word(int id, struct DataStructures* data){
 		already spent is not one. This is the bot choosing for itself - what the
 		player may type is not decided here. */
 		if(! checkIfUsed_WordSet(conn->data, data->wordSet)
-			&& ! isTooObscure(conn->data, data)){
+			&& ! isTooObscure(conn->data, data) && ! isOffLimits(conn->data, data)){
 			numOptions++; 
 		}
 		conn = conn->next; 	
@@ -310,7 +311,7 @@ int choose_random_word(int id, struct DataStructures* data){
 		above used - the two walks have to agree about what an option is or the
 		n-th option is not the one that was counted. */
 		while(checkIfUsed_WordSet(conn->data, data->wordSet)
-			|| isTooObscure(conn->data, data)){
+			|| isTooObscure(conn->data, data) || isOffLimits(conn->data, data)){
 			
 			// If it is go to the next word
 			conn = conn->next; 

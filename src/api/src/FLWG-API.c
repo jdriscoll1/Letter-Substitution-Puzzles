@@ -51,6 +51,15 @@ void setObscurityCap(struct DataStructures* data, int cap){
 	data->I2W->obscurityCap = cap;
 }
 
+int isOffLimits(int id, struct DataStructures* data){
+	/* nothing to work with */
+	if(data == NULL){
+		return 0;
+	}
+
+	return isOffLimitsForGraph(id, data->I2W);
+}
+
 int isTooObscure(int id, struct DataStructures* data){
 	if(data == NULL){
 		return 0;

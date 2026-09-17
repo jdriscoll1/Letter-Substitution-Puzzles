@@ -42,6 +42,17 @@ int isTooObscureForGraph(int id, struct wordDataArray* graph){
 	return graph->array[id]->obscurity > graph->obscurityCap;
 }
 
+/*See HashMap.h. Bounds checked like its neighbours, for the same reason.*/
+int isOffLimitsForGraph(int id, struct wordDataArray* graph){
+	if(graph == NULL || id < 0 || id >= graph->numWords){
+		return 0;
+	}
+	if(graph->array[id] == NULL){
+		return 0;
+	}
+	return graph->array[id]->offLimits != 0;
+}
+
 /*A word's rank off the graph, for the sort below. An id nothing knows about is
 the far end of the scale rather than the near one, so it sorts last instead of
 being offered first.*/
@@ -601,6 +612,158 @@ void Load_Obscurity_fd(struct wordDataArray* IntToWord_HashMap, int fd){
 	}
 	Fill_Obscurity(rankDoc, IntToWord_HashMap);
 	fclose(rankDoc);
+}
+
+/*How much of a dictionary a list is ever allowed to take out.
+ *
+ * A guard on the parse rather than on the list. Reading the wrong bytes marks
+ * whatever happens to convert, and the failure is silent in the worst way: the
+ * engine goes on choosing from what is left and the boards it cannot deal look
+ * like boards that were never dealable. A tenth is far more than any real list
+ * and far less than a misread archive.*/
+#define MOST_A_LIST_MAY_TAKE 10
+
+/*One line at a time from a buffer, so the caller decides where the text ends.
+Hash starts a comment, blank lines are skipped, and a word this dictionary does
+not hold is skipped as well - the same list is read by the two, three and four
+letter games and most of its words belong to one of them.*/
+static void Fill_OffLimits_text(const char* text, struct wordDataArray* IntToWord_HashMap,
+	struct DataStructures* data){
+	char line[128];
+	int marked = 0;
+	const char* at = text;
+
+	if(text == NULL || IntToWord_HashMap == NULL || data == NULL){
+		return;
+	}
+
+	while(*at != '\0'){
+		int n = 0;
+		while(at[n] != '\0' && at[n] != '\n' && n < (int)sizeof(line) - 1){
+			line[n] = at[n];
+			n++;
+		}
+		line[n] = '\0';
+		at += n;
+		while(*at == '\n' || *at == '\r'){
+			at++;
+		}
+
+		{
+			int start = 0, end;
+			while(line[start] == ' ' || line[start] == '\t'){
+				start++;
+			}
+			if(line[start] == '#' || line[start] == '\r' || line[start] == '\0'){
+				continue;
+			}
+			end = start;
+			while(line[end] >= 'a' && line[end] <= 'z'){
+				end++;
+			}
+			line[end] = '\0';
+			if(end == start){
+				continue;
+			}
+
+			int id = Convert_WordToInt(&line[start], data);
+			if(id >= 0 && id < IntToWord_HashMap->numWords
+				&& IntToWord_HashMap->array[id] != NULL
+				&& IntToWord_HashMap->array[id]->offLimits == 0){
+				IntToWord_HashMap->array[id]->offLimits = 1;
+				marked++;
+			}
+		}
+
+		/*More than a tenth of the dictionary is not a list, it is a misread.
+		Everything marked so far is put back, because half a list applied is
+		worse than none: it would take words out with nothing to say why.*/
+		if(marked * MOST_A_LIST_MAY_TAKE > IntToWord_HashMap->numWords){
+			int i;
+			for(i = 0; i < IntToWord_HashMap->numWords; i++){
+				if(IntToWord_HashMap->array[i] != NULL){
+					IntToWord_HashMap->array[i]->offLimits = 0;
+				}
+			}
+			FLWG_LOG("Off-limits list marked more than a tenth of the dictionary; ignored\n");
+			return;
+		}
+	}
+
+	FLWG_LOG("%d words are off limits to the engine\n", marked);
+}
+
+void Load_OffLimits_text(struct wordDataArray* IntToWord_HashMap, const char* text,
+	struct DataStructures* data){
+	Fill_OffLimits_text(text, IntToWord_HashMap, data);
+}
+
+/*The same, off a file. Used by the engine's own tests and the standalone
+console, which have real paths to open.*/
+static void Fill_OffLimits(FILE* doc, struct wordDataArray* IntToWord_HashMap,
+	struct DataStructures* data){
+	char line[128];
+	int marked = 0;
+
+	if(doc == NULL || IntToWord_HashMap == NULL || data == NULL){
+		return;
+	}
+
+	while(fgets(line, sizeof(line), doc) != NULL){
+		int at = 0, end;
+		while(line[at] == ' ' || line[at] == '\t'){
+			at++;
+		}
+		if(line[at] == '#' || line[at] == '\n' || line[at] == '\r' || line[at] == '\0'){
+			continue;
+		}
+		end = at;
+		while(line[end] >= 'a' && line[end] <= 'z'){
+			end++;
+		}
+		line[end] = '\0';
+		if(end == at){
+			continue;
+		}
+
+		int id = Convert_WordToInt(&line[at], data);
+		if(id >= 0 && id < IntToWord_HashMap->numWords
+			&& IntToWord_HashMap->array[id] != NULL){
+			IntToWord_HashMap->array[id]->offLimits = 1;
+			marked++;
+		}
+	}
+
+	FLWG_LOG("%d words are off limits to the engine\n", marked);
+}
+
+void Load_OffLimits_fd(struct wordDataArray* IntToWord_HashMap, int fd,
+	struct DataStructures* data){
+	/*Duplicated for the reason the two above give: fclose closes whatever
+	fdopen was handed, and the caller keeps what it passed in.*/
+	int fdCopy = (fd < 0) ? -1 : dup(fd);
+	FILE* doc = (fdCopy == -1) ? NULL : fdopen(fdCopy, "r");
+	if(doc == NULL){
+		if(fdCopy != -1){
+			close(fdCopy);
+		}
+		FLWG_LOG("No off-limits list on descriptor %d; the engine may say anything\n", fd);
+		return;
+	}
+	Fill_OffLimits(doc, IntToWord_HashMap, data);
+	fclose(doc);
+}
+
+void Load_OffLimits(struct wordDataArray* IntToWord_HashMap, const char* path,
+	struct DataStructures* data){
+	FILE* doc = (path == NULL) ? NULL : fopen(path, "r");
+	if(doc == NULL){
+		FLWG_LOG("No off-limits list at %s; the engine may say anything\n",
+			(path == NULL) ? "(null)" : path);
+		return;
+	}
+	Fill_OffLimits(doc, IntToWord_HashMap, data);
+	fclose(doc);
 }
 
 void Load_Obscurity(struct wordDataArray* IntToWord_HashMap, const char* path){

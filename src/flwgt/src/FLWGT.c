@@ -118,7 +118,7 @@ struct GameComponentsFLWGT* initFLWGT(const int* seeds, int numSeeds, int minDis
 		gc->answersTotal++;
 		/* The second count is the one that decides whether the board is fair.
 		   The first is the truth about the dictionary. */
-		if(!isTooObscure(i, data)){
+		if(!isTooObscure(i, data) && !isOffLimits(i, data)){
 			gc->answersWorthAsking++;
 		}
 	}
@@ -239,7 +239,7 @@ int anAnswerFLWGT(struct GameComponentsFLWGT* gc, struct DataStructures* data){
 		if(fallback == -1 || getObscurity(i, data) < getObscurity(fallback, data)){
 			fallback = i;
 		}
-		if(isTooObscure(i, data)){
+		if(isTooObscure(i, data) || isOffLimits(i, data)){
 			continue;
 		}
 		if(best == -1 || getObscurity(i, data) < getObscurity(best, data)){

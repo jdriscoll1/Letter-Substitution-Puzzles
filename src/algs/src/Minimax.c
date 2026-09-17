@@ -83,7 +83,9 @@ struct minimaxOutput* minimax(int id, int currDepth, int maxDepth, int isMaximiz
 		   the player as restricted too would make it believe it was safer than
 		   it is. */
 		if(checkIfUsed_WordSet(currID, wordSet) == 0
-			&& !(isMaximizingPlayer == 1 && isTooObscureForGraph(currID, wordGraph))){
+			&& !(isMaximizingPlayer == 1
+				&& (isTooObscureForGraph(currID, wordGraph)
+					|| isOffLimitsForGraph(currID, wordGraph)))){
 			
 			// Increment the parent's words number of connections
 			numConnections++; 

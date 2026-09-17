@@ -86,7 +86,8 @@ static int nearestInSet(int from, struct WordSet* set, int atLeast, int atMost,
 	depth[from] = 0;
 	queue[tail++] = from;
 
-	if(atLeast <= 0 && checkIfUsed_WordSet(from, set) && !isTooObscure(from, data)){
+	if(atLeast <= 0 && checkIfUsed_WordSet(from, set) && !isTooObscure(from, data)
+		&& !isOffLimits(from, data)){
 		found = from;
 	}
 
@@ -110,7 +111,7 @@ static int nearestInSet(int from, struct WordSet* set, int atLeast, int atMost,
 			   and hints towards has to be a word this level would deal. A board
 			   that says "get to a word with OO" and means ZOOT is asking for
 			   something outside its own reach. */
-			if(isTooObscure(next, data)){
+			if(isTooObscure(next, data) || isOffLimits(next, data)){
 				continue;
 			}
 			if(depth[next] >= atLeast && checkIfUsed_WordSet(next, set)){

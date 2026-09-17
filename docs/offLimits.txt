@@ -1,0 +1,81 @@
+# Words the ENGINE will not use. The player may still play every one of them.
+#
+# This is the same split the obscurity ranks make, and for the same reason: a
+# word being valid to play and a word being one the game DEALS, aims at, plays
+# back, hints towards or reads out in the haul are two different questions. A
+# word game that refuses a real word feels broken. A word game that puts CUNT on
+# the board by itself is a different problem, and a worse one.
+#
+# The obscurity cap cannot do this job. It keeps out words nobody knows, and
+# these are words everybody knows - FUCK is the 299th commonest word in English
+# and SHIT the 285th, so both sail under every cap the game has, including the
+# one the first level deals from.
+#
+# AND UNLIKE THE CAP, THIS NEVER RELAXES. The cap is a preference: when the
+# dictionary has nothing matching a board's numbers it is dropped and the board
+# is dealt anyway. A board that can only be built on one of these is a board
+# that does not get built.
+#
+# WHAT IS ON THE LIST, and the line is drawn twice.
+#
+# SLURS GO WHATEVER ELSE THEY MEAN. A dyke is a wall and a chink is a gap and a
+# coon is a raccoon, and none of that helps the person who reads it on the
+# board. The cost is a handful of words out of five thousand.
+#
+# PROFANITY GOES WHERE THERE IS NO EVERYDAY SENSE. Words that are crude in one
+# reading and ordinary in another are kept, because taking them thins the graph
+# and buys nothing: CLAP is applause, TART is a pastry, SOD is turf, DONG is a
+# bell, RIM is an edge, POX is a disease, TEAT and SMUT and SPEW and CRUD and
+# BUTT and GASH and BUM are all just words. HOE is a garden tool and HO is what
+# you say before HEAVE. SHAG is a cormorant, which on a pirate map is the more
+# likely bird. HELL and DAMN stay because this is a game about pirates.
+#
+# Add a word by putting it on its own line. Blank lines and lines starting with
+# a hash are ignored, and a word the dictionary does not hold is ignored too, so
+# the same list serves the two, three and four letter games.
+
+# ---------------------------------------------------------------- slurs
+abo
+abos
+coon
+dago
+dyke
+fag
+fags
+gook
+gyp
+gyps
+homo
+kike
+mick
+spic
+wog
+wogs
+wop
+wops
+yid
+yids
+
+# ----------------------------------------------------------- profanity
+arse
+cock
+crap
+cunt
+dick
+fart
+fuci
+fuck
+jism
+perv
+piss
+porn
+puke
+shat
+shit
+slag
+slut
+tits
+turd
+twat
+wank
+anus

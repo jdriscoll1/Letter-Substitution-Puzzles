@@ -64,6 +64,7 @@ int getWordWithNumberOfConnections(int minConnections, int maxConnections, struc
 			on a word nobody has heard of is the fault this exists to stop, so
 			it is refused every round rather than widened along with the band. */
 			if(adj >= band.min && adj <= band.max
+				&& !isOffLimits(i, data)
 				&& (takeAnythingPlayable || !isTooObscure(i, data))){
 				wordsWithinRange[numWordsWithinRange++]	= i;
 			}
@@ -117,6 +118,7 @@ int ChooseStart_Range(struct wordDataArray* IntToWord_HashMap, int minAdjacencie
 			on a word nobody has heard of is the fault it exists to stop, so it
 			is refused every round rather than widened along with the band. */
 			if(adj >= band.min && adj <= band.max
+				&& !isOffLimitsForGraph(i, IntToWord_HashMap)
 				&& (takeAnythingPlayable || !isTooObscureForGraph(i, IntToWord_HashMap))){
 				add_ArrayList((void*)(&i), aList, NUM);
 			}

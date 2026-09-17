@@ -60,6 +60,7 @@ struct GameComponents *findFLWPStartAndGoal(int minAdjacenciesToStart, int maxAd
 			   stop, so it is refused every round rather than widened along
 			   with them. */
 			if(adj >= startBand.min && adj <= startBand.max
+				&& !isOffLimits(id, data)
 				&& (takeAnythingPlayable || !isTooObscure(id, data))){
 				candidates[numCandidates++] = id;
 			}
@@ -141,7 +142,7 @@ int chooseGoalBFS_FLWP(int id, int minDistance, int maxDistance, int minAdjacenc
 			   graph only ever makes distances longer, so what comes back is a
 			   goal at least as far out as the band asked for - never one that
 			   is secretly nearer by a route through a word nobody knows. */
-			if (withinTier && isTooObscure(c_id, data)) {
+			if (isOffLimits(c_id, data) || (withinTier && isTooObscure(c_id, data))) {
 				c = c->next;
 				continue;
 			}
@@ -234,7 +235,8 @@ static int solve_FLWP(int id, int goalId, struct GameComponents* gc, int withinT
 			int childDistance = distance + 1;
 
 			/* The goal is exempt because it is an end and not a step. */
-			if (withinTier && c_id != goalId && isTooObscure(c_id, data)) {
+			if ((isOffLimits(c_id, data) && c_id != goalId)
+				|| (withinTier && c_id != goalId && isTooObscure(c_id, data))) {
 				c = c->next;
 				continue;
 			}

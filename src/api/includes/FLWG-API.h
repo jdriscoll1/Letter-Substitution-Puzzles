@@ -53,6 +53,18 @@ void setObscurityCap(struct DataStructures* data, int cap);
 for itself - never where it is judging one the player typed.*/
 int isTooObscure(int id, struct DataStructures* data);
 
+/*Whether the engine may choose this word at all.
+ *
+ * A DIFFERENT QUESTION FROM THE CAP, and it is asked in the same places for the
+ * opposite kind of reason. The cap keeps out words nobody knows; this keeps out
+ * a handful everybody does - see docs/offLimits.txt. And the cap is a
+ * preference that is dropped when a board cannot otherwise be dealt, where this
+ * is never dropped at all: a board that can only be built on one of these is a
+ * board that does not get built.
+ *
+ * Never asked about a word the PLAYER typed. They may play every one.*/
+int isOffLimits(int id, struct DataStructures* data);
+
 /*How obscure a word is, by the word. The opposite errand to isTooObscure: this
 is for judging a word the PLAYER has already played, so the app can tell them
 they found a good one. A word the dictionary does not know answers

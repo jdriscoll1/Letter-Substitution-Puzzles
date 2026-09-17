@@ -26,6 +26,18 @@ struct wordData{
 	int* connections;
 	//Finds if it has been given as a hint
 	int hintFound;
+	/*Whether the ENGINE may use this word. Nought for almost every word; one
+	for the handful the game will not say itself - see docs/offLimits.txt.
+
+	IT IS NOT AN OBSCURITY. The rank says how many people know a word, and
+	these are words everybody knows: the cap that keeps out ZOUK lets FUCK
+	through, because FUCK is the 299th commonest word in English. Writing it
+	here as a rank would also make the game COMPLIMENT a player for finding
+	one, since the praise line reads the same number.
+
+	And unlike the cap it never relaxes. The cap is dropped when the dictionary
+	has nothing else; this is not.*/
+	int offLimits;
 	//Finds the number of connections a word has
 	int numConnections;
 	//Necessary to know which the previous id is in the bfs
@@ -123,6 +135,29 @@ missing ranks file leaves every word OBSCURITY_UNKNOWN and a playable game,
 rather than no game at all.*/
 void Fill_Obscurity(FILE* rankDoc, struct wordDataArray* IntToWord_HashMap);
 void Load_Obscurity_fd(struct wordDataArray* IntToWord_HashMap, int fd);
+
+/*Read the words the engine will not use. One word a line, blanks and lines
+beginning with a hash ignored, and a word this dictionary does not hold ignored
+too - so one list serves every word length.*/
+void Load_OffLimits(struct wordDataArray* IntToWord_HashMap, const char* path,
+	struct DataStructures* data);
+void Load_OffLimits_fd(struct wordDataArray* IntToWord_HashMap, int fd,
+	struct DataStructures* data);
+
+/*The same list, already in memory and NUL terminated.
+ *
+ * WHICH IS WHAT THE APP HAS TO USE. An android asset is handed out as a
+ * descriptor into the whole APK, seeked to where the asset starts - so reading
+ * it to end-of-file reads the rest of the archive. The ranks loader never
+ * noticed because it stops after a known number of lines; this one reads until
+ * there is nothing left, and marked eight thousand words off limits on a four
+ * thousand word dictionary before anybody looked at the log.*/
+void Load_OffLimits_text(struct wordDataArray* IntToWord_HashMap, const char* text,
+	struct DataStructures* data);
+
+/*Whether the engine may choose this word. Asked wherever the engine picks a
+word for itself and NEVER where it judges one the player typed.*/
+int isOffLimitsForGraph(int id, struct wordDataArray* graph);
 void Load_Obscurity(struct wordDataArray* IntToWord_HashMap, const char* path); 
 
 struct DummyHeadNode** *Allocate_WordToInt(); 

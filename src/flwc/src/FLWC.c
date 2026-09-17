@@ -179,7 +179,7 @@ int botPly_MaxAdjacencies(int word, struct WordSet* goalWords, struct DataStruct
 	   The second is the bot choosing for itself: a player may still type a
 	   word this obscure, and takeUserInput never asks this question. */
 	if(checkIfUsed_WordSet(optionId, data->wordSet)
-		|| isTooObscure(optionId, data)){
+		|| isTooObscure(optionId, data) || isOffLimits(optionId, data)){
 		//FLWG_LOG("Option Is Used, NEXT\n\n"); 
 		options = options->next;
 		continue; 

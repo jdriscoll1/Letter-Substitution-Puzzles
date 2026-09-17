@@ -113,6 +113,14 @@ int chooseStartWord_FLWCGeneral(struct StartWordParametersFLWC p, struct GameCom
 				continue;
 			}
 
+			/*OFF LIMITS IS NOT PART OF THE CAP AND IS NOT RELAXED WITH IT. The
+			cap is dropped on the give-up round so that a board can always be
+			dealt; this is not, because a board that can only be built on one of
+			these is a board that does not get built.*/
+			if(isOffLimits(i, data)){
+				continue;
+			}
+
 			candidates[numCandidates++] = i;
 		}
 
@@ -350,7 +358,8 @@ int somethingInSetIsWithin(int id, int most, struct WordSet* set, struct WordSet
 		 * already true by the time it is reached - it is here to say the rule
 		 * out loud at the place a reader looks for it, and to still hold if
 		 * somebody ever lets goal words back past the queue. */
-		if(checkIfUsed_WordSet(currId, set) && !isTooObscure(currId, data)){
+		if(checkIfUsed_WordSet(currId, set) && !isTooObscure(currId, data)
+			&& !isOffLimits(currId, data)){
 			found = 1;
 			break;
 		}
@@ -369,7 +378,7 @@ int somethingInSetIsWithin(int id, int most, struct WordSet* set, struct WordSet
 			   deals - see the note at the arrival above. A goal word that is
 			   too obscure is no longer worth walking to, so it is no longer
 			   worth queueing either. */
-			if(isTooObscure(next, data)){
+			if(isTooObscure(next, data) || isOffLimits(next, data)){
 				continue;
 			}
 			enqueue(next, distance + 1, parent, q);

@@ -338,6 +338,7 @@ static struct arrayList* pathToNearestInSet(int id, struct StartWordParametersFL
 
 		// If the Current Word That We're Looking at is In The Goal Set
 		int currIsGoal = checkIfUsed_WordSet(currId, p.goalWords)
+			&& !isOffLimits(currId, data)
 			&& (!withinTier || !isTooObscure(currId, data));
 		if (currIsGoal) {
 			free_ArrayList(pathToNearestWord); 
