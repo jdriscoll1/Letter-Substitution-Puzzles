@@ -568,22 +568,3 @@ void swapAvoidGoal(struct StartWordParametersFLWC* p) {
     p->goalWords = c;
 }
 
-void getSetOfSurroundingWords(int id, int distance, struct WordSet* wordSet, struct DataStructures* data){
-
-	struct BFSResults result = BreadthFirstSearch_Distance(id, distance, data->I2W, data->wordSet); 
-
-	struct TreeStorageNode* curr = result.dataStorage->ReverseTreeHeader; 
-	curr = curr->next;
-
-	while(curr != NULL){
-		markUsed_WordSet(curr->id, wordSet);
-		curr = curr->next; 
-	}
-
-	free_ArrayList(result.list); 
-	Free_BFSComponents(result.dataStorage, data->wordSet);
-
-}
-
-
-

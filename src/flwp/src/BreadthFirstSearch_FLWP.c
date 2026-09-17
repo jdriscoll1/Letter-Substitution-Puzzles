@@ -105,50 +105,6 @@ struct GameComponents *findFLWPStartAndGoal(int minAdjacenciesToStart, int maxAd
 
 
 
-int BFS_IsFLWPStartValid(int id, int minDistance, int maxDistance, int minAdjacenciesToGoal, int maxAdjacenciesToGoal, struct DataStructures* data){
-
-	// Initialize the Queue, this keeps track of the current word that is being explored, and all words that will be explored
-	struct Queue* q = init_Queue(); 
-	enqueue(id, 0, NULL,  q);
-
-	
-	// Explored Nodes, keeps track of all explored Nodes
-	struct WordSet* x = init_WordSet(data->I2W->numWords); 
-	markUsed_WordSet(id, x); 
-	while(!isEmpty_Queue(q)){
-		struct QueueNode* parent = dequeue(q); 
-		int currId = parent->data->id; 
-		// if the distance is greater than the max distance and we have not been able to find a word, false
-		if(parent->data->distance > maxDistance){
-			continue; 
-		}
-		struct intList* c = getConnections(currId, data->I2W); 
-		c = c->next; 
-		while(c != NULL){
-			int childDistance = parent->data->distance + 1; 
-			int c_id = c->data; 
-			
-			if(checkIfUsed_WordSet(c_id, x) == 0){
-				enqueue(c_id, childDistance, parent, q); 
-				markUsed_WordSet(c_id, x); 
-			}
-			// if it happens to bump into a word within the parameters who abides by the parameters, it can free everything
-			int a = getNumAdjacencies(c_id, data); 
-			if(childDistance >= minDistance && childDistance <= maxDistance && a >= minAdjacenciesToGoal && a <= maxAdjacenciesToGoal){
-				free_Queue(q); 
-				free_WordSet(x); 
-				return 1; 
-			}
-			c = c->next; 
-		}
-	}
-	free_Queue(q); 
-	free_WordSet(x); 
-
-	return 0; 
-}
-
-
 int chooseGoalBFS_FLWP(int id, int minDistance, int maxDistance, int minAdjacenciesToGoal, int maxAdjacenciesToGoal, int withinTier, struct DataStructures* data) {
 	// Initialize the array of valid goals
 	int validGoals[data->I2W->numWords]; 
