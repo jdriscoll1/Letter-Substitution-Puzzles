@@ -34,6 +34,7 @@ bridge calls, which is the half of it that C cannot see.
 #include "../src/structs/includes/ArrayList.h"
 #include "../src/structs/includes/HashMap.h"
 #include "../src/flwg/includes/Hints2.h"
+#include "../src/flwgt/includes/FLWGT.h"
 
 struct DataStructures* open_dictionary(const char* path, int numLetters);
 int letters_that_differ(const char* a, const char* b, int numLetters);
@@ -72,6 +73,10 @@ static const char* BRIDGE_FUNCTIONS[] = {
 	"hintAdjacencyTowardsGoalFLWC", "hintPathToGoalFLWC",
 	"hintBestDirectAdjacencyFLWIC", "hintDistanceFromNearestAvoidWordFLWIC",
 	"freeGameComponentsFLWC",
+
+	"initFLWGT", "isSolvableFLWGT", "userEntersWordFLWGT", "distanceOfWordFLWGT",
+	"isGameWonFLWGT", "wordsFoundFLWGT", "wordsWantedFLWGT", "answersLeftFLWGT",
+	"anAnswerFLWGT", "freeGameComponentsFLWGT",
 
 	"initFLWGAtStart", "initFLWPAtStart", "initFLWPBetween",
 	"initFLWPUnreachable", "initFLWCAtStart", "initFLWTAtStart",
@@ -299,6 +304,73 @@ void test_bridge_the_adversarial_game(void){
 
 	freeGameComponentsFLWG(game);
 	covers("freeGameComponentsFLWG");
+	freeDataStructures(data);
+}
+
+/* ------------------------------------------------------------------ FLWGT */
+
+/* The one mode with no board. The level states a rule about the whole
+   dictionary and every word typed is judged against it on its own, so this
+   walks a whole round of one: build it, check it can be finished, take an
+   answer, refuse a non-answer for the right reason, and hand it back. */
+void test_bridge_the_generalized_turns_game(void){
+	struct DataStructures* data = open_dictionary("docs/4.txt", 4);
+
+	int seed = convertWordToInt("cart", data);
+	CHECK(seed >= 0);
+	int seeds[1] = { seed };
+
+	struct GameComponentsFLWGT* game = initFLWGT(seeds, 1, 2, 2, 2, data);
+	covers("initFLWGT");
+	CHECK(game != NULL);
+
+	/*a board nobody could finish is not dealt*/
+	CHECK_INT(isSolvableFLWGT(game), 1);
+	covers("isSolvableFLWGT");
+
+	CHECK_INT(wordsWantedFLWGT(game), 2);
+	covers("wordsWantedFLWGT");
+	CHECK_INT(wordsFoundFLWGT(game), 0);
+	covers("wordsFoundFLWGT");
+	CHECK_INT(isGameWonFLWGT(game), 0);
+	covers("isGameWonFLWGT");
+
+	int before = answersLeftFLWGT(game, data);
+	covers("answersLeftFLWGT");
+	CHECK(before >= 2);
+
+	/*the hint names one, and it is an answer*/
+	int offered = anAnswerFLWGT(game, data);
+	covers("anAnswerFLWGT");
+	CHECK(offered >= 0);
+
+	if(offered >= 0){
+		char* word = convertIntToWord(offered, data);
+		CHECK_INT(distanceOfWordFLWGT(word, game, data), 2);
+		covers("distanceOfWordFLWGT");
+
+		CHECK_INT(userEntersWordFLWGT(word, game, data), 0);
+		covers("userEntersWordFLWGT");
+		CHECK_INT(wordsFoundFLWGT(game), 1);
+		CHECK_INT(answersLeftFLWGT(game, data), before - 1);
+
+		/*the same word is not two answers*/
+		CHECK(userEntersWordFLWGT(word, game, data) != 0);
+	}
+
+	/*the seed is nought from itself, so it is not two from itself*/
+	CHECK_INT(distanceOfWordFLWGT("cart", game, data), 0);
+	CHECK(userEntersWordFLWGT("cart", game, data) != 0);
+
+	/*the second answer finishes it*/
+	int second = anAnswerFLWGT(game, data);
+	if(second >= 0){
+		CHECK_INT(userEntersWordFLWGT(convertIntToWord(second, data), game, data), 0);
+		CHECK_INT(isGameWonFLWGT(game), 1);
+	}
+
+	freeGameComponentsFLWGT(game);
+	covers("freeGameComponentsFLWGT");
 	freeDataStructures(data);
 }
 
@@ -738,6 +810,7 @@ void suite_bridge(void){
 	RUN_TEST(test_bridge_the_seed_decides_the_board);
 	RUN_TEST(test_bridge_the_direct_adjacency_hint_names_a_neighbour);
 	RUN_TEST(test_bridge_the_adversarial_game);
+	RUN_TEST(test_bridge_the_generalized_turns_game);
 	RUN_TEST(test_bridge_the_pathfinder);
 	RUN_TEST(test_bridge_the_composed_pathfinder);
 	RUN_TEST(test_bridge_the_turns_game);

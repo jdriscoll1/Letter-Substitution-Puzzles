@@ -30,7 +30,13 @@ enum ERROR_CODE{
                 WORD_DOES_NOT_EXIST = 6,
                 WRONG_ORDER = 7,
                 UNKNOWN_ERROR = 8,
-		TOO_MANY_LETTERS_IN_COMMON=9
+		TOO_MANY_LETTERS_IN_COMMON=9,
+		/*The generalized turns game's only rule: the word exists and is spelled
+		  fine, it is just not the distance from the seed set the level asked
+		  for. It is a separate code because the board says the number out loud
+		  - "BEST is 1 away, not 2" - and "wrong" would only teach that you were
+		  wrong.*/
+		WRONG_DISTANCE=10
 };
 /*This method checks gitthe input to make sure that it is valid
 @param prevWord --> The previous word, the word it is checking the current characters against
