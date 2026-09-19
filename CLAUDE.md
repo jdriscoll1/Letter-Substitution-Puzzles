@@ -80,6 +80,14 @@ concrete words (DAWS scores better than TARE in every corpus tried). Regeneratin
 from a frequency list alone silently drops 158 ordinary words back out of play;
 `WordObscurity-test.ts` is the ratchet on that.
 
+The four letter list has carried that correction all along — 147 words floored at 7,589. The
+three letter list only ever got thirteen, which is why OPT sat at 29,000 and a bot on a three
+letter board could answer with BES or KOR while the cap could do nothing about it without also
+dropping OPT. `docs/3rescued.txt` is the rest of it: 57 words floored at 4,739, one per line,
+with the reasoning in the file so it can be argued with a word at a time. **Membership of the
+old pre-Scrabble dictionary is a signal and not the rule** — it admits ABY, AUK and ALB, and at
+four letters it admits ADZE, which the game has always deliberately refused to deal.
+
 `initDataStructures(fd, numLetters)` takes `numLetters` as a separate argument from the file
 descriptor — it must match the word length in the file being opened. Several demos in
 `main.c` pass a mismatched value; copying one of those blindly produces silent corruption.

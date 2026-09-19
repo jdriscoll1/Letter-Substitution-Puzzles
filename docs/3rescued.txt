@@ -1,0 +1,101 @@
+# THREE LETTER WORDS THE FREQUENCY LIST UNDERSELLS.
+#
+# The ranks beside the dictionaries are a word's place in a list of the
+# commonest English words, and for four letter words that is close enough to
+# "would a player know this" to draw a line with. For three letter words it is
+# not. OPT sits at 29,000 and IMP at 29,000; WOK, ODE, OAT, STY, PLY, WRY and
+# EBB are all past thirty thousand, which is where the Scrabble-only filler
+# lives. A corpus counts how often a word is written down, and short concrete
+# words are written down less often than they are known.
+#
+# The four letter list already carries a correction for exactly this - a
+# hundred and forty-seven words floored at 7,589, whatever the corpus said -
+# and the three letter list only ever got thirteen. This is the rest of it.
+#
+# WHAT IS IN HERE IS A JUDGEMENT, and it is written down as data so it can be
+# argued with a word at a time rather than rediscovered. The test is not "is
+# this a word" - every word in the dictionary is playable whatever this file
+# says - it is "could the bot answer with this and leave the player feeling
+# cheated". Being cautious is cheap here: a word left out is a word the game
+# will not deal, which costs a little variety. A word wrongly let in is the
+# fault this whole file exists to fix.
+#
+# Membership of the old pre-Scrabble dictionary was the first thing tried as a
+# rule and it does not work. It admits ABY, AUK, AWN, ALB, UKE and FUG, and at
+# four letters it admits ADZE - which the game has always and deliberately
+# refused to deal. It is a signal, not an answer. Most of what follows is in
+# it; a few words (NIX, KOI, ZIT, ICK, ORC, SKA) are not, because the old list
+# was 589 words and missed them.
+#
+# BUR is not in here, and it is the one worth naming. It is in the old
+# dictionary and it looks like every other word on this list - but it was one
+# of the twelve the bot actually answered with when this was reported, which is
+# the best evidence there is about how a word reads across a board.
+#
+# AND NOTHING HERE CROSSES THE LINE THE GAME ALREADY DREW. Five words came off
+# this list for that reason - HEW, NTH, OVA, AWL and ERG - because the corpus
+# had them past fifty thousand, which is where the game stops calling a word its
+# own at all. A word outside that line is the player's: the game does not deal
+# it, and finding one buys seconds back on the clock. Pulling one inside would
+# have been this file deciding something it has no business deciding. The rest
+# were all inside it already and only needed to be inside the tier as well.
+#
+# Each of these is floored at 4,739, which is the rank the three letter rescue
+# already used - inside the medium tier and outside the calm one, so a rescued
+# word is dealt on a board that has a bit of weather and not on the opening
+# levels. See WordObscurity.ts for what the tiers mean.
+#
+# One word per line. Order does not matter; the generator reads them as a set.
+
+caw
+cob
+oft
+veg
+jot
+mew
+fib
+ohm
+cog
+ode
+wok
+cur
+sag
+zig
+fen
+opt
+imp
+lob
+ply
+bib
+wry
+ebb
+sty
+gad
+oat
+fob
+alt
+ewe
+nit
+rho
+lop
+lye
+emu
+ilk
+ire
+sop
+qua
+tun
+yew
+jut
+yaw
+nix
+koi
+jib
+zit
+ick
+tho
+ump
+orc
+nub
+vac
+ska
